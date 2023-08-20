@@ -1,0 +1,25 @@
+<div class="login-window">
+    <div class="login-item">
+        <form class="form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)" novalidate>
+            <div class="form-group section">
+                <label>Email Address</label>
+                <input class="form-control" required #email="ngModel" [class.is-invalid]="email.invalid && email.touched" 
+                name='email' type="email" [(ngModel)]="userModel.email">
+                <small claass="text-danger" [class.d-none]="email.valid || email.untouched">Email is required</small>
+            </div>
+    
+            <div class="form-group section">
+                <label>Password</label>
+                <input class="form-control" required #password="ngModel" name="password" type="text" [(ngModel)]="userModel.password">
+                <small claass="text-danger" [class.d-none]="password.valid || password.untouched">Password is required</small>
+            </div>
+            <button [disabled]="userForm.form.invalid" class="btn btn-primary btn-center">Login</button>
+            <br>
+            <a class="btn-center" href="/forgot-password">Forgot password??</a>
+        </form>  
+        <div class="sign-up">
+            <p class="center"><a class='anchors' href="/signup">Sign up</a></p>
+        </div>
+    </div>
+    
+</div>

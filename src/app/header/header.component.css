@@ -1,0 +1,28 @@
+.main-header {
+    background-color: rgb(135, 154, 106);
+}
+
+.container {
+
+    width: 70%;
+    margin: auto;
+}
+
+.nav ul{
+    margin: 0;
+}
+
+.nav li{
+    display: inline;
+}
+
+.nav a{
+    display: inline-block;
+    padding: .5em;
+    color: white;
+    text-decoration: none;
+}
+.nav a:hover{
+    background-color: rgba(255, 255, 255, .3)
+
+}

@@ -1,0 +1,16 @@
+.header{
+    width: 100%;
+
+}
+.main{
+    position: relative;
+}
+.router{
+    position: relative; 
+}
+
+.footer{
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+}
