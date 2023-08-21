@@ -8,32 +8,50 @@
         <div class="row">
             <div class="col mb-3">
                 <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="firstname" formControlName="firstname">
+                <input [class.is-invalid]="registerFormControl.firstname.touched && registerFormControl.firstname.invalid" type="text" class="form-control" id="firstname" formControlName="firstname">
+                <div *ngIf="registerFormControl.firstname.touched && registerFormControl.firstname.invalid">
+                    <small *ngIf="registerFormControl.firstname.errors?.['required']" class="text-danger">First name required</small>
+                    <small *ngIf="registerFormControl.firstname.errors?.['minlength']" class="text-danger">Minimum 4 letters required</small>
+                    <small *ngIf="registerFormControl.firstname.errors?.['forbiddenName']" class="text-danger">{{registerFormControl.firstname.errors?.['forbiddenName'].value}} forbidden Name</small>
+                </div>
             </div>
             <div class="col mb-3">
                 <label for="lastname" class="form-label">Last Name</label>
                 <input type="text" class="form-control" id="lastname" formControlName="lastname">
+                <div *ngIf="registerFormControl.lastname.touched && registerFormControl.lastname.invalid">
+                    <small *ngIf="registerFormControl.lastname.errors?.['required']" class="text-danger">Last name required</small>
+                    <small *ngIf="registerFormControl.lastname.errors?.['minlength']" class="text-danger">Minimum 4 letters required</small>
+                </div>
             </div>
             <div class="row">
                 <div class="col mb-3">
                     <label for="email" class="form-label">Email Address</label>
                     <input type="email" class="form-control" id="email" formControlName="email">
+                    <div *ngIf="registerFormControl.email.touched && registerFormControl.email.invalid">
+                        <small *ngIf="registerFormControl.email.errors?.['required']" class="text-danger">Email required</small>
+                        <small *ngIf="registerFormControl.email.errors?.['pattern']" class="text-danger"> Invalid email address</small>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col mb-3">
                     <label for="pwd" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="pwd" formControlName="pwd">
+                    <input [class.is-invalid]="registrationForm.errors?.['mismatch']" type="password" class="form-control" id="pwd" formControlName="pwd">
+                    
                 </div>
                 <div class="col mb-3">
                     <label for="rpwd" class="form-label">Repeat password</label>
                     <input type="password" class="form-control" id="rpwd" formControlName="rpwd">
+                    <div *ngIf="registerFormControl.rpwd.touched && registerFormControl.pwd.touched">
+                        <small *ngIf="registerFormControl.rpwd.errors?.['required']" class="text-danger">Confirm password required</small>
+                        <small *ngIf="registrationForm.errors?.['mismatch'] && !registerFormControl.rpwd.errors?.['required']" class="text-danger">Password mismatch</small>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-6 offset-3">
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button [disabled]="!registrationForm.valid" type="submit" class="btn btn-primary">Register</button>
                     </div>
                 </div>
             </div>

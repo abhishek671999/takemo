@@ -12,7 +12,7 @@ export class SignupService {
   _url = 'http://localhost:3000/signup'
   constructor(private _http: HttpClient) {}
 
-  signup(regUser: RegistrationUser){
+  signup(regUser: any){
     console.log(regUser)
     return this._http.post<any>(this._url, regUser)
                 .pipe(catchError(this.errorHandler))

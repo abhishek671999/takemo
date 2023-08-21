@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from '../user';
 import { LoginService } from '../login.service';
+import { FormBuilder } from '@angular/forms';
 
 
 @Component({
@@ -9,15 +10,23 @@ import { LoginService } from '../login.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
+
+      constructor(private _fb: FormBuilder, private _loginService: LoginService){}
       loginObj = {
         userName: '',
         passWord: ''
       };
+
+      // loginObj = this._fb.group({
+      //   userName: [''],
+      //   passWord: ['']
+
+      // })
+
+
       submitted = false;
       errorMsg = '';
       userModel = new User('mail@gmail.com', 'password')
-
-      constructor(private _loginService: LoginService){}
 
       onLogin(){
         console.log('UserName: '+ this.loginObj.userName, 'Password: ', this.loginObj.passWord)

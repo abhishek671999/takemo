@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { SignupService } from '../signup.service';
 import { RegistrationUser } from '../user';
+import { forbiddenNameValidator } from '../shared/user-name.validator';
+import { passwordValidator } from '../shared/password.validator';
+import { emailValidator } from '../shared/email.validator';
 
 @Component({
   selector: 'app-signup',
@@ -13,28 +16,34 @@ export class SignupComponent {
   ngOnInit(): void{
   }
   
-  constructor(private _signupService: SignupService){
+  constructor(private _fb: FormBuilder, private _signupService: SignupService){
 
   }
+  registrationForm = this._fb.group({
+    firstname: ['', [Validators.required, Validators.minLength(4), forbiddenNameValidator(/admin/)]],
+    lastname: ['',  [Validators.required, Validators.minLength(4)]],
+    email: ['', [Validators.required, Validators.minLength(4),  Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
+    pwd: ['', [Validators.required]],
+    rpwd: ['', [Validators.required]]
+  }, {validators: passwordValidator})
+  
+  // registrationForm = new FormGroup({
+  //   firstname: new FormControl(""),
+  //   lastname: new FormControl(""),
+  //   email: new FormControl(""),
+  //   pwd: new FormControl(""),
+  //   rpwd: new FormControl("")
+  // });
 
-  registrationForm = new FormGroup({
-    firstname: new FormControl(""),
-    lastname: new FormControl(""),
-    email: new FormControl(""),
-    pwd: new FormControl(""),
-    rpwd: new FormControl("")
-  });
-
-  regUser = new RegistrationUser(
-    this.registrationForm.value.firstname!,
-    this.registrationForm.value.lastname!,
-    this.registrationForm.value.email!,
-    this.registrationForm.value.pwd!,
-    this.registrationForm.value.rpwd!
-    )
+  get registerFormControl() {
+    return this.registrationForm.controls;
+  }
 
   registrationSubmit(){
     console.log(this.registrationForm.value)
-    this._signupService.signup(this.regUser)
+    this._signupService.signup(this.registrationForm.value).subscribe(
+      data => console.log('Success!', data),
+      error => alert(error.statusText)
+      )
   }
 }

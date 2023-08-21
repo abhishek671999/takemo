@@ -10,7 +10,7 @@
     
             <div class="form-group section">
                 <label>Password</label>
-                <input class="form-control" required #password="ngModel" name="password" type="text" [(ngModel)]="userModel.password">
+                <input class="form-control" required #password="ngModel" name="password" [class.is-invalid]="password.invalid && password.touched"  type="text" [(ngModel)]="userModel.password">
                 <small claass="text-danger" [class.d-none]="password.valid || password.untouched">Password is required</small>
             </div>
             <button [disabled]="userForm.form.invalid" class="btn btn-primary btn-center">Login</button>
