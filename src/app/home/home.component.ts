@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from '../user';
 import { LoginService } from '../login.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 
 @Component({
@@ -12,30 +12,28 @@ import { FormBuilder } from '@angular/forms';
 export class HomeComponent {
 
       constructor(private _fb: FormBuilder, private _loginService: LoginService){}
-      loginObj = {
-        userName: '',
-        passWord: ''
-      };
+      // loginObj = {
+      //   userName: '',
+      //   passWord: ''
+      // };
 
-      // loginObj = this._fb.group({
-      //   userName: [''],
-      //   passWord: ['']
+      loginObj = this._fb.group({
+        email: ['', [Validators.required, Validators.minLength(4),  Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
+        password: ['']
+      })
 
-      // })
+      get loginFormControl(){
+        return this.loginObj.controls
+      }
 
 
       submitted = false;
       errorMsg = '';
-      userModel = new User('mail@gmail.com', 'password')
-
-      onLogin(){
-        console.log('UserName: '+ this.loginObj.userName, 'Password: ', this.loginObj.passWord)
-      }
 
       onSubmit(userForm: any){
         console.log(userForm);
-        console.log(this.userModel);
-        this._loginService.login(this.userModel)
+        console.log(this.loginObj);
+        this._loginService.login(this.loginObj.value)
           .subscribe(
             data => console.log('Success!', data),
             error => alert(error.statusText)

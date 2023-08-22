@@ -13,7 +13,7 @@ export class LoginService {
   _url = 'http://localhost:3000/login'
   constructor(private _http: HttpClient) {}
 
-  login(user: User){
+  login(user: any){
     return this._http.post<any>(this._url, user)
                 .pipe(catchError(this.errorHandler))
   }
