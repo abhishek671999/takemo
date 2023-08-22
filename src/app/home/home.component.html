@@ -3,9 +3,14 @@
         <form class="form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)" novalidate>
             <div class="form-group section">
                 <label>Email Address</label>
-                <input class="form-control" required #email="ngModel" [class.is-invalid]="email.invalid && email.touched" 
-                name='email' type="email" [(ngModel)]="userModel.email">
-                <small claass="text-danger" [class.d-none]="email.valid || email.untouched">Email is required</small>
+                <input type="email" #email="ngModel" [class.is-invalid]="email.invalid && email.touched" required
+                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$" class="form-control"  
+                name='email'  [(ngModel)]="userModel.email"> 
+                <div *ngIf="email.invalid && email.touched">
+                    <small class="text-danger" *ngIf="email.errors?.['required']">Email is required</small>
+                    <small class="text-danger" *ngIf="email.errors?.['pattern']">Please provide a valid email address</small>
+                  </div>
+                <!-- <small claass="text-danger" [class.d-none]="email.valid || email.untouched">Email is required</small> -->
             </div>
     
             <div class="form-group section">
