@@ -3,15 +3,35 @@
         <h4>We would love to hear from you</h4>
     </div>
     <div class="contact-us-item">
-        <form [formGroup]="contactObj" #userForm="ngForm" (ngSubmit)="onSend(userForm)" novalidate>
+        <form [formGroup]="contactObj" #userForm="ngForm" (ngSubmit)="onSend()" novalidate>
             <div class="form-group section">
-                <input placeholder='Name' formControlName="name" type="text" size="50" class="form-control">
+                <input placeholder='Name' formControlName="name" type="text" size="50" class="form-control"
+                [class.is-invalid]="contactFormControl.name.invalid && contactFormControl.name.touched">
+                <div *ngIf="contactFormControl.name.valid || contactFormControl.name.untouched">
+                    <br>
+                </div>
+                <div *ngIf="contactFormControl.name.invalid && contactFormControl.name.touched">
+                    <small class="text-danger" *ngIf="contactFormControl.name.errors?.['required']">Name is required</small>
+                </div>
             </div>
             <div class="form-group section">
                 <input placeholder="Email address or phone number" formControlName='email_or_phone' type="email" size="50" class="form-control">
+                <div *ngIf="contactFormControl.email_or_phone.valid || contactFormControl.email_or_phone.untouched">
+                    <br>
+                </div>
+                <div *ngIf="contactFormControl.email_or_phone.invalid && contactFormControl.email_or_phone.touched">
+                    <small class="text-danger" *ngIf="contactFormControl.email_or_phone.errors?.['required']">Email or Phone number is required</small>
+                    <small class="text-danger" *ngIf="contactFormControl .email_or_phone.errors?.['pattern']">Please provide a valid email address or phone number</small>
+                </div>
             </div>
             <div class="form-grup section">
                 <textarea placeholder="Message" formControlName="message" type="text" rows="6" cols="52" class="form-control"></textarea>
+                <div *ngIf="contactFormControl.message.valid || contactFormControl.message.untouched">
+                    <br>
+                </div>
+                <div *ngIf="contactFormControl.message.invalid && contactFormControl.message.touched">
+                    <small class="text-danger" *ngIf="contactFormControl.message.errors?.['required']">Please write a message</small>
+                </div>
             </div>
             <div>
                 <button [disabled]="!contactObj.valid" class="btn-send">Send</button>

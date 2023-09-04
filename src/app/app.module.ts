@@ -14,6 +14,7 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
 
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,7 +24,7 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
     SignupComponent,
     ForgotpasswordComponent,
     routingComponents,
-    ContactUsComponent
+    ContactUsComponent,
   ],
   imports: [
     BrowserModule,
