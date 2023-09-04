@@ -1,9 +1,31 @@
-import { AbstractControl } from "@angular/forms";
+import { AbstractControl, ValidatorFn, ValidationErrors, AsyncValidatorFn} from "@angular/forms";
+import { SignupService } from "../signup.service";
+import { Observable, map } from "rxjs";
+import { __values } from "tslib";
 
+// export function emailValidator(signupService: SignupService): ValidatorFn{
+//     return (control: AbstractControl): {[key: string]: any} | null => {
+//         const email_or_phone = control.value
+//         let data;
+//         signupService.isUserRegistered(email_or_phone).subscribe(
+//             response_data => data = response_data,
+//             error => console.error(error)           
+//         )
+//         console.log('DAta received after validating: ', data)
+//         return data=='true'? {result: true} : null
+        
+//     }
+// };
 
+export function emailValidator(signupService: SignupService): AsyncValidatorFn {
+    return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+        return signupService.isUserRegistered(control.value).pipe(map(
+            response_data => {
+                console.log('Response from backend', response_data['registered'])
+                return response_data['registered']=='true' ? { "userExists": true } : null;
+            }
 
-export function emailValidator(control: AbstractControl): {[key: string]: any} | null{
-    const expression: RegExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$/;
-    const email = expression.test(control.value);
-    return email ? {'invalid_email': true} : null;
-}
+        ))      
+        
+    }
+  }

@@ -12,14 +12,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 export class HomeComponent {
 
       constructor(private _fb: FormBuilder, private _loginService: LoginService){}
-      // loginObj = {
-      //   userName: '',
-      //   passWord: ''
-      // };
-
+      regex = new RegExp('^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$')
       loginObj = this._fb.group({
-        email: ['', [Validators.required, Validators.minLength(4),  Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
-        password: ['']
+        email: ['', [Validators.required, Validators.minLength(4),  Validators.pattern(this.regex)]],
+        password: ['', [Validators.required, Validators.minLength(4)]]
       })
 
       get loginFormControl(){

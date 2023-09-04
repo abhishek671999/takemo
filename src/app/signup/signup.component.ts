@@ -19,21 +19,20 @@ export class SignupComponent {
   constructor(private _fb: FormBuilder, private _signupService: SignupService){
 
   }
+  regex = new RegExp('^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$')
   registrationForm = this._fb.group({
-    firstname: ['', [Validators.required, Validators.minLength(4), forbiddenNameValidator(/admin/)]],
-    lastname: ['',  [Validators.required, Validators.minLength(4)]],
-    email: ['', [Validators.required, Validators.minLength(4),  Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
-    pwd: ['', [Validators.required]],
-    rpwd: ['', [Validators.required]]
+    email: ['', 
+    {
+      validators: [Validators.required, Validators.minLength(4),  Validators.pattern(this.regex)],
+      asyncValidators: [emailValidator(this._signupService)],
+      updateOn: 'blur'
+    }],
+              
+    pwd: ['', [Validators.required, Validators.minLength(8)]],
+    rpwd: ['', [Validators.required, Validators.minLength(8)]]
   }, {validators: passwordValidator})
   
-  // registrationForm = new FormGroup({
-  //   firstname: new FormControl(""),
-  //   lastname: new FormControl(""),
-  //   email: new FormControl(""),
-  //   pwd: new FormControl(""),
-  //   rpwd: new FormControl("")
-  // });
+
 
   get registerFormControl() {
     return this.registrationForm.controls;

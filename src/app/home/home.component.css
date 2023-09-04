@@ -1,48 +1,58 @@
 .login-window{
   display: flex;
-  height: 600px;
-  border: 1px solid black;
+  height: 660px;
+  background-color: rgba(240, 242, 245, 1);
   justify-content: center;
   align-items: center;
   align-content: center;
 }
 
+
 .login-item{
-  position: relative;
+  width: 25%;
+  height: 47%;
   border: 1px outset black;
   border-radius: .5em;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .form{
-  border-bottom: 1px solid rgb(40, 36, 36);
-  padding-bottom: 10px;
+  border-bottom: 1px dashed rgb(0, 0, 0);
 }
 
 .section{
   padding-bottom: 10px;
 }
 
-.btn-center{
-  position: relative;
-  margin-left: 30px;
-}
-
-.sign-up{
-  margin-top: 10px;
-}
-.center{
-  margin: auto;
-  width: 50%;
-  padding: 0;
-}
-
-.anchors{
-  background-color: rgb(164, 198, 174);
-  text-decoration: none;
+.btn-login {
+  background-color: rgba(0, 82, 204, 1);
   color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
   padding: 5px;
+  border-radius: 5px;
+}
+
+.anchor-forgot-pwd{
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  padding: 3px;
+}
+
+.anchor-sign-up{
+  background-color: rgba(66, 183, 41, 1);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 7px;
   border-radius: 5px;
 }
 

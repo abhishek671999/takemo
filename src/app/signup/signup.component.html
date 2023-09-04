@@ -1,61 +1,49 @@
-<div class="container">
-    <form [formGroup]="registrationForm" (ngSubmit)='registrationSubmit()' class="border rounded-3 p-3" >
-        <div class="row g-0">
-            <div class="col text center p-2 mb-3 bg-light">
-                <span class="fs-2">Regsiter</span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col mb-3">
-                <label for="firstname" class="form-label">First Name</label>
-                <input [class.is-invalid]="registerFormControl.firstname.touched && registerFormControl.firstname.invalid" type="text" class="form-control" id="firstname" formControlName="firstname">
-                <div *ngIf="registerFormControl.firstname.touched && registerFormControl.firstname.invalid">
-                    <small *ngIf="registerFormControl.firstname.errors?.['required']" class="text-danger">First name required</small>
-                    <small *ngIf="registerFormControl.firstname.errors?.['minlength']" class="text-danger">Minimum 4 letters required</small>
-                    <small *ngIf="registerFormControl.firstname.errors?.['forbiddenName']" class="text-danger">{{registerFormControl.firstname.errors?.['forbiddenName'].value}} forbidden Name</small>
-                </div>
-            </div>
-            <div class="col mb-3">
-                <label for="lastname" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="lastname" formControlName="lastname">
-                <div *ngIf="registerFormControl.lastname.touched && registerFormControl.lastname.invalid">
-                    <small *ngIf="registerFormControl.lastname.errors?.['required']" class="text-danger">Last name required</small>
-                    <small *ngIf="registerFormControl.lastname.errors?.['minlength']" class="text-danger">Minimum 4 letters required</small>
+<div class="flex-container">
+    <div class="registration-item">
+        <form [formGroup]="registrationForm" (ngSubmit)='registrationSubmit()'>
+            <div class="row g-0">
+                <div>
+                    <h4 class="register">Register</h4>
                 </div>
             </div>
             <div class="row">
                 <div class="col mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" formControlName="email">
+                    <input placeholder="Email Address or Phone number" type="email" class="form-control" id="email" formControlName="email">
                     <div *ngIf="registerFormControl.email.touched && registerFormControl.email.invalid">
-                        <small *ngIf="registerFormControl.email.errors?.['required']" class="text-danger">Email required</small>
-                        <small *ngIf="registerFormControl.email.errors?.['pattern']" class="text-danger"> Invalid email address</small>
+                        <small *ngIf="registerFormControl.email.errors?.['required']" class="text-danger">Email or Phone number required</small>
+                        <small *ngIf="registerFormControl.email.errors?.['pattern']" class="text-danger"> Please enter valid email id or phone number</small>
+                        <small *ngIf="registerFormControl.email.errors?.['userExists']" class="text-danger"> User already registered. Go to <a href="/">Login</a></small>
+                    </div>
+                    <div *ngIf="registerFormControl.email.untouched || registerFormControl.email.valid">
+                        <br>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col mb-3">
-                    <label for="pwd" class="form-label">Password</label>
-                    <input [class.is-invalid]="registrationForm.errors?.['mismatch']" type="password" class="form-control" id="pwd" formControlName="pwd">
+                <div class="row">
+                    <div class="col mb-3">
+                        <input placeholder="Password" [class.is-invalid]="registrationForm.errors?.['mismatch']" type="password" class="form-control" id="pwd" formControlName="pwd">        
+                    </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <input placeholder="Confirm Password" type="password" class="form-control" id="rpwd" formControlName="rpwd">
+                        <div *ngIf="registerFormControl.rpwd.touched && registerFormControl.pwd.touched">
+                            <small *ngIf="registerFormControl.rpwd.errors?.['required']" class="text-danger">Confirm password required</small>
+                            <small *ngIf="registrationForm.errors?.['mismatch'] && !registerFormControl.rpwd.errors?.['required']" class="text-danger">Password mismatch</small>
+                        </div>
+                        <div *ngIf="registerFormControl.rpwd.untouched ||  !registrationForm.errors?.['mismatch']">
+                            <br>
+                        </div>
+                    </div>
+                </div>    
                     
                 </div>
-                <div class="col mb-3">
-                    <label for="rpwd" class="form-label">Repeat password</label>
-                    <input type="password" class="form-control" id="rpwd" formControlName="rpwd">
-                    <div *ngIf="registerFormControl.rpwd.touched && registerFormControl.pwd.touched">
-                        <small *ngIf="registerFormControl.rpwd.errors?.['required']" class="text-danger">Confirm password required</small>
-                        <small *ngIf="registrationForm.errors?.['mismatch'] && !registerFormControl.rpwd.errors?.['required']" class="text-danger">Password mismatch</small>
+                <div class="row">
+                    <div class="col-6 offset-3">
+                        <div class="d-grid">
+                            <button [disabled]="!registrationForm.valid" type="submit" class="btn btn-primary">Register</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-6 offset-3">
-                    <div class="d-grid">
-                        <button [disabled]="!registrationForm.valid" type="submit" class="btn btn-primary">Register</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </form>    
+        </form>    
+    </div>
 </div>

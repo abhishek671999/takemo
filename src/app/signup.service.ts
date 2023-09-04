@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { RegistrationUser } from './user';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -9,17 +9,26 @@ import { throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class SignupService {
-  _url = 'http://localhost:3000/signup'
+  _signup_url = 'http://localhost:3000/signup'
+  _signup_is_user_registered = 'http://localhost:3000/'
   constructor(private _http: HttpClient) {}
 
   signup(regUser: any){
     console.log(regUser)
-    return this._http.post<any>(this._url, regUser)
+    return this._http.post<any>(this._signup_url, regUser)
                 .pipe(catchError(this.errorHandler))
   }
 
   errorHandler(error: HttpErrorResponse){
     return throwError(error)
+  }
+
+  isUserRegistered(email_or_phone: string){
+    console.log('Requesting backend to verify if user data exisis' + email_or_phone)
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('is_user_registered', email_or_phone)
+    return this._http.get<any>(this._signup_is_user_registered, {params: queryParams} )
+                      .pipe(catchError(this.errorHandler))
   }
 
 }

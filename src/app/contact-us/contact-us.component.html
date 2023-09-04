@@ -1,1 +1,21 @@
-<p>contact-us works!</p>
+<div class="contact-container">
+    <div class="greeting-item">
+        <h4>We would love to hear from you</h4>
+    </div>
+    <div class="contact-us-item">
+        <form [formGroup]="contactObj" #userForm="ngForm" (ngSubmit)="onSend(userForm)" novalidate>
+            <div class="form-group section">
+                <input placeholder='Name' formControlName="name" type="text" size="50" class="form-control">
+            </div>
+            <div class="form-group section">
+                <input placeholder="Email address or phone number" formControlName='email_or_phone' type="email" size="50" class="form-control">
+            </div>
+            <div class="form-grup section">
+                <textarea placeholder="Message" formControlName="message" type="text" rows="6" cols="52" class="form-control"></textarea>
+            </div>
+            <div>
+                <button [disabled]="!contactObj.valid" class="btn-send">Send</button>
+            </div>
+        </form>
+    </div>
+</div>
