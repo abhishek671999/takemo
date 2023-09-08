@@ -20,21 +20,29 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <input placeholder="Password" [class.is-invalid]="registrationForm.errors?.['mismatch']" type="password" class="form-control" id="pwd" formControlName="pwd">        
-                    </div>
-                <div class="row">
-                    <div class="col mb-3">
-                        <input placeholder="Confirm Password" type="password" class="form-control" id="rpwd" formControlName="rpwd">
-                        <div *ngIf="registerFormControl.rpwd.touched && registerFormControl.pwd.touched">
-                            <small *ngIf="registerFormControl.rpwd.errors?.['required']" class="text-danger">Confirm password required</small>
-                            <small *ngIf="registrationForm.errors?.['mismatch'] && !registerFormControl.rpwd.errors?.['required']" class="text-danger">Password mismatch</small>
+                        <input placeholder="Password" [class.is-invalid]="registrationForm.errors?.['mismatch']" type="password" class="form-control" id="pwd" formControlName="pwd" size="100"> 
+                        <div *ngIf="registerFormControl.pwd.touched && registerFormControl.pwd.invalid">
+                            <small *ngIf="registerFormControl.pwd.errors?.['required']" class="text-danger">Password required</small>
+                        <small *ngIf="registerFormControl.pwd.errors?.['minlength']" class="text-danger">Min 8 character password is required</small>
                         </div>
-                        <div *ngIf="registerFormControl.rpwd.untouched ||  !registrationForm.errors?.['mismatch']">
+                        <div *ngIf="registerFormControl.pwd.untouched || registerFormControl.pwd.valid">
                             <br>
                         </div>
                     </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <input placeholder="Confirm Password" type="password" class="form-control" id="rpwd" formControlName="rpwd" size="100">
+                        <div *ngIf="registerFormControl.rpwd.touched && (registerFormControl.rpwd.invalid || registrationForm.errors?.['mismatch'])">
+                            <small *ngIf="registerFormControl.rpwd.errors?.['required']" class="text-danger">Confirm Password required. </small>
+                            <small *ngIf="registerFormControl.rpwd.errors?.['minlength']" class="text-danger">Min 8 character password is required. </small>
+                            <small *ngIf="registrationForm.errors?.['mismatch'] && !registerFormControl.rpwd.errors?.['required'] && !registerFormControl.rpwd.errors?.['minlength']" class="text-danger">Password mismatch. </small>
+                        </div>
+                        <div *ngIf="registerFormControl.rpwd.untouched || (registerFormControl.rpwd.valid && !registrationForm.errors?.['mismatch'])">
+                            <br>
+                        </div>
+                        
+                    </div>
                 </div>    
-                    
                 </div>
                 <div class="row">
                     <div class="col-6 offset-3">

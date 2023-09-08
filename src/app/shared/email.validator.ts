@@ -21,8 +21,8 @@ export function emailValidator(signupService: SignupService): AsyncValidatorFn {
     return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
         return signupService.isUserRegistered(control.value).pipe(map(
             response_data => {
-                console.log('Response from backend', response_data['registered'])
-                return response_data['registered']=='true' ? { "userExists": true } : null;
+                console.log('Response from backend', response_data['user_registered'])
+                return response_data['user_registered']==true ? { "userExists": true } : null;
             }
 
         ))      
