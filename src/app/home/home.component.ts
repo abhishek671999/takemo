@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { User } from '../user';
 import { LoginService } from '../login.service';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -11,10 +12,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class HomeComponent {
 
-      constructor(private _fb: FormBuilder, private _loginService: LoginService){}
+      constructor(private _fb: FormBuilder, private _loginService: LoginService, private _router: Router){}
       regex = new RegExp('^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$')
       loginObj = this._fb.group({
-        email: ['', [Validators.required, Validators.minLength(4),  Validators.pattern(this.regex)]],
+        username: ['', [Validators.required, Validators.minLength(4),  Validators.pattern(this.regex)]],
         password: ['', [Validators.required, Validators.minLength(4)]]
       })
 
@@ -31,7 +32,12 @@ export class HomeComponent {
         console.log(this.loginObj);
         this._loginService.login(this.loginObj.value)
           .subscribe(
-            data => console.log('Success!', data),
+            data => {
+              console.log('Success!', data);
+              window.localStorage.setItem('token', data['key']);
+              this._router.navigate(['test'])
+            }
+            ,
             error => alert(error.statusText)
           )
       }

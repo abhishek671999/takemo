@@ -11,6 +11,7 @@ import { SignupComponent } from './signup/signup.component';
 import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
 import { HttpClientModule} from '@angular/common/http';
 import { ContactUsComponent } from './contact-us/contact-us.component';
+import { TestComponentComponent } from './test-component/test-component.component';
 
 
 
@@ -25,6 +26,7 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
     ForgotpasswordComponent,
     routingComponents,
     ContactUsComponent,
+    TestComponentComponent,
   ],
   imports: [
     BrowserModule,

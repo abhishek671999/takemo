@@ -10,11 +10,12 @@ import { throwError } from 'rxjs';
 })
 export class LoginService {
 
-  _url = 'http://localhost:3000/login'
+  _login_url = 'http://65.20.75.191:8001/api/v1' + '/rest-auth/login/'
   constructor(private _http: HttpClient) {}
 
   login(user: any){
-    return this._http.post<any>(this._url, user)
+    const body = {'username': user.username , 'password': user.password}
+    return this._http.post<any>(this._login_url, body)
                 .pipe(catchError(this.errorHandler))
   }
 

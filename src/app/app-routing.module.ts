@@ -6,6 +6,7 @@ import { HomeComponent } from './home/home.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
 import { SignupComponent } from './signup/signup.component';
+import { TestComponentComponent } from './test-component/test-component.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent}, 
@@ -13,7 +14,8 @@ const routes: Routes = [
   { path: 'pricing', component: PricingComponent},
   { path: 'contact', component: ContactUsComponent},
   { path: 'forgot-password', component: ForgotpasswordComponent},
-  { path: 'signup', component: SignupComponent}
+  { path: 'signup', component: SignupComponent},
+  { path: 'test', component: TestComponentComponent}
   
 ];
 

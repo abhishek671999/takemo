@@ -24,25 +24,74 @@ export class SignupComponent {
     email: ['', 
     {
       validators: [Validators.required, Validators.minLength(4),  Validators.pattern(this.regex)],
-      asyncValidators: [emailValidator(this._signupService)],
-      updateOn: 'blur'
+      // asyncValidators: [emailValidator(this._signupService)],
+      //updateOn: 'blur'
     }],
               
     pwd: ['', [Validators.required, Validators.minLength(8)]],
     rpwd: ['', [Validators.required, Validators.minLength(8)]]
   }, {validators: passwordValidator})
   
-
-
+  otpForm = this._fb.group({
+    otp: ['', [Validators.required, Validators.minLength(6)]]
+  }
+  )
   get registerFormControl() {
     return this.registrationForm.controls;
   }
 
+  get otpFormControl() {
+    return this.otpForm.controls;
+  }
+
   registrationSubmit(){
     console.log(this.registrationForm.value)
-    this._signupService.signup(this.registrationForm.value).subscribe(
+    this._signupService.changePassword(this.__token!, this.registrationForm.value.pwd!).subscribe(
       data => console.log('Success!', data),
       error => alert(error.statusText)
       )
   }
+  __token = null;
+  signUpSubmit(){
+    console.log('Sign up successful');
+    this._signupService.validateUserEmail(this.registrationForm.value.email, this.otpForm.value.otp).subscribe(
+      data => {
+        console.log(data);
+        this.__token = data['token']
+        this.otpVerified = true
+        this._signupService.fillDummyValue(this.__token!).subscribe(
+          data => console.log('Dummy value filled: ', data),
+          error => {
+            console.log('Error while filling dummy values: ', error);
+            alert(error.error['error'])
+          }
+        )
+      },
+      error => alert(error.statusText)
+    )
+  }
+
+
+  authNotRequested = true;
+  authResponse = null;
+  authUser(){
+    if (this.authNotRequested){
+      console.log('authUser called')
+      this._signupService.authUserEmail(this.registrationForm.value.email).subscribe(
+      data => {
+        console.log("sucess: ", data);
+        console.log(data['detail']);
+        this.authNotRequested = false;
+        this.authResponse = data['detail']
+      },
+      error => alert(error)
+    )
+    }
+  }
+
+  otpVerified = false
+  shoulddisplayOtpItem(){
+    return this.registerFormControl.email.valid && !this.otpVerified
+  }
+
 }

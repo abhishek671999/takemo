@@ -2,14 +2,14 @@
     <div class="login-item">
         <form [formGroup]="loginObj" class="form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)" novalidate>
             <div class="form-group section">
-                <input placeholder="Email Address or Phone number" type="email" formControlName="email" class="form-control"
-                    [class.is-invalid]="loginFormControl.email.invalid && loginFormControl.email.touched"> 
-                    <div *ngIf="loginFormControl.email.valid || loginFormControl.email.untouched">
+                <input placeholder="Email Address or Phone number" type="email" formControlName="username" class="form-control"
+                    [class.is-invalid]="loginFormControl.username.invalid && loginFormControl.username.touched"> 
+                    <div *ngIf="loginFormControl.username.valid || loginFormControl.username.untouched">
                         <br>
                     </div>
-                <div *ngIf="loginFormControl.email.invalid && loginFormControl.email.touched">
-                    <small class="text-danger" *ngIf="loginFormControl.email.errors?.['required']">Email or Phone number is required</small>
-                    <small class="text-danger" *ngIf="loginFormControl.email.errors?.['pattern']">Please provide a valid email address or phone number</small>
+                <div *ngIf="loginFormControl.username.invalid && loginFormControl.username.touched">
+                    <small class="text-danger" *ngIf="loginFormControl.username.errors?.['required']">Email or Phone number is required</small>
+                    <small class="text-danger" *ngIf="loginFormControl.username.errors?.['pattern']">Please provide a valid email address or phone number</small>
                 </div>
                 
             </div>
