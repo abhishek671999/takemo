@@ -4,6 +4,7 @@
 
 .main{
     position: relative;
+
 }
 
 .router{
@@ -12,6 +13,7 @@
 
 .footer{
     position: relative;
+    display: inline-block;
     bottom: 0px;
     width: 100%;
 }

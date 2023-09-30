@@ -1,6 +1,6 @@
 
 .flex-container{
-    height: 620px;
+    height: 85vh;
     display: flex;
     position: relative;
     justify-content: center;
@@ -8,6 +8,7 @@
     align-items: center;
     flex-direction: column;
     background-color: rgba(240, 242, 245, 1);
+
 }
 
 .registration-item{
@@ -15,10 +16,14 @@
     width: 40%;
     height: 55%;
     background-color: rgba(255, 255, 255, 1);
-    border-radius: 5px;
+    border-radius: 15px;
     padding: 10px;
+    border: 1px outset black;
 }
 
+.form-text-box{
+  text-align: center;
+}
 
 @media screen and (max-width: 1024px) {
     .registration-item {
@@ -49,7 +54,7 @@
     height: 35%;
     z-index: 10;
     background-color: rgb(218, 218, 218);
-    border-radius: 5px;
+    border-radius: 15px;
     padding: 10px;
 }
 .register{

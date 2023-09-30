@@ -1,6 +1,6 @@
 .contact-container{
     display: flex;
-    height: 600px;
+    height: 85vh;
     background-color: rgba(240, 242, 245, 1);
     justify-content: center;
     align-items: center;
@@ -32,4 +32,23 @@
     width: 100%;
     padding: 5px;
     border-radius: 5px;
+  }
+
+
+  @media screen and (max-width: 1024px) {
+    .contact-us-item, .greeting-item {
+        width: 30%;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .contact-us-item, .greeting-item {
+      width: 60%;
+    }
+  }
+  
+  @media screen and (max-width: 426px) {
+    .contact-us-item, .greeting-item{
+      width: 90%;
+    }
   }

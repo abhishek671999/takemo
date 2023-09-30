@@ -1,6 +1,6 @@
 .login-window{
   display: flex;
-  height: 650px;
+  height: 85vh;
   background-color: rgba(240, 242, 245, 1);
   justify-content: center;
   align-items: center;
