@@ -1,6 +1,6 @@
 .login-window{
   display: flex;
-  height: 660px;
+  height: 650px;
   background-color: rgba(240, 242, 245, 1);
   justify-content: center;
   align-items: center;
@@ -8,13 +8,35 @@
 }
 
 
-.login-item{
-  width: 25%;
-  height: 47%;
+.login-item {
+  width: 38%;
+  height: 48%;
   border: 1px outset black;
   border-radius: .5em;
   padding: 20px;
   background-color: rgba(255, 255, 255, 1);
+}
+
+
+@media screen and (max-width: 1024px) {
+  .login-item {
+    width: 60%;
+    height: 47%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-item {
+    width: 60%;
+    height: 50%;
+  }
+}
+
+@media screen and (max-width: 426px) {
+  .login-item {
+    width: 90%;
+    height: 53%;
+  }
 }
 
 .form{

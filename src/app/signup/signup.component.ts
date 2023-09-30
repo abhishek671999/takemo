@@ -4,7 +4,7 @@ import { SignupService } from '../signup.service';
 import { RegistrationUser } from '../user';
 import { forbiddenNameValidator } from '../shared/user-name.validator';
 import { passwordValidator } from '../shared/password.validator';
-import { emailValidator } from '../shared/email.validator';
+import { userNameValidator } from '../shared/email.validator';
 
 @Component({
   selector: 'app-signup',
@@ -24,8 +24,8 @@ export class SignupComponent {
     email: ['', 
     {
       validators: [Validators.required, Validators.minLength(4),  Validators.pattern(this.regex)],
-      // asyncValidators: [emailValidator(this._signupService)],
-      //updateOn: 'blur'
+      asyncValidators: [userNameValidator(this._signupService)],
+      updateOn: 'blur'
     }],
               
     pwd: ['', [Validators.required, Validators.minLength(8)]],
@@ -46,15 +46,18 @@ export class SignupComponent {
 
   registrationSubmit(){
     console.log(this.registrationForm.value)
-    this._signupService.changePassword(this.__token!, this.registrationForm.value.pwd!).subscribe(
+    this._signupService.changePassword(this.__token!, this.registrationForm.value.pwd!, true).subscribe(
       data => console.log('Success!', data),
-      error => alert(error.statusText)
+      error => {
+        alert(error.statusText);
+        console.log("Error while changing password: ", error.errorText)
+      }
       )
   }
   __token = null;
   signUpSubmit(){
     console.log('Sign up successful');
-    this._signupService.validateUserEmail(this.registrationForm.value.email, this.otpForm.value.otp).subscribe(
+    this._signupService.validateUser(this.registrationForm.value.email, this.otpForm.value.otp).subscribe(
       data => {
         console.log(data);
         this.__token = data['token']
@@ -77,21 +80,24 @@ export class SignupComponent {
   authUser(){
     if (this.authNotRequested){
       console.log('authUser called')
-      this._signupService.authUserEmail(this.registrationForm.value.email).subscribe(
+      this._signupService.authUser(this.registrationForm.value.email).subscribe(
       data => {
         console.log("sucess: ", data);
         console.log(data['detail']);
         this.authNotRequested = false;
         this.authResponse = data['detail']
       },
-      error => alert(error)
+      error => {
+        console.log('Error in authUser: ', error)
+        alert(error)
+      }
     )
     }
   }
 
   otpVerified = false
   shoulddisplayOtpItem(){
-    return this.registerFormControl.email.valid && !this.otpVerified
+    return this.registerFormControl.email.valid && ! this.otpVerified
   }
 
 }

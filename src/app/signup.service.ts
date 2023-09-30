@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse, HttpParams , HttpHeaders} from '@angular
 import { RegistrationUser } from './user';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { emailValidator } from './shared/email.validator';
 import { Token } from '@angular/compiler';
 
 
@@ -11,23 +10,21 @@ import { Token } from '@angular/compiler';
   providedIn: 'root'
 })
 export class SignupService {
-  _signup_url = 'http://localhost:3000/signup'
   __base_url = "http://65.20.75.191:8001/api/v1"
   _signup_is_user_registered = this.__base_url + '/users/is_user_registered/'
   _email_otp_auth = this.__base_url + '/users/auth/email/'
-  _email_auth_token = this.__base_url + '/users/auth/token/'
+
+  _phone_plauth = this.__base_url + '/users/auth/mobile/'
+  _phone_otp_auth = this.__base_url + '/users/send_otp_sms/'
+
+  _user_auth_token = this.__base_url + '/users/auth/token/'
   _fill_dummy_values = this.__base_url + '/users/fill_dummy_password_username_and_email/'
   _change_password = this.__base_url + '/change-password/'
 
   constructor(private _http: HttpClient) {}
 
-  signup(regUser: any){
-    console.log(regUser)
-    return this._http.post<any>(this._signup_url, regUser)
-                .pipe(catchError(this.errorHandler))
-  }
-
   errorHandler(error: HttpErrorResponse){
+    console.log('Error in service: ', error);
     return throwError(error)
   }
 
@@ -41,20 +38,41 @@ export class SignupService {
       let email = email_or_phone
       queryParams = queryParams.append('email', email)
     }
+    console.log('query params for is user registered: ', queryParams)
     return this._http.get<any>(this._signup_is_user_registered, {params: queryParams} )
                       .pipe(catchError(this.errorHandler))
   }
   
-  authUserEmail(email: string | null | undefined){
+  // Change all email variables to username
+  authUser(email: string | null | undefined){
     console.log('Requesting back for email otp: '+ email);
-    return this._http.post<any>(this._email_otp_auth, {'email': email})
+    if(Number(email)){
+      let mobile = Number(email)
+      let body = {'mobile': '+91' + mobile}
+      this._http.post<any>(this._phone_plauth, body).subscribe(
+        data => console.log('Something is wrong as 400 is expected'),
+        error => console.log('Returned with error', error)
+      )
+      return this._http.post<any>(this._phone_otp_auth, body)
+                        .pipe(catchError(this.errorHandler))
+    }
+    else{
+      let body = {'email': email}
+    return this._http.post<any>(this._email_otp_auth, body)
                       .pipe(catchError(this.errorHandler))
+    }
   }
 
-  validateUserEmail(email: string | null | undefined, otp: string | null | undefined){
-    let body = {'email': email, 'token': otp}
+  validateUser(email: string | null | undefined, otp: string | null | undefined){
+    let body;
+    if (Number(email)){
+      let mobile = Number(email)
+      body = {'mobile': '+91' + mobile, 'token': otp}
+    }else{
+      body = {'email': email, 'token': otp}
+    }
     console.log('Requesting backend to validate OTP: '+ body)
-    return this._http.post<any>(this._email_auth_token, body)
+    return this._http.post<any>(this._user_auth_token, body)
                       .pipe(catchError(this.errorHandler))
   }
 
@@ -68,12 +86,13 @@ export class SignupService {
                       .pipe(catchError(this.errorHandler))
   }
 
-  changePassword(token: string, new_password: string){
+  changePassword(token: string, new_password: string, isNewUser: boolean = false){
+    console.log('Token: ', token, 'Password: ', new_password)
     const headers = new HttpHeaders({'Authorization': 'Token ' + token})
     const body = {
       "old_password": new_password,
       "new_password": new_password,
-      "is_new_user": false
+      "is_new_user": isNewUser
   }
   const requestOptions = {headers}
 

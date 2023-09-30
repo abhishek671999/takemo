@@ -25,7 +25,7 @@ export class HomeComponent {
 
 
       submitted = false;
-      errorMsg = '';
+      errorMsg = 'abhishek';
 
       onSubmit(userForm: any){
         console.log(userForm);
@@ -38,7 +38,7 @@ export class HomeComponent {
               this._router.navigate(['test'])
             }
             ,
-            error => alert(error.statusText)
+            error => alert('Invalid user id or password')
           )
       }
 }

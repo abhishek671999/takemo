@@ -10,13 +10,14 @@
     margin: 2px;
 }
 
+.flex-container .nav-items{
+    padding-right: 100px;    
+}
+
 .flex-container .logo-home{
     padding-left: 100px;
 }
 
-.flex-container .nav-items{
-    padding-right: 100px;    
-}
 
 .logo-home img{
     width: 100px;
@@ -41,3 +42,29 @@
 .nav a:hover{
     background-color: rgba(86, 70, 70, 0.3)
 }
+
+
+@media screen and (max-width: 426px) {
+   .flex-container{
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+   }
+   .flex-container .logo-home{
+        padding-left: 0;
+    }
+    .flex-container .nav-items{
+        padding-right: 0;    
+    }
+    .nav li{
+        display: block;
+    }
+    .nav ul{
+        margin: 0;
+        padding: 0;
+    }
+
+}
+
+
+

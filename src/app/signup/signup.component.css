@@ -19,6 +19,28 @@
     padding: 10px;
 }
 
+
+@media screen and (max-width: 1024px) {
+    .registration-item {
+      width: 60%;
+      height: 55%;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .registration-item {
+      width: 60%;
+      height: 60%;
+    }
+  }
+  
+  @media screen and (max-width: 426px) {
+    .registration-item {
+      width: 90%;
+      height: 60%;
+    }
+  }
+
 .otp-item{
     position: absolute;
     top: 30%;

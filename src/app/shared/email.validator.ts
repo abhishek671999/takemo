@@ -17,7 +17,7 @@ import { __values } from "tslib";
 //     }
 // };
 
-export function emailValidator(signupService: SignupService): AsyncValidatorFn {
+export function userNameValidator(signupService: SignupService): AsyncValidatorFn {
     return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
         return signupService.isUserRegistered(control.value).pipe(map(
             response_data => {

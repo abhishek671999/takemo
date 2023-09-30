@@ -9,18 +9,18 @@ import { SignupService } from '../signup.service';
 export class TestComponentComponent {
   constructor(private _signupService: SignupService){}
 
-  // testFunction(){
-  //   const token = '1f64885d6f6db3ca436276404f4e79032bd013ff'
-  //   const new_password = 'abhay123'
-  //   this._signupService.changePassword(token, new_password).subscribe(
-  //     data => console.log(data),
-  //     error => console.log(error)
-  //   )
-  // }
-
   testFunction(){
-    console.log(window.localStorage.getItem('token'))
+    const token = '62444019d16b013775d886284c99caaf19440c95'
+    const new_password = 'abhay123'
+    this._signupService.changePassword(token, new_password).subscribe(
+      data => console.log(data),
+      error => console.log(error)
+    )
   }
+
+  // testFunction(){
+  //   console.log(window.localStorage.getItem('token'))
+  // }
   
 
 }
