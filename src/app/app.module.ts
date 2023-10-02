@@ -12,6 +12,7 @@ import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.compone
 import { HttpClientModule} from '@angular/common/http';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { TestComponentComponent } from './test-component/test-component.component';
+import { PostLoginComponent } from './post-login/post-login.component';
 
 
 
@@ -27,6 +28,7 @@ import { TestComponentComponent } from './test-component/test-component.componen
     routingComponents,
     ContactUsComponent,
     TestComponentComponent,
+    PostLoginComponent,
   ],
   imports: [
     BrowserModule,
