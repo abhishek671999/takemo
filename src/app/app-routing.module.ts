@@ -1,27 +1,28 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AboutComponent } from './about/about.component';
-import { PricingComponent } from './pricing/pricing.component';
-import { HomeComponent } from './home/home.component';
-import { ContactUsComponent } from './contact-us/contact-us.component';
-import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
-import { SignupComponent } from './signup/signup.component';
-import { TestComponentComponent } from './test-component/test-component.component';
+import { HomeComponent } from './components/home_screen/home/home.component';
+import { DummyComponent } from './dummy/dummy.component';
+import { NotfoundComponent } from './notfound/notfound.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent}, 
-  { path: 'about', component: AboutComponent},
-  { path: 'pricing', component: PricingComponent},
-  { path: 'contact', component: ContactUsComponent},
-  { path: 'forgot-password', component: ForgotpasswordComponent},
-  { path: 'signup', component: SignupComponent},
-  { path: 'test', component: TestComponentComponent}
-  
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./components/user_screen/user.module').then((m) => m.UserModule),
+  },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./components/home_screen/home.module').then(
+        (m) => m.HomeModule
+      ),
+  },
+  { path: '**', component: NotfoundComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
-export const routingComponents = [AboutComponent, PricingComponent, HomeComponent]
+export class AppRoutingModule {}
+export const routingComponents = [DummyComponent, HomeComponent];
