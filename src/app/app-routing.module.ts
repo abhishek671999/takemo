@@ -12,6 +12,7 @@ const routes: Routes = [
   },
   {
     path: '',
+    
     loadChildren: () =>
       import('./components/home_screen/home.module').then(
         (m) => m.HomeModule

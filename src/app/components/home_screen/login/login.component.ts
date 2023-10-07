@@ -36,7 +36,6 @@ export class LoginComponent {
   }
 
   submitted = false;
-  errorMsg = 'abhishek';
 
   onSubmit(userForm: any) {
     console.log(userForm);
@@ -45,7 +44,7 @@ export class LoginComponent {
       (data) => {
         console.log('Success!', data);
         window.localStorage.setItem('token', data['key']);
-        this._router.navigate(['test']);
+        this._router.navigate(['login']);
       },
       (error) => alert('Invalid user id or password')
     );

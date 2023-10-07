@@ -1,31 +1,11 @@
-<div class="header1">
-    <div class="drop-down">
-        <button class="link"><i class="fa-solid fa-person"></i></button>
-        <div class="drop-down-menu">
+<div class="home-container">
+    <div class="nav-container">
+        <nav class="nav">
             <ul>
-                <li *ngFor="let item of dropdownList">
-                    {{item.name}}
+                <li class="nav-li" *ngFor="let info of restaurantInfo">
+                    <a href={{info.href}}>{{info.place}}</a>
                 </li>
-            </ul>
-        </div>
-    </div>
-</div>
-<div class="input-container-box">
-    <div class="location-input">
-        <input type="search" placeholder="Location">
-    </div>
-    <div class="restaurant-input">
-        <input type="search" placeholder="Restaurant">
-    </div>
-</div>
-<div class="grid-container">
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
+            </ul> 
+        </nav>
+    </div>    
 </div>

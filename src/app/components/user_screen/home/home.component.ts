@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { SignupService } from 'src/app/signup.service';
 
 @Component({
   selector: 'app-home',
@@ -7,20 +6,17 @@ import { SignupService } from 'src/app/signup.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  constructor(private _signupService: SignupService) {}
+  constructor() {}
 
-  dropdownList = [
+  restaurantInfo = [
     {
-      name: 'Profile',
+      place: 'Bangalore',
+      href: 'bangalore'
+
     },
     {
-      name: 'Add restaurant',
-    },
-    {
-      name: 'Setting',
-    },
-    {
-      name: 'Logout',
-    },
-  ];
+      place: 'Jaipur',
+      href: ''
+    }
+  ]
 }
