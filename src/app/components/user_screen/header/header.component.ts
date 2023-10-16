@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoginService } from 'src/app/login.service';
 
 @Component({
   selector: 'app-header',
@@ -6,22 +7,26 @@ import { Component } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+  constructor(private _loginService: LoginService){}
+
   dropdownList = [
     {
-      name: 'My Order',
-      href: ''
+      name: 'My Orders',
+      href: '',
+      action: () => console.log('My order')
     },
     {
-      name: 'My Restaurant',
-      href: ''
-    },
-    {
-      name: 'Setting',
-      href: ''
+      name: 'Settings',
+      href: '',
+      action: () => console.log('My settings')
     },
     {
       name: 'Logout',
-      href: ''
+      href: '',
+      action: () => this._loginService.logOut()
     },
   ];
-}
+
+  onClick(index: number){
+    this.dropdownList[index].action()
+  }}

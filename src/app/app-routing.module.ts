@@ -3,20 +3,30 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home_screen/home/home.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { NotfoundComponent } from './notfound/notfound.component';
+import { authGuard } from './gurd/auth/auth.guard';
+import { TestComponentComponent } from './test-component/test-component.component';
+import { TestComponentNewComponent } from './test-component-new/test-component-new.component';
 
 const routes: Routes = [
   {
-    path: 'login',
-    loadChildren: () =>
-      import('./components/user_screen/user.module').then((m) => m.UserModule),
+    path: '', redirectTo: 'home', pathMatch: 'full'
   },
   {
-    path: '',
-    
+    path: 'login',
     loadChildren: () =>
       import('./components/home_screen/home.module').then(
         (m) => m.HomeModule
       ),
+  },
+  {
+    path: 'home',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./components/user_screen/user.module').then((m) => m.UserModule),
+  },
+  {
+    path: 'test',
+    component: TestComponentNewComponent
   },
   { path: '**', component: NotfoundComponent },
 ];

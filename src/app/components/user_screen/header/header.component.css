@@ -25,7 +25,6 @@
     right: 0;
     top: calc(100% + 0.5rem);
     /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.1); */
-    pointer-events: none;
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
@@ -69,9 +68,5 @@
     border-radius: 5px;
     width: auto;
     box-shadow: #777;
-}
-
-.drop-down-menu a{
-    text-decoration: none;
-    color: black;
+    cursor: pointer;
 }

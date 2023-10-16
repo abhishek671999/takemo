@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router, Route, ActivatedRoute} from '@angular/router';
+import { delay } from 'rxjs';
+import { RestuarantService } from 'src/app/restuarant.service';
 
 @Component({
   selector: 'app-home',
@@ -6,17 +10,33 @@ import { Component } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  constructor() {}
+  constructor(private _router: Router,private _restuarantService: RestuarantService, private activatedRoute: ActivatedRoute) {}
 
-  restaurantInfo = [
-    {
-      place: 'Bangalore',
-      href: 'bangalore'
+  showSpinner = true
+  public restaurantInfo
+  ngOnInit(){
+    setTimeout( () => {
+      this.restaurantInfo = this._restuarantService.getResturantInfo()
+      this.showSpinner = false
+    }, 50)
+    this.printpath('', this._router.config);
+  }
+  
+  onSelect(info){
+    console.log(info)
+    this._router.navigate(['./home/menu', info.id])
+  }
 
-    },
-    {
-      place: 'Jaipur',
-      href: ''
+  printpath(parent: string, config: Route[]) {
+    for (let i = 0; i < config.length; i++) {
+      const route = config[i];
+      console.log(parent + '/' + route.path);
+      if (route.children) {
+        const currentPath = route.path ? `${parent}/${route.path}` : parent;
+        console.log('children')
+        this.printpath(currentPath, route.children);
+      }
     }
-  ]
+  }
+
 }

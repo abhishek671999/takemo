@@ -17,6 +17,10 @@ import { LoginComponent } from './components/home_screen/login/login.component';
 import { UserComponent } from './components/user_screen/user/user.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { NotfoundComponent } from './notfound/notfound.component';
+import { CommonModule } from '@angular/common';
+import { PlaceOrdersComponent } from './components/user_screen/place-orders/place-orders.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material/material.module';
 
 @NgModule({
   declarations: [
@@ -33,6 +37,8 @@ import { NotfoundComponent } from './notfound/notfound.component';
     LoginComponent,
     DummyComponent,
     NotfoundComponent,
+    TestComponentComponent,
+    PlaceOrdersComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,7 +46,10 @@ import { NotfoundComponent } from './notfound/notfound.component';
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-  ],
+    CommonModule,
+    BrowserAnimationsModule,
+    MaterialModule
+    ],
   providers: [],
   bootstrap: [AppComponent],
 })

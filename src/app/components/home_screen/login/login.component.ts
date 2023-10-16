@@ -3,6 +3,7 @@ import { User } from '../../../user';
 import { LoginService } from '../../../login.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ContactService } from 'src/app/contact.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
     private _loginService: LoginService,
     private _router: Router
   ) {}
+  
   regex = new RegExp(
     '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$'
   );
@@ -30,7 +32,6 @@ export class LoginComponent {
     ],
     password: ['', [Validators.required, Validators.minLength(4)]],
   });
-
   get loginFormControl() {
     return this.loginObj.controls;
   }
@@ -43,8 +44,9 @@ export class LoginComponent {
     this._loginService.login(this.loginObj.value).subscribe(
       (data) => {
         console.log('Success!', data);
-        window.localStorage.setItem('token', data['key']);
-        this._router.navigate(['login']);
+        localStorage.setItem('token', data['key']);
+        console.log('Redirecting')
+        this._router.navigate(['home']);
       },
       (error) => alert('Invalid user id or password')
     );

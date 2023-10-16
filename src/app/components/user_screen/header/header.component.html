@@ -1,17 +1,18 @@
 <div class="flex-container">
     <div class="logo-home">
-        <a href="/"><img src="assets/images/logo.png" alt="takemo-logo"></a>
+      <a href="/home"><img src="assets/images/logo.png" alt="takemo-logo"></a>
     </div>
     <div class="profile-button">
-        <div class="drop-down">
-            <button class="link"><i class="fa-solid fa-person"></i></button>
-            <div class="drop-down-menu">
-                <ul>
-                    <li *ngFor="let item of dropdownList">
-                        <a href={{item.href}}>{{item.name}}</a>
-                    </li>
-                </ul>
-            </div>
+      <div class="drop-down">
+        <button class="link"><i class="fa-solid fa-person"></i></button>
+        <div class="drop-down-menu">
+          <ul>
+            <li *ngFor="let item of dropdownList; index as i;" (click)="onClick(i)">
+              {{item.name}}
+            </li>
+          </ul>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+  

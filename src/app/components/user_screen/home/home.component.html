@@ -1,11 +1,21 @@
 <div class="home-container">
-    <div class="nav-container">
-        <nav class="nav">
-            <ul>
-                <li class="nav-li" *ngFor="let info of restaurantInfo">
-                    <a href={{info.href}}>{{info.place}}</a>
-                </li>
-            </ul> 
-        </nav>
-    </div>    
+    <div class="overlay" *ngIf="showSpinner; else ElseBlock">
+        <div class="center-spin">
+          <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+        </div>
+    </div> 
+    <ng-template #ElseBlock>
+        <div class="nav-container" *ngIf="restaurantInfo">
+                <ul *ngFor="let info of restaurantInfo.restaurants">
+                    <div>
+                        <li (click)="onSelect(info)" class="nav-li" >
+                            {{info.name}}
+                        </li>
+                    </div>
+                        <!-- <img src="{{'data:image/jpg;base64,' + info.image}}"> -->
+                </ul> 
+        </div>
+    </ng-template>
+    
+    
 </div>

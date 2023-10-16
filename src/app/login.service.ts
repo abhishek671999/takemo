@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -10,14 +11,16 @@ import { throwError } from 'rxjs';
 
 export class LoginService {
 
+  constructor(private _http: HttpClient, private _router: Router) {}
+
   _login_url = 'http://65.20.75.191:8001/api/v1' + '/rest-auth/login/'
-  constructor(private _http: HttpClient) {}
 
   login(user: any){
     if (Number(user.username)){
       user.username = '+91' + user.username
     }
     const body = {'username': user.username , 'password': user.password}
+    
     return this._http.post<any>(this._login_url, body)
                 .pipe(catchError(this.errorHandler))
   }
@@ -26,4 +29,16 @@ export class LoginService {
     return throwError(error)
   }
 
+  getToken(){
+    return localStorage.getItem('token')
+  }
+
+  isLoggedIn(){
+    return this.getToken() != null;
+  }
+
+  logOut(){
+    localStorage.removeItem('token')
+    this._router.navigate(['login'])
+  }
 }
