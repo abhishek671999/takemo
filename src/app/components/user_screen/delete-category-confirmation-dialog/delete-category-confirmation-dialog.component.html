@@ -1,0 +1,11 @@
+<div class="main-container">
+    <h1 mat-dialog-title>Delete category??</h1>
+    <div mat-dialog-content>
+        <p>Following items will be deleted!!</p>
+        <p *ngFor="let item of category.category.items; let i=index">{{i+1}}.{{item.name}}</p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="close()">Cancel</button>
+        <button mat-raised-button (click)="deleteCategory()" color="primary">Sure</button>
+    </div>
+</div>

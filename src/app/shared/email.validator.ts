@@ -24,7 +24,6 @@ export function userNameValidator(signupService: SignupService): AsyncValidatorF
                 console.log('Response from backend', response_data['user_registered'])
                 return response_data['user_registered']==true ? { "userExists": true } : null;
             }
-
         ))      
         
     }

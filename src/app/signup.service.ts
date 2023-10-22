@@ -24,7 +24,7 @@ export class SignupService {
   constructor(private _http: HttpClient) {}
 
   errorHandler(error: HttpErrorResponse){
-    console.log('Error in service: ', error);
+    console.log('Error in sign up service: ', error);
     return throwError(error)
   }
 
@@ -38,9 +38,9 @@ export class SignupService {
       let email = email_or_phone
       queryParams = queryParams.append('email', email)
     }
-    console.log('query params for is user registered: ', queryParams)
+    console.log('Query params for is user registered: ', queryParams)
     return this._http.get<any>(this._signup_is_user_registered, {params: queryParams} )
-                      .pipe(catchError(this.errorHandler))
+                      
   }
   
   // Change all email variables to username

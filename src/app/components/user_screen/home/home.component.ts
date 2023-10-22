@@ -16,15 +16,17 @@ export class HomeComponent {
   public restaurantInfo
   ngOnInit(){
     setTimeout( () => {
-      this.restaurantInfo = this._restuarantService.getResturantInfo()
+    this._restuarantService.getResturantInfo().subscribe(
+        data => this.restaurantInfo=data,
+        error => console.log(error)
+      )
       this.showSpinner = false
-    }, 50)
-    this.printpath('', this._router.config);
+    }, 10)
   }
   
   onSelect(info){
-    console.log(info)
-    this._router.navigate(['./home/menu', info.id])
+    console.log(info.restaurant_id)
+    this._router.navigate(['./home/menu', info.restaurant_id])
   }
 
   printpath(parent: string, config: Route[]) {

@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import {MatDialog, MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material/material.module';
 import { MenuService } from 'src/app/menu.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 
 @Component({
@@ -12,24 +14,35 @@ import { MenuService } from 'src/app/menu.service';
 export class MenuComponent {
   
   amount: number = 0;
-  orderList = []
-  constructor(private _menuService: MenuService, private _route: ActivatedRoute, private _router: Router){}
+  orderList = {items: [], amount: 0}
+  constructor(private _menuService: MenuService, private _route: ActivatedRoute, private _router: Router, 
+    private _dialog: MatDialog){}
   
   menu_response:any
-  showspineer = true
+  showSpinner = true
   
   ngOnInit(){
+    this.showSpinner = true
     this._route.paramMap.subscribe((params: ParamMap) => {
       let id = parseInt(params.get('id'))
-      this.menu_response = this._menuService.getMenu(id)
+      this._menuService.getMenu(id).subscribe(
+        data => {
+          this.menu_response = data,
+          console.log('This is data: ', data)
+          console.log('This is menue response: ', this.menu_response)
+          this.setQuantity()
+          console.log('After setting quantity: ', this.menu_response)
+        },
+        error => console.log('Error while getting menu: ', error)
+      )
     })
-    console.log(this.menu_response)
-    this.setQuantity()
-    console.log(this.menu_response)
+    
+    this.showSpinner= false
   }
 
   setQuantity(){
-    this.menu_response.forEach( (category) => {
+    console.log('Setting quantity:', this.menu_response)
+    this.menu_response.menu.forEach((category) => {
       category.category.items.forEach((item) => {
         item.quantity = 0;
       })
@@ -51,8 +64,7 @@ export class MenuComponent {
   }
 
   prepareSummary(){
-    this.orderList = []
-    this.menu_response.forEach(category => {
+    this.menu_response.menu.forEach(category => {
       category.category.items.forEach(item => {
         if(item.quantity){
           let itemSummary = {
@@ -60,13 +72,28 @@ export class MenuComponent {
             'quantity': item.quantity,
             'price': item.price
           }
-          this.orderList.push(itemSummary)
+          this.orderList.items.push(itemSummary)
         }
       });
     });
-    this.orderList.push({amount: this.amount})
+    this.orderList.amount = this.amount
     console.log(this.orderList)
-    this._menuService.submitOrder(this.orderList)
+    // this._menuService.submitOrder(this.orderList)
+    let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
+      data: this.orderList
+    }
+    )
+    dialogRef.afterClosed().subscribe( result =>{
+      console.log('Result from dialog component: ', result)
+      if(result){
+        console.log('Call place order api here');
+      }else{
+        this.orderList = {items: [], amount: 0}
+      }
+    }
+      
+
+    )
   }
 
 }

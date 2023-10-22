@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -6,28 +6,13 @@ import { Injectable } from '@angular/core';
 })
 export class MenuService {
 
-  host:string = '"http://65.20.75.191:8001"';
-  _submit_url = this.host + '/api/v1/inventory/create_order/'
+  
   headers:any;
   constructor(private _http: HttpClient) { }
+  host = "http://65.20.75.191:8001/api/v1/"
+  _getMenuEndpoint = 'inventory/get_menu/'
+  _submit_url = 'inventory/create_order/'
 
-  response = {
-    bangalore: [
-      { categoryname: 'category1',
-        categoryinfo: [
-          { name: 'item1', price: 100, isAvailable: true},
-          { name: 'item2', price: 200, isAvailable: true} 
-        ]
-      },
-      {
-          categoryname: 'category2',
-          categoryinfo: [
-          { name: 'item3', price: 300, isAvailable: true},
-          { name: 'item4', price: 400, isAvailable: true}
-        ]
-      }
-    ]
-  }
   response1 = {
     "menu": [
         {
@@ -39,7 +24,7 @@ export class MenuService {
                         "id": 1,
                         "name": "Masala Dose",
                         "price": 60,
-                        "is_available": true
+                        "is_available": false
                     },
                     {
                         "id": 2,
@@ -60,7 +45,43 @@ export class MenuService {
                         "name": "Mango",
                         "price": 40,
                         "is_available": true
-                    }
+                    },
+                    {
+                      "id": 5,
+                      "name": "Mango",
+                      "price": 40,
+                      "is_available": true
+                  },
+                  {
+                    "id": 5,
+                    "name": "Mango",
+                    "price": 40,
+                    "is_available": true
+                },
+                {
+                  "id": 5,
+                  "name": "Mango",
+                  "price": 40,
+                  "is_available": true
+              },
+              {
+                "id": 5,
+                "name": "Mango",
+                "price": 40,
+                "is_available": true
+            },
+            {
+              "id": 5,
+              "name": "Mango",
+              "price": 40,
+              "is_available": true
+          },
+          {
+            "id": 5,
+            "name": "Mango",
+            "price": 40,
+            "is_available": true
+        }
                 ]
             }
         }
@@ -68,13 +89,19 @@ export class MenuService {
     "restaurant_id": "1"
 }
 
+getToken(){
+  return localStorage.getItem('token')
+}
   getMenu(id: number){
-    console.log('get call for api', id)
-    return this.response1.menu
+    let queryParams = new HttpParams()
+    console.log('Getting menu for id: ', id)
+    const headers = new HttpHeaders({'Authorization': 'Token ' + this.getToken()})
+    queryParams = queryParams.append('restaurant_id', id.toString())
+    return this._http.get(this.host+this._getMenuEndpoint, {params: queryParams, headers: headers})
   }
 
   submitOrder(body){
-    this._http.post(this._submit_url, body).subscribe(
+    this._http.post(this.host+this._submit_url, body).subscribe(
       data => console.log('Successful ', data),
       error => console.log('Error: ', error) 
     )

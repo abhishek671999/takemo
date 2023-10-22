@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginService } from 'src/app/login.service';
 
 @Component({
@@ -7,13 +8,16 @@ import { LoginService } from 'src/app/login.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  constructor(private _loginService: LoginService){}
+  constructor(private _loginService: LoginService, private router: Router){}
 
   dropdownList = [
     {
       name: 'My Orders',
       href: '',
-      action: () => console.log('My order')
+      action: () => {
+        console.log('My order')
+        this.router.navigate(['./home/myorders'])
+      }
     },
     {
       name: 'Settings',

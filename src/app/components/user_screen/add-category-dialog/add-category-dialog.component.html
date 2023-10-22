@@ -1,0 +1,29 @@
+<div class="main-container">
+    <h1 mat-dialog-title> Add Category</h1>
+    <form action="" [formGroup]="addCategoryForm" (ngSubmit)="addCategory()">
+        <div mat-dialog-content>
+            <mat-form-field>
+                <mat-label>Category</mat-label>
+            <input matInput placeholder="Category" formControlName="categoryName">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Item Name</mat-label>
+            <input matInput placeholder="Item name" formControlName="itemName">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Price</mat-label>
+            <input matInput placeholder="price" formControlName="price">
+            </mat-form-field>
+            <mat-radio-group formControlName="isVeg">
+                <mat-radio-button value='veg'>Veg</mat-radio-button>
+                <mat-radio-button value='non_veg'>Non Veg</mat-radio-button>
+                <mat-radio-button value='egg'>Egg</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div mat-dialog-actions>
+            <button (click)="close()" type='button' mat-button>cancel</button>
+            <button type='submit' mat-button>Add Category</button>
+        </div>
+    </form>
+    
+</div>

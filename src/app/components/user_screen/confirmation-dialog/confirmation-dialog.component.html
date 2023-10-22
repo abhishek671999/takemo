@@ -1,0 +1,28 @@
+<div class="main-container">
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of pickedItems.items">
+                    <td>{{item.name}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.price}}</td>
+                    <td>{{item.quantity * item.price}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center amount">Total Amount:&nbsp;
+            &nbsp;₹ {{pickedItems.amount}} </div>
+    </div>
+    <div class="button-container">
+        <button mat-raised-button (click)="onEditButtonClick()">Edit Order</button>
+        <button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
+    </div>
+</div>

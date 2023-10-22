@@ -6,7 +6,7 @@
     </div> 
     <ng-template #ElseBlock>
         <div class="nav-container" *ngIf="restaurantInfo">
-                <ul *ngFor="let info of restaurantInfo.restaurants">
+                <ul *ngFor="let info of restaurantInfo.restaurants; let i = index">
                     <div>
                         <li (click)="onSelect(info)" class="nav-li" >
                             {{info.name}}

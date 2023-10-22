@@ -1,0 +1,10 @@
+.main-container{
+    display: flex;
+    height: 85vh;
+    justify-content: center;
+    background-color: rgba(240, 242, 245, 1);
+}
+.tab-group-container{
+    background-color: white;
+    width: 80vw;
+}

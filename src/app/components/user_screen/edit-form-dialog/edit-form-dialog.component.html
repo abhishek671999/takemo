@@ -1,0 +1,32 @@
+<div class="main-container">
+    <form [formGroup]="editMenuForm" (ngSubmit)="editSubmit()">
+        <h1 mat-dialog-title> Edit this item</h1>
+        <div mat-dialog-content>
+                <div>
+                    <div>
+                        <mat-form-field>
+                            <mat-label>Item Name</mat-label>
+                        <input matInput placeholder="Item Name" value="{{item.name}}" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <mat-label>Price</mat-label>
+                        <input matInput placeholder="Price" value="{{item.price}}" formControlName="price">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-radio-group formControlName="isVeg">
+                            <mat-radio-button value='veg'>Veg</mat-radio-button>
+                            <mat-radio-button value='non_veg'>Non Veg</mat-radio-button>
+                            <mat-radio-button value='egg'>Egg</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button type="button" (click)="close()">Cancel</button>
+            <button mat-button type="submit" >Submit</button>
+        </div>
+    </form>
+</div>
