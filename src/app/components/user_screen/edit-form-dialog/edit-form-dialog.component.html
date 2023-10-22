@@ -26,7 +26,7 @@
         </div>
         <div mat-dialog-actions>
             <button mat-button type="button" (click)="close()">Cancel</button>
-            <button mat-button type="submit" >Submit</button>
+            <button mat-raised-button color="primary" [disabled]="!editMenuForm.valid" type="submit" >Submit</button>
         </div>
     </form>
 </div>

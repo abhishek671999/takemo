@@ -1,0 +1,13 @@
+.main-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.content-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.action-container{
+    right: 0;
+}

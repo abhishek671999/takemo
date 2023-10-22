@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EditMenuService } from 'src/app/edit-menu.service';
 
@@ -18,10 +18,10 @@ export class EditFormDialogComponent {
 
   
   editMenuForm = this._fb.group({
-    id: this.item.id,
-    name: this.item.name,
-    price: this.item.price,
-    isVeg: ''
+    id: [this.item.id, Validators.required],
+    name: [this.item.name, Validators.required],
+    price: [this.item.price, Validators.required],
+    isVeg: ['', Validators.required]
   })
   
   editSubmit(){

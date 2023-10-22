@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EditMenuService } from 'src/app/edit-menu.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { EditMenuService } from 'src/app/edit-menu.service';
 })
 export class DeleteCategoryConfirmationDialogComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public category, private _editMenuService: EditMenuService, private _dialogRef: DialogRef){}
+  constructor(@Inject(MAT_DIALOG_DATA) public category, private _editMenuService: EditMenuService, private _dialogRef: MatDialogRef<DeleteCategoryConfirmationDialogComponent>){}
 
   deleteCategory(){
     console.log('This is category: ', this.category)

@@ -17,7 +17,7 @@ export class AddCategoryDialogComponent {
     private _editMenuService: EditMenuService){}
 
   addCategoryForm = this._fb.group({
-    categoryName: ['', Validators.required],
+    categoryName: ['', [Validators.required]],
     itemName: ['', Validators.required],
     price: ['', Validators.required],
     isVeg: ['', Validators.required]
