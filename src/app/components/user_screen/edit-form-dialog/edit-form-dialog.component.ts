@@ -13,13 +13,15 @@ export class EditFormDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public item, 
   public dialogRef: MatDialogRef<EditFormDialogComponent>,
   public _fb: FormBuilder,
-  private _editMenuService: EditMenuService){}
+  private _editMenuService: EditMenuService){
+  }
 
+  
   editMenuForm = this._fb.group({
     id: this.item.id,
     name: this.item.name,
     price: this.item.price,
-    isVeg: this.item.veg
+    isVeg: ''
   })
   
   editSubmit(){

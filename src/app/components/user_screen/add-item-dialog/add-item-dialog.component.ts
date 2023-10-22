@@ -1,7 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EditMenuService } from 'src/app/edit-menu.service';
 
 @Component({
@@ -11,7 +11,8 @@ import { EditMenuService } from 'src/app/edit-menu.service';
 })
 export class AddItemDialogComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) private data,private _fb: FormBuilder, private _dialogRef: DialogRef,
+  constructor(@Inject(MAT_DIALOG_DATA) private data,private _fb: FormBuilder, 
+  public dialogRef: MatDialogRef<AddItemDialogComponent>,
     private _editMenuService: EditMenuService){}
 
   addItemForm = this._fb.group({
@@ -32,17 +33,17 @@ export class AddItemDialogComponent {
     }
     this._editMenuService.addItem(body).subscribe(
       data => {
-        console.log(data)
-        this._dialogRef.close({success: true})},
+        console.log('Added ', data)
+        this.dialogRef.close({success: 'ok'})
+      },
       error => {
         console.log(error);
-        this._dialogRef.close({success: false})
+        this.dialogRef.close({success: 'failed'})
       }
     )
-    
   }
 
   close(){
-    this._dialogRef.close({success: false})
+    this.dialogRef.close()
   }
 }

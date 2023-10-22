@@ -27,7 +27,7 @@ export class DeleteConfirmationDialogComponent {
       data => console.log(data),
       error => console.log(error)
     )
-    this.dialogRef.close()
+    this.dialogRef.close({success: 'ok'})
   }
 
 }

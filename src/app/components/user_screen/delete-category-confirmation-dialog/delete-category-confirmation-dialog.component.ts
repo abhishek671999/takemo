@@ -20,8 +20,12 @@ export class DeleteCategoryConfirmationDialogComponent {
     this._editMenuService.deleteCategory(body).subscribe(
       data => {
         console.log(data)
+        this._dialogRef.close({success: 'ok'})
       },
-      error => console.log(error)
+      error => {
+        console.log(error)
+        this._dialogRef.close({success: 'failed'})
+      }
     )
   }
 

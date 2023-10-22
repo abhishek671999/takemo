@@ -1,15 +1,15 @@
 <div class="main-container">
-    <div>
-        <div>
-            <mat-icon svgIcon="plus" (click)="addCategory()"></mat-icon>
-        </div>
-        <mat-expansion-panel *ngFor="let category of menu_response.menu; let mainIndex = index">
+    <div class="menu-container">
+        <h2 class="text-center">Edit menu</h2>
+        <div class="text-center">
+            <mat-icon class="addCategoryIcon" svgIcon="plus" (click)="addCategory()"></mat-icon>
+        <mat-expansion-panel class="expansion-panel" *ngFor="let category of menu_response.menu; let mainIndex = index">
             <mat-expansion-panel-header >
                 <mat-panel-title>
                     {{category.category.name}}
                   </mat-panel-title>
                   <div>
-                    <mat-icon svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
+                    <mat-icon style="margin: 5px 4em 0 0;" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
                   </div>
             </mat-expansion-panel-header>
             <div>
@@ -30,12 +30,12 @@
                     <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
                     <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
                         <td class="col1" >{{subIndex+1}}</td>
-                        <td class="col2" [class.disabled]="item.is_available">{{item.name}}</td>
-                        <td class="col3" [class.disabled]="item.is_available">{{item.price}}</td>
+                        <td class="col2" >{{item.name}}</td>
+                        <td class="col3" >₹ {{item.price}}</td>
                         <td class="col4">
-                            <mat-button-toggle-group  value='{{item.is_available}}' aria-label="Font Style">
-                                <mat-button-toggle (change)="toggleAvailability(item, false)" value='false'><mat-icon svgIcon="Not Availabe"></mat-icon></mat-button-toggle>
-                                <mat-button-toggle (change)="toggleAvailability(item, true)" value='true'><mat-icon svgIcon="Available"></mat-icon></mat-button-toggle>
+                            <mat-button-toggle-group value='{{item.is_available}}' aria-label="Font Style">
+                                <mat-button-toggle  (change)="toggleAvailability(item, false)" value='false'><mat-icon style="font-size: 15px; width: 15px; height: 15px; margin: 0 padding:0" svgIcon="Not Availabe"></mat-icon></mat-button-toggle>
+                                <mat-button-toggle  (change)="toggleAvailability(item, true)" value='true'><mat-icon style="font-size: 15px; width: 15px; height: 15px; margin: 0 padding: 0;" svgIcon="Available"></mat-icon></mat-button-toggle>
                             </mat-button-toggle-group>
                         </td>
                         <td class="col5" [class.disabled]="item.is_available">

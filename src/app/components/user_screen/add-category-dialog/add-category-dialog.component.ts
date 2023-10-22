@@ -1,7 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EditMenuService } from 'src/app/edit-menu.service';
 import { MenuService } from 'src/app/menu.service';
 
@@ -12,7 +12,8 @@ import { MenuService } from 'src/app/menu.service';
 })
 export class AddCategoryDialogComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data, public _fb: FormBuilder, public _dialogRef: DialogRef,
+  constructor(@Inject(MAT_DIALOG_DATA) public data, public _fb: FormBuilder, 
+  public _dialogRef: MatDialogRef<AddCategoryDialogComponent>,
     private _editMenuService: EditMenuService){}
 
   addCategoryForm = this._fb.group({
@@ -41,13 +42,21 @@ export class AddCategoryDialogComponent {
 			egg: this.addCategoryForm.value.isVeg == 'egg'? true: false,
           }
           this._editMenuService.addItem(body).subscribe(
-            data => console.log('Added item', data),
-            error => console.log(error)
+            data => {
+              console.log('Added item', data)
+              this._dialogRef.close({success: 'ok'})
+            },
+            error => {
+              console.log(error)
+              this._dialogRef.close({success: 'failed'})
+            }
             )
         },
-      error => console.log(error)
+      error => {
+        console.log(error)
+        this._dialogRef.close({success: 'failed'})
+      }
     )
-    this._dialogRef.close()
   }
 
   close(){

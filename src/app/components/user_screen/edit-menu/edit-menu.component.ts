@@ -75,13 +75,9 @@ export class EditMenuComponent {
     )
   }
 
-  editItem(item){
-    console.log('Edit item: ', item)
-    let dialogRef = this._dialog.open(EditFormDialogComponent, {
-      data: Object.assign(item, {'restaurant_id': this.restaurantId})
-    })
+  _handleDialogComponentAfterClose(dialogRef){
     dialogRef.afterClosed().subscribe(result => {
-      console.log("result from Edit form: ", result)
+      console.log("result from dialog ref form: ", result)
       if(result == undefined){
         console.log('Nothing')
       }
@@ -90,8 +86,13 @@ export class EditMenuComponent {
         setTimeout(() => {
           dialogRef.close()
         }, 2000);
+        this.ngOnInit()
       }else if(result.success=='failed'){
-        this._dialog.open(ErrorDialogComponent)
+        let dialogRef = this._dialog.open(ErrorDialogComponent)
+        setTimeout(()=>{
+          dialogRef.close()
+        }, 2000)
+        this.ngOnInit()
       }else{
         console.log('Nothing else')
       }
@@ -99,32 +100,44 @@ export class EditMenuComponent {
     )
   }
 
-  deleteItem(item){
-    console.log('Delete item: ', item)
-    this._dialog.open(DeleteConfirmationDialogComponent, {
+  editItem(item){
+    console.log('Edit item: ', item)
+    let dialogRef = this._dialog.open(EditFormDialogComponent, {
       data: Object.assign(item, {'restaurant_id': this.restaurantId})
     })
+    this._handleDialogComponentAfterClose(dialogRef)
+  }
+
+  deleteItem(item){
+    console.log('Delete item: ', item)
+    let dialogRef = this._dialog.open(DeleteConfirmationDialogComponent, {
+      data: Object.assign(item, {'restaurant_id': this.restaurantId})
+    })
+    this._handleDialogComponentAfterClose(dialogRef)
   }
 
   deleteCategory(category){
     console.log('Deleting category', category)
-    this._dialog.open(DeleteCategoryConfirmationDialogComponent, {
+    let dialogRef = this._dialog.open(DeleteCategoryConfirmationDialogComponent, {
       data: category
     })
+    this._handleDialogComponentAfterClose(dialogRef)
   }
 
   addCategory(){
     console.log('Add category')
-    this._dialog.open(AddCategoryDialogComponent, {
+    let dialogRef = this._dialog.open(AddCategoryDialogComponent, {
       data: {'restaurant_id': this.restaurantId}
     }
   )
+  this._handleDialogComponentAfterClose(dialogRef)
   }
 
   addItem(category){
     console.log('Add item', category)
-    this._dialog.open(AddItemDialogComponent, {
+    let dialogRef = this._dialog.open(AddItemDialogComponent, {
       data: Object.assign(category, {'restaurant_id': this.restaurantId})
     })
+    this._handleDialogComponentAfterClose(dialogRef)
   }
 }

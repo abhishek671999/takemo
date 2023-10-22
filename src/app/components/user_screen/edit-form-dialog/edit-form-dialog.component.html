@@ -17,9 +17,9 @@
                     </div>
                     <div>
                         <mat-radio-group formControlName="isVeg">
-                            <mat-radio-button value='veg'>Veg</mat-radio-button>
-                            <mat-radio-button value='non_veg'>Non Veg</mat-radio-button>
-                            <mat-radio-button value='egg'>Egg</mat-radio-button>
+                            <mat-radio-button value='veg' [checked]="item.veg">Veg</mat-radio-button>
+                            <mat-radio-button value='non_veg' [checked]="item.non_veg">Non Veg</mat-radio-button>
+                            <mat-radio-button value='egg' [checked]="item.egg">Egg</mat-radio-button>
                         </mat-radio-group>
                     </div>
                 </div>
