@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -5,8 +6,8 @@ import { Injectable } from '@angular/core';
 })
 export class OrdersService {
 
-  constructor() { }
-
+  constructor(private _http: HttpClient) { }
+  host = ''
   mock_response = {
     "orders": [
         {
@@ -45,6 +46,6 @@ export class OrdersService {
       }
 
   getCurrentOrders(){
-    return this.mock_response
+    return this._http.get('http://localhost:3000/orders_get_my_order_history')
   }
 }
