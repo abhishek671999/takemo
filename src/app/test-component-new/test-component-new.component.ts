@@ -29,8 +29,8 @@ export class TestComponentNewComponent {
     },
   ];
   
-  onClick(name: string){
-    console.log(name)
+  onClick(){
+    window.open('https://mercury-t2.phonepe.com/transact/pg?token=NjAyMTZlNzNiMWViNWYzMDViYWYwYWMyYWE3ZGEwYmVmODcyYWI3NTdkZDE2NmRlOTBiNDE4ZTQ4ZWQ1OWYxMDA0NTQxMDY2ODk2ZmYzZDc5MWE2NjMzMzdiNjQ3MjdkMjgyNDMwMWFhNTEwZjgxZTc5ODI2MmQzNjM4ZTUyOmU0YzY4NGMyMTljMzg4MDc1MjgxNTJlMDE4MjZjZTUw')
   }
 
 }

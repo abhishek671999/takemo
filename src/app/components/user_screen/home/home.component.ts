@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, Route, ActivatedRoute} from '@angular/router';
 import { delay } from 'rxjs';
-import { RestuarantService } from 'src/app/restuarant.service';
+import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 
 @Component({
   selector: 'app-home',

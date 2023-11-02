@@ -23,6 +23,12 @@
     </div>
     <div class="button-container">
         <button mat-raised-button (click)="onEditButtonClick()">Edit Order</button>
-        <button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
+        <div *ngIf="isPayment; else elsePayment">
+            <button mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay</button>
+        </div>
+        <ng-template #elsePayment>
+            <button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
+        </ng-template>
+        
     </div>
 </div>

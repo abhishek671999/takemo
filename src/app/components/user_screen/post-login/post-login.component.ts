@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./post-login.component.css']
 })
 export class PostLoginComponent {
-
 }

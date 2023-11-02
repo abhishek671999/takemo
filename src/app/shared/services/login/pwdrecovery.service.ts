@@ -2,14 +2,15 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { UrlSegment } from '@angular/router';
 import { catchError, concatAll, throwError } from 'rxjs';
+import { host } from '../../site-variable';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PwdrecoveryService {
-  __base_url = "http://65.20.75.191:8001/api/v1"
-  _pwd_otp_auth = this.__base_url + "/users/get_password_reset_token/"
-  _pwd_auth_token = this.__base_url + "/users/reset_password/"
+  __base_url = host
+  _pwd_otp_auth = this.__base_url + "users/get_password_reset_token/"
+  _pwd_auth_token = this.__base_url + "users/reset_password/"
   
 
   constructor(private _http: HttpClient) { }

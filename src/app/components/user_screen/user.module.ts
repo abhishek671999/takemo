@@ -32,6 +32,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import { SuccessfulDialogComponent } from './successful-dialog/successful-dialog.component';
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { DeleteCategoryConfirmationDialogComponent } from './delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
+import { PostPaymentComponent } from './post-payment/post-payment.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { DeleteCategoryConfirmationDialogComponent } from './delete-category-con
     SuccessfulDialogComponent,
     ErrorDialogComponent,
     DeleteCategoryConfirmationDialogComponent,
+    PostPaymentComponent,
     ],
   imports: [CommonModule,FormsModule, UserRoutingModule, MatProgressSpinnerModule, MatExpansionModule, ScrollingModule, 
     MatTabsModule, MatTableModule, MatFormFieldModule, MatInputModule, MatDialogModule, MatButtonModule, 

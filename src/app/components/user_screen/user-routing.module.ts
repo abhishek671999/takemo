@@ -6,6 +6,7 @@ import { PlaceOrdersComponent } from './place-orders/place-orders.component';
 import { MenuComponent } from './menu/menu.component';
 import { MyOrdersComponent } from './my-orders/my-orders.component';
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
+import { PostPaymentComponent } from './post-payment/post-payment.component';
 
 
 const routes: Routes = [
@@ -17,7 +18,8 @@ const routes: Routes = [
       { path: 'menu/:id', component: MenuComponent},
       { path: 'place_order', component: PlaceOrdersComponent},
       { path: 'myorders', component: MyOrdersComponent},
-      { path: 'edit-menu/:id', component: EditMenuComponent}
+      { path: 'edit-menu/:id', component: EditMenuComponent},
+      { path: 'order-acknowledgement', component: PostPaymentComponent}
     ]
   },
 ];

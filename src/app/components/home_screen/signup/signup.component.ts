@@ -5,11 +5,15 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { SignupService } from '../../../signup.service';
+import { SignupService } from '../../../shared/services/login/signup.service';
 import { RegistrationUser } from '../../../user';
 import { forbiddenNameValidator } from '../../../shared/user-name.validator';
 import { passwordValidator } from '../../../shared/password.validator';
 import { userNameValidator } from '../../../shared/email.validator';
+import { MatDialog } from '@angular/material/dialog';
+import { SuccessfulDialogComponent } from '../successful-dialog/successful-dialog.component';
+import { Router } from '@angular/router';
+import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-signup',
@@ -17,12 +21,14 @@ import { userNameValidator } from '../../../shared/email.validator';
   styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent {
-  ngOnInit(): void {}
 
   constructor(
     private _fb: FormBuilder,
-    private _signupService: SignupService
+    private _signupService: SignupService,
+    private _matDialog: MatDialog,
+    private _router: Router
   ) {}
+
   regex = new RegExp(
     '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$'
   );
@@ -63,13 +69,26 @@ export class SignupComponent {
     this._signupService
       .changePassword(this.__token!, this.registrationForm.value.pwd!, true)
       .subscribe(
-        (data) => console.log('Success!', data),
+        (data) =>{
+          console.log('Success!', data)
+          let matDialogRef = this._matDialog.open(SuccessfulDialogComponent, {data: {message: "User Registered. Please login"}})
+          setTimeout(() => {
+            matDialogRef.close()
+          }, 3000);
+          this._router.navigate(['/'])
+        },
         (error) => {
           alert(error.statusText);
           console.log('Error while changing password: ', error.errorText);
+          let matDialogRef = this._matDialog.open(ErrorDialogComponent, {data: {message: "Something went wrong. Please try again"}})
+          setTimeout(() => {
+            matDialogRef.close()
+          }, 3000);
+          this._router.navigate(['/login/signup'])
         }
       );
   }
+  
   __token = null;
   signUpSubmit() {
     console.log('Sign up successful');

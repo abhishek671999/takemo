@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { passwordValidator } from '../../../shared/password.validator';
-import { ContactService } from '../../../contact.service';
+import { ContactService } from '../../../shared/services/contact-us/contact.service';
 
 @Component({
   selector: 'app-contact-us',

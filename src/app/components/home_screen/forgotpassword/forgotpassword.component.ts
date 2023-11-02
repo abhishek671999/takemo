@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { userNameValidator } from '../../../shared/email.validator';
-import { SignupService } from '../../../signup.service';
-import { PwdrecoveryService } from '../../../pwdrecovery.service';
+import { SignupService } from '../../../shared/services/login/signup.service';
+import { PwdrecoveryService } from '../../../shared/services/login/pwdrecovery.service';
+import { MatDialog } from '@angular/material/dialog';
+import { SuccessfulDialogComponent } from '../successful-dialog/successful-dialog.component';
+import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgotpassword',
@@ -13,7 +17,9 @@ export class ForgotpasswordComponent {
   constructor(
     private _fb: FormBuilder,
     private _signupService: SignupService,
-    private _pwdRecoveryService: PwdrecoveryService
+    private _pwdRecoveryService: PwdrecoveryService,
+    private _matDialog: MatDialog,
+    private _router: Router
   ) {}
 
   regex = new RegExp(
@@ -56,13 +62,14 @@ export class ForgotpasswordComponent {
         .subscribe(
           (data) => {
             console.log('sucess: ', data);
-            console.log(data['detail']);
+            alert(data['success'])
             this.authNotRequested = false;
             this.authResponse = data['detail'];
           },
           (error) => {
             console.log('Error in authUser: ', error);
             alert(error);
+            this._router.navigate(['/login/forgot-password'])
           }
         );
     }
@@ -78,8 +85,24 @@ export class ForgotpasswordComponent {
       .subscribe(
         (data) => {
           console.log(data);
+          let dialogRef = this._matDialog.open(SuccessfulDialogComponent, {data: {message: 'Password changed successfully. Please login'}})
+          setTimeout(() => {
+            dialogRef.close()
+          }, 3000);
+          dialogRef.afterClosed().subscribe(
+            data => {
+              console.log('Success window close')
+              this._router.navigate(['/home'])
+            }
+          )
         },
-        (error) => alert(error.statusText)
+        (error) => {
+          console.log('Error while changing the password', error)
+          let dialogRef = this._matDialog.open(ErrorDialogComponent, {data: {message: 'Something went wrong. Please try again'}})
+          setTimeout(() => {
+            dialogRef.close()
+          }, 3000);
+        }
       );
-  }
+    }
 }

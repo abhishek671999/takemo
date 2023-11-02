@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { OrdersService } from 'src/app/orders.service';
+import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import {MatTableDataSource} from '@angular/material/table';
 
 

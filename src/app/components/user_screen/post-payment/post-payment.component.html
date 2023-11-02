@@ -1,0 +1,30 @@
+<div class="main-container">
+    <div *ngIf="true">
+        <div class="window-container">
+            <img src="https://www.freeiconspng.com/uploads/success-icon-10.png" style="width: 200px; height: auto;" alt="failed">
+            <div>
+                <h2>Transaction id: {{transactionId}}</h2>
+            </div>
+            <div>
+                <h3>Order id: {{orderId}}</h3>
+            </div>
+            <div>
+                <h3>Transaction Amount: {{transactionAmount}}</h3>
+            </div>   
+        </div>
+    </div>
+    <div *ngIf="false">
+        <div class="window-container">
+            <img src="https://png.pngtree.com/png-clipart/20200701/original/pngtree-red-error-icon-png-image_5418881.jpg" style="width: 200px; height: auto;" alt="failed">
+            <div>
+                <h2>Transaction id: {{transactionId}}</h2>
+            </div>
+            <div>
+                <h3>Order id: {{orderId}}</h3>
+            </div>
+            <div>
+                <h3>Transaction Amount: {{transactionAmount}}</h3>
+            </div>    
+        </div>
+    </div>
+</div>
