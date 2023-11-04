@@ -5,14 +5,14 @@
           </div>
     </div>
     <ng-template #elseBlock>
-        <div class="flex-container" >
+        <div class="flex-container" *ngIf="menu_response.is_open; else resturantClosed">
             <div class="table-container">
                 <h2 class="text-center">Menu</h2>
-            <cdk-virtual-scroll-viewport itemSize="500" class="example-viewport" >
-                <mat-expansion-panel *ngFor="let category of menu_response.menu; let mainIndex = index">
+            <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+                <mat-expansion-panel [expanded]="mainIndex === 0" *ngFor="let category of menu_response.menu; let mainIndex = index">
                     <mat-expansion-panel-header >
                         <mat-panel-title>
-                            {{category.category.name}}
+                            <b>{{category.category.name}}</b>
                           </mat-panel-title>
                     </mat-expansion-panel-header>
                     <table class="table table-hover">
@@ -28,13 +28,16 @@
                             <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
                             <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
                                 <td class="col1" >{{subIndex+1}}</td>
-                                <td class="col2" [class.disabled]="item.is_available">{{item.name}}</td>
-                                <td class="col3" [class.disabled]="item.is_available">{{item.price}}</td>
-                                <td class="col4" [class.disabled]="item.is_available">
+                                <td class="col2" >{{item.name}}</td>
+                                <td class="col3" >{{item.price}}</td>
+                                <td class="col4" >
+                                    <div *ngIf="item.is_available; then thenTDblock else tdelseblock"></div>
+                                    <ng-template #thenTDblock>
                                         <i class="fa-solid fa-minus" (click)="subItem(item)"></i>
                                         <span class="m-3">{{item.quantity}}</span>
-                                        <i class="fa-solid fa-plus" (click)="addItem(item)"></i>  
-                                </td>
+                                        <i class="fa-solid fa-plus" (click)="addItem(item)"></i>
+                                    </ng-template>
+                                    <ng-template #tdelseblock><span>Unavailable</span></ng-template>
                             </tr>
                         </tbody>
                     </table>
@@ -48,6 +51,10 @@
                 <div class="text-center prepare-summary"><button class="btn btn-primary" (click)="prepareSummary()" [disabled]="!amount">Place Order</button></div>
             </div>
         </div>
+        <ng-template #resturantClosed>
+            <br>
+            <h1 class="text-center">{{menu_response.restaurant_id}} is close at this moment</h1>
+        </ng-template>
     </ng-template>
     
     

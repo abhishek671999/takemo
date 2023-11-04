@@ -12,11 +12,11 @@ export class HeaderComponent {
 
   dropdownList = [
     {
-      name: 'My Orders',
+      name: 'My Profile',
       href: '',
       action: () => {
-        console.log('My order');
-        this.router.navigate(['./home/myorders']);
+        console.log('My Profile');
+        this.router.navigate(['./home/myprofile']);
       },
     },
     {

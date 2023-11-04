@@ -3,6 +3,7 @@ import { LoginService } from '../../../shared/services/login/login.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -18,6 +19,7 @@ export class LoginComponent {
   regex = new RegExp(
     '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$'
   );
+  hide = true
   loginObj = this._fb.group({
     username: [
       '',

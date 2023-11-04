@@ -36,10 +36,12 @@ export class MenuComponent {
       this.restaurant_id = parseInt(params.get('id'));
       this._menuService.getMenu(this.restaurant_id).subscribe(
         (data) => {
-          (this.menu_response = data), console.log('This is data: ', data);
-          console.log('This is menue response: ', this.menu_response);
+          (this.menu_response = data),
+          console.log(this.menu_response)
+          this.menu_response.menu.forEach((category) => {
+            category.category.items.filter((element) => element.is_available == 1)
+          }) 
           this.setQuantity();
-          console.log('After setting quantity: ', this.menu_response);
         },
         (error) => console.log('Error while getting menu: ', error)
       );

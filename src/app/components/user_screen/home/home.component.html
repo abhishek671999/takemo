@@ -7,9 +7,9 @@
     <ng-template #ElseBlock>
         <div class="nav-container" *ngIf="restaurantInfo">
                 <ul *ngFor="let info of restaurantInfo.restaurants; let i = index">
-                    <div>
+                    <div class="restaurant-grid">
                         <li (click)="onSelect(info)" class="nav-li" >
-                            {{info.name}}
+                            <p>{{info.name}}</p>
                         </li>
                     </div>
                         <!-- <img src="{{'data:image/jpg;base64,' + info.image}}"> -->

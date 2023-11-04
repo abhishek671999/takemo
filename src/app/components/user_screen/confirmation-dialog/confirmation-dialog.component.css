@@ -9,8 +9,8 @@
 }
 
 .button-container{
-    margin: 20px;
-    justify-content: center;
-
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2em;
 }
 

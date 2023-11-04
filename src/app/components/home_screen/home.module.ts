@@ -8,6 +8,9 @@ import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsAndConditionsComponent } from './terms-and-conditions/terms-and-conditions.component';
+import { MatButtonModule } from '@angular/material/button';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -20,8 +23,10 @@ import { TermsAndConditionsComponent } from './terms-and-conditions/terms-and-co
     CommonModule, 
     HomeRoutingModule,
     ReactiveFormsModule,
-    MatDialogModule
-    
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
   ],
 })
 export class HomeModule {}

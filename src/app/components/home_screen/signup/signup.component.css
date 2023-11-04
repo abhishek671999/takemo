@@ -7,18 +7,21 @@
     align-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: rgba(240, 242, 245, 1);
+    background-image: url('../../../../assets/images/loginBG.jpg');
+    background-size: 100%;  
+    background-size: cover;
 
 }
 
 .registration-item{
     position: relative;
-    width: 40%;
+    width: 25%;
     height: 55%;
     background-color: rgba(255, 255, 255, 1);
     border-radius: 15px;
     padding: 10px;
     border: 1px outset black;
+    opacity: 0.9;
 }
 
 .form-text-box{

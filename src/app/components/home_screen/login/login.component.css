@@ -2,40 +2,41 @@
     display: flex;
     position: relative;
     height: 86vh;
-    background-color: rgba(240, 242, 245, 1);
+    background-image: url('../../../../assets/images/loginBG.jpg');
+    background-size: 100%;  
+    background-size: cover;
     justify-content: center;
     align-items: center;
     align-content: center;
+    min-height: 86vh;
   }
   
   .login-item {
-    width: 38%;
-    height: 49%;
+    width: 25%;
+    height: fit-content;
     position: relative;
     border: 1px outset black;
     border-radius: 0.5em;
     padding: 20px;
     background-color: rgba(255, 255, 255, 1);
+    opacity: 0.9;
   }
   
   @media screen and (max-width: 1024px) {
     .login-item {
       width: 60%;
-      height: 50%;
     }
   }
   
   @media screen and (max-width: 768px) {
     .login-item {
       width: 60%;
-      height: 50%;
     }
   }
   
   @media screen and (max-width: 426px) {
     .login-item {
       width: 90%;
-      height: 53%;
     }
   }
   
@@ -53,7 +54,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    width: 100%;
+    width: 50%;
     padding: 5px;
     border-radius: 5px;
   }
@@ -63,7 +64,7 @@
     text-decoration: none;
     display: inline-block;
     width: 100%;
-    padding: 3px;
+    padding: 1em;
   }
   
   .anchor-sign-up {
@@ -77,4 +78,17 @@
     padding: 7px;
     border-radius: 5px;
   }
+  .sign-up{
+    padding: 0.5em;
+  }
   
+  .center{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+.password-field{
+  width: 90%;
+  display: inline;
+  }

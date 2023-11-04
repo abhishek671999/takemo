@@ -3,51 +3,53 @@
         <h2 class="text-center">Edit menu</h2>
         <div class="text-center">
             <mat-icon class="addCategoryIcon" svgIcon="plus" (click)="addCategory()"></mat-icon>
-        <mat-expansion-panel class="expansion-panel" *ngFor="let category of menu_response.menu; let mainIndex = index">
-            <mat-expansion-panel-header >
-                <mat-panel-title>
-                    {{category.category.name}}
-                  </mat-panel-title>
-                  <div>
-                    <mat-icon style="margin: 5px 4em 0 0;" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
-                  </div>
-            </mat-expansion-panel-header>
-            <div>
-                <mat-icon svgIcon="plus" (click)="addItem(category)"></mat-icon>
-            </div>
-            <table class="table table-hover">
-                <thead class="text-center">
-                    <tr>
-                        <th class="col1" scope="col">Id</th>
-                        <th class="col2" scope="col">Item</th>
-                        <th class="col3" scope="col">Price</th>
-                        <th class="col4" scope="col">Availabe</th>
-                        <th class="col5" scope="col">Edit</th>
-                        <th class="col6" scope="col">Delete</th>
-                    </tr>
-                </thead>
-                <tbody class="text-center" >
-                    <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
-                    <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
-                        <td class="col1" >{{subIndex+1}}</td>
-                        <td class="col2" >{{item.name}}</td>
-                        <td class="col3" >₹ {{item.price}}</td>
-                        <td class="col4">
-                            <mat-button-toggle-group value='{{item.is_available}}' aria-label="Font Style">
-                                <mat-button-toggle  (change)="toggleAvailability(item, false)" value='false'><mat-icon style="font-size: 15px; width: 15px; height: 15px; margin: 0 padding:0" svgIcon="Not Availabe"></mat-icon></mat-button-toggle>
-                                <mat-button-toggle  (change)="toggleAvailability(item, true)" value='true'><mat-icon style="font-size: 15px; width: 15px; height: 15px; margin: 0 padding: 0;" svgIcon="Available"></mat-icon></mat-button-toggle>
-                            </mat-button-toggle-group>
-                        </td>
-                        <td class="col5" [class.disabled]="item.is_available">
-                                <mat-icon svgIcon="edit" (click)="editItem(item)"></mat-icon>
-                        </td>
-                        <td class="col6">
-                            <mat-icon svgIcon="delete" (click)="deleteItem(item)"></mat-icon>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </mat-expansion-panel>
+        <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+            <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of menu_response.menu; let mainIndex = index">
+                <mat-expansion-panel-header >
+                    <mat-panel-title>
+                        {{category.category.name}}
+                    </mat-panel-title>
+                    <div>
+                        <mat-icon style="margin: 5px 4em 0 0;" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
+                    </div>
+                </mat-expansion-panel-header>
+                <div>
+                    <mat-icon svgIcon="plus" (click)="addItem(category)"></mat-icon>
+                </div>
+                <table class="table table-hover">
+                    <thead class="text-center">
+                        <tr>
+                            <th class="col1" scope="col">Id</th>
+                            <th class="col2" scope="col">Item</th>
+                            <th class="col3" scope="col">Price</th>
+                            <th class="col4" scope="col">Availabe</th>
+                            <th class="col5" scope="col">Edit</th>
+                            <th class="col6" scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center" >
+                        <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                        <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
+                            <td class="col1" >{{subIndex+1}}</td>
+                            <td class="col2" >{{item.name}}</td>
+                            <td class="col3" >₹ {{item.price}}</td>
+                            <td class="col4">
+                                <mat-button-toggle-group value='{{item.is_available}}' aria-label="Font Style">
+                                    <mat-button-toggle  (change)="toggleAvailability(item, false)" value='false'><mat-icon style="font-size: 15px; width: 15px; height: 15px; margin: 0 padding:0" svgIcon="Not Availabe"></mat-icon></mat-button-toggle>
+                                    <mat-button-toggle  (change)="toggleAvailability(item, true)" value='true'><mat-icon style="font-size: 15px; width: 15px; height: 15px; margin: 0 padding: 0;" svgIcon="Available"></mat-icon></mat-button-toggle>
+                                </mat-button-toggle-group>
+                            </td>
+                            <td class="col5" [class.disabled]="item.is_available">
+                                    <mat-icon svgIcon="edit" (click)="editItem(item)"></mat-icon>
+                            </td>
+                            <td class="col6">
+                                <mat-icon svgIcon="delete" (click)="deleteItem(item)"></mat-icon>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-expansion-panel>
+        </cdk-virtual-scroll-viewport>
 
     </div>
 </div>

@@ -31,7 +31,7 @@ td {
 }
 
 
-.example-viewport {
+.viewport {
     height: 480px;
   }
 
@@ -55,8 +55,17 @@ td {
 }
 
 
+.col1, .col2, .col3, .col4 th{
+    border-right: dashed black 1px;
+}
+
+th{
+    background-color: rgb(148, 189, 250);
+}
+
 .col1{
     width: 10%;
+    
 }
 
 .col2{

@@ -10,6 +10,10 @@ html{
     height: 88vh;
     background: rgba(240, 242, 245, 1);
 }
+.viewport {
+    height: 70vh;
+  }
+
 
 .menu-container{
     width: 80%;
@@ -47,4 +51,16 @@ html{
 }
 .col6{
     width: 10%;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    overflow-y: scroll;
+    background: grey;
+    box-shadow: inset 0 0 4px #707070;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 246);
+    border-radius: 10px;
 }
