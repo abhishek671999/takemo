@@ -12,11 +12,27 @@ export class HeaderComponent {
 
   dropdownList = [
     {
-      name: 'My Profile',
+      name: 'Profile',
       href: '',
       action: () => {
         console.log('My Profile');
-        this.router.navigate(['./home/myprofile']);
+        this.router.navigate(['./admin/myprofile']);
+      },
+    },
+    {
+      name: 'Analytics',
+      href: '',
+      action: () => {
+        console.log('analytics');
+        this.router.navigate(['./admin/analytics']);
+      },
+    },
+    {
+      name: 'Shift',
+      href: '',
+      action: () => {
+        console.log('User management');
+        this.router.navigate(['./admin/user-management']);
       },
     },
     {

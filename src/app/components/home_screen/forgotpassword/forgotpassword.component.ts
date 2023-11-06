@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { userNameValidator } from '../../../shared/email.validator';
-import { SignupService } from '../../../shared/services/login/signup.service';
-import { PwdrecoveryService } from '../../../shared/services/login/pwdrecovery.service';
+import { SignupService } from '../../../shared/services/register/signup.service';
+import { PwdrecoveryService } from '../../../shared/services/register/pwdrecovery.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SuccessfulDialogComponent } from '../successful-dialog/successful-dialog.component';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
@@ -62,14 +62,14 @@ export class ForgotpasswordComponent {
         .subscribe(
           (data) => {
             console.log('sucess: ', data);
-            alert(data['success'])
+            alert(data['success']);
             this.authNotRequested = false;
             this.authResponse = data['detail'];
           },
           (error) => {
             console.log('Error in authUser: ', error);
             alert(error);
-            this._router.navigate(['/login/forgot-password'])
+            this._router.navigate(['/login/forgot-password']);
           }
         );
     }
@@ -85,24 +85,26 @@ export class ForgotpasswordComponent {
       .subscribe(
         (data) => {
           console.log(data);
-          let dialogRef = this._matDialog.open(SuccessfulDialogComponent, {data: {message: 'Password changed successfully. Please login'}})
+          let dialogRef = this._matDialog.open(SuccessfulDialogComponent, {
+            data: { message: 'Password changed successfully. Please login' },
+          });
           setTimeout(() => {
-            dialogRef.close()
+            dialogRef.close();
           }, 3000);
-          dialogRef.afterClosed().subscribe(
-            data => {
-              console.log('Success window close')
-              this._router.navigate(['/home'])
-            }
-          )
+          dialogRef.afterClosed().subscribe((data) => {
+            console.log('Success window close');
+            this._router.navigate(['/home']);
+          });
         },
         (error) => {
-          console.log('Error while changing the password', error)
-          let dialogRef = this._matDialog.open(ErrorDialogComponent, {data: {message: 'Something went wrong. Please try again'}})
+          console.log('Error while changing the password', error);
+          let dialogRef = this._matDialog.open(ErrorDialogComponent, {
+            data: { message: 'Something went wrong. Please try again' },
+          });
           setTimeout(() => {
-            dialogRef.close()
+            dialogRef.close();
           }, 3000);
         }
       );
-    }
+  }
 }

@@ -25,6 +25,12 @@ const routes: Routes = [
       import('./components/user_screen/user.module').then((m) => m.UserModule),
   },
   {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./components/admin/admin.module').then((m) => m.AdminModule)
+  },
+  {
     path: 'test',
     component: TestComponentNewComponent
   },

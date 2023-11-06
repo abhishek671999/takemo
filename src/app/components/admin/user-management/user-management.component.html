@@ -1,0 +1,44 @@
+<div class="main-container">
+    <div class="overlay" *ngIf="showSpinner; else ElseBlock">
+        <div class="center-spin">
+          <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+        </div>
+    </div> 
+    <ng-template #ElseBlock>
+        <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+            <mat-expansion-panel [expanded]='true' class="expansion-panel" >
+                <mat-expansion-panel-header >
+                    <mat-panel-title>
+                        Add rules here
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div>
+                    <mat-icon svgIcon="plus" (click)="addRule()"></mat-icon>
+                </div>
+                <table class="table table-hover">
+                    <thead class="text-center">
+                        <tr>
+                            <th class="col1" scope="col">Id</th>
+                            <th class="col2" scope="col">Name</th>
+                            <th class="col3" scope="col">Start Time</th>
+                            <th class="col4" scope="col">End time</th>
+                            <th class="col5" scope="col">Edit</th>
+                            <th class="col6" scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center" >
+                        <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                        <tr class="table-row" *ngFor="let rule of rules.rules; let mainIndex = index">
+                            <td class="col1" >{{mainIndex+1}}</td>
+                            <td class="col2" >{{rule.name}}</td>
+                            <td class="col3" >{{rule.start_time}}</td>
+                            <td class="col4">{{rule.end_time}}</td>
+                            <td class="col5"><mat-icon svgIcon="edit" (click)="editRule(rule)"></mat-icon></td>
+                            <td class="col6"><mat-icon svgIcon="delete" (click)="deleteRule(rule)"></mat-icon></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-expansion-panel>
+        </cdk-virtual-scroll-viewport>
+    </ng-template>
+</div>

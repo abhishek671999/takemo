@@ -21,6 +21,8 @@ import { CommonModule } from '@angular/common';
 import { PlaceOrdersComponent } from './components/user_screen/place-orders/place-orders.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
+import { AdminLandingComponent } from './components/admin/admin-landing/admin-landing.component';
+
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { MaterialModule } from './material/material.module';
     NotfoundComponent,
     TestComponentComponent,
     PlaceOrdersComponent,
+    AdminLandingComponent,
   ],
   imports: [
     BrowserModule,

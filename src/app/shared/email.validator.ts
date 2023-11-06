@@ -4,7 +4,7 @@ import {
   ValidationErrors,
   AsyncValidatorFn,
 } from '@angular/forms';
-import { SignupService } from './services/login/signup.service';
+import { SignupService } from './services/register/signup.service';
 import { Observable, map } from 'rxjs';
 import { __values } from 'tslib';
 

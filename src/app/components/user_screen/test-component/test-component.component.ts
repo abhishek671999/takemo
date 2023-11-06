@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SignupService } from '../../../shared/services/login/signup.service';
+import { SignupService } from '../../../shared/services/register/signup.service';
 
 @Component({
   selector: 'app-test-component',

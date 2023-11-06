@@ -1,0 +1,9 @@
+.main-container{
+    width: 100%;
+    height: 88vh;
+    background: rgba(240, 242, 245, 1);
+}
+
+.viewport {
+    height: 70vh;
+  }
