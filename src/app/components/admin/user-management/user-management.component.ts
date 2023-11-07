@@ -4,6 +4,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { svgDeleteIcon, svgEditIcon, svgPlusIcon } from 'src/app/shared/icons/svg-icons';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
+import { AddRulesDialogComponent } from '../add-rules-dialog/add-rules-dialog.component';
 // import { AddRulesDialogComponent } from '../add-rules-dialog/add-rules-dialog.component';
 
 @Component({
@@ -72,7 +73,7 @@ export class UserManagementComponent {
 
   addRule(){
     console.log('Add rule in user manangement')
-    //let dialogRef = this.matDialog.open(AddRulesDialogComponent)
+    let dialogRef = this.dialog.open(AddRulesDialogComponent)
        
   }
 }

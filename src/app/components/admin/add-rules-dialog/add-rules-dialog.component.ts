@@ -25,5 +25,6 @@ export class AddRulesDialogComponent {
 
   addRule(){
     console.log('ADd rule in dialog')
+    
   }
 }
