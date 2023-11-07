@@ -13,7 +13,7 @@ const routes: Routes = [
     component: HomeComponent,
     children: [
       { path: 'admin', component: AdminLandingComponent},
-      { path: 'analytics', component: AnalyticsComponent},
+      { path: 'analytics', loadChildren: ()=> import('./analytics/analytics.module').then(m=>m.AnalyticsModule)},
       { path: 'user-management', component: UserManagementComponent},
       { path: 'edit-rules', component: EditRulesDialogComponent},
       { path: 'add-rules', component: AddRulesDialogComponent}

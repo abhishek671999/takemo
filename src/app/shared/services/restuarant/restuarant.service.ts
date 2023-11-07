@@ -10,11 +10,16 @@ export class RestuarantService {
 
   constructor(private _httpClient: HttpClient) { }
 
-  _host = host
   _getRestaurantEndpoint = 'restaurant/get_restaurants/'
+  _editIsRestaurantOpenEndpoint = 'restaurant/edit_is_open/'
 
 
   getResturantInfo(){
-    return this._httpClient.get(this._host+this._getRestaurantEndpoint, {headers: getHeaders()})
-    }
+    return this._httpClient.get(host+this._getRestaurantEndpoint, {headers: getHeaders()})
+  }
+  
+  editIsRestaurantOpen(body){
+    return this._httpClient.post(host+this._editIsRestaurantOpenEndpoint, body,{headers: getHeaders()})
+  }
+
 }

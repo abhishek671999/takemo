@@ -10,7 +10,7 @@ export class RulesService {
   private getRulesEndpoint = 'role/get_rules/'
   private deleteRulesEndpoint = 'role/delete_rule/'
   private addRuleEndpoint = 'role/add_rule/'
-  private getRuleUsersEndpoint = 'role/get_rule_users/'
+  private getRuleUsersEndpoint = 'role/get_rule_users'
   private addUsersToRuleEndpoint = 'role/add_user_to_rule/'
 
   constructor(private _httpClient: HttpClient) { }

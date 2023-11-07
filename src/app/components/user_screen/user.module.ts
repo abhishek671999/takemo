@@ -33,6 +33,7 @@ import { SuccessfulDialogComponent } from './successful-dialog/successful-dialog
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { DeleteCategoryConfirmationDialogComponent } from './delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import { PostPaymentComponent } from './post-payment/post-payment.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,6 @@ import { PostPaymentComponent } from './post-payment/post-payment.component';
     ],
   imports: [CommonModule,FormsModule, UserRoutingModule, MatProgressSpinnerModule, MatExpansionModule, ScrollingModule, 
     MatTabsModule, MatTableModule, MatFormFieldModule, MatInputModule, MatDialogModule, MatButtonModule, 
-    MatIconModule, MatButtonToggleModule, MatCheckboxModule, MatRadioModule, ReactiveFormsModule],
+    MatIconModule, MatButtonToggleModule, MatCheckboxModule, MatRadioModule, ReactiveFormsModule, MatSlideToggleModule],
 })
 export class UserModule {}

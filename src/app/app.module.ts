@@ -22,7 +22,7 @@ import { PlaceOrdersComponent } from './components/user_screen/place-orders/plac
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { AdminLandingComponent } from './components/admin/admin-landing/admin-landing.component';
-
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 
 @NgModule({
   declarations: [
@@ -51,7 +51,8 @@ import { AdminLandingComponent } from './components/admin/admin-landing/admin-la
     ReactiveFormsModule,
     CommonModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    CanvasJSAngularChartsModule
     ],
   providers: [],
   bootstrap: [AppComponent],

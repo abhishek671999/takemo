@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import {  MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { AddUserToRuleComponent } from '../add-user-to-rule/add-user-to-rule.component';
+import {Chart} from 'chart.js';
 
 @Component({
   selector: 'app-edit-rules-dialog',
@@ -10,7 +11,7 @@ import { AddUserToRuleComponent } from '../add-user-to-rule/add-user-to-rule.com
   styleUrls: ['./edit-rules-dialog.component.css']
 })
 export class EditRulesDialogComponent {
-  
+  public chart: any;
   constructor(private _fb: FormBuilder,
     private _ruleService: RulesService,
     private matDialog: MatDialog,
@@ -51,4 +52,5 @@ export class EditRulesDialogComponent {
     console.log('Deleting this user: ', user)
   }
 
+  
 }

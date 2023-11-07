@@ -6,6 +6,12 @@
     height: 70vh;
 }
 
+#divChart{
+    display: block;
+    width: 400px;
+    height: 400px;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     overflow-y: scroll;

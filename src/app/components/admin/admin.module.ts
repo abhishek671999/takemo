@@ -23,6 +23,13 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
 import {MatButtonModule} from '@angular/material/button';
 import { AddUserToRuleComponent } from './add-user-to-rule/add-user-to-rule.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatSelectModule} from '@angular/material/select';
+import {MatRadioModule} from '@angular/material/radio';
+import { SalesAnalyticsComponent } from './analytics/sales-analytics/sales-analytics.component';
+import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-analytics.component';
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+ 
 
 @NgModule({
   declarations: [
@@ -33,7 +40,9 @@ import { AddUserToRuleComponent } from './add-user-to-rule/add-user-to-rule.comp
     UserManagementComponent,
     AddRulesDialogComponent,
     EditRulesDialogComponent,
-    AddUserToRuleComponent
+    AddUserToRuleComponent,
+    SalesAnalyticsComponent,
+    TimelyAnalyticsComponent
   ],
   imports: [
     CommonModule,
@@ -44,12 +53,17 @@ import { AddUserToRuleComponent } from './add-user-to-rule/add-user-to-rule.comp
     ScrollingModule,
     MatDialogModule,
     MatFormFieldModule,
+    FormsModule,
     ReactiveFormsModule,
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
     NgxMatTimepickerModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTabsModule,
+    MatSelectModule,
+    MatRadioModule,
+    CanvasJSAngularChartsModule
   ]
 })
 export class AdminModule { }
