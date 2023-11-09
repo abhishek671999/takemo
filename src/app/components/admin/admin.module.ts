@@ -29,6 +29,9 @@ import {MatRadioModule} from '@angular/material/radio';
 import { SalesAnalyticsComponent } from './analytics/sales-analytics/sales-analytics.component';
 import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-analytics.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { EditUserToRuleComponent } from './edit-user-to-rule/edit-user-to-rule.component';
+import { EditUserToRuleDialogComponent } from './edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
  
 
 @NgModule({
@@ -42,7 +45,9 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
     EditRulesDialogComponent,
     AddUserToRuleComponent,
     SalesAnalyticsComponent,
-    TimelyAnalyticsComponent
+    TimelyAnalyticsComponent,
+    EditUserToRuleComponent,
+    EditUserToRuleDialogComponent
   ],
   imports: [
     CommonModule,
@@ -63,7 +68,8 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
     MatTabsModule,
     MatSelectModule,
     MatRadioModule,
-    CanvasJSAngularChartsModule
+    CanvasJSAngularChartsModule,
+    MatAutocompleteModule
   ]
 })
 export class AdminModule { }

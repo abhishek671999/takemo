@@ -12,6 +12,7 @@ export class OrdersService {
   orderHistoryEndpoint = 'order/get_my_order_history/'
   checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/'
   createOrdersEnpoint = 'order/create_order/'
+  getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/'
 
 
 
@@ -27,7 +28,13 @@ export class OrdersService {
   }
 
   createOrders(body){
-    return this._http.post(this.host+this.createOrdersEnpoint, body, {headers: getHeaders()} )
+    return this._http.post(this.host + this.createOrdersEnpoint, body, {headers: getHeaders()} )
+  }
+
+  getCurrentOrdersCards(params){
+    let httpParams = new HttpParams()
+    httpParams = httpParams.append('restaurant_id', params['restaurant_id'])
+    return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams, headers: getHeaders()})
   }
 
   

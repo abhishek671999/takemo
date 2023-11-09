@@ -47,8 +47,7 @@
                             <th class="col2" scope="col">User Name</th>
                             <th class="col3" scope="col">Email</th>
                             <th class="col4" scope="col">Restaurant Name</th>
-                            <th class="col5" scope="col">Edit</th>
-                            <th class="col6" scope="col">Delete</th>
+                            <th class="col5" scope="col">Delete</th>
                         </tr>
                     </thead>
                     <tbody class="text-center" >
@@ -59,9 +58,6 @@
                             <td class="col3" >{{user.user_email}}</td>
                             <td class="col4">{{user.restaurant_name}}</td>
                             <td class="col5">
-                                    <mat-icon svgIcon="edit" (click)="editUser(user)"></mat-icon>
-                            </td>
-                            <td class="col6">
                                 <mat-icon svgIcon="delete" (click)="deleteUser(user)"></mat-icon>
                             </td>
                         </tr>
@@ -76,7 +72,4 @@
         <mat-icon svgIcon="plus" (click)="addUser()"></mat-icon>
         please
     </ng-template>
-    <div>
-        <canvas id="canvas">{{chart}}</canvas>
-    </div>
 </div>

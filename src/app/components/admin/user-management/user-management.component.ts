@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { svgDeleteIcon, svgEditIcon, svgPlusIcon } from 'src/app/shared/icons/svg-icons';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { AddRulesDialogComponent } from '../add-rules-dialog/add-rules-dialog.component';
+import { EditRulesDialogComponent } from '../edit-rules-dialog/edit-rules-dialog.component';
 // import { AddRulesDialogComponent } from '../add-rules-dialog/add-rules-dialog.component';
 
 @Component({
@@ -20,22 +21,14 @@ export class UserManagementComponent {
     private sanitizer: DomSanitizer,
     
     ){
-    iconRegistry.addSvgIconLiteral(
-      'edit',
-      sanitizer.bypassSecurityTrustHtml(svgEditIcon)
-    );
-    iconRegistry.addSvgIconLiteral(
-      'delete',
-      sanitizer.bypassSecurityTrustHtml(svgDeleteIcon)
-    );
-    iconRegistry.addSvgIconLiteral(
-      'plus',
-      sanitizer.bypassSecurityTrustHtml(svgPlusIcon)
-    );
+      iconRegistry.addSvgIconLiteral('edit', sanitizer.bypassSecurityTrustHtml(svgEditIcon));
+      iconRegistry.addSvgIconLiteral('delete', sanitizer.bypassSecurityTrustHtml(svgDeleteIcon));
+      iconRegistry.addSvgIconLiteral('plus', sanitizer.bypassSecurityTrustHtml(svgPlusIcon));
   }
 
   showSpinner = true
-  public rules
+  public rules;
+
   ngOnInit(){
     console.log('in ngoninit')
     this._rulesService.getRules().subscribe(
@@ -69,6 +62,7 @@ export class UserManagementComponent {
 
   editRule(rule){
     console.log('Edit rule: ', rule)
+    let dialogRef = this.dialog.open(EditRulesDialogComponent, {data: rule})
   }
 
   addRule(){

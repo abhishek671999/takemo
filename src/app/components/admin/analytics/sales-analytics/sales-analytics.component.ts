@@ -76,7 +76,7 @@ export class SalesAnalyticsComponent {
       datasets: [
         {
           label: '# of Amount',
-          data: [data[Object.keys(data)[1]]+1],
+          data: [data[Object.keys(data)[1]]],
           borderWidth: 1
         }
       ]
@@ -100,7 +100,7 @@ export class SalesAnalyticsComponent {
       datasets: [
         {
           label: '# of orders',
-          data: [data[Object.keys(data)[0]]+1],
+          data: [data[Object.keys(data)[0]]],
           borderWidth: 1
         }
       ]

@@ -31,6 +31,12 @@ const routes: Routes = [
       import('./components/admin/admin.module').then((m) => m.AdminModule)
   },
   {
+    path: 'owner',
+    canActivate: [authGuard],
+    loadChildren: () => 
+      import('./components/owner_view/owner.module').then((m) => m.OwnerModule)
+  },
+  {
     path: 'test',
     component: TestComponentNewComponent
   },

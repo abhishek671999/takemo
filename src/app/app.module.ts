@@ -23,6 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { AdminLandingComponent } from './components/admin/admin-landing/admin-landing.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { CurrentOrdersComponent } from './components/owner_view/current-orders/current-orders.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,7 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
     NotfoundComponent,
     TestComponentComponent,
     PlaceOrdersComponent,
-    AdminLandingComponent,
+    AdminLandingComponent
   ],
   imports: [
     BrowserModule,
