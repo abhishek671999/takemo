@@ -27,7 +27,7 @@ export class DeliveryOrderDialogComponent {
         "line_item_id": pendingOrder.line_item_id
       }
       console.log('This is body: ', body)
-      this._orderService.deliverIndividualOrders(body).subscribe(
+      this._orderService.deliverIndividualOrder(body).subscribe(
         data => { 
           pendingOrder.is_delivered =! pendingOrder.is_delivered
           console.log(pendingOrder.is_delivered)

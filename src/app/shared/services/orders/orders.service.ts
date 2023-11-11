@@ -8,27 +8,28 @@ import { getHeaders, host } from '../../site-variable';
 export class OrdersService {
 
   constructor(private _http: HttpClient) { }
-  host = host
-  orderHistoryEndpoint = 'order/get_my_order_history/'
-  checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/'
-  createOrdersEnpoint = 'order/create_order/'
-  getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/'
-  deliverIndividualOrdersEndpoint = 'order/deliver_single_item/'
-  getRestaurantOrdersEndpoint = 'order/get_restaurant_orders/'
+
+  private orderHistoryEndpoint = 'order/get_my_order_history/'
+  private checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/'
+  private createOrdersEnpoint = 'order/create_order/'
+  private deliverIndividualOrderEndpoint = 'order/deliver_single_item/'
+  private deliverEntireOrderEndpoint = 'order/deliver_entire_order/'
+  private getRestaurantOrdersEndpoint = 'order/get_restaurant_orders/'
+  private getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/'
 
 
   getCurrentOrders(){
-    return this._http.get(this.host + this.orderHistoryEndpoint, {headers: getHeaders()})
+    return this._http.get(host + this.orderHistoryEndpoint, {headers: getHeaders()})
   }
 
   checkIfPaymentRequired(){
     let httpParams = new HttpParams()
     httpParams = httpParams.append('restaurant_id', 1)
-    return this._http.get(this.host + this.checkIfPaymentRequiredEndpoint, {headers: getHeaders(), params: httpParams})
+    return this._http.get(host + this.checkIfPaymentRequiredEndpoint, {headers: getHeaders(), params: httpParams})
   }
 
   createOrders(body){
-    return this._http.post(this.host + this.createOrdersEnpoint, body, {headers: getHeaders()} )
+    return this._http.post(host + this.createOrdersEnpoint, body, {headers: getHeaders()} )
   }
 
   getCurrentOrdersCards(params){
@@ -37,13 +38,19 @@ export class OrdersService {
     return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams, headers: getHeaders()})
   }
 
-  deliverIndividualOrders(body){
-    return this._http.post(host + this.deliverIndividualOrdersEndpoint, body, {headers: getHeaders()})
+  deliverIndividualOrder(body){
+    return this._http.post(host + this.deliverIndividualOrderEndpoint, body, {headers: getHeaders()})
+  }
+
+  deliverEntireOrder(body){
+    return this._http.post(host + this.deliverEntireOrderEndpoint, body, {headers: getHeaders()})
   }
 
   getRestaurantOrders(body){
     return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {headers: getHeaders()})
   }
+
+  
 
   
 }

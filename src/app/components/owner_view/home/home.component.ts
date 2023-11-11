@@ -14,15 +14,17 @@ export class HomeComponent {
       label: 'Pending',
       link: '/owner/pending-orders',
         index: 0
-    }, {
-        label: 'History',
-        link: '/owner/orders-history',
-        index: 1
-    }, {
+    },
+    {
       label: 'Current',
       link: '/owner/current-orders',
-      index: 2
-    }
+      index: 1
+    },
+    {
+        label: 'History',
+        link: '/owner/orders-history',
+        index: 2
+    },
 ]; 
 
 }

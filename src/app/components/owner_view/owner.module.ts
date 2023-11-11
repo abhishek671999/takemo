@@ -25,7 +25,8 @@ import {MatButtonModule} from '@angular/material/button';
     HeaderComponent,
     PendingOrdersComponent,
     OrdersHistoryComponent,
-    DeliveryOrderDialogComponent
+    DeliveryOrderDialogComponent,
+    CurrentOrdersComponent
   ],
   imports: [
     CommonModule,
@@ -37,6 +38,9 @@ import {MatButtonModule} from '@angular/material/button';
     MatTableModule,
     MatInputModule,
     MatButtonModule
+  ],
+  exports: [
+    
   ]
 })
 export class OwnerModule { }
