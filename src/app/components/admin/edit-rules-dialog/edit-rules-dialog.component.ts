@@ -21,10 +21,16 @@ export class EditRulesDialogComponent {
   ){}
 
   public users;
+
   ngOnInit(){
     let params = {'rule_id': this.data.id}
     this._ruleService.getRuleUsers(params).subscribe(
-      data => this.users = data,
+      data => {
+        this.users = data
+        this.users.forEach(element => {
+          element.is_deleted = false
+        });
+      },
       error => console.log(error) 
     )
   }
@@ -47,8 +53,11 @@ export class EditRulesDialogComponent {
     }
     this._ruleService.editRule(body).subscribe(
       data =>{
-        alert('Success')
-         console.log(data)},
+        console.log(data)
+        setTimeout(() => {
+          this.dialogRef.close({success: 'ok'})
+        }, 1000);
+      },
       error => {
         console.log(error)
         alert('Error')
@@ -76,13 +85,17 @@ export class EditRulesDialogComponent {
     this._ruleService.deleteUserFromRule(body).subscribe(
       data => {
         console.log(data)
-        alert('User deleted successfully')
+        user.is_deleted = true
       },
       error => {
         console.log(error)
         alert('Error while deleting')
       }
     )
+  }
+
+  onCancelClick(){
+    this.dialogRef.close()
   }
 
   

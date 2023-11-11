@@ -32,6 +32,9 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { EditUserToRuleComponent } from './edit-user-to-rule/edit-user-to-rule.component';
 import { EditUserToRuleDialogComponent } from './edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SuccessMsgDialogComponent } from './success-msg-dialog/success-msg-dialog.component';
+import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.component';
+import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
  
 
 @NgModule({
@@ -47,7 +50,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     SalesAnalyticsComponent,
     TimelyAnalyticsComponent,
     EditUserToRuleComponent,
-    EditUserToRuleDialogComponent
+    EditUserToRuleDialogComponent,
+    SuccessMsgDialogComponent,
+    ErrorMsgDialogComponent,
+    DeleteConfirmationDialogComponent
   ],
   imports: [
     CommonModule,

@@ -47,8 +47,6 @@ export class EditMenuComponent {
   RestaurantAction = this.restaurantStatus? 'Close restaurant':'Open restaurant'
 
   ngOnInit() {
-    
-
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
       setTimeout(() => {
@@ -142,6 +140,7 @@ export class EditMenuComponent {
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }
+  
   toggleRestoOpen(){
     console.log('Restaurant toggled')
     let body = {
@@ -156,6 +155,7 @@ export class EditMenuComponent {
       },
       error => {
         alert('Some thing went wrong')
+        console.log('Error while toggling: ', error)
       }
     )
   }

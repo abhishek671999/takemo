@@ -6,4 +6,9 @@
 
 .viewport {
     height: 70vh;
-  }
+}
+
+.add-rule-icon{
+    width: 100%;
+    height: 3em;
+}

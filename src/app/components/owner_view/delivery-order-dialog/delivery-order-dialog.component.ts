@@ -17,7 +17,7 @@ export class DeliveryOrderDialogComponent {
     data.forEach(ele => {
       ele['is_delivered'] = false
     });
-      console.log('After transformation', data)
+  
     }
     deliver(pendingOrder){
       
@@ -30,8 +30,8 @@ export class DeliveryOrderDialogComponent {
       this._orderService.deliverIndividualOrder(body).subscribe(
         data => { 
           pendingOrder.is_delivered =! pendingOrder.is_delivered
-          console.log(pendingOrder.is_delivered)
-          console.log('Order delivered successfuly', data)},
+          console.log('Order delivered successfuly', data)
+        },
         error => { console.log('Error while delivering orders', error)}
       )
     }

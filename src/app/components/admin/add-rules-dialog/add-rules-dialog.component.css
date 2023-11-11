@@ -1,3 +1,13 @@
 .main-container{
-    width: 50%;
+    width: fit-content;
+}
+
+.form-field{
+    padding: 2px;
+}
+
+.action-container{
+    display: flex;
+    justify-content: center;
+    gap: 1em;
 }

@@ -30,7 +30,10 @@
     padding: .5em 2em;
     transition: 0.3s;
 }
-
+.active-link{
+    color: aqua;
+    background-color: #040404;
+}
 .menu li a:hover{
     box-shadow: 0 -5px 0px #ffffff inset, 500px 0 0 rgb(255, 255, 255, 0.03) inset;
     padding: .3em 2em .7em 2em;

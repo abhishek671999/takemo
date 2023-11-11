@@ -35,7 +35,7 @@ export class EditFormDialogComponent {
     };
     this._editMenuService.editMenu(body).subscribe(
       (data) => {
-        console.log('Successful message from editmenu', data),
+          console.log('Successful message from editmenu', data),
           this.dialogRef.close({ success: 'ok' });
       },
       (error) => {

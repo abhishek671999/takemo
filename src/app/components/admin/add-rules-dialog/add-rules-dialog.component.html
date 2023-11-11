@@ -3,29 +3,28 @@
         <h1 mat-dialog-title>Add this rule</h1>
         <div mat-dialog-content>
             <div>
-                <mat-form-field>
+                <mat-form-field class="form-field">
                     <mat-label>Name</mat-label>
                     <input matInput placeholder="Item Name" formControlName="name">
                 </mat-form-field>
-                <mat-form-field>
+                <mat-form-field  class="form-field">
                     <mat-label>Start time</mat-label>
                     <input matInput [ngxMatTimepicker]="picker" placeholder="Start time" formControlName="start_time">
                     <ngx-mat-timepicker #picker></ngx-mat-timepicker>  
                 </mat-form-field>
-
-                <mat-form-field>
+                <mat-form-field class="form-field">
                     <mat-label>End time</mat-label>
-                    <input matInput [format]="24" [ngxMatTimepicker]="picker2" placeholder="End time" formControlName="end_time">
+                    <input matInput [ngxMatTimepicker]="picker2" placeholder="End time" formControlName="end_time">
                     <ngx-mat-timepicker #picker2></ngx-mat-timepicker>  
                 </mat-form-field>
-                <mat-form-field>
+                <mat-form-field  class="form-field">
                     <mat-label>Max Amount</mat-label>
                     <input matInput placeholder="Max Amount" formControlName="max_amount_per_shift">
                 </mat-form-field>
             </div>
         </div>
-        <div mat-dialog-action>
-            <button mat-raised-button > Cancel</button>
+        <div mat-dialog-actions class="action-container">
+            <button mat-raised-button (click)="closeDialog()"> Cancel</button>
             <button mat-raised-button color="primary" type="submit">Submit</button>
         </div>
 

@@ -5,15 +5,11 @@
         </div>
     </div> 
     <ng-template #ElseBlock>
+        <h2 class="text-center">Add or modify rules</h2>
         <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
             <mat-expansion-panel [expanded]='true' class="expansion-panel" >
-                <mat-expansion-panel-header >
-                    <mat-panel-title>
-                        Add rules here
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
                 <div>
-                    <mat-icon svgIcon="plus" (click)="addRule()"></mat-icon>
+                    <mat-icon class="add-rule-icon" title="Add a new rule here" svgIcon="plus" (click)="addRule()"></mat-icon>
                 </div>
                 <table class="table table-hover">
                     <thead class="text-center">

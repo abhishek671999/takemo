@@ -27,20 +27,34 @@ export class AddRulesDialogComponent {
     max_amount_per_shift: ['', Validators.required]
   });
 
+  getTwentyFourHourTime(amPmString) { 
+    var d = new Date("1/1/2013 " + amPmString); 
+    return d.getHours() + ':' + d.getMinutes(); 
+}
+
+
   addRule(){
-    console.log('ADd rule in dialog')
     let body = {
         "name": this.addRuleForm.value.name,
-        "start_time":this.addRuleForm.value.start_time,
-        "end_time": this.addRuleForm.value.end_time,
+        "start_time":this.getTwentyFourHourTime(this.addRuleForm.value.start_time),
+        "end_time": this.getTwentyFourHourTime(this.addRuleForm.value.end_time),
         "max_amount_per_shift": this.addRuleForm.value.max_amount_per_shift
     }
+    console.log('This is body: ', body)
     this._rulesService.addRule(body).subscribe(
       data => {
         console.log(data)
-        alert('Success')
+        this.dialogRef.close({success: 'ok'})
       },
-      error => window.alert('Failed')
+      error => {
+       console.log(error)
+       this.dialogRef.close({success: 'failed'})
+      }
     )
+  }
+
+  closeDialog(){
+    console.log('  k l')
+    this.dialogRef.close()
   }
 }
