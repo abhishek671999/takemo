@@ -1,0 +1,26 @@
+<div class="main-container">
+    <h1 mat-dialog-title>Deliver Order</h1>
+    <div mat-dialog-content>
+        <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+                <table class="table table-hover">
+                    <thead class="text-center">
+                        <tr>
+                            <th class="col1" scope="col">Order No</th>
+                            <th class="col2" scope="col">Done</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center" >
+                        <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                        <tr class="table-row" *ngFor="let pendingOrder of data; let subIndex = index">
+                            <td class="col1" scope="col" >{{pendingOrder.line_item_id}}</td>
+                            <td class="col2" scope="col">
+                                <button mat-raised-button color="primary" *ngIf='!pendingOrder.is_delivered' (click)="deliver(pendingOrder)">Deliver</button>
+                                <p *ngIf="pendingOrder.is_delivered">Delivered</p>
+                            </td>
+                                <!-- <i class="fa-solid fa-plus"></i> -->
+                        </tr>
+                    </tbody>
+                </table>
+        </cdk-virtual-scroll-viewport>
+    </div>
+</div>

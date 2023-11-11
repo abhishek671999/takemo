@@ -24,11 +24,10 @@ export class ConfirmationDialogComponent {
     this.__ordersService.checkIfPaymentRequired().subscribe(
       data => {
         (console.log(data))
-        this.isPayment = true
+        this.isPayment = data['payment_required']
       },
       error => {
         console.log(error)
-        this.isPayment = false
       }
 
     )
@@ -39,6 +38,25 @@ export class ConfirmationDialogComponent {
   }
 
   onConfirmButtonClick(){
+    //this.dialogRef.close({mode: 'wallet'})
+    let body ={   
+      "total_amount": this.pickedItems.amount,
+      "order_list":this.pickedItems.items,
+      "restaurant_id": this.pickedItems.restaurant_id
+  }
+  localStorage.setItem('total_amount', this.pickedItems.amount)
+  
+    this.__ordersService.createOrders(body).subscribe(
+      data => {
+        console.log('Payment done', data)
+        localStorage.setItem('transaction_id', data['transaction_id'])
+        localStorage.setItem('order_id', data['order_id'])
+        window.location.href = data['payment_url']
+      },
+      error => {
+        console.log('Error while paying: ', error)
+      }
+    )
     this.dialogRef.close({mode: 'wallet'})
   }
 

@@ -31,7 +31,7 @@ import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-an
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { EditUserToRuleComponent } from './edit-user-to-rule/edit-user-to-rule.component';
 import { EditUserToRuleDialogComponent } from './edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
  
 
 @NgModule({

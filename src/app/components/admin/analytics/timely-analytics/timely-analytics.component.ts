@@ -23,7 +23,7 @@ export class TimelyAnalyticsComponent {
   chart4: any = []
 
   constructor(private _analyticsService: AnalyticsService,
-    private _menuService: MenuService){}
+        private _menuService: MenuService){}
 
   
   ngOnInit(){

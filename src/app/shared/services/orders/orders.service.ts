@@ -13,13 +13,13 @@ export class OrdersService {
   checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/'
   createOrdersEnpoint = 'order/create_order/'
   getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/'
-
+  deliverIndividualOrdersEndpoint = 'order/deliver_single_item/'
+  getRestaurantOrdersEndpoint = 'order/get_restaurant_orders/'
 
 
   getCurrentOrders(){
     return this._http.get(this.host + this.orderHistoryEndpoint, {headers: getHeaders()})
   }
-
 
   checkIfPaymentRequired(){
     let httpParams = new HttpParams()
@@ -35,6 +35,14 @@ export class OrdersService {
     let httpParams = new HttpParams()
     httpParams = httpParams.append('restaurant_id', params['restaurant_id'])
     return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams, headers: getHeaders()})
+  }
+
+  deliverIndividualOrders(body){
+    return this._http.post(host + this.deliverIndividualOrdersEndpoint, body, {headers: getHeaders()})
+  }
+
+  getRestaurantOrders(body){
+    return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {headers: getHeaders()})
   }
 
   

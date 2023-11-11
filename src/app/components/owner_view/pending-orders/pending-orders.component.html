@@ -1,1 +1,10 @@
-<p>pending-orders works!</p>
+<div class="main-container">
+    <div class="main-box">
+        <ng-container *ngFor="let item of orderList">
+            <button class="card-box" (click)="itemClicked(item)">
+                <h2 class="text-center">{{item.name}}</h2>
+                <p class="text-center">{{item.quantity}}</p>
+            </button>
+        </ng-container>
+    </div>
+</div>
