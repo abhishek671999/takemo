@@ -24,7 +24,7 @@ export class HeaderComponent {
       href: '',
       action: () => {
         console.log('analytics');
-        this.router.navigate(['./admin/analytics']);
+        this.router.navigate(['./admin/analytics/sales-analytics']);
       },
     },
     {

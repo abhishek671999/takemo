@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-analytics-home',
@@ -10,4 +11,10 @@ export class AnalyticsHomeComponent {
     {name: 'Sales-analytics' , href: "admin/analytics/sales-analytics" },
     {name: 'Timely-analytics', href: "admin/analytics/timely-analytics"}
   ]
+
+  constructor(private _router: Router){}
+
+  ngOnInit(){
+    
+  }
 }

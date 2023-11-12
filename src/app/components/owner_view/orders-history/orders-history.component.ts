@@ -17,7 +17,7 @@ export class OrdersHistoryComponent {
     {ViewValue: 'This month', actualValue: 'this_month'},
   ]
 
-  displayedColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'DelieveredAt', 'Status', 'Location' ];
+  displayedColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'DeliveredAt', 'Location' ];
   
   public currentOrders = []
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
@@ -65,7 +65,7 @@ export class OrdersHistoryComponent {
       }) : order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
-      DelieveredAt: done_time,
+      DeliveredAt: done_time,
       Location: order.restaurant_name,
       Status: order.is_delivered ? 'Delivered': 'Not-delivered'
     }

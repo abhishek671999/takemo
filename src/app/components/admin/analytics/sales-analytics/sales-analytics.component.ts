@@ -8,10 +8,19 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
   selector: 'app-sales-analytics',
   templateUrl: './sales-analytics.component.html',
   styleUrls: ['./sales-analytics.component.css']
+  
 })
+
 export class SalesAnalyticsComponent {
 
-  timeFrames = ["today", "this_week", "this_month", "last_3_months", "last_6_months", "this_year"]
+  timeFrames = [
+    { displayValue: 'Today', actualValue: 'today'},
+    { displayValue: 'This week', actualValue: 'this_week'},
+    { displayValue: 'This month', actualValue: 'this_month'},
+    { displayValue: 'Last 3 months', actualValue: 'last_3_months'},
+    { displayValue: 'Last 6 months', actualValue: 'last_6_months'},
+    { displayValue: 'This year', actualValue: 'this_year'},
+  ]
   groupList = [
     { displayValue:'All', actualValue: 'All'},
     { displayValue:'Item Wise', actualValue: 'item_wise'},
@@ -19,7 +28,7 @@ export class SalesAnalyticsComponent {
   ]
 
   selectedGroup: string = this.groupList[0].actualValue;
-  selectedTimeFrame: string = this.timeFrames[0];
+  selectedTimeFrame: string = this.timeFrames[0].actualValue;
 
 
   chart1: any = []
@@ -75,7 +84,7 @@ export class SalesAnalyticsComponent {
       labels: [Object.keys(data)[1]],
       datasets: [
         {
-          label: '# of Amount',
+          label: 'Total Amount',
           data: [data[Object.keys(data)[1]]],
           borderWidth: 1
         }
@@ -99,7 +108,7 @@ export class SalesAnalyticsComponent {
       labels: [Object.keys(data)[0]],
       datasets: [
         {
-          label: '# of orders',
+          label: 'Number of orders',
           data: [data[Object.keys(data)[0]]],
           borderWidth: 1
         }

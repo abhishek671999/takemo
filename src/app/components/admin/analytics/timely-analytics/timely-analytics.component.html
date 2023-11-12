@@ -1,35 +1,37 @@
 <div class="main-container">
-  <mat-form-field>
-    <mat-label>Select time frame</mat-label>
-    <mat-select [(value)]="selectedTimeFrameForTimelyAnalytics" (selectionChange)="onValueChange('none')" >
-      <mat-option *ngFor="let time of timeFramesForTimelyAnalytics" [value]="time">
-        {{time}}
-      </mat-option>
-    </mat-select>
-</mat-form-field>
-<mat-form-field>
-    <mat-label>Category</mat-label>
-    <mat-select [(value)]="selectedCategory" (selectionChange)="onValueChange('category')">
-      <mat-option *ngFor="let category of categoryList" [value]="category">
-        {{category.name}}
-      </mat-option>
-    </mat-select>
-</mat-form-field>
-<mat-form-field>
-    <mat-label>Item</mat-label>
-    <mat-select [(value)]="selectedItem" (selectionChange)="onValueChange('item')">
-      <mat-option *ngFor="let item of itemList" [value]="item">
-        {{item.name}}
-      </mat-option>
-    </mat-select>
-</mat-form-field>
-<div class="graph-container">
+  <div class="input-container">
+    <mat-form-field>
+      <mat-label>Select time frame</mat-label>
+      <mat-select [(value)]="selectedTimeFrameForTimelyAnalytics" (selectionChange)="onValueChange('none')" >
+        <mat-option *ngFor="let time of timeFramesForTimelyAnalytics" [value]="time.actualValue">
+          {{time.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select [(value)]="selectedCategory" (selectionChange)="onValueChange('category')">
+        <mat-option *ngFor="let category of categoryList" [value]="category">
+          {{category.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Item</mat-label>
+      <mat-select [(value)]="selectedItem" (selectionChange)="onValueChange('item')">
+        <mat-option *ngFor="let item of itemList" [value]="item">
+          {{item.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="graph-container">
     <div class="graph">
         <canvas id="canvas4"></canvas>
     </div>
     <div class="graph">
         <canvas id="canvas3"></canvas>
     </div>
-</div>
+  </div>
 
 </div>

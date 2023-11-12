@@ -11,11 +11,15 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 })
 export class TimelyAnalyticsComponent {
 
-  timeFramesForTimelyAnalytics = ['last_30_days', 'last_month', 'last_12_months']
+  timeFramesForTimelyAnalytics = [
+    {displayValue: 'Last 30 days', actualValue: 'last_30_days' },
+    {displayValue: 'Last month', actualValue: 'last_month' },
+    {displayValue: 'Last 12 months', actualValue: 'last_12_months' },
+  ]
   categoryList = [{'name': 'select', 'id': 0}]
   itemList = [{'name': 'select', 'id': 0}]
 
-  selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0]
+  selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0].actualValue
   selectedCategory = this.categoryList[0];
   selectedItem  = this.itemList[0];
 
@@ -93,7 +97,7 @@ export class TimelyAnalyticsComponent {
         labels: Object.keys(data[time_frame]),
         datasets: [
           {
-            label: '# of orders',
+            label: 'Num of orders',
             data: ordersData,
             borderWidth: 1
           }
@@ -120,7 +124,7 @@ export class TimelyAnalyticsComponent {
         labels: Object.keys(data[time_frame]),
         datasets: [
           {
-            label: '# of orders',
+            label: 'Total Amount',
             data: AmountsData,
             borderWidth: 1
           }

@@ -1,27 +1,29 @@
 <div class="main-container">
-  <mat-form-field>
-    <mat-label>Select time frame</mat-label>
-    <mat-select [(value)]="selectedTimeFrame" (selectionChange)="onValueChange()">
-      <mat-option *ngFor="let time of timeFrames" [value]="time">
-        {{time}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-radio-group
-    aria-labelledby="example-radio-group-label"
-    class="example-radio-group"
-    [(ngModel)]="selectedGroup" (change)="onValueChange()">
-    <mat-radio-button class="example-radio-button" *ngFor="let group of groupList" [value]="group.actualValue">
-        {{group.displayValue}}
-    </mat-radio-button>
-    </mat-radio-group>
-<div class="graph-container">
-    <div class="graph">
-        <canvas id="canvas1"></canvas>
-    </div>
-    <div class="graph">
-        <canvas id="canvas2"></canvas>
-    </div>
-</div>
+  <div class="input-container">
+    <mat-form-field>
+      <mat-label>Select time frame</mat-label>
+      <mat-select [(value)]="selectedTimeFrame" (selectionChange)="onValueChange()">
+        <mat-option *ngFor="let time of timeFrames" [value]="time.actualValue">
+          {{time.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-radio-group
+      aria-labelledby="example-radio-group-label"
+      class="example-radio-group"
+      [(ngModel)]="selectedGroup" (change)="onValueChange()">
+      <mat-radio-button class="example-radio-button" *ngFor="let group of groupList" [value]="group.actualValue">
+          {{group.displayValue}}
+      </mat-radio-button>
+      </mat-radio-group>
+  </div>
+  <div class="graph-container">
+      <div class="graph">
+          <canvas id="canvas1"></canvas>
+      </div>
+      <div class="graph">
+          <canvas id="canvas2"></canvas>
+      </div>
+  </div>
 
 </div>

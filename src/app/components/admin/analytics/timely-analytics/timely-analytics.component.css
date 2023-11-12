@@ -12,6 +12,11 @@
     gap: 20px;
 }
 
+.input-container{
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
 .graph{
     border: solid 1px black;
     width: 50%;

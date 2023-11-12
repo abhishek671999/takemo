@@ -25,7 +25,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { AddUserToRuleComponent } from './add-user-to-rule/add-user-to-rule.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select';
-import {MatRadioModule} from '@angular/material/radio';
+import {MAT_RADIO_DEFAULT_OPTIONS, MatRadioModule} from '@angular/material/radio';
 import { SalesAnalyticsComponent } from './analytics/sales-analytics/sales-analytics.component';
 import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-analytics.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
@@ -76,6 +76,10 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
     MatRadioModule,
     CanvasJSAngularChartsModule,
     MatAutocompleteModule
-  ]
+  ],
+  providers: [{
+    provide: MAT_RADIO_DEFAULT_OPTIONS,
+    useValue: { color: 'primary' },
+}]
 })
 export class AdminModule { }

@@ -107,24 +107,28 @@
     display: none;
 }
 
-.navigation input:checked ~ .hamburger{
+.navigation input:hover ~ .hamburger{
     background: transparent;
 }
 
-.navigation input:checked ~ .hamburger:before{
+.navigation input:hover ~ .hamburger:before{
     top: 0;
     transform: rotate(-45deg);
     width: 30px;
 }
-.navigation input:checked ~ .hamburger:after{
+.navigation input:hover ~ .hamburger:after{
     top: 0;
     transform: rotate(45deg);
     width: 30px;
 }
 
-.navigation input:checked ~ .menu{
+.navigation input:hover ~ .menu{
     left: 0;
     box-shadow: -20px 0 40px rgba(0, 0, 0,  0.3);
+}
+
+.menu:hover{
+    left: 0;
 }
 
 .hamburger, 
