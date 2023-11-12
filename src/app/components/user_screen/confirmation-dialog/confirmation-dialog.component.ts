@@ -51,13 +51,14 @@ export class ConfirmationDialogComponent {
         console.log('Payment done', data)
         localStorage.setItem('transaction_id', data['transaction_id'])
         localStorage.setItem('order_id', data['order_id'])
-        window.location.href = data['payment_url']
+        alert('You order number is: '+ data['order_no'])
+        this.dialogRef.close({mode: 'wallet'})
       },
       error => {
         console.log('Error while paying: ', error)
       }
     )
-    this.dialogRef.close({mode: 'wallet'})
+    
   }
 
   onProceedPaymentClick(){

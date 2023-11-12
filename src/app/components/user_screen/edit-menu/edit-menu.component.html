@@ -34,10 +34,11 @@
                             <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
                                 <td class="col1" >{{subIndex+1}}</td>
                                 <td class="col2" >
+                                    <p class="item-text">{{item.name}}</p>
                                     <img class="indicator-image" *ngIf="item.veg" src="../../../../assets/images/veg_icon.png">
                                     <img class="indicator-image" *ngIf="item.non_veg" src="../../../../assets/images/non_veg_icon.png">
                                     <img class="indicator-image" *ngIf="item.egg" src="../../../../assets/images/egg_icon.jpg">
-                                    {{item.name}}</td>
+                                </td>
                                 <td class="col3" >₹ {{item.price}}</td>
                                 <td class="col4">
                                     <mat-slide-toggle color="primary" [ngModel]='item.is_available' (change)="toggleAvailability(item)"></mat-slide-toggle>

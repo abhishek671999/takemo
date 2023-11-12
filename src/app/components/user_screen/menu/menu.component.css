@@ -69,7 +69,8 @@ th{
 }
 
 .col2{
-    width: 40%;
+    width: 20%;
+    display: relative;
 }
 
 .col3{
@@ -80,11 +81,15 @@ th{
     width: 30%;
 }
 
+.item-text{
+    float: left;
+}
+
 .indicator-image{
     width:30px;
     height: auto;
+    float: right;
 }
-
 ::-webkit-scrollbar {
     width: 6px;
     overflow-y: scroll;
