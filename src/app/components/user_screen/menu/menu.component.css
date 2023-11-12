@@ -80,6 +80,11 @@ th{
     width: 30%;
 }
 
+.indicator-image{
+    width:30px;
+    height: auto;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     overflow-y: scroll;

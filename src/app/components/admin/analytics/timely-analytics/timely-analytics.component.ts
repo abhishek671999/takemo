@@ -82,10 +82,6 @@ export class TimelyAnalyticsComponent {
   )
   }
 
-
-
-
-
   createTimelyOrderAnalyticsChart(data, time_frame){
     let ordersData = []
     for (let ele in data[time_frame] ){

@@ -12,8 +12,12 @@ html{
 }
 .viewport {
     height: 70vh;
-  }
+}
 
+.indicator-image{
+    width:30px;
+    height: auto;
+}
 
 .menu-container{
     width: 80%;

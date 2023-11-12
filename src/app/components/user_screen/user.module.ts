@@ -28,7 +28,7 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
 import { AddCategoryDialogComponent } from './add-category-dialog/add-category-dialog.component';
 import { AddItemDialogComponent } from './add-item-dialog/add-item-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import {MatRadioModule} from '@angular/material/radio';
+import {MAT_RADIO_DEFAULT_OPTIONS, MatRadioModule} from '@angular/material/radio';
 import { SuccessfulDialogComponent } from './successful-dialog/successful-dialog.component';
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { DeleteCategoryConfirmationDialogComponent } from './delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
@@ -57,5 +57,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
   imports: [CommonModule,FormsModule, UserRoutingModule, MatProgressSpinnerModule, MatExpansionModule, ScrollingModule, 
     MatTabsModule, MatTableModule, MatFormFieldModule, MatInputModule, MatDialogModule, MatButtonModule, 
     MatIconModule, MatButtonToggleModule, MatCheckboxModule, MatRadioModule, ReactiveFormsModule, MatSlideToggleModule],
+  providers:[{
+      provide: MAT_RADIO_DEFAULT_OPTIONS,
+      useValue: { color: 'primary' },
+    }]
 })
 export class UserModule {}

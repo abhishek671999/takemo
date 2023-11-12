@@ -64,14 +64,17 @@ export class EditMenuComponent {
     )
   }
 
-  toggleAvailability(item, availablity) {
+  toggleAvailability(item) {
     console.log('Toggled', item);
     let body = {
       item_id: item.id,
-      is_available: availablity,
+      is_available: !item.is_available,
     };
     this._menuEditService.editItemAvailability(body).subscribe(
-      (data) => console.log('Toggle successfule: ', data),
+      (data) => {
+        console.log('Toggle successfule: ', data)
+        item.is_available = !item.is_available
+      },
       (error) => console.log('Toggle failed: ', error)
     );
   }
