@@ -12,16 +12,20 @@ import { SuccessfulDialogComponent } from '../successful-dialog/successful-dialo
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
 import { DeleteCategoryConfirmationDialogComponent } from '../delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
-import { svgAvilableIcon, svgDeleteIcon, svgEditIcon, svgNotAvailableIcon, svgPlusIcon } from 'src/app/shared/icons/svg-icons';
+import {
+  svgAvilableIcon,
+  svgDeleteIcon,
+  svgEditIcon,
+  svgNotAvailableIcon,
+  svgPlusIcon,
+} from 'src/app/shared/icons/svg-icons';
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
-
 
 @Component({
   selector: 'app-edit-menu',
   templateUrl: './edit-menu.component.html',
   styleUrls: ['./edit-menu.component.css'],
 })
-
 export class EditMenuComponent {
   constructor(
     private _route: ActivatedRoute,
@@ -33,18 +37,35 @@ export class EditMenuComponent {
     private _menuEditService: EditMenuService,
     private _restaurantService: RestuarantService
   ) {
-    iconRegistry.addSvgIconLiteral('Available',sanitizer.bypassSecurityTrustHtml(svgAvilableIcon));
-    iconRegistry.addSvgIconLiteral('Not Availabe', sanitizer.bypassSecurityTrustHtml(svgNotAvailableIcon));
-    iconRegistry.addSvgIconLiteral('edit', sanitizer.bypassSecurityTrustHtml(svgEditIcon));
-    iconRegistry.addSvgIconLiteral('delete', sanitizer.bypassSecurityTrustHtml(svgDeleteIcon));
-    iconRegistry.addSvgIconLiteral('plus', sanitizer.bypassSecurityTrustHtml(svgPlusIcon));
+    iconRegistry.addSvgIconLiteral(
+      'Available',
+      sanitizer.bypassSecurityTrustHtml(svgAvilableIcon)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'Not Availabe',
+      sanitizer.bypassSecurityTrustHtml(svgNotAvailableIcon)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'edit',
+      sanitizer.bypassSecurityTrustHtml(svgEditIcon)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'delete',
+      sanitizer.bypassSecurityTrustHtml(svgDeleteIcon)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'plus',
+      sanitizer.bypassSecurityTrustHtml(svgPlusIcon)
+    );
   }
 
   menu_response: any;
   fontStyle?: string;
   restaurantId: number;
   restaurantStatus = false;
-  RestaurantAction = this.restaurantStatus? 'Close restaurant':'Open restaurant'
+  RestaurantAction = this.restaurantStatus
+    ? 'Close restaurant'
+    : 'Open restaurant';
 
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -59,9 +80,9 @@ export class EditMenuComponent {
       }, 1000);
     });
     this._menuService.getMenu(this.restaurantId).subscribe(
-      data => this.restaurantStatus = data['is_open'],
-      error => console.log(error)
-    )
+      (data) => (this.restaurantStatus = data['is_open']),
+      (error) => console.log(error)
+    );
   }
 
   toggleAvailability(item) {
@@ -72,8 +93,8 @@ export class EditMenuComponent {
     };
     this._menuEditService.editItemAvailability(body).subscribe(
       (data) => {
-        console.log('Toggle successfule: ', data)
-        item.is_available = !item.is_available
+        console.log('Toggle successfule: ', data);
+        item.is_available = !item.is_available;
       },
       (error) => console.log('Toggle failed: ', error)
     );
@@ -143,23 +164,25 @@ export class EditMenuComponent {
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }
-  
-  toggleRestoOpen(){
-    console.log('Restaurant toggled')
+
+  toggleRestoOpen() {
+    console.log('Restaurant toggled');
     let body = {
-    "restaurant_id": 1,
-    "is_open": !this.restaurantStatus
-    }
+      restaurant_id: 1,
+      is_open: !this.restaurantStatus,
+    };
     this._restaurantService.editIsRestaurantOpen(body).subscribe(
-      data => {
-        this.RestaurantAction = this.restaurantStatus? 'Close restaurant':'Open restaurant'
-        this.restaurantStatus = ! this.restaurantStatus
-        console.log(data)
+      (data) => {
+        this.RestaurantAction = this.restaurantStatus
+          ? 'Close restaurant'
+          : 'Open restaurant';
+        this.restaurantStatus = !this.restaurantStatus;
+        console.log(data);
       },
-      error => {
-        alert('Some thing went wrong')
-        console.log('Error while toggling: ', error)
+      (error) => {
+        alert('Some thing went wrong');
+        console.log('Error while toggling: ', error);
       }
-    )
+    );
   }
 }

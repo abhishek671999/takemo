@@ -16,6 +16,7 @@ export class PendingOrdersComponent {
   orderList = [];
   currentOrders;
   ngOnInit(){
+    console.log('In pending order ngInit')
     let params = {'restaurant_id': 1}
     this._orderService.getCurrentOrdersCards(params).subscribe(
       data =>{ 

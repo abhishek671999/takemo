@@ -7,7 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material/material.module';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from '../../owner_view/confirmation-dialog/confirmation-dialog.component';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 
 @Component({
@@ -17,7 +17,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 })
 export class MenuComponent {
   amount: number = 0;
-  orderList = { items: [], amount: 0, restaurant_id: null};
+  orderList = { items: [], amount: 0, restaurant_id: null };
   constructor(
     private _menuService: MenuService,
     private _route: ActivatedRoute,
@@ -36,11 +36,12 @@ export class MenuComponent {
       this.restaurant_id = parseInt(params.get('id'));
       this._menuService.getMenu(this.restaurant_id).subscribe(
         (data) => {
-          (this.menu_response = data),
-          console.log(this.menu_response)
+          (this.menu_response = data), console.log(this.menu_response);
           this.menu_response.menu.forEach((category) => {
-            category.category.items.filter((element) => element.is_available == 1)
-          }) 
+            category.category.items.filter(
+              (element) => element.is_available == 1
+            );
+          });
           this.setQuantity();
         },
         (error) => console.log('Error while getting menu: ', error)
@@ -87,7 +88,7 @@ export class MenuComponent {
       });
     });
     this.orderList.amount = this.amount;
-    this.orderList.restaurant_id = this.restaurant_id
+    this.orderList.restaurant_id = this.restaurant_id;
     console.log(this.orderList);
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
       data: this.orderList,
@@ -95,10 +96,10 @@ export class MenuComponent {
     dialogRef.afterClosed().subscribe((result) => {
       console.log('Result from dialog component: ', result);
       if (result) {
-        console.log(result)
-        this.orderList = { items: [], amount: 0, restaurant_id: null};
+        console.log(result);
+        this.orderList = { items: [], amount: 0, restaurant_id: null };
       } else {
-        this.orderList = { items: [], amount: 0, restaurant_id: null};
+        this.orderList = { items: [], amount: 0, restaurant_id: null };
       }
     });
   }

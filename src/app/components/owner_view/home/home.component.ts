@@ -8,23 +8,5 @@ import { Router,NavigationStart }  from "@angular/router";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-
-  navLinks = [
-    {
-      label: 'Pending',
-      link: '/owner/pending-orders',
-        index: 0
-    },
-    {
-      label: 'Current',
-      link: '/owner/current-orders',
-      index: 1
-    },
-    {
-        label: 'History',
-        link: '/owner/orders-history',
-        index: 2
-    },
-]; 
-
+  
 }

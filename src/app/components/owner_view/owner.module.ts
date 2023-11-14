@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
+import { OrdersHomeComponent } from './orders-home/orders-home.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import {MatButtonModule} from '@angular/material/button';
     PendingOrdersComponent,
     OrdersHistoryComponent,
     DeliveryOrderDialogComponent,
-    CurrentOrdersComponent
+    CurrentOrdersComponent,
+    OrdersHomeComponent
   ],
   imports: [
     CommonModule,
