@@ -6,6 +6,7 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { EditRulesDialogComponent } from './edit-rules-dialog/edit-rules-dialog.component';
 import { AddRulesDialogComponent } from './add-rules-dialog/add-rules-dialog.component';
+import { BillingComponent } from './billing/billing.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,8 @@ const routes: Routes = [
       { path: 'analytics', loadChildren: ()=> import('./analytics/analytics.module').then(m=>m.AnalyticsModule)},
       { path: 'user-management', component: UserManagementComponent},
       { path: 'edit-rules', component: EditRulesDialogComponent},
-      { path: 'add-rules', component: AddRulesDialogComponent}
+      { path: 'add-rules', component: AddRulesDialogComponent},
+      { path: 'billing', component: BillingComponent}
     ]
   }
 ];

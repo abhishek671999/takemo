@@ -22,6 +22,7 @@
     "@angular/router": "^16.1.0",
     "@canvasjs/angular-charts": "^1.0.3",
     "chart.js": "^4.4.0",
+    "ng2-pdf-viewer": "^10.0.0",
     "ngx-mat-timepicker": "^16.1.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

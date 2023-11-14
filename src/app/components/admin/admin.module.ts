@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
-
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
@@ -35,6 +35,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SuccessMsgDialogComponent } from './success-msg-dialog/success-msg-dialog.component';
 import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { BillingComponent } from './billing/billing.component';
  
 
 @NgModule({
@@ -53,7 +54,8 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
     EditUserToRuleDialogComponent,
     SuccessMsgDialogComponent,
     ErrorMsgDialogComponent,
-    DeleteConfirmationDialogComponent
+    DeleteConfirmationDialogComponent,
+    BillingComponent
   ],
   imports: [
     CommonModule,
@@ -76,6 +78,7 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
     MatRadioModule,
     CanvasJSAngularChartsModule,
     MatAutocompleteModule,
+    PdfViewerModule
   ],
   providers: [{
     provide: MAT_RADIO_DEFAULT_OPTIONS,

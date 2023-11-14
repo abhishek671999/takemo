@@ -1,0 +1,8 @@
+<div class="main-container">    
+    <pdf-viewer [src]="pdfSrc" 
+            *ngIf="pdfSrc"
+                  [render-text]="true"
+                  class="pdf-viewer"
+    ></pdf-viewer>
+    <button mat-raised-button color="primary" (click)="downloadPdf()">Download PDF </button>
+</div>

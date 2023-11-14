@@ -36,6 +36,14 @@ export class HeaderComponent {
       },
     },
     {
+      name: 'Billing',
+      href: '',
+      action : () => {
+        console.log('Billing')
+        this.router.navigate(['./admin/billing'])
+      }
+    },
+    {
       name: 'Settings',
       href: '',
       action: () => console.log('My settings'),
