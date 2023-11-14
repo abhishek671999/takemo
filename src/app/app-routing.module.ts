@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home_screen/home/home.component';
-import { DummyComponent } from './dummy/dummy.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { authGuard } from './gurd/auth/auth.guard';
-import { TestComponentComponent } from './test-component/test-component.component';
 import { TestComponentNewComponent } from './test-component-new/test-component-new.component';
 
 const routes: Routes = [
@@ -48,4 +46,4 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
-export const routingComponents = [DummyComponent, HomeComponent];
+export const routingComponents = [HomeComponent];

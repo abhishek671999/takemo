@@ -14,8 +14,6 @@ import { ContactUsComponent } from './components/home_screen/contact-us/contact-
 import { TestComponentComponent } from './components/user_screen/test-component/test-component.component';
 import { PostLoginComponent } from './components/user_screen/post-login/post-login.component';
 import { LoginComponent } from './components/home_screen/login/login.component';
-import { UserComponent } from './components/user_screen/user/user.component';
-import { DummyComponent } from './dummy/dummy.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { CommonModule } from '@angular/common';
 import { PlaceOrdersComponent } from './components/user_screen/place-orders/place-orders.component';
@@ -38,7 +36,6 @@ import { CurrentOrdersComponent } from './components/owner_view/current-orders/c
     TestComponentComponent,
     PostLoginComponent,
     LoginComponent,
-    DummyComponent,
     NotfoundComponent,
     TestComponentComponent,
     PlaceOrdersComponent,
