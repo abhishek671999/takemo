@@ -75,7 +75,7 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
     MatSelectModule,
     MatRadioModule,
     CanvasJSAngularChartsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
   providers: [{
     provide: MAT_RADIO_DEFAULT_OPTIONS,

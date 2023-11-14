@@ -1,16 +1,10 @@
 <app-header></app-header>
-<!-- <mat-tab-group>
-    <mat-tab 
-    label="link.label" *ngFor="let link of navLinks"
-    [routerLink]="link.link"
-    routerLinkActive #rla="routerLinkActive"> link.label
-    </mat-tab>
-</mat-tab-group> -->
     <nav mat-tab-nav-bar>
         <a mat-tab-link
         *ngFor="let link of navLinks"
         [routerLink]="link.link"
         routerLinkActive #rla="routerLinkActive"
+        [active]="rla.isActive"
         >
     {{link.label}}
     </a>

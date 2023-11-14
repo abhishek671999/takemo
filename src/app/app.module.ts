@@ -53,7 +53,7 @@ import { CurrentOrdersComponent } from './components/owner_view/current-orders/c
     CommonModule,
     BrowserAnimationsModule,
     MaterialModule,
-    CanvasJSAngularChartsModule
+    CanvasJSAngularChartsModule,
     ],
   providers: [],
   bootstrap: [AppComponent],
