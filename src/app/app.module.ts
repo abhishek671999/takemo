@@ -11,8 +11,6 @@ import { SignupComponent } from './components/home_screen/signup/signup.componen
 import { ForgotpasswordComponent } from './components/home_screen/forgotpassword/forgotpassword.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ContactUsComponent } from './components/home_screen/contact-us/contact-us.component';
-import { TestComponentComponent } from './components/user_screen/test-component/test-component.component';
-import { PostLoginComponent } from './components/user_screen/post-login/post-login.component';
 import { LoginComponent } from './components/home_screen/login/login.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { CommonModule } from '@angular/common';
@@ -33,11 +31,8 @@ import { CurrentOrdersComponent } from './components/owner_view/current-orders/c
     ForgotpasswordComponent,
     routingComponents,
     ContactUsComponent,
-    TestComponentComponent,
-    PostLoginComponent,
     LoginComponent,
     NotfoundComponent,
-    TestComponentComponent,
     PlaceOrdersComponent,
     AdminLandingComponent
   ],
