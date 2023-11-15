@@ -9,9 +9,14 @@ import { getHeaders, host } from '../../site-variable';
 export class MeService {
 
   meEndpoint = 'users/me/'
+  rolesEndpoint = 'role/get_roles/'
   constructor(private __httpClient: HttpClient) { }
 
   getMyInfo(){
     return this.__httpClient.get(host+this.meEndpoint, {headers: getHeaders()})
+  }
+
+  getRoles(){
+    return this.__httpClient.get(host+this.rolesEndpoint, {headers: getHeaders()})
   }
 }

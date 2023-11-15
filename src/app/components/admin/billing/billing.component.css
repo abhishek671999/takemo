@@ -10,6 +10,7 @@
 .pdf-viewer{
     display: block; 
     width: 70%;
-     min-height: 80vh;
+     min-height: 70vh;
      border: 1px solid black;
+     margin-top: 10px;
 }
