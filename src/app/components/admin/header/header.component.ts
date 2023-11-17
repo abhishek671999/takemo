@@ -53,11 +53,18 @@ export class HeaderComponent {
         action: () => console.log('My settings'),
       },
       'edit_menu': {
-        name: 'Edit Menu',
+        name: 'Menu',
         href: '',
         action: () => {
           this.router.navigate(['./owner/edit-menu/1'])
         }
+      },
+      'orders': {
+          name: 'Orders',
+          href: '',
+          action: () => {
+            this.router.navigate(['./owner/pending-orders'])
+          }
       },
       'logout': {
         name: 'Logout',
@@ -66,6 +73,27 @@ export class HeaderComponent {
       },
     }
   
+    addAdminNavOptions(){
+      let adminNavOptions = ['shift', 'analytics', 'billing']
+      for(let option of adminNavOptions){
+        if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+          this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+        }
+      }
+      
+    }
+  
+  addRestaurantOwnerNavOptions(){
+    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
+    for(let option of restaurantOwnerNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
+  
+
+    
   dropdownList = [this.AvailableDropdownList['profile'], this.AvailableDropdownList['logout']]
   username: string
 
@@ -74,35 +102,40 @@ export class HeaderComponent {
       data => {
         console.log(data)
         this.username = data['email']
-        // if(data['restaurants'].length > 0){
-        //   this.dropdownList.splice(1, 0, this.AvailableDropdownList['analytics'])
-        // }
-        // if(data['companies'].length > 0){
-        //   this.dropdownList.splice(1, 0, this.AvailableDropdownList['shift'])
-        // }
-      },
-      error => {
-        console.log('Error while getting my info')
-      }
-    )
-
-    this._meService.getRoles().subscribe(
-      data => {
-        for (let role of data['roles']){
-          console.log(role)
-          if(role.role_name=='restaurant_admin'){
-            this.dropdownList.splice(1, 0, this.AvailableDropdownList['analytics'])
-            this.dropdownList.splice(1, 0, this.AvailableDropdownList['edit_menu'])
-          }else if(role.role_name == 'corporate_admin'){
-            this.dropdownList.splice(1, 0, this.AvailableDropdownList['shift'])
-            this.dropdownList.splice(1, 0, this.AvailableDropdownList['billing'])
+        for(let company of data['companies']){
+          if(company.role_name == 'corporate_admin'){
+            this.addAdminNavOptions()
+            break
+          }
+        }
+        for(let restaurant of data['restaurants']){
+          if(restaurant.role_name == 'restaurant_admin'){
+            this.addRestaurantOwnerNavOptions()
+            break
           }
         }
       },
       error => {
-        console.log('Error while loading the file')
+        console.log('Error while getting my info', error)
       }
     )
+
+    // this._meService.getRoles().subscribe(
+    //   data => {
+    //     for (let role of data['roles']){
+    //       console.log(role)
+    //       if(role.role_name=='restaurant_admin'){
+    //         this.dropdownList.splice(1, 0, this.AvailableDropdownList['analytics'])
+    //         this.dropdownList.splice(1, 0, this.AvailableDropdownList['edit_menu'])
+    //       }else if(role.role_name == 'corporate_admin'){
+    //         this.dropdownList.splice(1, 0, this.AvailableDropdownList['shift'])
+    //       }
+    //     }
+    //   },
+    //   error => {
+    //     console.log('Error while loading the file')
+    //   }
+    // )
       
   }
 
@@ -112,3 +145,4 @@ export class HeaderComponent {
     this.dropdownList[index].action();
   }
 }
+
