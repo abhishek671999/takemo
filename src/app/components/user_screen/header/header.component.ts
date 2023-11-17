@@ -8,6 +8,9 @@ import { MeService } from 'src/app/shared/services/register/me.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
+
+
+
 export class HeaderComponent {
   constructor(
     private _loginService: LoginService, 
@@ -71,42 +74,49 @@ export class HeaderComponent {
         href: '',
         action: () => this._loginService.logOut(),
       },
-      'my_orders': {
-        name: 'Orders',
-        href: '',
-        action: () => {
-          this.router.navigate(['home/myorders'])
-        }
-      },
-      'place_orders': {
-        name: 'Place Orders',
-        href: '',
-        action: () => {
-          this.router.navigate(['home'])
-        }
-      }
     }
   
+    addAdminNavOptions(){
+      let adminNavOptions = ['shift', 'analytics', 'billing']
+      for(let option of adminNavOptions){
+        if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+          this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+        }
+      }
+      
+    }
+  
+  addRestaurantOwnerNavOptions(){
+    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
+    for(let option of restaurantOwnerNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
+  
+
+    
   dropdownList = [this.AvailableDropdownList['profile'], this.AvailableDropdownList['logout']]
   username: string
 
   ngOnInit(){
+    console.log('user screen on init')
     this._meService.getMyInfo().subscribe(
       data => {
         console.log(data)
         this.username = data['email']
-        if(data['restaurants'].length > 0){
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['analytics'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['edit_menu'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['billing'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['orders'])
+        for(let company of data['companies']){
+          if(company.role_name == 'corporate_admin'){
+            this.addAdminNavOptions()
+            break
+          }
         }
-        if(data['companies'].length > 0){
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['shift'])
-        }
-        else{
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['place_orders'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['my_orders'])
+        for(let restaurant of data['restaurants']){
+          if(restaurant.role_name == 'restaurant_admin'){
+            this.addRestaurantOwnerNavOptions()
+            break
+          }
         }
       },
       error => {
@@ -130,7 +140,11 @@ export class HeaderComponent {
     //     console.log('Error while loading the file')
     //   }
     // )
-}
+      
+  }
+
+  
+
   onClick(index: number) {
     this.dropdownList[index].action();
   }

@@ -8,8 +8,10 @@ import { MeService } from 'src/app/shared/services/register/me.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
 
+
+
+export class HeaderComponent {
   constructor(
     private _loginService: LoginService, 
     private router: Router,
@@ -74,6 +76,27 @@ export class HeaderComponent {
       },
     }
   
+    addAdminNavOptions(){
+      let adminNavOptions = ['shift', 'analytics', 'billing']
+      for(let option of adminNavOptions){
+        if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+          this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+        }
+      }
+      
+    }
+  
+  addRestaurantOwnerNavOptions(){
+    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
+    for(let option of restaurantOwnerNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
+  
+
+    
   dropdownList = [this.AvailableDropdownList['profile'], this.AvailableDropdownList['logout']]
   username: string
 
@@ -82,14 +105,17 @@ export class HeaderComponent {
       data => {
         console.log(data)
         this.username = data['email']
-        if(data['restaurants'].length > 0){
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['analytics'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['edit_menu'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['billing'])
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['orders'])
+        for(let company of data['companies']){
+          if(company.role_name == 'corporate_admin'){
+            this.addAdminNavOptions()
+            break
+          }
         }
-        if(data['companies'].length > 0){
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList['shift'])
+        for(let restaurant of data['restaurants']){
+          if(restaurant.role_name == 'restaurant_admin'){
+            this.addRestaurantOwnerNavOptions()
+            break
+          }
         }
       },
       error => {
