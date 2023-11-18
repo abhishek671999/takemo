@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
 })
 export class AnalyticsHomeComponent {
   analyticsPages = [
-    {name: 'Sales-analytics' , href: "admin/analytics/sales-analytics" },
-    {name: 'Timely-analytics', href: "admin/analytics/timely-analytics"}
+    {name: 'Sales-analytics' , href: "sales-analytics" },
+    {name: 'Timely-analytics', href: "timely-analytics"}
   ]
 
   constructor(private _router: Router){}

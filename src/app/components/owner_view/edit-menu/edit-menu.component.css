@@ -14,14 +14,12 @@ html{
     height: 70vh;
 }
 
-.item-text{
-    float: left;
-}
+
 
 .indicator-image{
     width:30px;
     height: auto;
-    float: right;
+    float: left;
 }
 
 .menu-container{

@@ -101,7 +101,7 @@ export class HeaderComponent {
     this._meService.getMyInfo().subscribe(
       data => {
         console.log(data)
-        this.username = data['email']
+        this.username = data['username'] ? data['username'] : data['email']
         for(let company of data['companies']){
           if(company.role_name == 'corporate_admin'){
             this.addAdminNavOptions()

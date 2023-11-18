@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AnalyticsRoutingModule } from './analytics-routing.module';
 import { AnalyticsHomeComponent } from './analytics-home/analytics-home.component';
- 
-
+import { NgApexchartsModule } from "ng-apexcharts";
 
 
 @NgModule({
@@ -14,6 +13,7 @@ import { AnalyticsHomeComponent } from './analytics-home/analytics-home.componen
   imports: [
     CommonModule,
     AnalyticsRoutingModule,
+    NgApexchartsModule
   ]
 })
 export class AnalyticsModule { }

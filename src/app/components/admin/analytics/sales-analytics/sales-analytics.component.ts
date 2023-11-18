@@ -1,7 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
+import { ChartComponent } from "ng-apexcharts";
+import {
+  ApexNonAxisChartSeries,
+  ApexResponsive,
+  ApexChart
+} from "ng-apexcharts";
+
+export type ChartOptions = {
+  series: ApexNonAxisChartSeries;
+  chart: ApexChart;
+  responsive: ApexResponsive[];
+  labels: any;
+};
 
 
 @Component({
@@ -12,6 +25,8 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 })
 
 export class SalesAnalyticsComponent {
+  @ViewChild("chart") chart: ChartComponent;
+  public chartOptions: Partial<ChartOptions>;
 
   timeFrames = [
     { displayValue: 'Today', actualValue: 'today'},
@@ -178,6 +193,35 @@ export class SalesAnalyticsComponent {
         },
       }
     })
+  }
+
+  createCategoryWiseTotalOrderPieChart(data){
+    console.log('Creating category wise pie chart')
+    let chartData = []
+    for(let point in data['category_wise_data']){
+      chartData.push(data['category_wise_data'][point]['quantity'])
+    }
+    return this.chartOptions = {
+      series: chartData,
+      chart: {
+        width: 380,
+        type: "pie"
+      },
+      labels: Object.keys(data['category_wise_data']),
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: "bottom"
+            }
+          }
+        }
+      ]
+    };
   }
 
   createCategoryWiseTotalOrderChart(data){

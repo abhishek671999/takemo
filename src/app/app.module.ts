@@ -20,6 +20,7 @@ import { MaterialModule } from './material/material.module';
 import { AdminLandingComponent } from './components/admin/admin-landing/admin-landing.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { CurrentOrdersComponent } from './components/owner_view/current-orders/current-orders.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { CurrentOrdersComponent } from './components/owner_view/current-orders/c
     BrowserAnimationsModule,
     MaterialModule,
     CanvasJSAngularChartsModule,
+    NgApexchartsModule
     ],
   providers: [],
   bootstrap: [AppComponent],
