@@ -74,10 +74,17 @@ export class HeaderComponent {
         href: '',
         action: () => this._loginService.logOut(),
       },
+      'menu':{
+        name: 'Menu',
+        href: '',
+        action: () => {
+          this.router.navigate(['./user/menu/1'])
+      }
+    }
     }
   
     addAdminNavOptions(){
-      let adminNavOptions = ['shift', 'analytics', 'billing']
+      let adminNavOptions = ['shift', 'analytics', 'billing', 'menu']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
