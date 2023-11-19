@@ -9,27 +9,4 @@ import { MeService } from 'src/app/shared/services/register/me.service';
 })
 export class UserComponent {
 
-  constructor(private _meService: MeService, private _router: Router){}
-
-  ngOnInit(){
-    console.log('In user component')
-    this._meService.getMyInfo().subscribe(
-      data => {
-        console.log(data, data['restaurants'].length, )
-        if(data['restaurants'].length > 0){
-          this._router.navigate(['admin/user-management'])
-          
-        }
-        else if(data['companies'].length > 0){
-          this._router.navigate(['owner/pending-orders'])
-        }
-        else{
-          this._router.navigate([''])
-        }
-      },
-      error => {
-
-      }
-    )
-  }
 }

@@ -4,6 +4,7 @@ import { HomeComponent } from './components/home_screen/home/home.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { authGuard } from './gurd/auth/auth.guard';
 import { TestComponentNewComponent } from './test-component-new/test-component-new.component';
+import { PostLoginComponent } from './components/post-login/post-login.component';
 
 const routes: Routes = [
   {
@@ -17,10 +18,15 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'home',
+    path: 'user',
     canActivate: [authGuard],
     loadChildren: () =>
       import('./components/user_screen/user.module').then((m) => m.UserModule),
+  },
+  {
+    path: 'home',
+    canActivate: [authGuard],
+    component: PostLoginComponent
   },
   {
     path: 'admin',

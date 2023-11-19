@@ -21,6 +21,7 @@ import { AdminLandingComponent } from './components/admin/admin-landing/admin-la
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { CurrentOrdersComponent } from './components/owner_view/current-orders/current-orders.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { PostLoginComponent } from './components/post-login/post-login.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     LoginComponent,
     NotfoundComponent,
     PlaceOrdersComponent,
-    AdminLandingComponent
+    AdminLandingComponent,
+    PostLoginComponent
   ],
   imports: [
     BrowserModule,
