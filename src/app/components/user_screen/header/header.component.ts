@@ -78,7 +78,7 @@ export class HeaderComponent {
         name: 'Menu',
         href: '',
         action: () => {
-          this.router.navigate(['./user/menu/1'])
+          this.router.navigate(['./user'])
       }
     }
     }
@@ -96,6 +96,15 @@ export class HeaderComponent {
   addRestaurantOwnerNavOptions(){
     let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
     for(let option of restaurantOwnerNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
+
+  addUserNavOptions(){
+    let userNavOptions = ['menu']
+    for(let option of userNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
       }
@@ -124,6 +133,9 @@ export class HeaderComponent {
             this.addRestaurantOwnerNavOptions()
             break
           }
+        }
+        if(data['restaurants'].length == 0 && data['companies'].length == 0){
+          this.addUserNavOptions()
         }
       },
       error => {

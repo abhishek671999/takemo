@@ -26,7 +26,7 @@ export class HomeComponent {
   
   onSelect(info){
     console.log(info.restaurant_id)
-    this._router.navigate(['./home/menu', info.restaurant_id])
+    this._router.navigate(['./user/menu', info.restaurant_id])
   }
 
   printpath(parent: string, config: Route[]) {
