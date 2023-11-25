@@ -19,8 +19,11 @@
                 </tr>
             </tbody>
         </table>
+        <div *ngIf="platformFee">
+            <p>Platform Fee: {{platformFee.platform_fee_percentage}}% + Gst {{platformFee.platform_fee_gst_percentage}}% = {{platformFee.platformFeeAmount}}</p>
+        </div>
         <div class="text-center amount">Total Amount:&nbsp;
-            &nbsp;₹ {{pickedItems.amount}} </div>
+            &nbsp;₹ {{totalAmount}} </div>
     </div>
     <div mat-dialog-actions class="button-container">
         <div class="confirmation-buttons">

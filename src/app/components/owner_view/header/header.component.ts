@@ -102,7 +102,6 @@ export class HeaderComponent {
     }
   }
   
-
     
   dropdownList = [this.AvailableDropdownList['profile'], this.AvailableDropdownList['logout']]
   username: string
