@@ -10,10 +10,13 @@ import { MeService } from 'src/app/shared/services/register/me.service';
 export class PostLoginComponent {
   constructor(private _meService: MeService, private _router: Router){}
 
+  showSpinner = true
+  errorOccured = false
   ngOnInit(){
-    console.log('In user component')
+      console.log('In user component')
     this._meService.getMyInfo().subscribe(
       data => {
+        this.showSpinner = false
         console.log(data, data['restaurants'].length, )
         if(data['restaurants'].length > 0){
           this._router.navigate(['owner/pending-orders'])
@@ -26,7 +29,8 @@ export class PostLoginComponent {
         }
       },
       error => {
-
+        this.errorOccured = true
+        this.showSpinner = false
       }
     )
   }
