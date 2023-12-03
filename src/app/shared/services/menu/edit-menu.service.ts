@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { host, getToken, getHeaders} from '../../site-variable';
+import { host, getToken, getHeaders, Utility} from '../../site-variable';
 
 @Injectable({
   providedIn: 'root',
@@ -14,46 +14,46 @@ export class EditMenuService {
   deleteCategoryEndpoint = 'inventory/delete_category/';
   editItemAvailabilityEndpoint = 'inventory/edit_is_available/';
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient, public utility: Utility) {}
 
   editMenu(body) {
     console.log('This is the body: ', body);
     return this._http.post(this.host + this.editItemEndpoint, body, {
-      headers: getHeaders(),
+      headers: this.utility.getHeaders(),
     });
   }
 
   addItem(body) {
     console.log('This is the body: ', body);
     return this._http.post(this.host + this.addItemEndpoint, body, {
-      headers: getHeaders(),
+      headers: this.utility.getHeaders(),
     });
   }
 
   addCategory(body) {
     console.log('This is the body: ', body);
     return this._http.post(this.host + this.addCategoryEndpoint, body, {
-      headers: getHeaders(),
+      headers: this.utility.getHeaders(),
     });
   }
 
   deleteItem(body) {
     return this._http.delete(this.host + this.deleteItemEndpoint, {
       body: body,
-      headers: getHeaders(),
+      headers: this.utility.getHeaders(),
     });
   }
 
   deleteCategory(body) {
     return this._http.delete(this.host + this.deleteCategoryEndpoint, {
       body: body,
-      headers: getHeaders(),
+      headers: this.utility.getHeaders(),
     });
   }
 
   editItemAvailability(body) {
     return this._http.post(
-      this.host + this.editItemAvailabilityEndpoint, body, { headers: getHeaders() }
+      this.host + this.editItemAvailabilityEndpoint, body, { headers: this.utility.getHeaders() }
     );
   }
 }

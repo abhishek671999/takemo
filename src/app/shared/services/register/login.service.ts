@@ -3,13 +3,14 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { host, getToken } from '../../site-variable';
+import { host, getToken, Utility } from '../../site-variable';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
-  constructor(private _http: HttpClient, private _router: Router) {}
+  constructor(private _http: HttpClient, private _router: Router, public cookieService: CookieService, public utility: Utility) {}
 
   _host = host;
   _login_endpoint = 'rest-auth/login/';
@@ -22,7 +23,6 @@ export class LoginService {
 
     return this._http
       .post<any>(this._host + this._login_endpoint, body)
-      .pipe(catchError(this.errorHandler));
   }
 
   errorHandler(error: HttpErrorResponse) {
@@ -30,11 +30,14 @@ export class LoginService {
   }
 
   isLoggedIn() {
-    return getToken() != null;
+    var token = this.utility.getToken()
+    console.log(typeof(token), token.length)
+    console.log('returning',token.length != 0);
+    return token.length != 0
   }
 
   logOut() {
-    localStorage.removeItem('token');
+    this.utility.removeToken()
     this._router.navigate(['login']);
   }
 }

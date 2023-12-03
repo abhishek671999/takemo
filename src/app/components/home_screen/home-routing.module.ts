@@ -9,13 +9,15 @@ import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsAndConditionsComponent } from './terms-and-conditions/terms-and-conditions.component';
+import { Login2Component } from './login2/login2.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     children: [
-      { path: '', component: LoginComponent },
+      { path: '', component: Login2Component },
+      { path: '2', component: LoginComponent},
       { path: 'about', component: AboutComponent },
       { path: 'pricing', component: PricingComponent },
       { path: 'contact', component: ContactUsComponent },

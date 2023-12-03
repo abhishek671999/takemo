@@ -19,8 +19,13 @@ export class ConfirmationDialogComponent {
   }
 
   public isPayment=false;
-  public platformFee = null;
-  public totalAmount = null;
+  // public platformFee: {
+  //   platform_fee_percentage: number,
+  //   platform_fee_gst_percentage: number,
+  //   platformFeeAmount: number
+  // };
+  public platformFee = undefined || {};
+  public totalAmount;
 
   ngOnInit(){
     this.__ordersService.checkIfPaymentRequired().subscribe(
@@ -28,7 +33,8 @@ export class ConfirmationDialogComponent {
         (console.log(data))
         this.isPayment = data['payment_required']
         this.totalAmount = this.pickedItems.amount
-        if(!data['tax_inclusive']){
+        if(data['tax_inclusive']){
+          console.log('INcluding tax')
           this.platformFee['platform_fee_percentage'] = data['platform_fee_percentage']
           this.platformFee['platform_fee_gst_percentage'] = data['platform_fee_gst_percentage']
           this.platformFee['platformFeeAmount'] = (this.platformFee['platform_fee_percentage'] * this.totalAmount) 

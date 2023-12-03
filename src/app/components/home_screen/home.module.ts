@@ -11,6 +11,7 @@ import { TermsAndConditionsComponent } from './terms-and-conditions/terms-and-co
 import { MatButtonModule } from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { Login2Component } from './login2/login2.component';
 
 @NgModule({
   declarations: [

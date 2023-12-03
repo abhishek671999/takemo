@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { getHeaders, host } from '../../site-variable';
+import { Utility, getHeaders, host } from '../../site-variable';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +15,11 @@ export class RulesService {
   private addUsersToRuleEndpoint = 'role/add_user_to_rule/'
   private editRuleEndpoint = 'role/edit_rule/'
 
-  constructor(private _httpClient: HttpClient) { }
+  constructor(private _httpClient: HttpClient, public utility: Utility) { }
 
   getRules(){
     console.log('hitting get rules')
-    return this._httpClient.get(host+this.getRulesEndpoint, {headers: getHeaders()})
+    return this._httpClient.get(host+this.getRulesEndpoint, {headers: this.utility.getHeaders()})
   }
 
   deleteRule(body){

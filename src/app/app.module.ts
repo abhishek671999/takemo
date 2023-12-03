@@ -22,6 +22,9 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { CurrentOrdersComponent } from './components/owner_view/current-orders/current-orders.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { PostLoginComponent } from './components/post-login/post-login.component';
+import { Utility } from './shared/site-variable';
+import { Login2Component } from './components/home_screen/login2/login2.component';
+
 
 @NgModule({
   declarations: [
@@ -37,7 +40,8 @@ import { PostLoginComponent } from './components/post-login/post-login.component
     NotfoundComponent,
     PlaceOrdersComponent,
     AdminLandingComponent,
-    PostLoginComponent
+    PostLoginComponent,
+    Login2Component
   ],
   imports: [
     BrowserModule,
@@ -51,7 +55,7 @@ import { PostLoginComponent } from './components/post-login/post-login.component
     CanvasJSAngularChartsModule,
     NgApexchartsModule
     ],
-  providers: [],
+  providers: [Utility],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

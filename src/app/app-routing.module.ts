@@ -11,11 +11,16 @@ const routes: Routes = [
     path: '', redirectTo: 'home', pathMatch: 'full'
   },
   {
-    path: 'login',
+    path: 'login2',
     loadChildren: () =>
       import('./components/home_screen/home.module').then(
         (m) => m.HomeModule
       ),
+  },
+  {
+    path: 'login',
+    loadChildren: () => 
+      import('./components/home_screen/home.module').then((m) => m.HomeModule)
   },
   {
     path: 'user',

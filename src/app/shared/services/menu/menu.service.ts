@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { host, getToken, getHeaders } from '../../site-variable';
+import { host, getToken, getHeaders, Utility } from '../../site-variable';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ export class MenuService {
 
   
   headers:any;
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient, public utility: Utility) { }
   host = host
   _getMenuEndpoint = 'inventory/get_menu/'
   _submit_url = 'inventory/create_order/'
@@ -18,7 +18,7 @@ export class MenuService {
   getMenu(id: number){
     let queryParams = new HttpParams()
     queryParams = queryParams.append('restaurant_id', id.toString())
-    return this._http.get(this.host+this._getMenuEndpoint, {params: queryParams, headers: getHeaders()})
+    return this._http.get(this.host+this._getMenuEndpoint, {params: queryParams, headers: this.utility.getHeaders()})
   }
 
   submitOrder(body){

@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { UrlSegment } from '@angular/router';
 import { catchError, concatAll, throwError } from 'rxjs';
-import { host } from '../../site-variable';
+import { Utility, host } from '../../site-variable';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class PwdrecoveryService {
   _pwd_auth_token = this.__base_url + "users/reset_password/"
   
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient, public utility: Utility) { }
   
   errorHandler(error: HttpErrorResponse){
     console.log('Error in pwd recovery service: ', error);

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { LoginService } from '../../../shared/services/register/login.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Utility, setToken1 } from 'src/app/shared/site-variable';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -12,8 +14,13 @@ export class LoginComponent {
   constructor(
     private _fb: FormBuilder,
     private _loginService: LoginService,
-    private _router: Router
-  ) {}
+    private _router: Router,
+    private _utility: Utility
+  ) {
+    
+  }
+
+  setToken = setToken1()
 
   regex = new RegExp(
     '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$'
@@ -42,7 +49,8 @@ export class LoginComponent {
     console.log(this.loginObj);
     this._loginService.login(this.loginObj.value).subscribe(
       (data) => {
-        console.log('Success!', data);
+        console.log('Success!!', data);
+        this._utility.setToken(data['key'])
         localStorage.setItem('token', data['key']);
         console.log('Redirecting');
         this._router.navigate(['home']);

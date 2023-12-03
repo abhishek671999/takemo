@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { getHeaders, host } from '../../site-variable';
+import { Utility, getHeaders, host } from '../../site-variable';
 
 @Injectable({
   providedIn: 'root'
@@ -8,10 +8,10 @@ import { getHeaders, host } from '../../site-variable';
 export class RolesService {
 
   roleEndpoint = 'role/get_roles/' 
-  constructor(private _httpClient: HttpClient) { }
+  constructor(private _httpClient: HttpClient, public utility: Utility) { }
 
   getRole(){
-    return this._httpClient.get(host+this.roleEndpoint, {headers: getHeaders()})
+    return this._httpClient.get(host+this.roleEndpoint, {headers: this.utility.getHeaders()})
   }
 
 }

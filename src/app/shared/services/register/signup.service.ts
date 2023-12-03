@@ -83,6 +83,7 @@ export class SignupService {
     } else {
       body = { email: email, token: otp };
     }
+    console.log(email, otp)
     console.log('Requesting backend to validate OTP: ' + body);
     return this._http
       .post<any>(this._user_auth_token, body)
