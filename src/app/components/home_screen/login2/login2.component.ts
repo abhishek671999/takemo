@@ -74,7 +74,10 @@ export class Login2Component {
         console.log('Redirecting');
         this._router.navigate(['home']);
       },
-      (error) => alert('Invalid user id or password')
+      (error) => {
+        alert('Invalid user id or password')
+        this.freezeEmail = true
+      }
     );
   }
 

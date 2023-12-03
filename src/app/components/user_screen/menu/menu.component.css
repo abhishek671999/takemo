@@ -69,27 +69,64 @@ th{
 }
 
 .col2{
-    width: 20%;
-    display: relative;
+    width: 30%;
+    padding: 0.5em 0 0 0;
 }
+
+p{
+    margin: 0;
+}
+
 
 .col3{
     width: 20%;
 }
 
 .col4{
-    width: 30%;
+    width: 20%;
+    padding: 0.5em 0 0 0;
 }
 
 .item-text{
-    float: left;
+    display: inline-block;
+    text-wrap: wrap;
 }
 
 .indicator-image{
     width:30px;
     height: auto;
-    float: right;
+    display: inline;
 }
+
+
+ 
+@media screen and (max-width: 1024px) {
+    .table-container{
+        border-radius: 10px;
+        width: 60vw;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .table-container{
+        border-radius: 10px;
+        width: 60vw;
+    }
+  }
+  
+  @media screen and (max-width: 426px) {
+    .table-container{
+        border-radius: 10px;
+        width: 95vw;
+    }
+    .indicator-image{
+        width: 25px;
+        padding-right: 5px;
+        height: auto;
+        display: inline;
+    }
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     overflow-y: scroll;
