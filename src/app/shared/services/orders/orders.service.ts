@@ -10,13 +10,14 @@ export class OrdersService {
 
   constructor(private _http: HttpClient, public utility: Utility) { }
 
-  private orderHistoryEndpoint = 'order/get_my_order_history/'
+  private orderHistoryEndpoint = 'order/get_my_orders/'
   private checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/'
   private createOrdersEnpoint = 'order/create_order/'
   private deliverIndividualOrderEndpoint = 'order/deliver_single_item/'
   private deliverEntireOrderEndpoint = 'order/deliver_entire_order/'
   private getRestaurantOrdersEndpoint = 'order/get_restaurant_orders/'
   private getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/'
+  private updateOrderStatusEndpoint = 'order/update_single_item_status/'
 
 
   getCurrentOrders(){
@@ -39,6 +40,9 @@ export class OrdersService {
     return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams, headers: this.utility.getHeaders()})
   }
 
+  updateOrderStatus(body){
+    return this._http.post(host + this.updateOrderStatusEndpoint, body, {headers: this.utility.getHeaders()})
+  }
   deliverIndividualOrder(body){
     return this._http.post(host + this.deliverIndividualOrderEndpoint, body, {headers: this.utility.getHeaders()})
   }

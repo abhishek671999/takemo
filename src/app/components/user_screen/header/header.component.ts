@@ -79,8 +79,15 @@ export class HeaderComponent {
         href: '',
         action: () => {
           this.router.navigate(['./user'])
+        }
+      },
+      'userOrders': {
+        name: 'Orders',
+        href: '',
+        action: () => {
+          this.router.navigate(['./user/myorders'])
+        }
       }
-    }
     }
   
     addAdminNavOptions(){
@@ -103,7 +110,7 @@ export class HeaderComponent {
   }
 
   addUserNavOptions(){
-    let userNavOptions = ['menu']
+    let userNavOptions = ['menu', 'userOrders']
     for(let option of userNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])

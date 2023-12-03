@@ -6,16 +6,21 @@
                     <thead class="text-center">
                         <tr>
                             <th class="col1" scope="col">Order No</th>
-                            <th class="col2" scope="col">Done</th>
+                            <th class="col2" scope="col">Ready</th>
+                            <th class="col3" scope="col">Completed</th>
                         </tr>
                     </thead>
                     <tbody class="text-center" >
                         <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
-                        <tr class="table-row" *ngFor="let pendingOrder of data; let subIndex = index">
-                            <td class="col1" scope="col" >{{pendingOrder.line_item_id}}</td>
+                        <tr class="table-row" *ngFor="let order of data; let subIndex = index">
+                            <td class="col1" scope="col" >{{order.line_item_id}}</td>
                             <td class="col2" scope="col">
-                                <button mat-raised-button color="primary" *ngIf='!pendingOrder.is_delivered' (click)="deliver(pendingOrder)">Deliver</button>
-                                <p *ngIf="pendingOrder.is_delivered">Delivered</p>
+                                <button mat-raised-button color="primary" *ngIf='!order.is_ready' (click)="updateStatus(order, 'ready')">Ready</button>
+                                <p *ngIf="order.is_ready">Marked Ready</p>
+                            </td>
+                            <td class="col3" scope="col">
+                                <button mat-raised-button color="primary" *ngIf='!order.is_delivered' (click)="updateStatus(order, 'delivered')">Deliver</button>
+                                <p *ngIf="order.is_delivered">Delivered</p>
                             </td>
                                 <!-- <i class="fa-solid fa-plus"></i> -->
                         </tr>

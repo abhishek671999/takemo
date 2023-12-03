@@ -16,11 +16,12 @@ export class DeliveryOrderDialogComponent {
     console.log('Data received: ', data)
     data.forEach(ele => {
       ele['is_delivered'] = false
+      ele['is_ready'] = false
     });
   
     }
-    deliver(pendingOrder){
-      
+
+    deliver(pendingOrder){ 
       console.log(pendingOrder)
       let body = {
         "restaurant_id": 1,
@@ -33,6 +34,54 @@ export class DeliveryOrderDialogComponent {
           console.log('Order delivered successfuly', data)
         },
         error => { console.log('Error while delivering orders', error)}
+      )
+    }
+
+    updateStatus(order, status){
+      let body = {
+        "restaurant_id": 1,
+        "line_item_id": order.line_item_id,
+        "status": status
+      }
+      this._orderService.updateOrderStatus(body).subscribe(
+        data => {
+          order.is_delivered =! order.is_delivered
+        },
+        error => {
+          console.log('Error while delivering orders')
+        }
+      )
+    }
+
+    updateStatusToDelivered(order){
+      let body = {
+        "restaurant_id": 1,
+        "line_item_id": order.line_item_id,
+        "status": "delivered"
+      }
+      this._orderService.updateOrderStatus(body).subscribe(
+        data => {
+          order.is_delivered =! order.is_delivered
+        },
+        error => {
+          console.log('Error while delivering orders')
+        }
+      )
+    }
+
+    updateStatusToReady(order){
+      let body = {
+        "restaurant_id": 1,
+        "line_item_id": order.line_item_id,
+        "status": "ready"
+      }
+      this._orderService.updateOrderStatus(body).subscribe(
+        data => {
+          order.is_ready =! order.is_ready
+        },
+        error => {
+          console.log('Error while delivering orders')
+        }
       )
     }
   }
