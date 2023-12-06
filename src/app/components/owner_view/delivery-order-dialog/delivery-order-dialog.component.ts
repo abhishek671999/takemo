@@ -16,7 +16,6 @@ export class DeliveryOrderDialogComponent {
     console.log('Data received: ', data)
     data.forEach(ele => {
       ele['is_delivered'] = false
-      ele['is_ready'] = false
     });
   
     }
@@ -37,7 +36,7 @@ export class DeliveryOrderDialogComponent {
       )
     }
 
-    updateStatus(order, status){
+    updateStatus(order, status, flag){
       let body = {
         "restaurant_id": 1,
         "line_item_id": order.line_item_id,
@@ -45,7 +44,7 @@ export class DeliveryOrderDialogComponent {
       }
       this._orderService.updateOrderStatus(body).subscribe(
         data => {
-          order.is_delivered =! order.is_delivered
+          order[flag] =! order[flag]
         },
         error => {
           console.log('Error while delivering orders')
@@ -57,11 +56,13 @@ export class DeliveryOrderDialogComponent {
       let body = {
         "restaurant_id": 1,
         "line_item_id": order.line_item_id,
-        "status": "delivered"
+        "status": !order.is_ready ? "ready_and_delivered" : "delivered"
       }
+      console.log('Delivered: ', body)
       this._orderService.updateOrderStatus(body).subscribe(
         data => {
-          order.is_delivered =! order.is_delivered
+          order.is_delivered = true
+          order.is_ready = true
         },
         error => {
           console.log('Error while delivering orders')
@@ -75,6 +76,7 @@ export class DeliveryOrderDialogComponent {
         "line_item_id": order.line_item_id,
         "status": "ready"
       }
+      console.log('Ready: ', body)
       this._orderService.updateOrderStatus(body).subscribe(
         data => {
           order.is_ready =! order.is_ready

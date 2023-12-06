@@ -3,8 +3,8 @@
         <div *ngIf="orderList.length > 0; else NoPendingOrderBlock">
             <ng-container *ngFor="let item of orderList">
                 <button class="card-box" (click)="itemClicked(item)">
-                    <h2 class="text-center">{{item.name}}</h2>
-                    <p class="text-center">{{item.quantity}}</p>
+                    <h2 class="text-center text-white">{{item.quantity}}</h2>
+                    <h1 class="text-center text-white">{{item.name}}</h1>
                 </button>
             </ng-container>
         </div>

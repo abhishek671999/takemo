@@ -19,7 +19,7 @@
                 </tr>
             </tbody>
         </table>
-        <div *ngIf="platformFee">
+        <div *ngIf="isPayment">
             <p>Platform Fee: {{platformFee['platform_fee_percentage']}}% + Gst {{platformFee['platform_fee_gst_percentage']}}% = {{platformFee['platformFeeAmount']}}</p>
         </div>
         <div class="text-center amount">Total Amount:&nbsp;

@@ -24,29 +24,29 @@ export class RulesService {
 
   deleteRule(body){
     console.log('hitting delete rule')
-    return this._httpClient.delete(host + this.deleteRulesEndpoint, {body: body, headers: getHeaders()})
+    return this._httpClient.delete(host + this.deleteRulesEndpoint, {body: body, headers: this.utility.getHeaders()})
   }
 
   deleteUserFromRule(body){
-    return this._httpClient.post(host + this.deleteUserFromRuleEndpoint, body, { headers: getHeaders()})
+    return this._httpClient.post(host + this.deleteUserFromRuleEndpoint, body, { headers: this.utility.getHeaders()})
   }
 
   addRule(body){
-    return this._httpClient.post(host + this.addRuleEndpoint, body, {headers: getHeaders()})
+    return this._httpClient.post(host + this.addRuleEndpoint, body, {headers: this.utility.getHeaders()})
   }
 
   editRule(body){
-    return this._httpClient.post(host + this.editRuleEndpoint, body, {headers: getHeaders()})
+    return this._httpClient.post(host + this.editRuleEndpoint, body, {headers: this.utility.getHeaders()})
   }
   
   getRuleUsers(params){
     let queryParams = new HttpParams()
     queryParams = queryParams.append('rule_id', params['rule_id'])
-    return this._httpClient.get(host + this.getRuleUsersEndpoint, {params: queryParams, headers: getHeaders()})
+    return this._httpClient.get(host + this.getRuleUsersEndpoint, {params: queryParams, headers: this.utility.getHeaders()})
   }
 
   addUserToRule(body){
-    return this._httpClient.post(host+this.addUsersToRuleEndpoint, body, {headers: getHeaders()})
+    return this._httpClient.post(host+this.addUsersToRuleEndpoint, body, {headers: this.utility.getHeaders()})
   }
 
 }

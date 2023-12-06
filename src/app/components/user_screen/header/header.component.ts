@@ -91,7 +91,7 @@ export class HeaderComponent {
     }
   
     addAdminNavOptions(){
-      let adminNavOptions = ['shift', 'analytics', 'billing', 'menu']
+      let adminNavOptions = ['shift', 'userOrders', 'analytics', 'billing', 'menu']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])

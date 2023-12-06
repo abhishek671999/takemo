@@ -21,7 +21,6 @@
                         <small class="text-danger" *ngIf="loginFormControl.username.errors?.['required']">Email or Phone number is required</small>
                         <small class="text-danger" *ngIf="loginFormControl.username.errors?.['pattern']">Please provide a valid email address or phone number</small>
                     </div>
-
                 </div>
                 <div class="center">
                     <button *ngIf="!freezeEmail" [disabled]="!loginFormControl.username.valid" class="btn-login" (click)="authUser()">Send OTP</button>

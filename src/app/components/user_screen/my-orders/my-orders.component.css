@@ -8,3 +8,18 @@
     background-color: white;
     width: 80vw;
 }
+
+@media screen and (max-width: 1024px) {
+  }
+  
+  @media screen and (max-width: 768px) {
+    .tab-group-container{
+        width: 90vw;
+    }
+  }
+  
+  @media screen and (max-width: 426px) {
+    .tab-group-container{
+        width: 95vw;
+    }
+  }

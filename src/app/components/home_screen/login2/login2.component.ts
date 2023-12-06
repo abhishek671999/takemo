@@ -48,21 +48,7 @@ export class Login2Component {
 
   submitted = false;
 
-  onSubmit(userForm: any) {
-    console.log('On submit called')
-    console.log(userForm);
-    console.log(this.loginObj);
-    this._loginService.login(this.loginObj.value).subscribe(
-      (data) => {
-        console.log('Success!!', data);
-        this._utility.setToken(data['key'])
-        localStorage.setItem('token', data['key']);
-        console.log('Redirecting');
-        this._router.navigate(['home']);
-      },
-      (error) => alert('Invalid user id or password')
-    );
-  }
+
 
  
   logIn(){

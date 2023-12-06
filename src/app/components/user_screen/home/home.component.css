@@ -14,7 +14,9 @@
 
 ul{
     margin: 0;
+    padding: 0 2em 0 2em;
     justify-content: flex-start;
+    text-align: center;
 }
 
 li{
@@ -43,4 +45,17 @@ li{
 .nav a{
     text-decoration: none;
     color: rgb(155, 159, 159);
+}
+
+@media screen and (max-width: 426px) {
+    .table-container{
+        border-radius: 10px;
+        width: 95vw;
+    }
+    .indicator-image{
+        width: 25px;
+        padding-right: 5px;
+        height: auto;
+        display: inline;
+    }
 }

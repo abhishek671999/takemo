@@ -51,16 +51,22 @@ export class SignupService {
     });
   }
 
+  async hitPhonePlauth(body){
+    return await this._http.post<any>(this._phone_plauth, body).subscribe(
+      (data) => {
+        console.log('Something is wrong as 400 is expected')
+      },
+      (error) => console.log('Returned with error', error)
+    );
+  }
+
   // Change all email variables to username
-  authUser(email: string | null | undefined) {
+   authUser(email: string | null | undefined) {
     console.log('Requesting back for email otp: ' + email);
     if (Number(email)) {
       let mobile = Number(email);
       let body = { mobile: '+91' + mobile };
-      this._http.post<any>(this._phone_plauth, body).subscribe(
-        (data) => console.log('Something is wrong as 400 is expected'),
-        (error) => console.log('Returned with error', error)
-      );
+      this.hitPhonePlauth(body)
       return this._http
         .post<any>(this._phone_otp_auth, body)
         .pipe(catchError(this.errorHandler));
@@ -83,7 +89,7 @@ export class SignupService {
     } else {
       body = { email: email, token: otp };
     }
-    console.log(email, otp)
+    console.log(email, )
     console.log('Requesting backend to validate OTP: ' + body);
     return this._http
       .post<any>(this._user_auth_token, body)
