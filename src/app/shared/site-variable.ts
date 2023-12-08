@@ -3,7 +3,9 @@ import { Token } from "@angular/compiler"
 import { inject } from "@angular/core"
 import { CookieService } from "ngx-cookie-service"
 
-export let host = 'http://65.20.75.191:8001/api/v1/' // 'https://takemo.in/api/v1/'  //'http://192.168.1.13:8000/api/v1/'
+export let host = 'http://65.20.75.191:8001/api/v1/' // local test
+// export let host = 'https://test.takemo.in/api/v1/' // Demo test
+// export let host = 'https://takemo.in/api/v1/' //Prod 
 
 export function getToken(){
     this.cookieService = inject(CookieService)
