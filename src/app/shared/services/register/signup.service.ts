@@ -52,11 +52,16 @@ export class SignupService {
   }
 
   async hitPhonePlauth(body){
+    
     return await this._http.post<any>(this._phone_plauth, body).subscribe(
       (data) => {
+        console.log('This is call 1')
         console.log('Something is wrong as 400 is expected')
       },
-      (error) => console.log('Returned with error', error)
+      (error) => {
+        console.log('This is call 1')
+        console.log('Returned with error', error)
+      }
     );
   }
 
@@ -67,6 +72,7 @@ export class SignupService {
       let mobile = Number(email);
       let body = { mobile: '+91' + mobile };
       this.hitPhonePlauth(body)
+
       return this._http
         .post<any>(this._phone_otp_auth, body)
         .pipe(catchError(this.errorHandler));

@@ -11,7 +11,7 @@ export class CurrentOrdersComponent {
 
   constructor(private _ordersService: OrdersService){}
 
-  displayedColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'Location', 'Deliver'];
+  displayedColumns: string[] = ['Order No', 'Order details', 'Deliver', 'Amount', 'OrderedAt', 'Location'];
   
   public currentOrders = []
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
@@ -54,7 +54,7 @@ export class CurrentOrdersComponent {
       orderno : order.order_no,
       order_detail: order.line_items.length != 1? 
           order.line_items.map(this.addOrderDetails).reduce((a,b)=>{
-            return `${a.details} <br> ${b.details}`}, `abhi`) : 
+            return `${a.details} <br> ${b.details}`}) : 
           order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
@@ -67,7 +67,9 @@ export class CurrentOrdersComponent {
 
     addOrderDetails(order){
       console.log('Orders', order)
-      return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ${(order.item_quantity*order.item_price)}`}
+      let details = { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ${(order.item_quantity*order.item_price)}`}
+      console.log('Details', details)
+      return details // `}
     }
 
     deliverEntireOrder(order){

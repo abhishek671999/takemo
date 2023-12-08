@@ -77,6 +77,7 @@ export class Login2Component {
       console.log('authUser called');
       this._signUpService.authUser(this.loginObj.value.username).subscribe(
         (data) => {
+          console.log('THis is call 2')
           console.log('sucess: ', data);
           console.log(data['detail']);
           this.freezeEmail = true
