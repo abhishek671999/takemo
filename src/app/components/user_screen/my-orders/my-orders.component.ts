@@ -12,7 +12,7 @@ import {MatTableDataSource} from '@angular/material/table';
 
 export class MyOrdersComponent {
 
-  displayedColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'OrderStatus', 'Location' ];
+  displayedColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'OrderedAt', 'Location' ];
   historyColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'DelieveredAt', 'Location']
   
   public currentOrders = []
@@ -52,13 +52,13 @@ export class MyOrdersComponent {
   
 
   addOrderDetails(order){
-    return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ${(order.item_quantity*order.item_price)}`}
+    return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ₹ ${(order.item_quantity*order.item_price)}`}
   }
 
   addOrderStatus(order){
-    let status = order.ready_quantity == 0 ? 'being prepared' : `${order.ready_quantity} of ${order.item_quantity} ready`
+    let status = order.ready_quantity == 0 ? `<p> being prepared </p>` : `<p class="text-success">${order.ready_quantity} of ${order.item_quantity} ready<p>`
     return { 
-      status: `${order.item_name} ${status}`
+      status: `<b>${order.item_name}</b> ${status}`
     }
   }
 

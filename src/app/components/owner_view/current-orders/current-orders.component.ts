@@ -50,20 +50,23 @@ export class CurrentOrdersComponent {
   unParsedOrder(order){
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
     let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
-    return { orderno : order.order_no,
-      order_detail: order.line_items.length != 1? order.line_items.map(this.addOrderDetails).reduce((a,b)=>{
-        return `${a.details} <br> ${b.details}`
-      }) : order.line_items.map(this.addOrderDetails)[0].details,
+    return { 
+      orderno : order.order_no,
+      order_detail: order.line_items.length != 1? 
+          order.line_items.map(this.addOrderDetails).reduce((a,b)=>{
+            return `${a.details} <br> ${b.details}`}, `abhi`) : 
+          order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
       DelieveredAt: done_time,
       Location: order.restaurant_name,
       Status: order.is_delivered,
       order_id: order.order_id
-    }
+      }
     }
 
     addOrderDetails(order){
+      console.log('Orders', order)
       return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ${(order.item_quantity*order.item_price)}`}
     }
 

@@ -23,7 +23,7 @@
                 <!-- Weight Column -->
                 <ng-container matColumnDef='Amount'>
                   <th mat-header-cell *matHeaderCellDef>Amount</th>
-                  <td mat-cell *matCellDef="let element">{{element.amount}}</td>
+                  <td mat-cell *matCellDef="let element">₹ {{element.amount}}</td>
                 </ng-container>
                 
                 <ng-container matColumnDef="OrderStatus">
@@ -48,7 +48,7 @@
               </table>
       </mat-tab>
 
-      <mat-tab label="History1">
+      <mat-tab label="History">
         <mat-form-field >
                 <mat-label>Filter</mat-label>
                 <input (keyup)="applyFilter($event.target)" matInput placeholder="Filter">
@@ -70,7 +70,7 @@
                 <!-- Weight Column -->
                 <ng-container matColumnDef='Amount'>
                   <th mat-header-cell *matHeaderCellDef>Amount</th>
-                  <td mat-cell *matCellDef="let element">{{element.amount}}</td>
+                  <td mat-cell *matCellDef="let element">₹ {{element.amount}}</td>
                 </ng-container>
                 
                 <ng-container matColumnDef="DelieveredAt">
