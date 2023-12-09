@@ -3,29 +3,32 @@ import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { HeaderComponent } from './header/header.component';
+import { HeaderComponent } from '../shared/header/header.component';
 import { HomeComponent } from './home/home.component';
-import { FooterComponent } from './footer/footer.component';
+import { FooterComponent } from '../shared/footer/footer.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { UserManagementComponent } from './user-management/user-management.component';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatIconModule} from '@angular/material/icon';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {ScrollingModule} from '@angular/cdk/scrolling';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AddRulesDialogComponent } from './add-rules-dialog/add-rules-dialog.component';
 import { EditRulesDialogComponent } from './edit-rules-dialog/edit-rules-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
-import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
-import {MatButtonModule} from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+import { MatButtonModule } from '@angular/material/button';
 import { AddUserToRuleComponent } from './add-user-to-rule/add-user-to-rule.component';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatSelectModule} from '@angular/material/select';
-import {MAT_RADIO_DEFAULT_OPTIONS, MatRadioModule} from '@angular/material/radio';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatSelectModule } from '@angular/material/select';
+import {
+  MAT_RADIO_DEFAULT_OPTIONS,
+  MatRadioModule,
+} from '@angular/material/radio';
 import { SalesAnalyticsComponent } from './analytics/sales-analytics/sales-analytics.component';
 import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-analytics.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
@@ -38,7 +41,6 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
 import { BillingComponent } from './billing/billing.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
- 
 
 @NgModule({
   declarations: [
@@ -55,7 +57,7 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     SuccessMsgDialogComponent,
     ErrorMsgDialogComponent,
     DeleteConfirmationDialogComponent,
-    BillingComponent
+    BillingComponent,
   ],
   imports: [
     CommonModule,
@@ -80,11 +82,13 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     MatAutocompleteModule,
     PdfViewerModule,
     MatCheckboxModule,
-    SharedModuleModule
+    SharedModuleModule,
   ],
-  providers: [{
-    provide: MAT_RADIO_DEFAULT_OPTIONS,
-    useValue: { color: 'primary' },
-}]
+  providers: [
+    {
+      provide: MAT_RADIO_DEFAULT_OPTIONS,
+      useValue: { color: 'primary' },
+    },
+  ],
 })
-export class AdminModule { }
+export class AdminModule {}
