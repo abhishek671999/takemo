@@ -36,6 +36,7 @@ import { SuccessMsgDialogComponent } from './success-msg-dialog/success-msg-dial
 import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { BillingComponent } from './billing/billing.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
  
 
 @NgModule({
@@ -78,7 +79,8 @@ import { BillingComponent } from './billing/billing.component';
     MatRadioModule,
     CanvasJSAngularChartsModule,
     MatAutocompleteModule,
-    PdfViewerModule
+    PdfViewerModule,
+    MatCheckboxModule
   ],
   providers: [{
     provide: MAT_RADIO_DEFAULT_OPTIONS,

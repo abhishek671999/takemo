@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 
@@ -24,9 +24,11 @@ export class AddRulesDialogComponent {
     name: ['', Validators.required],
     start_time: ['', Validators.required],
     end_time: ['', Validators.required],
-    max_amount_per_shift: ['', Validators.required]
+    max_amount_per_shift: ['', Validators.required],
+    checked: new FormControl(true, Validators.required)
   });
 
+  
   getTwentyFourHourTime(amPmString) { 
     var d = new Date("1/1/2013 " + amPmString); 
     return d.getHours() + ':' + d.getMinutes(); 
@@ -38,7 +40,8 @@ export class AddRulesDialogComponent {
         "name": this.addRuleForm.value.name,
         "start_time":this.getTwentyFourHourTime(this.addRuleForm.value.start_time),
         "end_time": this.getTwentyFourHourTime(this.addRuleForm.value.end_time),
-        "max_amount_per_shift": this.addRuleForm.value.max_amount_per_shift
+        "max_amount_per_shift": this.addRuleForm.value.max_amount_per_shift,
+        "same_day_end_date": this.addRuleForm.value.checked
     }
     console.log('This is body: ', body)
     this._rulesService.addRule(body).subscribe(

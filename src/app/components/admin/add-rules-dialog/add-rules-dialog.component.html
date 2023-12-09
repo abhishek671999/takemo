@@ -21,12 +21,14 @@
                     <mat-label>Max Amount</mat-label>
                     <input matInput placeholder="Max Amount" formControlName="max_amount_per_shift">
                 </mat-form-field>
+                <mat-checkbox class="example-margin" formControlName="checked">Same day</mat-checkbox>
             </div>
         </div>
         <div mat-dialog-actions class="action-container">
             <button mat-raised-button (click)="closeDialog()"> Cancel</button>
             <button mat-raised-button color="primary" type="submit">Submit</button>
         </div>
-
     </form>
+    
+    
 </div>
