@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { SignupService } from 'src/app/shared/services/register/signup.service';
 import { Utility } from 'src/app/shared/site-variable';
+import { interval, Subject, PartialObserver, Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login2',
@@ -19,6 +21,27 @@ export class Login2Component {
     private _utility: Utility,
     private _signUpService: SignupService
   ) {
+    this.timer = interval(1000)
+    .pipe(
+      takeUntil(this.ispause)
+    );
+
+    this.timerObserver = {
+   
+    next: (_: number) => {  
+       if(this.time==0){
+        this.ispause.next;
+      }
+        this.time -= 1;        
+    }
+  };
+  }
+  ispause = new Subject();
+  public time = 120;
+  timer: Observable<number>;
+  timerObserver: PartialObserver<number>;
+
+  ngOnit(){
     
   }
 
@@ -48,9 +71,21 @@ export class Login2Component {
 
   submitted = false;
 
+  secondsToHms(d) {
+    d = Number(d);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var mDisplay = m > 0 ? m + (m == 1 ? ": " : " : ") : "00";
+    var sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "00";
+    return mDisplay + sDisplay; 
+}
+  goOn() {
+    
+    this.timer.subscribe(this.timerObserver);
+  }
 
 
- 
   logIn(){
     this.loginFormControl.username.enable()
     this._signUpService.validateUser(this.loginObj.value.username, this.loginObj.value.otp).subscribe(
@@ -77,7 +112,7 @@ export class Login2Component {
       console.log('authUser called');
       this._signUpService.authUser(this.loginObj.value.username).subscribe(
         (data) => {
-          console.log('THis is call 2')
+          console.log('call 2 response')
           console.log('sucess: ', data);
           console.log(data['detail']);
           this.freezeEmail = true

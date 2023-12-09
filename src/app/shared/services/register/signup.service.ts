@@ -9,7 +9,8 @@ import { RegistrationUser } from '../../../user';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { host } from '../../site-variable';
-
+import { timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -51,18 +52,16 @@ export class SignupService {
     });
   }
 
-  async hitPhonePlauth(body){
-    
-    return await this._http.post<any>(this._phone_plauth, body).subscribe(
-      (data) => {
-        console.log('This is call 1')
-        console.log('Something is wrong as 400 is expected')
-      },
-      (error) => {
-        console.log('This is call 1')
-        console.log('Returned with error', error)
-      }
-    );
+  hitPhonePlauth(body){
+    console.log('call 1')
+    return this._http.post<any>(this._phone_plauth, body)
+  }
+
+  sendOTP(body){
+    console.log('Call 2')
+    return this._http
+        .post<any>(this._phone_otp_auth, body)
+        .pipe(catchError(this.errorHandler));
   }
 
   // Change all email variables to username
@@ -71,11 +70,16 @@ export class SignupService {
     if (Number(email)) {
       let mobile = Number(email);
       let body = { mobile: '+91' + mobile };
-      this.hitPhonePlauth(body)
-
-      return this._http
-        .post<any>(this._phone_otp_auth, body)
-        .pipe(catchError(this.errorHandler));
+      return this.hitPhonePlauth(body).pipe(
+        switchMap( () => {
+          console.log('Call 1 response *')
+          return this.sendOTP(body)
+        }
+       ), 
+        catchError(() => {
+          console.log('Call 1 response')
+          return this.sendOTP(body)})
+        )
     } else {
       let body = { email: email };
       return this._http

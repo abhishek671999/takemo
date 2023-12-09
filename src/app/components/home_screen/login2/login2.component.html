@@ -28,6 +28,7 @@
             </div>
             <div class="center">
                 <button *ngIf="freezeEmail" [disabled]="!loginObj.valid" class="btn-login" (click)="logIn()">Login</button>
+                <button (click)="goOn()"> {{secondsToHms(time)}}</button>
             </div>
         </form>  
     </div>
