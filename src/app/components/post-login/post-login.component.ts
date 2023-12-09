@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
 
 @Component({
@@ -8,13 +9,24 @@ import { MeService } from 'src/app/shared/services/register/me.service';
   styleUrls: ['./post-login.component.css']
 })
 export class PostLoginComponent {
-  constructor(private _meService: MeService, private _router: Router){}
+  constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService){
+    this._meService.getMyInfo().subscribe(
+      data => {
+        console.log('Me api from post login')
+        this.myInfo = data
+        this._cc.setMessage(this.myInfo)
+      }
+    )
+  }
 
   showSpinner = true
   errorOccured = false
+  myInfo;
   ngOnInit(){
-      console.log('In user component')
-    this._meService.getMyInfo().subscribe(
+
+    
+     console.log('In user component')
+      this._meService.getMyInfo().subscribe(
       data => {
         this.showSpinner = false
         console.log(data, data['restaurants'].length, )

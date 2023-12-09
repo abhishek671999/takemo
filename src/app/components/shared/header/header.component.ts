@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
 
@@ -12,7 +13,8 @@ export class HeaderComponent {
   constructor(
     private _loginService: LoginService, 
     private router: Router,
-    private _meService: MeService) {
+    private _meService: MeService,
+    private _cc: ConnectComponentsService) {
     }
     AvailableDropdownList = {
       'profile': {
@@ -110,9 +112,10 @@ export class HeaderComponent {
     
   dropdownList = [this.AvailableDropdownList['profile'], this.AvailableDropdownList['logout']]
   username: string
+  message: string
 
   ngOnInit(){
-    this._meService.getMyInfo().subscribe(
+    this._cc.getMessage.subscribe(
       data => {
         console.log(data)
         this.username = data['username'] ? data['username'] : data['email']
