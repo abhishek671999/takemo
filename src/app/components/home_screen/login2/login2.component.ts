@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ResolveStart, Router } from '@angular/router';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { SignupService } from 'src/app/shared/services/register/signup.service';
 import { Utility } from 'src/app/shared/site-variable';
@@ -31,15 +31,35 @@ export class Login2Component {
     next: (_: number) => {  
        if(this.time==0){
         this.ispause.next;
+        this.resendOTP = true
       }
         this.time -= 1;        
     }
   };
   }
   ispause = new Subject();
-  public time = 120;
+  public resend_otp_time = 5
+  public time = this.resend_otp_time;
   timer: Observable<number>;
   timerObserver: PartialObserver<number>;
+
+  secondsToHms(d) {
+    d = Number(d);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var mDisplay = m > 0 ? m + (m == 1 ? ": " : " : ") : "00 : ";
+    var sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "00";
+    return mDisplay + sDisplay ; 
+}
+  resendOTP = true
+  goOn() {
+    if(this.resendOTP){
+      this.resendOTP = false
+      this.time = this.resend_otp_time
+      this.timer.subscribe(this.timerObserver);
+    }
+  }
 
   ngOnit(){
     
@@ -69,23 +89,6 @@ export class Login2Component {
     return this.loginObj.controls;
   }
 
-  submitted = false;
-
-  secondsToHms(d) {
-    d = Number(d);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-
-    var mDisplay = m > 0 ? m + (m == 1 ? ": " : " : ") : "00";
-    var sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "00";
-    return mDisplay + sDisplay; 
-}
-  goOn() {
-    
-    this.timer.subscribe(this.timerObserver);
-  }
-
-
   logIn(){
     this.loginFormControl.username.enable()
     this._signUpService.validateUser(this.loginObj.value.username, this.loginObj.value.otp).subscribe(
@@ -110,6 +113,7 @@ export class Login2Component {
   freezeEmail = false
   authUser() {
       console.log('authUser called');
+      this.loginFormControl.username.enable()
       this._signUpService.authUser(this.loginObj.value.username).subscribe(
         (data) => {
           console.log('call 2 response')
@@ -117,6 +121,7 @@ export class Login2Component {
           console.log(data['detail']);
           this.freezeEmail = true
           this.loginFormControl.username.disable()
+          this.goOn()
         },
         (error) => {
           console.log('Error in authUser: ', error);

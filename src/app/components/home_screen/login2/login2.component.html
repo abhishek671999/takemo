@@ -26,11 +26,10 @@
                     <button *ngIf="!freezeEmail" [disabled]="!loginFormControl.username.valid" class="btn-login" (click)="authUser()">Send OTP</button>
                 </div>
             </div>
-            <div class="center">
+            <div class="submit-buttons">
                 <button *ngIf="freezeEmail" [disabled]="!loginObj.valid" class="btn-login" (click)="logIn()">Login</button>
-                <button (click)="goOn()"> {{secondsToHms(time)}}</button>
+                <button *ngIf="freezeEmail" [disabled]="!resendOTP" (click)="authUser()" class="btn-login" > Resend OTP in {{secondsToHms(time)}}</button>   
             </div>
         </form>  
-    </div>
-    
+    </div>    
 </div>
