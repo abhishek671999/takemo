@@ -41,11 +41,10 @@ import { ErrorDialogComponent } from '../owner_view/error-dialog/error-dialog.co
 import { DeleteCategoryConfirmationDialogComponent } from '../owner_view/delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import { PostPaymentComponent } from './post-payment/post-payment.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
 
 @NgModule({
   declarations: [
-    HeaderComponent,
-    FooterComponent,
     HomeComponent,
     UserComponent,
     MenuComponent,
@@ -80,6 +79,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatRadioModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
+    SharedModuleModule
   ],
   providers: [
     {

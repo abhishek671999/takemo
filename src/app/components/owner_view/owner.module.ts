@@ -17,13 +17,12 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import { OrdersHomeComponent } from './orders-home/orders-home.component';
+import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
 
 
 @NgModule({
   declarations: [
     HomeComponent,
-    FooterComponent,
-    HeaderComponent,
     PendingOrdersComponent,
     OrdersHistoryComponent,
     DeliveryOrderDialogComponent,
@@ -39,7 +38,8 @@ import { OrdersHomeComponent } from './orders-home/orders-home.component';
     MatSelectModule,
     MatTableModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    SharedModuleModule
   ],
   exports: [
     

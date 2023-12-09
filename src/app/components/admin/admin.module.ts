@@ -37,13 +37,12 @@ import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.com
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { BillingComponent } from './billing/billing.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
  
 
 @NgModule({
   declarations: [
-    HeaderComponent,
     HomeComponent,
-    FooterComponent,
     AnalyticsComponent,
     UserManagementComponent,
     AddRulesDialogComponent,
@@ -80,7 +79,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     CanvasJSAngularChartsModule,
     MatAutocompleteModule,
     PdfViewerModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    SharedModuleModule
   ],
   providers: [{
     provide: MAT_RADIO_DEFAULT_OPTIONS,
