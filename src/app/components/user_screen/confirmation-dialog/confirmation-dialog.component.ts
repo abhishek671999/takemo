@@ -59,13 +59,12 @@ export class ConfirmationDialogComponent {
       "order_list":this.pickedItems.items,
       "restaurant_id": this.pickedItems.restaurant_id
   }
-  localStorage.setItem('total_amount', this.pickedItems.amount)
-  
+    localStorage.setItem('total_amount', this.totalAmount)
     this.__ordersService.createOrders(body).subscribe(
       data => {
         console.log('Payment done', data)
         localStorage.setItem('transaction_id', data['transaction_id'])
-        localStorage.setItem('order_id', data['order_id'])
+        localStorage.setItem('order_no', data['order_no'])
         alert('You order number is: '+ data['order_no'])
         this.dialogRef.close({mode: 'wallet'})
       },

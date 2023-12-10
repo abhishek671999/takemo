@@ -7,7 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material/material.module';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
-import { ConfirmationDialogComponent } from '../../owner_view/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 
 @Component({

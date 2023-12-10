@@ -19,7 +19,7 @@ export class PostPaymentComponent {
 
   transactionId = localStorage.getItem('transaction_id')
   transactionAmount = localStorage.getItem('total_amount')
-  orderId = localStorage.getItem('order_id')
+  orderno = localStorage.getItem('order_no')
   
 
   success = false

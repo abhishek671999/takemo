@@ -18,7 +18,7 @@ import {
   MatDialogModule,
 } from '@angular/material/dialog';
 import { MyOrdersComponent } from './my-orders/my-orders.component';
-import { ConfirmationDialogComponent } from '../owner_view/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
 import { EditMenuComponent } from '../owner_view/edit-menu/edit-menu.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -76,7 +76,7 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     MatRadioModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
-    SharedModuleModule
+    SharedModuleModule,
   ],
   providers: [
     {
