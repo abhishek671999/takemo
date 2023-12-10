@@ -77,7 +77,7 @@ export class HeaderComponent {
         name: 'Menu',
         href: '',
         action: () => {
-          this.router.navigate(['./user/menu/1'])
+          this.router.navigate(['./user/menu/1']) //Fix: Change this hard code restaurant id
         }
       },
       'userOrders': {
@@ -160,27 +160,7 @@ export class HeaderComponent {
         console.log('Error while getting my info', error)
       }
     )
-
-    // this._meService.getRoles().subscribe(
-    //   data => {
-    //     for (let role of data['roles']){
-    //       console.log(role)
-    //       if(role.role_name=='restaurant_admin'){
-    //         this.dropdownList.splice(1, 0, this.AvailableDropdownList['analytics'])
-    //         this.dropdownList.splice(1, 0, this.AvailableDropdownList['edit_menu'])
-    //       }else if(role.role_name == 'corporate_admin'){
-    //         this.dropdownList.splice(1, 0, this.AvailableDropdownList['shift'])
-    //       }
-    //     }
-    //   },
-    //   error => {
-    //     console.log('Error while loading the file')
-    //   }
-    // )
-      
-  }
-
-  
+   }  
 
   onClick(index: number) {
     this.dropdownList[index].action();
