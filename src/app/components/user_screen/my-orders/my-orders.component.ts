@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import {MatTableDataSource} from '@angular/material/table';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -22,27 +23,28 @@ export class MyOrdersComponent {
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
   public previousOrdersDataSource = new MatTableDataSource(this.previousOrders)
 
-  constructor(private _ordersService: OrdersService){}
+  navLinks = [
+    {
+      label: 'Current',
+      link: '/user/myorders/current-orders',
+        index: 0
+    },
+    {
+      label: 'History',
+      link: '/user/myorders/order-history',
+      index: 1
+    },
+    {
+        label: 'Cancelled',
+        link: '/user/myorders/cancelled-orders',
+        index: 2
+    },
+];  
 
-  ngOnInit(){
-    let body = {
-      "time_frame": "current"
-    }
-    this._ordersService.getCurrentOrders(body).subscribe(
-      data => {
-        console.log('This is data: ', data['order_list'])
-        data['order_list'].map(ele => {
-            this.currentOrders.push(this.unparseCurrentOrder(ele))
-            this.currentOrdersDataSource.data = this.currentOrders
-          }
-        )
-      },
-      error => {
-        console.log('this is error: ', error)
-      }
-    )
-    
-    
+  constructor(private _ordersService: OrdersService, private _router: Router){}
+
+  ngOnInit(){    
+    this._router.navigate(['user/myorders/current-orders'])
   }
 
 

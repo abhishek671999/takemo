@@ -20,7 +20,7 @@ export class OrdersService {
   private updateOrderStatusEndpoint = 'order/update_single_item_status/'
 
 
-  getCurrentOrders(body){
+  getMyOrders(body){
     console.log('Get current orders called')
     return this._http.post(host + this.orderHistoryEndpoint, body, {headers: this.utility.getHeaders()})
   }

@@ -39,6 +39,10 @@ import { DeleteCategoryConfirmationDialogComponent } from '../owner_view/delete-
 import { PostPaymentComponent } from './post-payment/post-payment.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
+import { CurrentOrdersComponent } from './current-orders/current-orders.component';
+import { OrderHistoryComponent } from './order-history/order-history.component';
+import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -56,6 +60,9 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     ErrorDialogComponent,
     DeleteCategoryConfirmationDialogComponent,
     PostPaymentComponent,
+    CurrentOrdersComponent,
+    OrderHistoryComponent,
+    CancelledOrdersComponent,
   ],
   imports: [
     CommonModule,
@@ -77,6 +84,7 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     ReactiveFormsModule,
     MatSlideToggleModule,
     SharedModuleModule,
+    MatSelectModule
   ],
   providers: [
     {
