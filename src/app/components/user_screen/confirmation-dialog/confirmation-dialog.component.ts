@@ -81,13 +81,13 @@ export class ConfirmationDialogComponent {
       "order_list":this.pickedItems.items,
       "restaurant_id": this.pickedItems.restaurant_id
   }
-  localStorage.setItem('total_amount', this.pickedItems.amount)
+  sessionStorage.setItem('total_amount', this.pickedItems.amount)
   
     this.__ordersService.createOrders(body).subscribe(
       data => {
         console.log('Payment done', data)
         sessionStorage.setItem('transaction_id', data['transaction_id'])
-        sessionStorage.setItem('order_id', data['order_id'])
+        sessionStorage.setItem('order_no', data['order_no'])
         window.location.href = data['payment_url']
       },
       error => {
