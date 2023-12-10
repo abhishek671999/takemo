@@ -58,7 +58,7 @@ export class HeaderComponent {
         name: 'Menu',
         href: '',
         action: () => {
-          this.router.navigate(['./owner/edit-menu/1'])
+          this.router.navigate(['./owner/edit-menu/' + sessionStorage.getItem('restaurant_id')])
         }
       },
       'orders': {
@@ -77,7 +77,7 @@ export class HeaderComponent {
         name: 'Menu',
         href: '',
         action: () => {
-          this.router.navigate(['./user/menu/1']) //Fix: Change this hard code restaurant id
+          this.router.navigate(['./user/menu/'+ sessionStorage.getItem('restaurant_id')]) //Fix: Change this hard code restaurant id
         }
       },
       'userOrders': {

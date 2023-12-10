@@ -31,10 +31,12 @@ export class PostLoginComponent {
         this.showSpinner = false
         console.log(data, data['restaurants'].length, )
         if(data['restaurants'].length > 0){
+          sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
           this._router.navigate(['owner/pending-orders'])
         }
         else if(data['companies'].length > 0){
-          this._router.navigate(['admin/user-management'])
+          sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+          this._router.navigate(['admin/user-management'])          
         }
         else{
           this._router.navigate(['user/'])
@@ -46,4 +48,6 @@ export class PostLoginComponent {
       }
     )
   }
+
+  
 }

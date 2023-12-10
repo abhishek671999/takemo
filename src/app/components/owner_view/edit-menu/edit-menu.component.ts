@@ -168,7 +168,7 @@ export class EditMenuComponent {
   toggleRestoOpen() {
     console.log('Restaurant toggled');
     let body = {
-      restaurant_id: 1,
+      restaurant_id: sessionStorage.getItem('restaurant_id'),
       is_open: !this.restaurantStatus,
     };
     this._restaurantService.editIsRestaurantOpen(body).subscribe(

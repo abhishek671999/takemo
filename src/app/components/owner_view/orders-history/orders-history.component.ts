@@ -26,7 +26,7 @@ export class OrdersHistoryComponent {
 
   ngOnInit(){
     let body = {
-        "restaurant_id": 1,
+        "restaurant_id": sessionStorage.getItem('restaurant_id'),
         "rule_id": 2,
         "_c": "rule_id is optional",
         "time_frame": this.selectedTimeFrame.actualValue,
@@ -76,7 +76,7 @@ export class OrdersHistoryComponent {
     this.currentOrders = []
     console.log('This is value:: ', this.selectedTimeFrame, this.currentOrders)
     let body = {
-      "restaurant_id": 1,
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "rule_id": 2,
       "_c": "rule_id is optional",
       "time_frame": this.selectedTimeFrame.actualValue,

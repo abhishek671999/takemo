@@ -26,7 +26,7 @@ export class PendingOrdersComponent {
   }
 
   getCurrentOrders(){
-    let params = {'restaurant_id': 1}
+    let params = {'restaurant_id': sessionStorage.getItem('restaurant_id')}
     this._orderService.getCurrentOrdersCards(params).subscribe(
       data =>{ 
         this.currentOrders = data

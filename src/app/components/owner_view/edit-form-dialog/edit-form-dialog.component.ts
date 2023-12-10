@@ -20,7 +20,7 @@ export class EditFormDialogComponent {
     id: [this.item.id, Validators.required],
     name: [this.item.name, Validators.required],
     price: [this.item.price, Validators.required],
-    isVeg: ['', Validators.required],
+    isVeg: [this.item.veg, Validators.required],
   });
 
   editSubmit() {

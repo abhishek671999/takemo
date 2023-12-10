@@ -3,10 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { HeaderComponent } from '../shared/header/header.component';
 import { HomeComponent } from './home/home.component';
-import { FooterComponent } from '../shared/footer/footer.component';
-import { AnalyticsComponent } from './analytics/analytics.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,7 +42,6 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
 @NgModule({
   declarations: [
     HomeComponent,
-    AnalyticsComponent,
     UserManagementComponent,
     AddRulesDialogComponent,
     EditRulesDialogComponent,

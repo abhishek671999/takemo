@@ -69,7 +69,7 @@ export class SalesAnalyticsComponent {
   createChart(timeFrame, groupby){
     console.log('Time frame', timeFrame, 'group by', groupby)
     let body = {
-      "restaurant_id": 1,
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": timeFrame,
       "_comment1": "Possible options for above field: today, this_week, this_month, last_3_months, last_6_months, this_year, custom",

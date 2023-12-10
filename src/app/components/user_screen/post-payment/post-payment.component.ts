@@ -17,9 +17,9 @@ export class PostPaymentComponent {
       iconRegistry.addSvgIconLiteral('fail', sanitizer.bypassSecurityTrustHtml(this.svgFailMark))
     }
 
-  transactionId = localStorage.getItem('transaction_id')
-  transactionAmount = localStorage.getItem('total_amount')
-  orderno = localStorage.getItem('order_no')
+  transactionId = sessionStorage.getItem('transaction_id')
+  transactionAmount = sessionStorage.getItem('total_amount')
+  orderno = sessionStorage.getItem('order_no')
   
 
   success = false

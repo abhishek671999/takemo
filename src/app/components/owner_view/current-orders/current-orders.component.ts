@@ -18,7 +18,7 @@ export class CurrentOrdersComponent {
 
   ngOnInit(){
     let body = { 
-        "restaurant_id": 1,
+        "restaurant_id": sessionStorage.getItem('restaurant_id'),
         "rule_id": 2,
         "_c": "rule_id is optional",
         "time_frame": "current",
@@ -75,7 +75,7 @@ export class CurrentOrdersComponent {
     deliverEntireOrder(order){
       console.log('Delivering: ', order)
       let body = {
-        "restaurant_id": 1,
+        "restaurant_id": sessionStorage.getItem("restaurant_id"),
         "order_id": order.order_id
       }
       console.log('THis is body: ', body)

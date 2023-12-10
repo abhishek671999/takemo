@@ -23,7 +23,7 @@ export class DeliveryOrderDialogComponent {
 
   updateStatusToDelivered(order){
     let body = {
-      "restaurant_id": 1,
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "line_item_id": order.line_item_id,
       "status": !order.is_ready ? "delivered" : "ready_and_delivered" 
     }
@@ -41,7 +41,7 @@ export class DeliveryOrderDialogComponent {
 
   updateStatusToReady(order){
     let body = {
-      "restaurant_id": 1,
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "line_item_id": order.line_item_id,
       "status": "ready"
     }
