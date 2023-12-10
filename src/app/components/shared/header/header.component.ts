@@ -77,7 +77,7 @@ export class HeaderComponent {
         name: 'Menu',
         href: '',
         action: () => {
-          this.router.navigate(['./user/menu/'+ sessionStorage.getItem('restaurant_id')]) //Fix: Change this hard code restaurant id
+          this.router.navigate(['./user'])
         }
       },
       'userOrders': {

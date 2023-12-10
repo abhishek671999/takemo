@@ -8,7 +8,6 @@
                             <th class="col1" scope="col">Order No</th>
                             <th class="col2" scope="col">Ready</th>
                             <th class="col3" scope="col">Completed</th>
-                            <th class="col4" scope="col">Cancel</th>
                         </tr>
                     </thead>
                     <tbody class="text-center" >
@@ -22,9 +21,6 @@
                             <td class="col3" scope="col">
                                 <button mat-raised-button color="primary" *ngIf='!order.is_delivered' (click)="updateStatusToDelivered(order)">Deliver</button>
                                 <p *ngIf="order.is_delivered">Delivered</p>
-                            </td>
-                            <td class="col4" scope="col">
-                                <button mat-raised-button (click)="cancelOrder(order)">Cancel Order</button>
                             </td>
                                 <!-- <i class="fa-solid fa-plus"></i> -->
                         </tr>

@@ -40,6 +40,14 @@
                     <p class="text-center" *ngIf="element.is_delivered">Delivered</p>
                 </td>
             </ng-container>
+
+            <ng-container matColumnDef="Cancel">
+                <th mat-header-cell *matHeaderCellDef>Cancel</th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-raised-button color (click)="cancelOrder(element)">Cancel Order</button>
+                </td>
+
+            </ng-container>
             
             
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

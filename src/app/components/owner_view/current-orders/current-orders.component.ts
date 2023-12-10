@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { ConfirmOrderCancelComponent } from '../confirm-order-cancel/confirm-order-cancel.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-current-orders',
@@ -9,9 +11,9 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 })
 export class CurrentOrdersComponent {
 
-  constructor(private _ordersService: OrdersService){}
+  constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
 
-  displayedColumns: string[] = ['Order No', 'Order details', 'Deliver', 'Amount', 'OrderedAt', 'Location'];
+  displayedColumns: string[] = ['Order No', 'Order details', 'Deliver', 'Amount', 'Cancel', 'OrderedAt', 'Location'];
   
   public currentOrders = []
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
@@ -89,5 +91,8 @@ export class CurrentOrdersComponent {
         }
       )
     }
-  
+
+    cancelOrder(order){
+      let dialogRef = this._dialog.open(ConfirmOrderCancelComponent, {data: order})    
+    }
 }
