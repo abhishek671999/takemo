@@ -14,7 +14,6 @@ import { ContactUsComponent } from './components/home_screen/contact-us/contact-
 import { LoginComponent } from './components/home_screen/login/login.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { CommonModule } from '@angular/common';
-import { PlaceOrdersComponent } from './components/user_screen/place-orders/place-orders.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { AdminLandingComponent } from './components/admin/admin-landing/admin-landing.component';
@@ -38,7 +37,6 @@ import { Login2Component } from './components/home_screen/login2/login2.componen
     ContactUsComponent,
     LoginComponent,
     NotfoundComponent,
-    PlaceOrdersComponent,
     AdminLandingComponent,
     PostLoginComponent,
     Login2Component

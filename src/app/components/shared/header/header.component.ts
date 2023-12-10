@@ -107,6 +107,15 @@ export class HeaderComponent {
       }
     }
   }
+
+  addUserNavOptions(){
+    let userNavOptions = ['menu', 'userOrders']
+    for(let option of userNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
   
 
     
@@ -130,6 +139,9 @@ export class HeaderComponent {
             this.addRestaurantOwnerNavOptions()
             break
           }
+        }
+        if(data['restaurants'].length == 0 && data['companies'].length == 0){
+          this.addUserNavOptions()
         }
       },
       error => {

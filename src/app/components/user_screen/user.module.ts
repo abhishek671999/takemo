@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { UserRoutingModule } from './user-routing.module';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
-import { PlaceOrdersComponent } from './place-orders/place-orders.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MenuComponent } from './menu/menu.component';
 import { MatExpansionModule } from '@angular/material/expansion';
