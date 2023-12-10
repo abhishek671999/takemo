@@ -41,7 +41,6 @@ export class PostPaymentComponent {
         if(data['success']){
           this.success = true
           this.fail = false
-
         }else{
           this.success = false
           this.fail = true

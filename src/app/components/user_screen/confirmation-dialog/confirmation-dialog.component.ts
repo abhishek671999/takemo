@@ -86,8 +86,8 @@ export class ConfirmationDialogComponent {
     this.__ordersService.createOrders(body).subscribe(
       data => {
         console.log('Payment done', data)
-        localStorage.setItem('transaction_id', data['transaction_id'])
-        localStorage.setItem('order_id', data['order_id'])
+        sessionStorage.setItem('transaction_id', data['transaction_id'])
+        sessionStorage.setItem('order_id', data['order_id'])
         window.location.href = data['payment_url']
       },
       error => {
