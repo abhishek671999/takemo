@@ -56,7 +56,7 @@ export class DeliveryOrderDialogComponent {
       let body = {
         "restaurant_id": 1,
         "line_item_id": order.line_item_id,
-        "status": !order.is_ready ? "ready_and_delivered" : "delivered"
+        "status": !order.is_ready ? "delivered" : "ready_and_delivered" 
       }
       console.log('Delivered: ', body)
       this._orderService.updateOrderStatus(body).subscribe(

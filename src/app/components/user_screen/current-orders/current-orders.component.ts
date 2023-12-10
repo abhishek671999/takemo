@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { Observable,Subscription, interval  } from 'rxjs';
+
 
 @Component({
   selector: 'app-current-orders',
@@ -15,7 +17,19 @@ export class CurrentOrdersComponent {
 
   constructor(private _ordersService: OrdersService){}
 
+  updateSubscription: Subscription;
+  refreshInterval = 5 // seconds
+
   ngOnInit(){
+    this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
+      (val) => {
+        this.getMyOrders()
+      }
+    )
+    
+  }
+
+  getMyOrders(){
     let body = {
       "time_frame": "current"
     }
@@ -66,4 +80,7 @@ export class CurrentOrdersComponent {
     this.currentOrdersDataSource.filter = (filterValue as HTMLInputElement).value.trim().toLowerCase()
   }
 
+  ngOnDestroy(){
+    this.updateSubscription.unsubscribe()
+  }
 }
