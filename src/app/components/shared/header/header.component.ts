@@ -90,7 +90,7 @@ export class HeaderComponent {
     }
   
     addAdminNavOptions(){
-      let adminNavOptions = ['shift', 'userOrders', 'analytics', 'billing', 'menu']
+      let adminNavOptions = ['shift', 'userOrders', 'billing', 'menu']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -111,6 +111,15 @@ export class HeaderComponent {
   addUserNavOptions(){
     let userNavOptions = ['menu', 'userOrders']
     for(let option of userNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
+
+  addRestaurantStaffNavOptions(){
+    let restaurantStaffNavOptions = ['edit_menu', 'orders']
+    for(let option of restaurantStaffNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
       }
@@ -137,6 +146,9 @@ export class HeaderComponent {
         for(let restaurant of data['restaurants']){
           if(restaurant.role_name == 'restaurant_admin'){
             this.addRestaurantOwnerNavOptions()
+            break
+          }else if(restaurant.role_name == 'restaurant_staff'){
+            this.addRestaurantStaffNavOptions()
             break
           }
         }
