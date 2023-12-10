@@ -56,7 +56,7 @@ export class MyOrdersComponent {
   }
 
   addOrderStatus(order){
-    let status = order.ready_quantity == 0 ? `<p> being prepared </p>` : `<p class="text-success">${order.ready_quantity} of ${order.item_quantity} ready<p>`
+    let status = order.ready_quantity == 0 ? `<p class="text-warning"> being prepared </p>` : `<p class="text-success">${order.ready_quantity} of ${order.item_quantity} ready<p>`
     return { 
       status: `<b>${order.item_name}</b> ${status}`
     }

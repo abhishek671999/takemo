@@ -93,7 +93,7 @@ export class HeaderComponent {
       let adminNavOptions = ['shift', 'userOrders', 'analytics', 'billing', 'menu']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
-          this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+          this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
         }
       }
       
@@ -103,7 +103,7 @@ export class HeaderComponent {
     let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
-        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+        this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
       }
     }
   }
@@ -112,14 +112,14 @@ export class HeaderComponent {
     let userNavOptions = ['menu', 'userOrders']
     for(let option of userNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
-        this.dropdownList.splice(1, 0, this.AvailableDropdownList[option])
+        this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
       }
     }
   }
   
 
     
-  dropdownList = [this.AvailableDropdownList['profile'], this.AvailableDropdownList['logout']]
+  dropdownList = [this.AvailableDropdownList['logout']] //this.AvailableDropdownList['profile']
   username: string
   message: string
 
