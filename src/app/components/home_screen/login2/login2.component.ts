@@ -38,7 +38,7 @@ export class Login2Component {
   };
   }
   ispause = new Subject();
-  public resend_otp_time = 5
+  public resend_otp_time = 45 // seconds
   public time = this.resend_otp_time;
   timer: Observable<number>;
   timerObserver: PartialObserver<number>;
@@ -51,7 +51,7 @@ export class Login2Component {
     var mDisplay = m > 0 ? m + (m == 1 ? ": " : " : ") : "00 : ";
     var sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "00";
     return mDisplay + sDisplay ; 
-}
+  }
   resendOTP = true
   goOn() {
     if(this.resendOTP){
@@ -59,10 +59,6 @@ export class Login2Component {
       this.time = this.resend_otp_time
       this.timer.subscribe(this.timerObserver);
     }
-  }
-
-  ngOnit(){
-    
   }
 
   regex = new RegExp(

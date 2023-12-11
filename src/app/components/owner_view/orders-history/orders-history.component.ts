@@ -25,27 +25,33 @@ export class OrdersHistoryComponent {
   selectedTimeFrame = this.timeFrames[0]
 
   ngOnInit(){
-    let body = {
-        "restaurant_id": sessionStorage.getItem('restaurant_id'),
-        "rule_id": 2,
-        "_c": "rule_id is optional",
-        "time_frame": this.selectedTimeFrame.actualValue,
-        "_c1": "possible options for time_frame are today, this_week, this_month",
-        "start_date": "",
-        "end_date": "",
-        "_c3": "if the above both are given then time_frame is not needed"
-    }
-    console.log(body)
-    this._orderService.getRestaurantOrders(body).subscribe(
-      data => {
-        console.log(data)
-        this.unparseResponse(data)
-      },
-      error => {
-        console.log(error)
-      }
-    )
+    this.getRestaurantCurrentOrders()
+    
   }
+
+  getRestaurantCurrentOrders(){
+    this.currentOrders = []
+    let body = {
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
+      "_c": "rule_id is optional",
+      "time_frame": this.selectedTimeFrame.actualValue,
+      "_c1": "possible options for time_frame are today, this_week, this_month",
+      "start_date": "",
+      "end_date": "",
+      "_c3": "if the above both are given then time_frame is not needed"
+  }
+  console.log(body)
+  this._orderService.getRestaurantOrders(body).subscribe(
+    data => {
+      console.log(data)
+      this.unparseResponse(data)
+    },
+    error => {
+      console.log(error)
+    }
+  )
+  }
+
 
   unparseResponse(data){
     this.currentOrders = []
@@ -69,34 +75,8 @@ export class OrdersHistoryComponent {
       Location: order.restaurant_name,
       Status: order.is_delivered ? 'Delivered': 'Not-delivered'
     }
-    }
-
-
-  onValueChange(){
-    this.currentOrders = []
-    console.log('This is value:: ', this.selectedTimeFrame, this.currentOrders)
-    let body = {
-      "restaurant_id": sessionStorage.getItem('restaurant_id'),
-      "rule_id": 2,
-      "_c": "rule_id is optional",
-      "time_frame": this.selectedTimeFrame.actualValue,
-      "_c1": "possible options for time_frame are today, this_week, this_month",
-      "start_date": "",
-      "end_date": "",
-      "_c3": "if the above both are given then time_frame is not needed"
   }
-  console.log(body)
-    this._orderService.getRestaurantOrders(body).subscribe(
-      data => {
-        console.log(data)
-        this.unparseResponse(data)
-      },
-      error => {
-        console.log(error)
-      }
-    )
- 
-  }
+
 
   addOrderDetails(order){
     return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ${(order.item_quantity*order.item_price)}`}

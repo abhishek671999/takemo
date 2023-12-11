@@ -21,6 +21,7 @@ export class CurrentOrdersComponent {
   refreshInterval = 5 // seconds
 
   ngOnInit(){
+    this.getMyOrders()
     this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
       (val) => {
         this.getMyOrders()
@@ -36,6 +37,7 @@ export class CurrentOrdersComponent {
     this._ordersService.getMyOrders(body).subscribe(
       data => {
         console.log('This is data: ', data['order_list'])
+        this.currentOrders = []
         data['order_list'].map(ele => {
             this.currentOrders.push(this.unparseCurrentOrder(ele))
             this.currentOrdersDataSource.data = this.currentOrders

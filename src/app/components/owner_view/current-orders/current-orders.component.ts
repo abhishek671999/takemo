@@ -21,7 +21,6 @@ export class CurrentOrdersComponent {
   ngOnInit(){
     let body = { 
         "restaurant_id": sessionStorage.getItem('restaurant_id'),
-        "rule_id": 2,
         "_c": "rule_id is optional",
         "time_frame": "current",
         "_c1": "possible options for time_frame are today, this_week, this_month",

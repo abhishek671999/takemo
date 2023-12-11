@@ -13,8 +13,8 @@
     </mat-form-field>
         
     
-    
-    <table mat-table [dataSource]="orderHistoryDataSource" class="mat-elevation-z8 demo-table">
+    <cdk-virtual-scroll-viewport itemSize="500" class="viewport">
+      <table mat-table [dataSource]="orderHistoryDataSource" class="mat-elevation-z8 demo-table">
         <!-- Position Column -->
         <ng-container matColumnDef="Order No">
           <th mat-header-cell *matHeaderCellDef>Order No.</th>
@@ -53,4 +53,6 @@
         <tr mat-header-row *matHeaderRowDef="historyColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: historyColumns;"></tr>
       </table>
+    </cdk-virtual-scroll-viewport>
+    
 </div>

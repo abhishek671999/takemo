@@ -20,6 +20,7 @@ export class PendingOrdersComponent {
   refreshInterval = 5 // seconds
 
   ngOnInit(){
+    this.getCurrentOrders()
     console.log('In pending order ngInit')
     this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
       (val) => { this.getCurrentOrders()});

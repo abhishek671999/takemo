@@ -1,7 +1,7 @@
 <div class="main-container">
     <div style="white-space: pre;" class="tab-group-container">
 
-        
+    <cdk-virtual-scroll-viewport itemSize="500" class="viewport">
         <table mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
             <!-- Position Column -->
             <ng-container matColumnDef="Order No">
@@ -53,8 +53,9 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>          
-        <div *ngIf="currentOrders.length == 0">
-            <h1 class="text-center">No Orders</h1>
-        </div>
+    </cdk-virtual-scroll-viewport>
+    <div *ngIf="currentOrders.length == 0">
+        <h1 class="text-center m-5">No Orders</h1>
+    </div>
     </div>
 </div>

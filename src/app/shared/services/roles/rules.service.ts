@@ -48,5 +48,4 @@ export class RulesService {
   addUserToRule(body){
     return this._httpClient.post(host+this.addUsersToRuleEndpoint, body, {headers: this.utility.getHeaders()})
   }
-
 }

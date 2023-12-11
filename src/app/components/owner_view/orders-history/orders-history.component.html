@@ -2,7 +2,7 @@
     <div class="input-container">
         <mat-form-field>
             <mat-label>Select time frame</mat-label>
-            <mat-select [(value)]="selectedTimeFrame" (selectionChange)="onValueChange()" >
+            <mat-select [(value)]="selectedTimeFrame" (selectionChange)="getRestaurantCurrentOrders()" >
               <mat-option *ngFor="let time of timeFrames" [value]="time">
                 {{time.ViewValue}}
               </mat-option>
@@ -14,53 +14,55 @@
         </mat-form-field>
     </div>
     
-
-    <div style="white-space: pre;" class="tab-group-container">
-        <div>
-            <table mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
-                <!-- Position Column -->
-                <ng-container matColumnDef="Order No">
-                    <th mat-header-cell *matHeaderCellDef>Order No.</th>
-                    <td mat-cell *matCellDef="let element">{{element.orderno}}</td>
-                </ng-container>
-            
-                <!-- Name Column -->
-                <ng-container matColumnDef='Order details'>
-                    <th mat-header-cell *matHeaderCellDef>Name</th>
-                    <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.order_detail"></td>
-                </ng-container>
-                
-                <!-- Weight Column -->
-                <ng-container matColumnDef='Amount'>
-                    <th mat-header-cell *matHeaderCellDef>Amount</th>
-                    <td mat-cell *matCellDef="let element">{{element.amount}}</td>
-                </ng-container>
-                
-                <ng-container matColumnDef="DeliveredAt">
-                    <th mat-header-cell *matHeaderCellDef>Delivered at</th>
-                    <td mat-cell *matCellDef="let element">{{element.DeliveredAt}}</td>
+    <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+        <div style="white-space: pre;" class="tab-group-container">
+            <div>
+                <table mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="Order No">
+                        <th mat-header-cell *matHeaderCellDef>Order No.</th>
+                        <td mat-cell *matCellDef="let element">{{element.orderno}}</td>
                     </ng-container>
-    
-                <!-- Symbol Column -->
-                <ng-container matColumnDef="OrderedAt">
-                    <th mat-header-cell *matHeaderCellDef>Ordered at</th>
-                    <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
-                </ng-container>
                 
-                <ng-container matColumnDef="Location">
-                    <th mat-header-cell *matHeaderCellDef>Location</th>
-                    <td mat-cell *matCellDef="let element">{{element.Location}}</td>
-                </ng-container>
-    
-                <!-- <ng-container matColumnDef="Status">
-                    <th mat-header-cell *matHeaderCellDef>Order Status</th>
-                    <td mat-cell *matCellDef="let element">{{element.Status}}</td>
-                </ng-container> -->
-                
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
+                    <!-- Name Column -->
+                    <ng-container matColumnDef='Order details'>
+                        <th mat-header-cell *matHeaderCellDef>Name</th>
+                        <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.order_detail"></td>
+                    </ng-container>
+                    
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef='Amount'>
+                        <th mat-header-cell *matHeaderCellDef>Amount</th>
+                        <td mat-cell *matCellDef="let element">{{element.amount}}</td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="DeliveredAt">
+                        <th mat-header-cell *matHeaderCellDef>Delivered at</th>
+                        <td mat-cell *matCellDef="let element">{{element.DeliveredAt}}</td>
+                        </ng-container>
+        
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="OrderedAt">
+                        <th mat-header-cell *matHeaderCellDef>Ordered at</th>
+                        <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="Location">
+                        <th mat-header-cell *matHeaderCellDef>Location</th>
+                        <td mat-cell *matCellDef="let element">{{element.Location}}</td>
+                    </ng-container>
+        
+                    <!-- <ng-container matColumnDef="Status">
+                        <th mat-header-cell *matHeaderCellDef>Order Status</th>
+                        <td mat-cell *matCellDef="let element">{{element.Status}}</td>
+                    </ng-container> -->
+                    
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+                      
         </div>
-                  
-    </div>
+    </cdk-virtual-scroll-viewport>
+    
 </div>
