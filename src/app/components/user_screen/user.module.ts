@@ -16,6 +16,7 @@ import {
   MatDialog,
   MAT_DIALOG_DATA,
   MatDialogModule,
+  MatDialogRef,
 } from '@angular/material/dialog';
 import { MyOrdersComponent } from './my-orders/my-orders.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
@@ -43,6 +44,7 @@ import { CurrentOrdersComponent } from './current-orders/current-orders.componen
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { MatSelectModule } from '@angular/material/select';
+import { OrderMoreDetailsDialogComponent } from '../shared/order-more-details-dialog/order-more-details-dialog.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +65,7 @@ import { MatSelectModule } from '@angular/material/select';
     CurrentOrdersComponent,
     OrderHistoryComponent,
     CancelledOrdersComponent,
+    OrderMoreDetailsDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -84,13 +87,8 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatSlideToggleModule,
     SharedModuleModule,
-    MatSelectModule
+    MatSelectModule,    
   ],
-  providers: [
-    {
-      provide: MAT_RADIO_DEFAULT_OPTIONS,
-      useValue: { color: 'primary' },
-    },
-  ],
+  exports: [],
 })
 export class UserModule {}

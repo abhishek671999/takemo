@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-order-history',
@@ -19,11 +21,11 @@ export class OrderHistoryComponent {
   ]
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
 
-  historyColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'DelieveredAt', 'Location']
+  historyColumns: string[] = ['Order No', 'Order details', 'Amount', 'Details']
   public orderHistory = []
   public orderHistoryDataSource = new MatTableDataSource(this.orderHistory)
   
-  constructor(private _ordersService: OrdersService){}
+  constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
   
   ngOnInit(){
     let body = {
@@ -96,7 +98,12 @@ export class OrderHistoryComponent {
       amount: order.total_amount,
       OrderedAt: ordered_time,
       DelieveredAt: done_time,
-      Location: order.restaurant_name
+      Location: order.restaurant_name,
+      order_id: order.order_id,
+      payment_details: order.payment_details,
+      total_amount: order.total_amount.toFixed(2),
+      total_platform_fee: order.total_platform_fee.toFixed(2),
+      total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
     }
   }
 
@@ -104,4 +111,10 @@ export class OrderHistoryComponent {
     return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ₹ ${(order.item_quantity*order.item_price)}`}
   }
 
+  displayMoreDetails(order) {
+    console.log(order);
+    let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
+      data: order,
+    });
+  }
 }

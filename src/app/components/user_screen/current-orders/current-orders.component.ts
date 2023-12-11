@@ -2,20 +2,22 @@ import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { Observable,Subscription, interval  } from 'rxjs';
-
+import { Dialog } from '@angular/cdk/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
 
 @Component({
   selector: 'app-current-orders',
   templateUrl: './current-orders.component.html',
-  styleUrls: ['./current-orders.component.css']
+  styleUrls: ['./current-orders.component.css'],
 })
 export class CurrentOrdersComponent {
 
   public currentOrders = []
-  displayedColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'OrderedAt', 'Location' ];
+  displayedColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'More details'];
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
 
-  constructor(private _ordersService: OrdersService){}
+  constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
 
   updateSubscription: Subscription;
   refreshInterval = 5 // seconds
@@ -63,7 +65,12 @@ export class CurrentOrdersComponent {
       OrderStatus: order.line_items.length != 1?
         order.line_items.map(this.addOrderStatus).reduce((a,b)=>{return `${a.status} <br> ${b.status}`}) : 
         order.line_items.map(this.addOrderStatus)[0].status,
-      Location: order.restaurant_name
+      Location: order.restaurant_name,
+      order_id: order.order_id,
+      payment_details: order.payment_details,
+      total_amount: order.total_amount.toFixed(2),
+      total_platform_fee: order.total_platform_fee.toFixed(2),
+      total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
     }
   }
 
@@ -84,5 +91,12 @@ export class CurrentOrdersComponent {
 
   ngOnDestroy(){
     this.updateSubscription.unsubscribe()
+  }
+
+  displayMoreDetails(order) {
+    console.log(order);
+    let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
+      data: order,
+    });
   }
 }
