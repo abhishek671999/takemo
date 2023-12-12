@@ -3,14 +3,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { host, getToken, Utility } from '../../site-variable';
+import { host, getToken, Utility, meAPIUtility } from '../../site-variable';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
-  constructor(private _http: HttpClient, private _router: Router, public cookieService: CookieService, public utility: Utility) {}
+  constructor(private _http: HttpClient, private _router: Router, public cookieService: CookieService, 
+    public utility: Utility, private meAPIUtility: meAPIUtility) {}
 
   _host = host;
   _login_endpoint = 'rest-auth/login/';
@@ -36,6 +37,7 @@ export class LoginService {
 
   logOut() {
     this.utility.removeToken()
+    this.meAPIUtility.removeMeData()
     this._router.navigate(['login']);
   }
 }

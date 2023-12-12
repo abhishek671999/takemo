@@ -2,9 +2,8 @@
     <form class="example-form">
         <mat-form-field class="example-full-width">
           <mat-label>Name</mat-label>
-          <input type="text"
+          <input matInput type="text"
                  placeholder="Pick one"
-                 matInput
                  [formControl]="formControl"
                  [matAutocomplete]="auto">
           <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">

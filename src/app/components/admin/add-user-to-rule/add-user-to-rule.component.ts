@@ -20,6 +20,12 @@ export class AddUserToRuleComponent {
    filteredOptions: Observable<string[]>;
 
    ngOnInit() {
+    this._rulesServices.getITTUsers().subscribe(
+      data => {
+        this.options = data['itt_users']
+      }
+    )
+    
     this.filteredOptions = this.formControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
@@ -27,7 +33,6 @@ export class AddUserToRuleComponent {
   }
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 

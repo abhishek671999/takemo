@@ -14,6 +14,7 @@ export class RulesService {
   private getRuleUsersEndpoint = 'role/get_rule_users/'
   private addUsersToRuleEndpoint = 'role/add_user_to_rule/'
   private editRuleEndpoint = 'role/edit_rule/'
+  private getITTUsersEndpoint = 'role/get_itt_users/'
 
   constructor(private _httpClient: HttpClient, public utility: Utility) { }
 
@@ -47,5 +48,9 @@ export class RulesService {
 
   addUserToRule(body){
     return this._httpClient.post(host+this.addUsersToRuleEndpoint, body, {headers: this.utility.getHeaders()})
+  }
+
+  getITTUsers(){
+    return this._httpClient.get(host + this.getITTUsersEndpoint, {headers: this.utility.getHeaders()})
   }
 }
