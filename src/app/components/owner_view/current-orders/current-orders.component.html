@@ -50,9 +50,9 @@
             <ng-container matColumnDef="Cancel">
                 <th mat-header-cell *matHeaderCellDef>Cancel</th>
                 <td mat-cell *matCellDef="let element">
-                    <button mat-raised-button color (click)="cancelOrder(element)">Cancel Order</button>
+                    <button mat-raised-button color *ngIf="!element.is_cancelled" (click)="cancelOrder(element)">Cancel Order</button>
+                    <p class="text-center" *ngIf="element.is_cancelled">is_cancelled</p>
                 </td>
-
             </ng-container>
             
             

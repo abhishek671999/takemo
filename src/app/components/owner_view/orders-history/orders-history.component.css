@@ -18,8 +18,10 @@
     height:70vh
 }
 
+
 .viewport {
     height: 68vh;
+    width: 100%;
 }
 
 ::-webkit-scrollbar {

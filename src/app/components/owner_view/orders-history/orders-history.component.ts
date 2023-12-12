@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-orders-history',
@@ -9,7 +11,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 })
 export class OrdersHistoryComponent {
 
-  constructor(private _orderService: OrdersService){}
+  constructor(private _orderService: OrdersService, private _dialog: MatDialog){}
 
   timeFrames = [
     {ViewValue: 'Today', actualValue: 'today'},
@@ -17,7 +19,13 @@ export class OrdersHistoryComponent {
     {ViewValue: 'This month', actualValue: 'this_month'},
   ]
 
-  displayedColumns: string[] = ['Order No', 'Order details', 'Amount', 'OrderedAt', 'DeliveredAt', 'Location' ];
+  displayedColumns: string[] = [
+    'Order No',
+    'Order details',
+    'Amount',
+    'Details',
+  ];
+
   
   public currentOrders = []
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
@@ -26,7 +34,6 @@ export class OrdersHistoryComponent {
 
   ngOnInit(){
     this.getRestaurantCurrentOrders()
-    
   }
 
   getRestaurantCurrentOrders(){
@@ -73,7 +80,12 @@ export class OrdersHistoryComponent {
       OrderedAt: ordered_time,
       DeliveredAt: done_time,
       Location: order.restaurant_name,
-      Status: order.is_delivered ? 'Delivered': 'Not-delivered'
+      Status: order.is_delivered ? 'Delivered': 'Not-delivered',
+      order_id: order.order_id,
+      payment_details: order.payment_details,
+      total_amount: order.total_amount.toFixed(2),
+      total_platform_fee: order.total_platform_fee.toFixed(2),
+      total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
     }
   }
 
@@ -88,5 +100,12 @@ export class OrdersHistoryComponent {
 
   onClick(){
     console.log(this.currentOrdersDataSource)
+  }
+
+  displayMoreDetails(order) {
+    console.log(order);
+    let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
+      data: order,
+    });
   }
 }

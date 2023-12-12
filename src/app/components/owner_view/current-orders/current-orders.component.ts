@@ -77,6 +77,7 @@ export class CurrentOrdersComponent {
       DelieveredAt: done_time,
       Location: order.restaurant_name,
       Status: order.is_delivered,
+      is_cancelled: false,
       order_id: order.order_id,
       payment_details: order.payment_details,
       total_amount: order.total_amount.toFixed(2),
@@ -114,7 +115,16 @@ export class CurrentOrdersComponent {
   cancelOrder(order) {
     let dialogRef = this._dialog.open(ConfirmOrderCancelComponent, {
       data: order,
-    });
+    })
+    dialogRef.afterClosed().subscribe(
+      (result) => {
+        if (result == undefined){
+          
+        } else if(result.cancelled){
+          order.is_cancelled = true
+        }
+      }
+    );
   }
 
   displayMoreDetails(order) {
