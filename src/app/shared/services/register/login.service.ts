@@ -31,8 +31,6 @@ export class LoginService {
 
   isLoggedIn() {
     var token = this.utility.getToken()
-    console.log(typeof(token), token.length)
-    console.log('returning',token.length != 0);
     return token.length != 0
   }
 

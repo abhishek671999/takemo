@@ -21,7 +21,6 @@ export class PendingOrdersComponent {
 
   ngOnInit(){
     this.getCurrentOrders()
-    console.log('In pending order ngInit')
     this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
       (val) => { this.getCurrentOrders()});
   }
@@ -31,18 +30,15 @@ export class PendingOrdersComponent {
     this._orderService.getCurrentOrdersCards(params).subscribe(
       data =>{ 
         this.currentOrders = data
-        console.log('Current Orders data: ', data)
         this.orderList = []
         for (let item in this.currentOrders){
           this.orderList.push({obj: this.currentOrders[item]['pending_order'], name: item, quantity: this.currentOrders[item]['pending_order'].length})
         }
-        console.log("Order list", this.orderList)
       }, 
       error => {
         console.log('Error while getting data: ', error)
       }
     )
-    console.log('order list22', this.orderList)
   }
 
 

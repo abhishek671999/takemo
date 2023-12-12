@@ -19,4 +19,5 @@ export class MeService {
   getRoles(){
     return this.__httpClient.get(host+this.rolesEndpoint, {headers: this.utility.getHeaders()})
   }
+  
 }

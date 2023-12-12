@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
+import { Utility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-post-login',
@@ -9,7 +10,7 @@ import { MeService } from 'src/app/shared/services/register/me.service';
   styleUrls: ['./post-login.component.css']
 })
 export class PostLoginComponent {
-  constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService){
+  constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService, private _utility: Utility){
     this._meService.getMyInfo().subscribe(
       data => {
         console.log('Me api from post login')

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
+import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-header',
@@ -13,8 +14,7 @@ export class HeaderComponent {
   constructor(
     private _loginService: LoginService, 
     private router: Router,
-    private _meService: MeService,
-    private _cc: ConnectComponentsService) {
+    private _meAPIutility: meAPIUtility) {
     }
     AvailableDropdownList = {
       'profile': {
@@ -133,10 +133,9 @@ export class HeaderComponent {
   message: string
 
   ngOnInit(){
-    this._cc.getMessage.subscribe(
-      data => {
-        console.log(data)
-        this.username = data['username'] ? data['username'] : data['email']
+    let data = this._meAPIutility.getMeData()
+    console.log('Header component: ', data)
+    this.username = data['username'] ? data['username'] : data['email']
         for(let company of data['companies']){
           if(company.role_name == 'corporate_admin'){
             this.addAdminNavOptions()
@@ -154,12 +153,7 @@ export class HeaderComponent {
         }
         if(data['restaurants'].length == 0 && data['companies'].length == 0){
           this.addUserNavOptions()
-        }
-      },
-      error => {
-        console.log('Error while getting my info', error)
       }
-    )
    }  
 
   onClick(index: number) {

@@ -37,6 +37,9 @@ export function getHeaders(){
 }
 
 import { Injectable } from '@angular/core';
+import { MeService } from "./services/register/me.service"
+import { JsonPipe } from "@angular/common"
+
 @Injectable({
     providedIn: 'root'
 })
@@ -45,7 +48,6 @@ export class Utility{
 
     getToken(){
         var token = this.cookieService.get('token')
-        console.log('This is token: ', token)
         return token
     }
 
@@ -61,5 +63,38 @@ export class Utility{
 
     removeToken(){
         this.cookieService.delete('token')
+    }
+}
+
+
+@Injectable({
+    providedIn: 'root'
+})
+export class meAPIUtility{
+
+    constructor(public cookieService: CookieService, private _meService: MeService){}
+
+    setMeData(meData){
+        let meDataExpiryDuration = 30 // min
+        this.cookieService.set('me', JSON.stringify(meData), new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000))
+    }
+
+    getMeData(){
+        let meData: any = this.cookieService.get('me')
+        if(meData){
+            return JSON.parse(meData)
+        }else{
+            this._meService.getMyInfo().subscribe(
+                data => {
+                    meData = data
+                    this.setMeData(meData)
+                    return meData
+                }
+            )
+        } 
+    }
+
+    removeMeData(){
+        this.cookieService.delete('me')
     }
 }
