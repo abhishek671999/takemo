@@ -57,8 +57,8 @@ export class Utility{
     }
 
     setToken( key: string){
-    let totalExpiryDate = 7; // days
-    this.cookieService.set('token', key, new Date(new Date().getTime()  + totalExpiryDate * 24 * 60 * 60 * 1000))
+        let totalExpiryDate = 60; // days
+        this.cookieService.set('token', key, new Date(new Date().getTime()  + totalExpiryDate * 24 * 60 * 60 * 1000))
     }
 
     removeToken(){

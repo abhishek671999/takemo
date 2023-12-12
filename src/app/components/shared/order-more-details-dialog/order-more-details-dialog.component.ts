@@ -12,7 +12,9 @@ export class OrderMoreDetailsDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<OrderMoreDetailsDialogComponent>
-  ){}
+  ){
+    console.log('Data recerived: ', data)
+  }
   NA = 'NA'
   closeDialog(){
     this.dialogRef.close()
