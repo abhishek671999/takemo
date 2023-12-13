@@ -14,3 +14,9 @@
      border: 1px solid black;
      margin-top: 10px;
 }
+
+.input-container{
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
