@@ -16,51 +16,101 @@ export class AddUserToRuleComponent {
     @Inject(MAT_DIALOG_DATA) public data){}
 
    formControl = new FormControl('')
-   options: string[] = ['One', 'Two', 'Three'];
    filteredOptions: Observable<string[]>;
+  
+   options = ['one'];
+   displayOptions = []
+   companies = [
+    {company_name: 'select company', company_id: 0},
+    {company_name: 'Intimetec', company_id: 1}
+  ]
+  selected_company = this.companies[0]
+
+   restaurants = [
+    { restaurant_name: 'Select Restaurant', restaurant_id: 0},
+    {restaurant_name: 'Amulya Kitchen', restaurant_id: 1},
+    {restaurant_name: 'Tikkand Kitchen', restaurant_id: 2}
+  ]
+  selected_restaurant = this.restaurants[0]
+
 
    ngOnInit() {
     this._rulesServices.getITTUsers().subscribe(
       data => {
+        console.log('This is data: ', data)
         this.options = data['itt_users']
+        this.options.forEach(ele =>
+          this.displayOptions.push(ele['user_email']))
+        console.log('This is options: ', this.displayOptions)
+        this.filteredOptions = this.formControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this.displayOptions.filter(option => option.toLowerCase().includes(value.toLowerCase() || '')))
+        );
       }
     )
     
-    this.filteredOptions = this.formControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    );
   }
-  private _filter(value: string): string[] {
+  private _filter(value: string){
     const filterValue = value.toLowerCase();
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 
+  disableRestaurantField(){
+    console.log('Checking disable', this.selected_company)
+    if(this.selected_company.company_id > 0){
+      return true
+    }
+    return false
+  }
+
+  disableCompanyField(){
+    if(this.selected_restaurant.restaurant_id > 0){
+      return true
+    }
+    return false
+  }
+
   onClick(){
     console.log("FormControl", this.formControl)
-    console.log(this.options.indexOf(this.formControl.value))
+    console.log('selected: ', this.selected_company, this.selected_restaurant)
+    let emailIndex = this.displayOptions.indexOf(this.formControl.value)
+    let user_id = this.options[emailIndex]['user_id']
     let body = {
-      "rule_id": this.data['rule_id'],
-      "restaurant_id": 1,
-      "user_id": this.options.indexOf(this.formControl.value) + 1
+      'user_id': user_id,
+      'rule_id': this.data['rule_id']
     }
-    console.log('This is body', body)
+    
+    this.selected_company['company_id'] > 0 ? body['company_id'] = this.selected_company['company_id'] : body['restaurant_id'] = this.selected_restaurant['restaurant_id']
+    console.log('This is body: ', body) 
     this._rulesServices.addUserToRule(body).subscribe(
-      data => {
-        console.log(data)
-        alert('User added')
-      },
-      error => {
-        console.log(error)
-        alert('Something went wrong')
-      }
+      data => alert('User added'),
+      error => alert('Failed to add user')
     )
+    
+    // console.log(this.options.indexOf(this.formControl.value))
+    // let body = {
+    //   "rule_id": this.data['rule_id'],
+    //   "restaurant_id": 1,
+    //   "user_id": this.options.indexOf(this.formControl.value) + 1
+    // }
+    // console.log('This is body', body)
+    // this._rulesServices.addUserToRule(body).subscribe(
+    //   data => {
+    //     console.log(data)
+    //     alert('User added')
+    //   },
+    //   error => {
+    //     console.log(error)
+    //     alert('Something went wrong')
+    //   }
+    // )
   }
 
   isDisabled(){
-    return this.options.indexOf(this.formControl.value) >= 0
+    let index_is = this.displayOptions.indexOf(this.formControl.value) >= 0
+    let isRestaurantOrCompanySelected = this.selected_company.company_id > 0 || this.selected_restaurant.restaurant_id > 0
+    return index_is && isRestaurantOrCompanySelected
   }
-   Options = [{email: 'abhishek.akkannavar@gmail.com', id: 1}, {email: 'raghav@gmail.com', id: 2}]
 
 
 }

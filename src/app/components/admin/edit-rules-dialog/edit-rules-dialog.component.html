@@ -1,15 +1,15 @@
 <div class="main-container">
     <form [formGroup]="editRulesForm">
-        <h1 mat-dialog-title>Edit this rule</h1>
+        <h1 mat-dialog-title>Edit this Shift</h1>
         <div mat-dialog-content>
             <div class="form-container">
                 <mat-form-field class="form-field">
                     <mat-label>Name</mat-label>
-                    <input matInput placeholder="Item Name" formControlName="name">
+                    <input matInput  (keydown)="false" placeholder="Item Name" formControlName="name">
                 </mat-form-field>
                 <mat-form-field class="form-field">
-                    <mat-label>Start time</mat-label>
-                    <input matInput [ngxMatTimepicker]="picker" placeholder="Start time" formControlName="start_time">
+                    <mat-label>Start time1</mat-label>
+                    <input matInput  (keydown)="false" [ngxMatTimepicker]="picker" placeholder="Start time" formControlName="start_time">
                     <ngx-mat-timepicker #picker></ngx-mat-timepicker>  
                 </mat-form-field>
 
@@ -45,20 +45,16 @@
                 <table class="table table-hover">
                     <thead class="text-center">
                         <tr>
-                            <th class="col1" scope="col">Id</th>
-                            <th class="col2" scope="col">User Name</th>
                             <th class="col3" scope="col">Email</th>
-                            <th class="col4" scope="col">Restaurant Name</th>
+                            <th class="col4" scope="col">Assigned To</th>
                             <th class="col5" scope="col">Delete</th>
                         </tr>
                     </thead>
                     <tbody class="text-center" >
                         <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
                         <tr class="table-row" *ngFor="let user of users.users; let subIndex = index">
-                            <td class="col1" >{{user.user_id}}</td>
-                            <td class="col2" >{{user.username}}</td>
                             <td class="col3" >{{user.user_email}}</td>
-                            <td class="col4">{{user.restaurant_name}}</td>
+                            <td class="col4">{{user.restaurant_name || user.company_name}}</td>
                             <td class="col5">
                                 <mat-icon *ngIf="!user.is_deleted" svgIcon="delete" (click)="deleteUser(user)"></mat-icon>
                                 <p *ngIf="user.is_deleted">User deleted</p>

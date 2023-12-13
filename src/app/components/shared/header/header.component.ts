@@ -138,12 +138,16 @@ export class HeaderComponent {
     this.username = data['username'] ? data['username'] : data['email']
         for(let company of data['companies']){
           if(company.role_name == 'corporate_admin'){
+            sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+            console.log('company_id', sessionStorage.getItem('company_id'))
             this.addAdminNavOptions()
             break
           }
         }
         for(let restaurant of data['restaurants']){
           if(restaurant.role_name == 'restaurant_admin'){
+            sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
+            console.log(sessionStorage.getItem('restaurant_id'))
             this.addRestaurantOwnerNavOptions()
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
