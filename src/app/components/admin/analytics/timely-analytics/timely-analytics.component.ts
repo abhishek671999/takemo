@@ -19,9 +19,17 @@ export class TimelyAnalyticsComponent {
   categoryList = [{'name': 'select', 'id': 0}]
   itemList = [{'name': 'select', 'id': 0}]
 
+  restaurantList = [
+    // { displayValue: 'All', restaurant_id: 0},
+    { displayValue: 'Amulya Kitchen', restaurant_id: 1},
+    { displayValue: 'Tikkad kitchen', restaurant_id: 2}
+  ]
+
   selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0].actualValue
   selectedCategory = this.categoryList[0];
   selectedItem  = this.itemList[0];
+  selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
 
   chart2: any = []
   chart4: any = []
@@ -61,7 +69,7 @@ export class TimelyAnalyticsComponent {
 
   createTimelyAnalytics(){
     let body = {
-      "restaurant_id": 1,
+      "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant,
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": this.selectedTimeFrameForTimelyAnalytics,
       "_comment1": "Possible options for above field: last_30_days, last_month, last_12_months",

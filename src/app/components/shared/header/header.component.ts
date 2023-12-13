@@ -90,7 +90,7 @@ export class HeaderComponent {
     }
   
     addAdminNavOptions(){
-      let adminNavOptions = ['shift', 'userOrders', 'billing', 'menu']
+      let adminNavOptions = ['shift', 'userOrders', 'billing', 'menu', 'analytics']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -100,7 +100,7 @@ export class HeaderComponent {
     }
   
   addRestaurantOwnerNavOptions(){
-    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
+    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders', 'analytics']
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -146,6 +146,7 @@ export class HeaderComponent {
         }
         for(let restaurant of data['restaurants']){
           if(restaurant.role_name == 'restaurant_admin'){
+            console.log('setting restaurant id', data['restaurants'][0]['restaurant_id'])
             sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
             console.log(sessionStorage.getItem('restaurant_id'))
             this.addRestaurantOwnerNavOptions()

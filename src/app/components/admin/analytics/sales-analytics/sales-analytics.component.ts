@@ -42,15 +42,19 @@ export class SalesAnalyticsComponent {
     { displayValue:'Category Wise', actualValue: 'category_wise'}
   ]
 
+  restaurantList = [
+    // { displayValue: 'All', restaurant_id: 0},
+    { displayValue: 'Amulya Kitchen', restaurant_id: 1},
+    { displayValue: 'Tikkad kitchen', restaurant_id: 2}
+  ]
+
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
-
+  selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
 
   chart1: any = []
   chart2: any = []
-
-  chart3: any = []
-  chart4: any = []
 
   constructor(private _analyticsService: AnalyticsService,
     private _menuService: MenuService){}
@@ -62,14 +66,14 @@ export class SalesAnalyticsComponent {
   onValueChange(){
     console.log('Value changed')
     this.chart1.destroy()
-    this.chart3.destroy()   
+    this.chart2.destroy()   
     this.createChart(this.selectedTimeFrame, this.selectedGroup)
   }
 
   createChart(timeFrame, groupby){
     console.log('Time frame', timeFrame, 'group by', groupby)
     let body = {
-      "restaurant_id": sessionStorage.getItem('restaurant_id'),
+      "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": timeFrame,
       "_comment1": "Possible options for above field: today, this_week, this_month, last_3_months, last_6_months, this_year, custom",
@@ -83,7 +87,7 @@ export class SalesAnalyticsComponent {
     data => {
       console.log('Got response:: ', this.selectedGroup, data)
       this.chart1 = (this.selectedGroup == 'All')? this.createTotalOrdersAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalOrderChart(data): this.createItemWiseTotalOrderChart(data)
-      this.chart3 = (this.selectedGroup == 'All')? this.createTotalAmountAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalAmountChart(data): this.createItemWiseTotalAmountChart(data)
+      this.chart2 = (this.selectedGroup == 'All')? this.createTotalAmountAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalAmountChart(data): this.createItemWiseTotalAmountChart(data)
     },
     error => {
       console.log('Error while loading analytics')

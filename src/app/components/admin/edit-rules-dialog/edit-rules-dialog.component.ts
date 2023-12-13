@@ -81,7 +81,7 @@ export class EditRulesDialogComponent {
     let body ={
       "rule_id": this.data.id,
       "restaurant_id": 1,
-      "user_id": user.id
+      "user_id": user.user_id
     }
     this._ruleService.deleteUserFromRule(body).subscribe(
       data => {

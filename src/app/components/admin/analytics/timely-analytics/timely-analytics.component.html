@@ -1,5 +1,13 @@
 <div class="main-container">
   <div class="input-container">
+    <mat-form-field *ngIf="!restaurantFlag">
+      <mat-label>Select Restaurant</mat-label>
+      <mat-select [(value)]="selectedRestaurant" (selectionChange)="onValueChange('none')">
+        <mat-option *ngFor="let time of restaurantList" [value]="time.restaurant_id">
+          {{time.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field>
       <mat-label>Select time frame</mat-label>
       <mat-select [(value)]="selectedTimeFrameForTimelyAnalytics" (selectionChange)="onValueChange('none')" >
