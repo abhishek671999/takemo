@@ -17,7 +17,9 @@ export class ConfirmOrderCancelComponent {
     public dialogRef: MatDialogRef<ConfirmOrderCancelComponent>,
     private _orderService: OrdersService,
     private dialog: MatDialog
-  ){}
+  ){
+    console.log('Data received: ', data)
+  }
 
   amount = 10
 

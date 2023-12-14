@@ -38,7 +38,7 @@ export class Login2Component {
   };
   }
   ispause = new Subject();
-  public resend_otp_time = 5 // seconds
+  public resend_otp_time = 45 // seconds
   public time = this.resend_otp_time;
   timer: Observable<number>;
   timerObserver: PartialObserver<number>;

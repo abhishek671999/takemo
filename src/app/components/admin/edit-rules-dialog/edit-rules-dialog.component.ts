@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormControlDirective, Validators } from '@angular/forms';
 import {  MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { AddUserToRuleComponent } from '../add-user-to-rule/add-user-to-rule.component';
@@ -18,8 +18,10 @@ export class EditRulesDialogComponent {
     private matDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<EditRulesDialogComponent>
-  ){}
-
+  ){
+    console.log('This is data received in edit rules: ', data['same_day_end_time'])
+  }
+  public checked = new FormControl(this.data['same_day_end_time'])
   public users;
 
   ngOnInit(){
@@ -50,7 +52,8 @@ export class EditRulesDialogComponent {
       "name": this.editRulesForm.value.name,
       "start_time": this.editRulesForm.value.start_time,
       "end_time": this.editRulesForm.value.end_time,
-      "max_amount_per_shift": this.editRulesForm.value.max_amount_per_shift
+      "max_amount_per_shift": this.editRulesForm.value.max_amount_per_shift,
+      "same_day_end_date": this.checked.value
     }
     this._ruleService.editRule(body).subscribe(
       data =>{
