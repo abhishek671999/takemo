@@ -26,6 +26,7 @@ export class ConfirmationDialogComponent {
   // };
   public platformFee = undefined || {};
   public totalAmount;
+  public roundOffAmount;
 
   ngOnInit(){
     this.__ordersService.checkIfPaymentRequired().subscribe(
@@ -40,6 +41,10 @@ export class ConfirmationDialogComponent {
           this.platformFee['platformFeeAmount'] = (this.platformFee['platform_fee_percentage'] * this.totalAmount) 
           * (1 + this.platformFee['platform_fee_gst_percentage'])
           this.totalAmount = this.totalAmount + this.platformFee['platformFeeAmount']
+          this.roundOffAmount = this.totalAmount.toFixed(2) - this.totalAmount
+
+          this.roundOffAmount = this.roundOffAmount.toFixed(3)
+          this.totalAmount = this.totalAmount.toFixed(2)
         }
       },
       error => {

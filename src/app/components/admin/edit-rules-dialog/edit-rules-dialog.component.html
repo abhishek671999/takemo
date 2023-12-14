@@ -54,7 +54,7 @@
                     <tbody class="text-center" >
                         <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
                         <tr class="table-row" *ngFor="let user of users.users; let subIndex = index">
-                            <td class="col3" >{{user.user_email}}</td>
+                            <td class="col3" >{{user.username}}</td>
                             <td class="col4">{{user.restaurant_name || user.company_name}}</td>
                             <td class="col5">
                                 <mat-icon *ngIf="!user.is_deleted" svgIcon="delete" (click)="deleteUser(user)"></mat-icon>

@@ -29,7 +29,6 @@ import {
 import { SalesAnalyticsComponent } from './analytics/sales-analytics/sales-analytics.component';
 import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-analytics.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
-import { EditUserToRuleComponent } from './edit-user-to-rule/edit-user-to-rule.component';
 import { EditUserToRuleDialogComponent } from './edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SuccessMsgDialogComponent } from './success-msg-dialog/success-msg-dialog.component';
@@ -48,7 +47,6 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     AddUserToRuleComponent,
     SalesAnalyticsComponent,
     TimelyAnalyticsComponent,
-    EditUserToRuleComponent,
     EditUserToRuleDialogComponent,
     SuccessMsgDialogComponent,
     ErrorMsgDialogComponent,
