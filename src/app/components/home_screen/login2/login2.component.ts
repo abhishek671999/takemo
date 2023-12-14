@@ -38,7 +38,7 @@ export class Login2Component {
   };
   }
   ispause = new Subject();
-  public resend_otp_time = 45 // seconds
+  public resend_otp_time = 5 // seconds
   public time = this.resend_otp_time;
   timer: Observable<number>;
   timerObserver: PartialObserver<number>;
@@ -103,11 +103,14 @@ export class Login2Component {
 
   editEmail(){
     this.freezeEmail = false
+    this.disableLogin = false
     this.loginFormControl.username.enable()
   }
 
   freezeEmail = false
+  disableLogin = false
   authUser() {
+      this.disableLogin = true
       console.log('authUser called');
       this.loginFormControl.username.enable()
       this._signUpService.authUser(this.loginObj.value.username).subscribe(

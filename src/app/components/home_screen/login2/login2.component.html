@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="center">
-                    <button *ngIf="!freezeEmail" [disabled]="!loginFormControl.username.valid" class="btn-login" (click)="authUser()">Send OTP</button>
+                    <button *ngIf="!freezeEmail" [disabled]="!loginFormControl.username.valid || disableLogin" class="btn-login" (click)="authUser()">Send OTP</button>
                 </div>
             </div>
             <div class="submit-buttons">
