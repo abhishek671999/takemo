@@ -16,6 +16,14 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Select Shift</mat-label>
+      <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange()">
+        <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id">
+          {{rule.rule_name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-radio-group
       aria-labelledby="example-radio-group-label"
       class="example-radio-group"

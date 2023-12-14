@@ -8,6 +8,7 @@ import {
   ApexResponsive,
   ApexChart
 } from "ng-apexcharts";
+import { RulesService } from 'src/app/shared/services/roles/rules.service';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -48,19 +49,29 @@ export class SalesAnalyticsComponent {
     { displayValue: 'Tikkad kitchen', restaurant_id: 2}
   ]
 
+  ruleList = []
+
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  selectedRule;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
 
   chart1: any = []
   chart2: any = []
 
   constructor(private _analyticsService: AnalyticsService,
-    private _menuService: MenuService){}
+    private _menuService: MenuService, private _ruleService: RulesService){}
 
   ngOnInit(){
     this.createChart('today', 'all')
+    this._ruleService.getRules().subscribe(
+      data => {
+        data['rules'].forEach(element => {
+          this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
+        });
+      }
+    )
   }
 
   onValueChange(){
@@ -73,6 +84,7 @@ export class SalesAnalyticsComponent {
   createChart(timeFrame, groupby){
     console.log('Time frame', timeFrame, 'group by', groupby)
     let body = {
+      "rule_id": this.selectedRule,
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": timeFrame,

@@ -9,6 +9,14 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
+      <mat-label>Select Shift</mat-label>
+      <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange('none')">
+        <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id">
+          {{rule.rule_name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
       <mat-label>Select time frame</mat-label>
       <mat-select [(value)]="selectedTimeFrameForTimelyAnalytics" (selectionChange)="onValueChange('none')" >
         <mat-option *ngFor="let time of timeFramesForTimelyAnalytics" [value]="time.actualValue">
@@ -32,6 +40,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    
   </div>
   <div class="graph-container">
     <div class="graph">

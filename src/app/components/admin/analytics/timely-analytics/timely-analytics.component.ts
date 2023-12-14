@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
+import { RulesService } from 'src/app/shared/services/roles/rules.service';
 
 
 @Component({
@@ -30,12 +31,14 @@ export class TimelyAnalyticsComponent {
   selectedItem  = this.itemList[0];
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
-
+  selectedRule;
+  ruleList = []
+  
   chart2: any = []
   chart4: any = []
 
   constructor(private _analyticsService: AnalyticsService,
-        private _menuService: MenuService){}
+        private _menuService: MenuService,  private _ruleService: RulesService){}
 
   
   ngOnInit(){
@@ -52,6 +55,13 @@ export class TimelyAnalyticsComponent {
       }
     )
     this.createTimelyAnalytics() 
+    this._ruleService.getRules().subscribe(
+      data => {
+        data['rules'].forEach(element => {
+          this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
+        });
+      }
+    )
   }
 
   onValueChange(value: string){
@@ -69,6 +79,7 @@ export class TimelyAnalyticsComponent {
 
   createTimelyAnalytics(){
     let body = {
+      "rule_id": this.selectedRule,
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant,
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": this.selectedTimeFrameForTimelyAnalytics,

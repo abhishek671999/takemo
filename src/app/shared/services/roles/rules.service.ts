@@ -15,16 +15,19 @@ export class RulesService {
   private addUsersToRuleEndpoint = 'role/add_user_to_rule/'
   private editRuleEndpoint = 'role/edit_rule/'
   private getITTUsersEndpoint = 'role/get_itt_users/'
+  private getAllRulesEndpoint = 'role/get_all_rules/'
 
   constructor(private _httpClient: HttpClient, public utility: Utility) { }
 
   getRules(){
-    console.log('hitting get rules')
     return this._httpClient.get(host+this.getRulesEndpoint, {headers: this.utility.getHeaders()})
   }
 
+  getAllRules(){
+    return this._httpClient.get(host+this.getAllRulesEndpoint, {headers: this.utility.getHeaders()})
+  }
+
   deleteRule(body){
-    console.log('hitting delete rule')
     return this._httpClient.delete(host + this.deleteRulesEndpoint, {body: body, headers: this.utility.getHeaders()})
   }
 
