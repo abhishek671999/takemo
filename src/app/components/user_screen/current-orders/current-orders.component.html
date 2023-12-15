@@ -19,8 +19,8 @@
       
         <!-- Weight Column -->
         <ng-container matColumnDef='Amount'>
-          <th mat-header-cell *matHeaderCellDef>Amount</th>
-          <td mat-cell *matCellDef="let element">₹ {{element.amount}}</td>
+          <th mat-header-cell *matHeaderCellDef>Amount<br>(Incl. charges)</th>
+          <td mat-cell *matCellDef="let element">₹ {{element.total_amount}}</td>
         </ng-container>
         
         <ng-container matColumnDef="OrderStatus">

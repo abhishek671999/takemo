@@ -75,7 +75,7 @@ export class meAPIUtility{
     constructor(public cookieService: CookieService, private _meService: MeService){}
 
     setMeData(meData){
-        let meDataExpiryDuration = 30 // min
+        let meDataExpiryDuration = 600 // min
         this.cookieService.set('me', JSON.stringify(meData), new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000))
     }
 
