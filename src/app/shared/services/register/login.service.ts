@@ -32,7 +32,7 @@ export class LoginService {
 
   isLoggedIn() {
     var token = this.utility.getToken()
-    return token.length != 0
+    return token.length != 0 || token != '' || token != null
   }
 
   logOut() {

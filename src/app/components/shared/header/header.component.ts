@@ -100,7 +100,7 @@ export class HeaderComponent {
     }
   
   addRestaurantOwnerNavOptions(){
-    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders', 'analytics']
+    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -125,7 +125,6 @@ export class HeaderComponent {
       }
     }
   }
-  
 
     
   dropdownList = [this.AvailableDropdownList['logout']] //this.AvailableDropdownList['profile']
