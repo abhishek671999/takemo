@@ -26,6 +26,7 @@ export class HomeComponent {
   
   onSelect(info){
     console.log(info.restaurant_id)
+    sessionStorage.setItem('restaurant_id', info.restaurant_id)
     this._router.navigate(['./user/menu', info.restaurant_id])
   }
 

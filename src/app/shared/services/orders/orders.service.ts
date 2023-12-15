@@ -30,7 +30,7 @@ export class OrdersService {
 
   checkIfPaymentRequired(){
     let httpParams = new HttpParams()
-    httpParams = httpParams.append('restaurant_id', 1)
+    httpParams = httpParams.append('restaurant_id', sessionStorage.getItem('restaurant_id'))
     return this._http.get(host + this.checkIfPaymentRequiredEndpoint, {headers: this.utility.getHeaders(), params: httpParams})
   }
 
