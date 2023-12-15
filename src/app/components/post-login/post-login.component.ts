@@ -11,43 +11,34 @@ import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
 })
 export class PostLoginComponent {
   constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService, 
-    private _utility: Utility, private _meAPIUtility: meAPIUtility){
-    this._meService.getMyInfo().subscribe(
-      data => {
-        console.log('Me api from post login')
-        this.myInfo = data
-        this._cc.setMessage(this.myInfo)
-      }
-    )
+    private _utility: Utility, private _meAPIUtility: meAPIUtility,
+    public meAPIUtility: meAPIUtility ){
+    // this.myInfo = this.meAPIUtility.getMeData()
   }
 
   showSpinner = true
   errorOccured = false
   myInfo;
   ngOnInit(){
-
      console.log('In user component')
-      this._meService.getMyInfo().subscribe(
-      data => {
-        this.showSpinner = false
-        this._meAPIUtility.setMeData(data)
-        if(data['restaurants'].length > 0){
-          sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
+     this.myInfo = this.meAPIUtility.getMeData()
+    console.log('in user component after getting me', this.myInfo)
+      this.showSpinner = false
+        if(this.myInfo['restaurants'].length > 0){
+          console.log('navigating to owner')
+          sessionStorage.setItem('restaurant_id', this.myInfo['restaurants'][0]['restaurant_id'])
           this._router.navigate(['owner/pending-orders'])
         }
-        else if(data['companies'].length > 0){
-          sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+        else if(this.myInfo['companies'].length > 0){
+          console.log('Navigationto admin')
+          sessionStorage.setItem('company_id', this.myInfo['companies'][0]['company_id'])
           this._router.navigate(['admin/user-management'])          
         }
         else{
+          console.log('Navigating to user')
           this._router.navigate(['user/'])
         }
-      },
-      error => {
-        this.errorOccured = true
-        this.showSpinner = false
-      }
-    )
+      
   }
 
   
