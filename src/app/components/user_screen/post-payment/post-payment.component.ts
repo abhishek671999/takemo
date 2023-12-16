@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { PaymentsService } from 'src/app/shared/services/payments/payments.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { PaymentsService } from 'src/app/shared/services/payments/payments.servi
 export class PostPaymentComponent {
 
   constructor(private _paymentService: PaymentsService, 
+    private router: Router,
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,){
       iconRegistry.addSvgIconLiteral('success', sanitizer.bypassSecurityTrustHtml(this.svgTickMark));
@@ -41,6 +43,9 @@ export class PostPaymentComponent {
         if(data['success']){
           this.success = true
           this.fail = false
+          setTimeout(() => {
+            this.router.navigate(['/user/myorders'])
+          }, 8000);
         }else{
           this.success = false
           this.fail = true

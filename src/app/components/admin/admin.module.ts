@@ -39,6 +39,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
 import { DeleteUserConfirmationComponent } from './delete-user-confirmation/delete-user-confirmation.component';
 import { DeleteRuleConfirmationComponent } from './delete-rule-confirmation/delete-rule-confirmation.component';
+import { Time24to12Format } from './time24to12.pipe';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { DeleteRuleConfirmationComponent } from './delete-rule-confirmation/dele
     BillingComponent,
     DeleteUserConfirmationComponent,
     DeleteRuleConfirmationComponent,
+    Time24to12Format
   ],
   imports: [
     CommonModule,

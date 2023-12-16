@@ -90,6 +90,7 @@ export class OrderHistoryComponent {
   unparsePastOrders(order){
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
     let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
+    console.log('Length of line times: ', order.line_items.length)
     return { 
       orderno : order.order_no,
       order_detail: order.line_items.length != 1?
@@ -108,7 +109,9 @@ export class OrderHistoryComponent {
   }
 
   addOrderDetails(order){
-    return { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ₹ ${(order.item_quantity*order.item_price)}`}
+    let a = { details: `${order.item_name} ${order.item_quantity} X ${order.item_price} = ₹ ${(order.item_quantity*order.item_price)}`} 
+    console.log('Order details', a)
+    return a
   }
 
   displayMoreDetails(order) {

@@ -49,13 +49,18 @@ export class EditRulesDialogComponent {
     max_amount_per_shift: [this.data.max_amount_per_shift, Validators.required]
   });
 
+  getTwentyFourHourTime(amPmString) { 
+    var d = new Date("1/1/2013 " + amPmString); 
+    return d.getHours() + ':' + d.getMinutes(); 
+  }
+
   editRule(){
     console.log(this.editRulesForm.value)
     let body = {
       "id": this.data.id,
       "name": this.editRulesForm.value.name,
-      "start_time": this.editRulesForm.value.start_time,
-      "end_time": this.editRulesForm.value.end_time,
+      "start_time": this.getTwentyFourHourTime( this.editRulesForm.value.start_time),
+      "end_time":  this.getTwentyFourHourTime(this.editRulesForm.value.end_time),
       "max_amount_per_shift": this.editRulesForm.value.max_amount_per_shift,
       "same_day_end_date": this.checked.value
     }

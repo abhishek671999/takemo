@@ -1,5 +1,5 @@
 <div class="main-container">
-    <form [formGroup]="addRuleForm" (ngSubmit)="addRule()">
+    <form [formGroup]="addRuleForm">
         <h1 mat-dialog-title>Add this shift??</h1>
         <div mat-dialog-content>
             <div>
@@ -9,24 +9,24 @@
                 </mat-form-field>
                 <mat-form-field  class="form-field">
                     <mat-label>Start time</mat-label>
-                    <input matInput [ngxMatTimepicker]="picker" placeholder="Start time" formControlName="start_time">
+                    <input matInput (keydown)="false" [ngxMatTimepicker]="picker" placeholder="Start time" formControlName="start_time">
                     <ngx-mat-timepicker #picker></ngx-mat-timepicker>  
                 </mat-form-field>
                 <mat-form-field class="form-field">
                     <mat-label>End time</mat-label>
-                    <input matInput [ngxMatTimepicker]="picker2" placeholder="End time" formControlName="end_time">
+                    <input matInput (keydown)="false" [ngxMatTimepicker]="picker2" placeholder="End time" formControlName="end_time">
                     <ngx-mat-timepicker #picker2></ngx-mat-timepicker>  
                 </mat-form-field>
                 <mat-form-field  class="form-field">
                     <mat-label>Max Amount</mat-label>
-                    <input matInput placeholder="Max Amount" formControlName="max_amount_per_shift">
+                    <input matInput type="number" placeholder="Max Amount" formControlName="max_amount_per_shift">
                 </mat-form-field>
-                <mat-checkbox class="example-margin" formControlName="checked">Same day</mat-checkbox>
+                <mat-checkbox class="example-margin" formControlName="checked">Same day End time</mat-checkbox>
             </div>
         </div>
         <div mat-dialog-actions class="action-container">
             <button mat-raised-button (click)="closeDialog()"> Cancel</button>
-            <button mat-raised-button [disabled]="!addRuleForm.valid" color="primary" type="submit">Submit</button>
+            <button mat-raised-button [disabled]="!addRuleForm.valid" color="primary" (click)="addRule()">Submit</button>
         </div>
     </form>
     

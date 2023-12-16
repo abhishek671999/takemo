@@ -27,8 +27,8 @@
                         <tr class="table-row" *ngFor="let rule of rules.rules; let mainIndex = index">
                             <td class="col1" >{{mainIndex+1}}</td>
                             <td class="col2" >{{rule.name}}</td>
-                            <td class="col3" >{{rule.start_time}}</td>
-                            <td class="col4">{{rule.end_time}}</td>
+                            <td class="col3" >{{rule.start_time | time24to12Transform}}</td>
+                            <td class="col4">{{rule.end_time | time24to12Transform}}</td>
                             <td class="col5"><mat-icon svgIcon="edit" (click)="editRule(rule)"></mat-icon></td>
                             <td class="col6"><mat-icon svgIcon="delete" (click)="deleteRule(rule)"></mat-icon></td>
                         </tr>

@@ -19,14 +19,10 @@ export class ConfirmationDialogComponent {
   }
 
   public isPayment=false;
-  // public platformFee: {
-  //   platform_fee_percentage: number,
-  //   platform_fee_gst_percentage: number,
-  //   platformFeeAmount: number
-  // };
   public platformFee = undefined || {};
   public totalAmount;
   public roundOffAmount;
+  public platformFeeAmount;
 
   ngOnInit(){
     this.__ordersService.checkIfPaymentRequired().subscribe(
@@ -38,11 +34,12 @@ export class ConfirmationDialogComponent {
           console.log('INcluding tax')
           this.platformFee['platform_fee_percentage'] = data['platform_fee_percentage']
           this.platformFee['platform_fee_gst_percentage'] = data['platform_fee_gst_percentage']
-          this.platformFee['platformFeeAmount'] = (this.platformFee['platform_fee_percentage'] * this.totalAmount) 
-          * (1 + this.platformFee['platform_fee_gst_percentage'])
+          this.platformFee['platformFeeAmount'] = ((this.platformFee['platform_fee_percentage'] * this.totalAmount) 
+          * (1 + this.platformFee['platform_fee_gst_percentage']))
           this.totalAmount = this.totalAmount + this.platformFee['platformFeeAmount']
           this.roundOffAmount = this.totalAmount.toFixed(2) - this.totalAmount
 
+          this.platformFeeAmount = this.platformFee['platformFeeAmount'].toFixed(2)
           this.roundOffAmount = this.roundOffAmount.toFixed(3)
           this.totalAmount = this.totalAmount.toFixed(2)
         }

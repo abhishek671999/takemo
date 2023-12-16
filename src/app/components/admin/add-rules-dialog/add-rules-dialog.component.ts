@@ -24,7 +24,7 @@ export class AddRulesDialogComponent {
     name: ['', Validators.required],
     start_time: ['', Validators.required],
     end_time: ['', Validators.required],
-    max_amount_per_shift: ['', Validators.required],
+    max_amount_per_shift: ['', [Validators.required]],
     checked: new FormControl(true, Validators.required)
   });
 
