@@ -35,7 +35,7 @@ export class CancelledOrdersComponent {
 
   getCancelledOrders(){
     let body = {
-      "restaurant_id": 1,
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "time_frame": this.selectedTimeFrame
     }
     this._ordersService.getCancelledOrders(body).subscribe(

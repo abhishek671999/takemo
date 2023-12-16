@@ -42,7 +42,7 @@ export class TimelyAnalyticsComponent {
 
   
   ngOnInit(){
-    this._menuService.getMenu(1).subscribe(
+    this._menuService.getMenu(Number(sessionStorage.getItem('restaurant_id'))).subscribe(
       data => {
         data['menu'].forEach(element => {
           console.log('In menue iteration: ', element)

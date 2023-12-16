@@ -57,7 +57,6 @@ export class AddRulesDialogComponent {
   }
 
   closeDialog(){
-    console.log('  k l')
     this.dialogRef.close()
   }
 }

@@ -5,6 +5,10 @@ import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { AddUserToRuleComponent } from '../add-user-to-rule/add-user-to-rule.component';
 import {Chart} from 'chart.js';
 import { EditUserToRuleDialogComponent } from '../edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
+import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
+import { DeleteUserConfirmationComponent } from '../delete-user-confirmation/delete-user-confirmation.component';
 
 @Component({
   selector: 'app-edit-rules-dialog',
@@ -71,7 +75,8 @@ export class EditRulesDialogComponent {
 
   addUser(){
     console.log('Adding user')
-    this.matDialog.open(AddUserToRuleComponent, {data: {'rule_id': this.data.id}})
+    let dialogRef = this.matDialog.open(AddUserToRuleComponent, {data: {'rule_id': this.data.id}})
+    this.handlePostDialogClosure(dialogRef, 'Successfully added user to shift', 'Failed to Add user to shift')
   }
 
   editUser(user){
@@ -79,28 +84,55 @@ export class EditRulesDialogComponent {
     this.matDialog.open(EditUserToRuleDialogComponent, {data: user})
   }
 
+
   deleteUser(user){
     console.log('Deleting this user: ', user)
-    let body ={
-      "rule_id": this.data.id,
-      "restaurant_id": 1,
-      "user_id": user.user_id
-    }
-    this._ruleService.deleteUserFromRule(body).subscribe(
-      data => {
-        console.log(data)
-        user.is_deleted = true
-      },
-      error => {
-        console.log(error)
-        alert('Error while deleting')
-      }
-    )
+    let params = {"rule_id": this.data.id, "restaurant_id": user.restaurant_id, "user_id": user.user_id}
+    let additionalData = { userEmail: user.user_email}
+    let dialogData = {bodyParams: params, additionalData: additionalData}
+    let dialogRef = this.matDialog.open(DeleteUserConfirmationComponent, {data: dialogData})
+    this.handlePostDialogClosure(
+      dialogRef, 'Successfully Deleted User from Shift',
+      'Failed to Delete user from Shift')
   }
 
   onCancelClick(){
     this.dialogRef.close()
   }
 
+
+  handlePostDialogClosure(dialogRef, successMsg, errorMsg){
+    dialogRef.afterClosed().subscribe(
+      data => {
+        console.log('Edit rule close with: ', data)
+        if(data == undefined){
+          console.log('Nothing')
+        }else if(data.success == 'ok'){
+          this.showSuccessDialog(successMsg)
+        }else if(data.success == 'failed'){
+          this.showErrorDialog(errorMsg)
+        }
+      },
+      error => {
+        console.log('Error while clsoing edit rule: ', error)
+        this.showErrorDialog(errorMsg)
+      }
+    )
+  }
+
+  showSuccessDialog(msg: string){
+    let dialogRef = this.matDialog.open(SuccessMsgDialogComponent, {data: {msg: msg}})
+          setTimeout(() => {
+            dialogRef.close()
+          }, 1500);
+    this.ngOnInit()
+  }
+
+  showErrorDialog(msg: string){
+    let dialogRef = this.matDialog.open(ErrorMsgDialogComponent, {data: {msg: msg}})
+    setTimeout(() => {
+      dialogRef.close()
+    }, 1500);
+  }
   
 }

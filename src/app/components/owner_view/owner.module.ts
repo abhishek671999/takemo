@@ -17,8 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
 import { ConfirmOrderCancelComponent } from './confirm-order-cancel/confirm-order-cancel.component';
-import { SuccessMsgDialogComponent } from './success-msg-dialog/success-msg-dialog.component';
-import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.component';
+
 
 
 @NgModule({
@@ -30,8 +29,6 @@ import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.com
     CurrentOrdersComponent,
     OrdersHomeComponent,
     ConfirmOrderCancelComponent,
-    SuccessMsgDialogComponent,
-    ErrorMsgDialogComponent,
   ],
   imports: [
     CommonModule,

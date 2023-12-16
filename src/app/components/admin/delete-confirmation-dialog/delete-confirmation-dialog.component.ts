@@ -14,16 +14,25 @@ export class DeleteConfirmationDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     private matDialogRef: MatDialogRef<DeleteConfirmationDialogComponent>
   ){}
-
+  
+  
   ngOnInit(){
     console.log('Data recieved: ', this.data)
   }
 
+  deleteUserFromRule(body){
+    console.log('I am called', body)
+    return this._rulesService.deleteUserFromRule(body)
+  }
+
+  deleteRule(body){
+    return this._rulesService.deleteRule(body)
+  }
+
+  mapping = { 'deleteUser': this.deleteUserFromRule, 'deleteRule': this.deleteRule}
+
   onDelete(){
-    let body = {
-      "id": this.data.id
-    }
-    this._rulesService.deleteRule(body).subscribe(
+    this.mapping[this.data.functionKey](this.data.bodyParams).subscribe(
       data => {
         console.log(data)
         this.matDialogRef.close({success: 'ok'})
@@ -33,6 +42,11 @@ export class DeleteConfirmationDialogComponent {
         this.matDialogRef.close({success: 'failed'})
       }
     )
+    // let body = {
+    //   "id": this.data.id
+    // }
+    // this._rulesService.deleteRule(body)
+    // )
   }
 
   closeDialog(){

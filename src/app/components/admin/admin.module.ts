@@ -31,12 +31,14 @@ import { TimelyAnalyticsComponent } from './analytics/timely-analytics/timely-an
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { EditUserToRuleDialogComponent } from './edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { SuccessMsgDialogComponent } from './success-msg-dialog/success-msg-dialog.component';
-import { ErrorMsgDialogComponent } from './error-msg-dialog/error-msg-dialog.component';
+import { SuccessMsgDialogComponent } from '../shared/success-msg-dialog/success-msg-dialog.component';
+import { ErrorMsgDialogComponent } from '../shared/error-msg-dialog/error-msg-dialog.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { BillingComponent } from './billing/billing.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
+import { DeleteUserConfirmationComponent } from './delete-user-confirmation/delete-user-confirmation.component';
+import { DeleteRuleConfirmationComponent } from './delete-rule-confirmation/delete-rule-confirmation.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +54,8 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     ErrorMsgDialogComponent,
     DeleteConfirmationDialogComponent,
     BillingComponent,
+    DeleteUserConfirmationComponent,
+    DeleteRuleConfirmationComponent,
   ],
   imports: [
     CommonModule,

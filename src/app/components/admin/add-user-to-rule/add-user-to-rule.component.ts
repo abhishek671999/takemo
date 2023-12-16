@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 
@@ -13,7 +13,9 @@ export class AddUserToRuleComponent {
 
   constructor(public _fb: FormBuilder,
     private _rulesServices: RulesService,
-    @Inject(MAT_DIALOG_DATA) public data){}
+    @Inject(MAT_DIALOG_DATA) public data,
+    public matDialogRef: MatDialogRef<AddUserToRuleComponent>
+    ){}
 
    formControl = new FormControl('')
    filteredOptions: Observable<string[]>;
@@ -79,31 +81,16 @@ export class AddUserToRuleComponent {
       'user_id': user_id,
       'rule_id': this.data['rule_id']
     }
-    
     this.selected_company['company_id'] > 0 ? body['company_id'] = this.selected_company['company_id'] : body['restaurant_id'] = this.selected_restaurant['restaurant_id']
     console.log('This is body: ', body) 
     this._rulesServices.addUserToRule(body).subscribe(
-      data => alert('User added'),
-      error => alert('Failed to add user')
+      data =>{
+        this.matDialogRef.close({success: 'ok'})
+      } ,
+      error => {
+        this.matDialogRef.close({success: 'failed'})
+      }
     )
-    
-    // console.log(this.options.indexOf(this.formControl.value))
-    // let body = {
-    //   "rule_id": this.data['rule_id'],
-    //   "restaurant_id": 1,
-    //   "user_id": this.options.indexOf(this.formControl.value) + 1
-    // }
-    // console.log('This is body', body)
-    // this._rulesServices.addUserToRule(body).subscribe(
-    //   data => {
-    //     console.log(data)
-    //     alert('User added')
-    //   },
-    //   error => {
-    //     console.log(error)
-    //     alert('Something went wrong')
-    //   }
-    // )
   }
 
   isDisabled(){

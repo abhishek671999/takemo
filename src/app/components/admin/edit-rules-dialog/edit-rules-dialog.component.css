@@ -1,9 +1,10 @@
 .main-container{
     width: 90%;
+    height: 90vh;
 }
 
 .viewport {
-    height: 70vh;
+    height: 50vh;
 }
 
 .form-container{
