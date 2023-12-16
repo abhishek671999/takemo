@@ -54,7 +54,9 @@ export class SalesAnalyticsComponent {
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  selectedRule;
+  selectedRule = 1;
+  totalAmount = 0;
+  totalOrders = 0;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
 
   chart1: any = []
@@ -65,10 +67,12 @@ export class SalesAnalyticsComponent {
 
   ngOnInit(){
     this.createChart('today', 'all')
-    this._ruleService.getRules().subscribe(
+    console.log('Get all rules called')
+    this._ruleService.getAllRules().subscribe(
       data => {
+        console.log('Rules data', data)
         data['rules'].forEach(element => {
-          this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
+          this.ruleList.push({'rule_id_list': element.id, 'rule_name': element.name})
         });
       }
     )
@@ -84,7 +88,7 @@ export class SalesAnalyticsComponent {
   createChart(timeFrame, groupby){
     console.log('Time frame', timeFrame, 'group by', groupby)
     let body = {
-      "rule_id": this.selectedRule,
+      "rule_id_list": Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": timeFrame,
@@ -98,6 +102,8 @@ export class SalesAnalyticsComponent {
   this._analyticsService.getSalesAnalyticsData(body).subscribe(
     data => {
       console.log('Got response:: ', this.selectedGroup, data)
+      this.totalOrders = data['quantity']
+      this.totalAmount = data['total_amount']
       this.chart1 = (this.selectedGroup == 'All')? this.createTotalOrdersAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalOrderChart(data): this.createItemWiseTotalOrderChart(data)
       this.chart2 = (this.selectedGroup == 'All')? this.createTotalAmountAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalAmountChart(data): this.createItemWiseTotalAmountChart(data)
     },

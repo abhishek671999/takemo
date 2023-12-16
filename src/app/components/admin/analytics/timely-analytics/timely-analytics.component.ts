@@ -33,6 +33,8 @@ export class TimelyAnalyticsComponent {
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
   selectedRule;
   ruleList = []
+  totalAmount = 0;
+  totalOrders = 0;
   
   chart2: any = []
   chart4: any = []
@@ -42,7 +44,7 @@ export class TimelyAnalyticsComponent {
 
   
   ngOnInit(){
-    this._menuService.getMenu(Number(sessionStorage.getItem('restaurant_id'))).subscribe(
+    this._menuService.getMenu(this.selectedRestaurant).subscribe(
       data => {
         data['menu'].forEach(element => {
           console.log('In menue iteration: ', element)
@@ -68,7 +70,7 @@ export class TimelyAnalyticsComponent {
     console.log('THis is before onValue change', value, this.selectedTimeFrameForTimelyAnalytics, this.selectedCategory, this.selectedItem)
     if(value == 'item'){
       this.selectedCategory = {'name': 'select', 'id': 0}
-    }else if(value=='category'){
+    }else if(value == 'category'){
       this.selectedItem = {'name': 'select', 'id': 0}
     }
     console.log('THis is onValue change', value, this.selectedTimeFrameForTimelyAnalytics, this.selectedCategory, this.selectedItem)
@@ -79,7 +81,8 @@ export class TimelyAnalyticsComponent {
 
   createTimelyAnalytics(){
     let body = {
-      "rule_id": this.selectedRule,
+      
+      "rule_id_list": Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant,
       "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": this.selectedTimeFrameForTimelyAnalytics,
@@ -92,6 +95,8 @@ export class TimelyAnalyticsComponent {
   this._analyticsService.getTimelyAnalyticsData(body).subscribe(
     data => {
       console.log("Timely analytics", data[this.selectedTimeFrameForTimelyAnalytics], this.selectedTimeFrameForTimelyAnalytics)
+      this.totalOrders = data['quantity']
+      this.totalAmount = data['total_amount']
       this.chart2  = this.createTimelyOrderAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
       this.chart4 = this.createTimelyAmountAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
         },

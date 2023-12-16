@@ -19,7 +19,7 @@
     <mat-form-field>
       <mat-label>Select Shift</mat-label>
       <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange()">
-        <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id">
+        <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id_list">
           {{rule.rule_name}}
         </mat-option>
       </mat-select>
@@ -32,6 +32,10 @@
           {{group.displayValue}}
       </mat-radio-button>
       </mat-radio-group>
+  </div>
+  <div class="total-view">
+    <b>Total Orders: {{totalOrders}}</b>
+    <b>Total Amount: {{totalAmount}}</b>
   </div>
   <div class="graph-container">
       <div class="graph">

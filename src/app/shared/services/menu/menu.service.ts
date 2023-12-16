@@ -15,7 +15,7 @@ export class MenuService {
   _submit_url = 'inventory/create_order/'
 
 
-  getMenu(id: number){
+  getMenu(id){
     let queryParams = new HttpParams()
     queryParams = queryParams.append('restaurant_id', id.toString())
     return this._http.get(this.host+this._getMenuEndpoint, {params: queryParams, headers: this.utility.getHeaders()})
