@@ -80,7 +80,7 @@ export class UserManagementComponent {
     });
     setTimeout(() => {
       dialogRef.close();
-    }, 1500);
+    }, 8000);
   }
 
   handlePostDialogClosure(dialogRef, successMsg, errorMsg) {
@@ -92,7 +92,12 @@ export class UserManagementComponent {
         } else if (data.success == 'ok') {
           this.showSuccessDialog(successMsg);
         } else if (data.success == 'failed') {
-          this.showErrorDialog(errorMsg);
+          if(data.msg){
+            this.showErrorDialog(data.msg)
+          }else{
+            this.showErrorDialog(errorMsg);
+          }
+
         }
       },
       (error) => {

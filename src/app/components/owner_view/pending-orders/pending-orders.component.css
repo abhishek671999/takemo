@@ -27,3 +27,9 @@
     width: 12em;
     border-radius: 5px;
 }
+
+@media screen and (max-width: 426px) {
+    .main-container{
+        flex-direction: column;
+    }
+  }

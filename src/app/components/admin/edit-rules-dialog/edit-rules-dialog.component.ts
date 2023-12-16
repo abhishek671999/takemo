@@ -115,7 +115,11 @@ export class EditRulesDialogComponent {
         }else if(data.success == 'ok'){
           this.showSuccessDialog(successMsg)
         }else if(data.success == 'failed'){
-          this.showErrorDialog(errorMsg)
+          if(data.msg){
+            this.showErrorDialog(errorMsg + '   ' + data.msg);
+          }else{
+            this.showErrorDialog(errorMsg)
+          }
         }
       },
       error => {
@@ -137,7 +141,7 @@ export class EditRulesDialogComponent {
     let dialogRef = this.matDialog.open(ErrorMsgDialogComponent, {data: {msg: msg}})
     setTimeout(() => {
       dialogRef.close()
-    }, 1500);
+    }, 4000 );
   }
   
 }

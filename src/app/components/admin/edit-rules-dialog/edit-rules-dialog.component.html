@@ -40,8 +40,8 @@
                         <h2 class="text-center">Users in this shift</h2>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <div>
-                    <mat-icon class="add-user-icon" title='Add users to this shift' svgIcon="plus" (click)="addUser()"></mat-icon>
+                <div class="text-center">
+                    <button mat-raised-button color="primary" title='Add users to this shift' svgIcon="plus" (click)="addUser()">Add Users</button>
                 </div>
                 <table class="table table-hover">
                     <thead class="text-center">
@@ -69,7 +69,7 @@
     </div>
     <ng-template #elseBlock>
         No users for this rule: Add here
-        <mat-icon svgIcon="plus" (click)="addUser()"></mat-icon>
+        <button mat-button-raised color="primary" svgIcon="plus" (click)="addUser()">Add user</button>
         please
     </ng-template>
 </div>

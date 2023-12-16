@@ -24,14 +24,14 @@ export class AddUserToRuleComponent {
    displayOptions = []
    companies = [
     {company_name: 'select company', company_id: 0},
-    {company_name: 'Intimetec', company_id: 1}
+    {company_name: 'In time tec', company_id: 1}
   ]
   selected_company = this.companies[0]
 
    restaurants = [
     { restaurant_name: 'Select Restaurant', restaurant_id: 0},
     {restaurant_name: 'Amulya Kitchen', restaurant_id: 1},
-    {restaurant_name: 'Tikkand Kitchen', restaurant_id: 2}
+    {restaurant_name: 'Tikkad Kitchen', restaurant_id: 2}
   ]
   selected_restaurant = this.restaurants[0]
 
@@ -88,7 +88,12 @@ export class AddUserToRuleComponent {
         this.matDialogRef.close({success: 'ok'})
       } ,
       error => {
-        this.matDialogRef.close({success: 'failed'})
+        let exceptionMessage = ''
+        console.log('Error while adding',error.error.exception)
+        if(error.error.exception.toLowerCase().includes('duplicate')){
+          exceptionMessage = 'User already added to this shift'
+        }
+        this.matDialogRef.close({success: 'failed', msg: exceptionMessage})
       }
     )
   }

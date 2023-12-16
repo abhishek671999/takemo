@@ -6,11 +6,12 @@
     </div> 
     <ng-template #ElseBlock>
         <h2 class="text-center">Add or modify shift</h2>
+        <div class="text-center">
+            <button mat-raised-button class="add-rule-button" title="Add a new rule here" svgIcon="plus" (click)="addRule()">Add new shift</button>
+        </div>
         <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
             <mat-expansion-panel [expanded]='true' class="expansion-panel" >
-                <div>
-                    <mat-icon class="add-rule-icon" title="Add a new rule here" svgIcon="plus" (click)="addRule()"></mat-icon>
-                </div>
+                
                 <table class="table table-hover">
                     <thead class="text-center">
                         <tr>

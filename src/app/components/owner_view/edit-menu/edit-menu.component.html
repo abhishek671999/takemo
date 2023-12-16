@@ -4,7 +4,7 @@
         <h4 class="text-center">Restaurant is open</h4>
         <h2 class="text-center">Edit menu</h2>
         <div class="text-center">
-            <mat-icon class="addCategoryIcon" title="Add a new category" svgIcon="plus" (click)="addCategory()"></mat-icon>
+            <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">Add new category</button>
             <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
                 <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of menu_response.menu; let mainIndex = index">
                     <mat-expansion-panel-header >
@@ -15,8 +15,8 @@
                             <mat-icon style="margin: 5px 4em 0 0;" title="Delete this category" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
                         </div>
                     </mat-expansion-panel-header>
-                    <div>
-                        <mat-icon svgIcon="plus" (click)="addItem(category)"></mat-icon>
+                    <div class="text-center">
+                        <button mat-raised-button color="primary" class="add-item-button" svgIcon="plus" (click)="addItem(category)">Add new Item to Category</button>
                     </div>
                     <table class="table table-hover">
                         <thead class="text-center">

@@ -9,13 +9,6 @@ import { RulesService } from 'src/app/shared/services/roles/rules.service';
   styleUrls: ['./add-rules-dialog.component.css']
 })
 export class AddRulesDialogComponent {
-//   let body = {
-//     "name": "Test",
-//     "start_time": "17:40:00",
-//     "end_time": "17:45:00",
-//     "max_amount_per_shift": 300
-// }
-
   constructor(private _formBuilder: FormBuilder,
     private _rulesService: RulesService,
     private dialogRef: MatDialogRef<AddRulesDialogComponent>){}
@@ -50,8 +43,8 @@ export class AddRulesDialogComponent {
         this.dialogRef.close({success: 'ok'})
       },
       error => {
-       console.log(error)
-       this.dialogRef.close({success: 'failed'})
+       console.log(error.error.error)
+       this.dialogRef.close({success: 'failed', msg: error.error.error})
       }
     )
   }

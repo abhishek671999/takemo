@@ -14,7 +14,15 @@ html{
     height: 70vh;
 }
 
+.add-category-button{
+    border-radius: 4em 4em 0 0 ;
+    font-size: large;
+}
 
+.add-item-button{
+    border-radius: 4em 4em 0 0 ;
+    font-size: small;
+}
 
 .indicator-image{
     width:30px;
