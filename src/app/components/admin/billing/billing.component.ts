@@ -66,8 +66,7 @@ export class BillingComponent {
   ngOnInit(){
     let body = {
         "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
-        "rule_id": 1,
-        "month_and_year": "11/2023"
+        "month_and_year": "12/2023"
     }
     this._billingService.getRestaurantBilling(body).subscribe(
       data => {

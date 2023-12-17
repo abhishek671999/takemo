@@ -103,27 +103,6 @@ export class meAPIUtility{
             }
         })
         return meDataObservable
-        console.log('Get me data from cookies')
-        let meData: any = this.cookieService.get('me')
-        if(meData){
-            console.log('Got data form cookies')
-            return JSON.parse(meData)
-        }else{
-            console.log('Hitting me again')
-            this._meService.getMyInfo().subscribe(
-                data => {
-                    console.log('Got response from me api', data)
-                    meData = data
-                    this.setMeData(meData)
-                },
-                error => {
-                    console.log('Error occured while getting me: ', error)
-                    this._router.navigate(['login']) // todo: IT's quick fix investage on session or cookies and chagne it.
-                } 
-            )
-            console.log('Returning this: ', meData)
-            return meData
-        } 
     }
 
     removeMeData(){
