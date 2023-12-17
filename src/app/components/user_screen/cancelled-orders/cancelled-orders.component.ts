@@ -35,7 +35,6 @@ export class CancelledOrdersComponent {
 
   getCancelledOrders(){
     let body = {
-      "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "time_frame": this.selectedTimeFrame
     }
     this._ordersService.getCancelledOrders(body).subscribe(
@@ -48,6 +47,7 @@ export class CancelledOrdersComponent {
       }
     )
   }
+
 
   unparseCancelledOrders(order){
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null

@@ -20,7 +20,7 @@ export class OrdersService {
   private updateOrderStatusEndpoint = 'order/update_single_item_status/'
   private cancelOrderEndpoint = 'order/cancel_order/'
   private myCancelledOrdersEndpoint = 'order/get_my_canceled_orders/'
-  private cancellledRestaurantOrdersEndpoint = '/order/get_restaurant_canceled_orders/'
+  private cancellledRestaurantOrdersEndpoint = 'order/get_restaurant_canceled_orders/'
 
 
 

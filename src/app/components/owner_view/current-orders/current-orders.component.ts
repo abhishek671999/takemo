@@ -29,6 +29,10 @@ export class CurrentOrdersComponent {
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
   ngOnInit() {
+    this.getRestaurantCurrentOrders()
+  }
+
+  getRestaurantCurrentOrders(){
     let body = {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       _c: 'rule_id is optional',
@@ -102,6 +106,7 @@ export class CurrentOrdersComponent {
       (data) => {
         console.log(data);
         order.is_delivered = true;
+        this.ngOnInit()
       },
       (error) => {
         console.log(error);
@@ -119,6 +124,7 @@ export class CurrentOrdersComponent {
           
         } else if(result.cancelled){
           order.is_cancelled = true
+          this.ngOnInit()
         }
       }
     );

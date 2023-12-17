@@ -73,7 +73,7 @@ export class CancelledOrdersComponent {
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
     let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
     return { orderno : order.order_no,
-      order_detail: order.line_items.length != 1? order.line_items.map(this.addOrderDetails).map(items => items.details).join('<br>'): order.line_items.map(this.addOrderDetails)[0].details,
+      order_detail: order.line_items.length != 1? order.line_items.map(this.addOrderDetails).map(items => items.details).join(`<br>`): order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
       DeliveredAt: done_time,

@@ -17,6 +17,7 @@ export class ConfirmOrderCancelComponent {
     private _orderService: OrdersService,
     private dialog: MatDialog
   ){
+    data.order_detail = data.order_detail.replace('<br>', '\n')
     console.log('Data received: ', data)
   }
 
@@ -33,13 +34,13 @@ export class ConfirmOrderCancelComponent {
     this._orderService.cancelOrder(body).subscribe(
       data => {
         console.log('Success', data)
-        let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {data: 'Order Cancel successfully'})
+        let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Order Cancelled successfully'}})
         this.closeDialogDisplay(dialogRef)
         this.dialogRef.close({cancelled: true})
       },
       error => {
         console.log('Failed', error)
-        let dialogRef = this.dialog.open(ErrorMsgDialogComponent, {data: 'Order could not be cancelled'})
+        let dialogRef = this.dialog.open(ErrorMsgDialogComponent, {data: {msg: 'Order could not be cancelled'}})
         this.closeDialogDisplay(dialogRef)
         this.dialogRef.close({cancelled: false})
       }
