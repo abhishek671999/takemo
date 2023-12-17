@@ -70,10 +70,6 @@ export class Utility{
         let totalExpiryDate = 60; // days
         this.cookieService.set('token', key, new Date(new Date().getTime()  + totalExpiryDate * 24 * 60 * 60 * 1000))
     }
-
-    removeToken(){
-        this.cookieService.delete('token')
-    }
 }
 
 
@@ -106,6 +102,6 @@ export class meAPIUtility{
     }
 
     removeMeData(){
-        this.cookieService.delete('me')
+        this.cookieService.deleteAll('/')
     }
 }

@@ -36,7 +36,6 @@ export class LoginService {
   }
 
   logOut() {
-    this.utility.removeToken()
     sessionStorage.removeItem('restaurant_id')
     sessionStorage.removeItem('company_id')
     this.meAPIUtility.removeMeData()

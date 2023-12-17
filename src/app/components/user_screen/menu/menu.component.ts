@@ -44,12 +44,17 @@ export class MenuComponent {
             );
           });
           this.setQuantity();
+          this.showSpinner = false;
         },
-        (error) => console.log('Error while getting menu: ', error)
+        (error) => {
+          console.log('Error while getting menu: ', error)
+          this.showSpinner = false;
+          alert('Error while loading menu')
+        }
       );
     });
 
-    this.showSpinner = false;
+    
   }
 
   setQuantity() {
