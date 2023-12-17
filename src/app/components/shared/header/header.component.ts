@@ -132,8 +132,8 @@ export class HeaderComponent {
   message: string
 
   ngOnInit(){
-    let data = this._meAPIutility.getMeData()
-    console.log('Header component: ', data)
+    let data = this._meAPIutility.getMeData().subscribe(data => {
+      console.log('Header component: ', data)
     this.username = data['username'] ? data['username'] : data['email']
         for(let company of data['companies']){
           if(company.role_name == 'corporate_admin'){
@@ -158,6 +158,8 @@ export class HeaderComponent {
         if(data['restaurants'].length == 0 && data['companies'].length == 0){
           this.addUserNavOptions()
       }
+    })
+    
    }  
 
   onClick(index: number) {

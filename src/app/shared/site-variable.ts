@@ -42,6 +42,7 @@ import { MeService } from "./services/register/me.service"
 import { JsonPipe } from "@angular/common"
 import { Router } from "@angular/router"
 import { LoginService } from "./services/register/login.service"
+import { Observable } from "rxjs"
 
 @Injectable({
     providedIn: 'root'
@@ -91,6 +92,17 @@ export class meAPIUtility{
     }
 
     getMeData(){
+        let meDataObservable = new Observable(observer => {
+            let meData: any = this.cookieService.get('me')
+            if(meData){
+                observer.next(JSON.parse(meData))
+            }else{
+                this._meService.getMyInfo().subscribe(data =>{
+                    observer.next(data)
+                })
+            }
+        })
+        return meDataObservable
         console.log('Get me data from cookies')
         let meData: any = this.cookieService.get('me')
         if(meData){

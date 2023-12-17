@@ -21,8 +21,8 @@ export class PostLoginComponent {
   myInfo;
   ngOnInit(){
      console.log('In user component')
-     this.myInfo = this.meAPIUtility.getMeData()
-    console.log('in user component after getting me', this.myInfo)
+     this.meAPIUtility.getMeData().subscribe(data =>{
+      this.myInfo = data
       this.showSpinner = false
         if(this.myInfo['restaurants'].length > 0){
           console.log('navigating to owner')
@@ -38,6 +38,8 @@ export class PostLoginComponent {
           console.log('Navigating to user')
           this._router.navigate(['user/'])
         }
+      
+     })
       
   }
 
