@@ -2,7 +2,7 @@
     <div class="input-container">
         <mat-form-field>
             <mat-label>Select time frame</mat-label>
-            <mat-select [(value)]="selectedTimeFrame" (selectionChange)="getRestaurantCurrentOrders()" >
+            <mat-select [(value)]="selectedTimeFrame" (selectionChange)="getRestaurantCancelledOrders()" >
               <mat-option *ngFor="let time of timeFrames" [value]="time">
                 {{time.ViewValue}}
               </mat-option>
@@ -15,7 +15,7 @@
     </div>
 
     <cdk-virtual-scroll-viewport itemSize="500" class="viewport">
-        <table mat-table [dataSource]="cancelledOrdersDataSource" class="mat-elevation-z8 demo-table">
+        <table mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
             <!-- Position Column -->
             <ng-container matColumnDef="Order No">
                 <th mat-header-cell *matHeaderCellDef>Order No.</th>

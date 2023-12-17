@@ -15,12 +15,10 @@ html{
 }
 
 .add-category-button{
-    border-radius: 4em 4em 0 0 ;
     font-size: large;
 }
 
 .add-item-button{
-    border-radius: 4em 4em 0 0 ;
     font-size: small;
 }
 

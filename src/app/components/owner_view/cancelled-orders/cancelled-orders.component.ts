@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-orders-history',
-  templateUrl: './orders-history.component.html',
-  styleUrls: ['./orders-history.component.css']
+  selector: 'app-cancelled-orders',
+  templateUrl: './cancelled-orders.component.html',
+  styleUrls: ['./cancelled-orders.component.css']
 })
-export class OrdersHistoryComponent {
+export class CancelledOrdersComponent {
 
   constructor(private _orderService: OrdersService, private _dialog: MatDialog){}
 
@@ -27,17 +27,17 @@ export class OrdersHistoryComponent {
   ];
 
   
-  public cancelledOrders = []
-  public cancelledOrdersDataSource = new MatTableDataSource(this.cancelledOrders)
+  public currentOrders = []
+  public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
 
   selectedTimeFrame = this.timeFrames[0]
 
   ngOnInit(){
-    this.getRestaurantCurrentOrders()
+    this.getRestaurantCancelledOrders()
   }
 
-  getRestaurantCurrentOrders(){
-    this.cancelledOrders = []
+  getRestaurantCancelledOrders(){
+    this.currentOrders = []
     let body = {
       "restaurant_id": sessionStorage.getItem('restaurant_id'),
       "_c": "rule_id is optional",
@@ -48,7 +48,7 @@ export class OrdersHistoryComponent {
       "_c3": "if the above both are given then time_frame is not needed"
   }
   console.log(body)
-  this._orderService.getRestaurantOrders(body).subscribe(
+  this._orderService.getRestaurantCancelledOrders(body).subscribe(
     data => {
       console.log(data)
       this.unparseResponse(data)
@@ -61,19 +61,19 @@ export class OrdersHistoryComponent {
 
 
   unparseResponse(data){
-    this.cancelledOrders = []
+    this.currentOrders = []
     data['order_list'].map(ele =>{
-      this.cancelledOrders.push(this.unParsedOrder(ele))
+      this.currentOrders.push(this.unParsedOrder(ele))
     }
     )
-    this.cancelledOrdersDataSource.data = this.cancelledOrders     
+    this.currentOrdersDataSource.data = this.currentOrders     
   }
 
   unParsedOrder(order){
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
     let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
     return { orderno : order.order_no,
-      order_detail: order.line_items.length != 1? order.line_items.map(this.addOrderDetails).map(items => items.details).join('<br>') : order.line_items.map(this.addOrderDetails)[0].details,
+      order_detail: order.line_items.length != 1? order.line_items.map(this.addOrderDetails).map(items => items.details).join('<br>'): order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
       DeliveredAt: done_time,
@@ -93,11 +93,11 @@ export class OrdersHistoryComponent {
   }
 
   applyFilter(filterValue){
-    this.cancelledOrdersDataSource.filter = (filterValue as HTMLInputElement).value.trim().toLowerCase()
+    this.currentOrdersDataSource.filter = (filterValue as HTMLInputElement).value.trim().toLowerCase()
   }
 
   onClick(){
-    console.log(this.cancelledOrdersDataSource)
+    console.log(this.currentOrdersDataSource)
   }
 
   displayMoreDetails(order) {
@@ -106,4 +106,5 @@ export class OrdersHistoryComponent {
       data: order,
     });
   }
+
 }

@@ -45,7 +45,7 @@ export class PostPaymentComponent {
           this.fail = false
           setTimeout(() => {
             this.router.navigate(['/user/myorders'])
-          }, 8000);
+          }, 5000);
         }else{
           this.success = false
           this.fail = true

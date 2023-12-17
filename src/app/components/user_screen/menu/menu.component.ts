@@ -67,7 +67,7 @@ export class MenuComponent {
   }
 
   addItem(item) {
-    if (item.quantity < 3) {
+    if (item.quantity < 10) {
       item.quantity += 1;
       this.amount += item.price;
     }
@@ -103,6 +103,9 @@ export class MenuComponent {
       console.log('Result from dialog component: ', result);
       if (result) {
         console.log(result);
+        if(result.mode == 'wallet'){
+          this._router.navigate(['/user/myorders'])
+        }
         this.orderList = { items: [], amount: 0, restaurant_id: null };
       } else {
         this.orderList = { items: [], amount: 0, restaurant_id: null };

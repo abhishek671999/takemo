@@ -53,6 +53,7 @@ export class Utility{
     getToken(){
         var token = this.cookieService.get('token')
         if(token){
+            this.setToken(token)
             return token
         }else{
             this.router.navigate(['login']);
@@ -68,7 +69,9 @@ export class Utility{
 
     setToken( key: string){
         let totalExpiryDate = 60; // days
-        this.cookieService.set('token', key, new Date(new Date().getTime()  + totalExpiryDate * 24 * 60 * 60 * 1000))
+        let newDate =  new Date(new Date().getTime()  + totalExpiryDate * 24 * 60 * 60 * 1000)
+        console.log('NEw date: ', newDate)
+        this.cookieService.set('token', key, newDate)
     }
 }
 
@@ -81,10 +84,8 @@ export class meAPIUtility{
     constructor(public cookieService: CookieService, private _meService: MeService, private _router: Router){}
     
     setMeData(meData){
-        let meDataExpiryDuration = 6000 // min
-        console.log('Setting cookies')
+        let meDataExpiryDuration = 30 // min
         this.cookieService.set('me', JSON.stringify(meData), new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000))
-        console.log('Cookies set')
     }
 
     getMeData(){
@@ -94,6 +95,7 @@ export class meAPIUtility{
                 observer.next(JSON.parse(meData))
             }else{
                 this._meService.getMyInfo().subscribe(data =>{
+                    this.setMeData(data)
                     observer.next(data)
                 })
             }

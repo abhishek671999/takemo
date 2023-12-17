@@ -2,6 +2,8 @@ import {Component, Inject} from '@angular/core'
 import {MatDialog, MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
+import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -13,6 +15,7 @@ export class ConfirmationDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public pickedItems, 
   public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
   private __ordersService: OrdersService,
+  private dialog: MatDialog,
   private _router: Router
   ) {
     console.log('Picked items: ', pickedItems)
@@ -67,11 +70,12 @@ export class ConfirmationDialogComponent {
         console.log('Payment done', data)
         sessionStorage.setItem('transaction_id', data['transaction_id'])
         sessionStorage.setItem('order_no', data['order_no'])
-        alert('You order number is: '+ data['order_no'])
+        this.dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Your Order number is: ' + data['order_no'] } })
         this.dialogRef.close({mode: 'wallet'})
       },
       error => {
-        console.log('Error while paying: ', error)
+        this.dialog.open(ErrorMsgDialogComponent, {data: {msg: error.error.description}})
+        console.log('Error while paying: ', error.error.description)
       }
     )
     
@@ -93,6 +97,7 @@ export class ConfirmationDialogComponent {
         window.location.href = data['payment_url']
       },
       error => {
+        this.dialog.open(ErrorMsgDialogComponent, {data: { msg: error.error.description}})
         console.log('Error while paying: ', error)
       }
     )

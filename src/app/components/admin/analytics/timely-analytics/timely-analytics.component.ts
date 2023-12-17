@@ -31,7 +31,7 @@ export class TimelyAnalyticsComponent {
   selectedItem  = this.itemList[0];
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
-  selectedRule;
+  selectedRule = 2; // Todo: Get this after API call
   ruleList = []
   totalAmount = 0;
   totalOrders = 0;

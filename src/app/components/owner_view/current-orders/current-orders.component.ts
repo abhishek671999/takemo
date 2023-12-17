@@ -68,10 +68,7 @@ export class CurrentOrdersComponent {
       orderno: order.order_no,
       order_detail:
         order.line_items.length != 1
-          ? order.line_items.map(this.addOrderDetails).reduce((a, b) => {
-              return `${a.details} <br> ${b.details}`;
-            })
-          : order.line_items.map(this.addOrderDetails)[0].details,
+          ? order.line_items.map(this.addOrderDetails).map(items => items.details).join('<br>') : order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
       DelieveredAt: done_time,

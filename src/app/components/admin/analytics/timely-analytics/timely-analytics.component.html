@@ -25,18 +25,18 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Category</mat-label>
-      <mat-select [(value)]="selectedCategory" (selectionChange)="onValueChange('category')">
-        <mat-option *ngFor="let category of categoryList" [value]="category">
-          {{category.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
       <mat-label>Item</mat-label>
       <mat-select [(value)]="selectedItem" (selectionChange)="onValueChange('item')">
         <mat-option *ngFor="let item of itemList" [value]="item">
           {{item.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select [(value)]="selectedCategory" (selectionChange)="onValueChange('category')">
+        <mat-option *ngFor="let category of categoryList" [value]="category">
+          {{category.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>

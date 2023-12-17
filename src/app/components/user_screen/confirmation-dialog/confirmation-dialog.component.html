@@ -27,7 +27,7 @@
             Round Off: {{roundOffAmount}}
             <div class="text-center amount">Total Amount:&nbsp;
                 &nbsp;₹ {{totalAmount}} </div>
-            <small>*Please use VPA/UPI id to pay if auto redirection doesn't work</small>
+            <small>*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
         </div>
     </div>
     <div mat-dialog-actions class="button-container">
@@ -37,7 +37,7 @@
         <div class="confirmation-buttons" *ngIf="isPayment; else elsePayment">
             <button mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay</button>
         </div>
-        <ng-template #elsePayment>
+                <ng-template #elsePayment>
             <button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
         </ng-template>
         

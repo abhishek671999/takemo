@@ -73,7 +73,7 @@ export class EditRulesDialogComponent {
       },
       error => {
         console.log(error)
-        alert('Error')
+        this.dialogRef.close({success: 'failed', msg: error.error.error})
       }
     )
   }
@@ -92,9 +92,17 @@ export class EditRulesDialogComponent {
 
   deleteUser(user){
     console.log('Deleting this user: ', user)
-    let params = {"rule_id": this.data.id, "restaurant_id": user.restaurant_id, "user_id": user.user_id}
+    let params = {
+      "rule_id": this.data.id,
+      "user_id": user.user_id
+    }
+    if(user.restaurant_id){
+      params['restaurant_id'] = user.restaurant_id
+     }else if(user.company_id){
+      params['company_id'] = user.company_id
+     }
     let additionalData = { userEmail: user.user_email}
-    let dialogData = {bodyParams: params, additionalData: additionalData}
+    let dialogData = { bodyParams: params, additionalData: additionalData }
     let dialogRef = this.matDialog.open(DeleteUserConfirmationComponent, {data: dialogData})
     this.handlePostDialogClosure(
       dialogRef, 'Successfully Deleted User from Shift',

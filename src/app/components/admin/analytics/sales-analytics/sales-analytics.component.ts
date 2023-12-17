@@ -54,7 +54,7 @@ export class SalesAnalyticsComponent {
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  selectedRule = 1;
+  selectedRule = 2; // Todo: Get this after API call
   totalAmount = 0;
   totalOrders = 0;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false

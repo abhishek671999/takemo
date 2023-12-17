@@ -22,5 +22,10 @@ export class OrdersHomeComponent {
         link: '/owner/orders-history',
         index: 2
     },
+    {
+      label: 'Cancelled',
+      link: '/owner/cancelled-orders',
+      index: 3
+    }
 ]; 
 }
