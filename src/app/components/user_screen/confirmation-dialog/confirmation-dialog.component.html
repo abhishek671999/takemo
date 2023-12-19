@@ -22,24 +22,27 @@
         <div>
             <p>Amount:&nbsp;&nbsp;₹ {{pickedItems.amount}}</p>
         </div>
-        <div *ngIf="isPayment">
+        <div *ngIf="isPayment==true">
             <p>Platform Fee: {{platformFee['platform_fee_percentage']}}% + Gst {{platformFee['platform_fee_gst_percentage']}}% = &nbsp;₹&nbsp;{{platformFee['platformFeeAmount']}}</p>
             Round Off: {{roundOffAmount}}
             <div class="text-center amount">Total Amount:&nbsp;
                 &nbsp;₹ {{totalAmount}} </div>
-            <small>*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
+            <small class="font-weight-bold text-warning">*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
         </div>
     </div>
     <div mat-dialog-actions class="button-container">
         <div class="confirmation-buttons">
             <button mat-raised-button (click)="onEditButtonClick()">Edit Order</button>
         </div>
-        <div class="confirmation-buttons" *ngIf="isPayment; else elsePayment">
+        <div class="confirmation-buttons" *ngIf="isPayment==true; else elsePayment">
             <button mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay</button>
         </div>
-                <ng-template #elsePayment>
-            <button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
+            <ng-template #elsePayment>
+                <ng-container *ngIf="isPayment==false; else elseBlock"><button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button></ng-container>
+            </ng-template>
+        <ng-template #elseBlock>
+            <button mat-raised-button disabled>Loading</button>
         </ng-template>
-        
+
     </div>
 </div>

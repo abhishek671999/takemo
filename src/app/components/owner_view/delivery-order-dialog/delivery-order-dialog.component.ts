@@ -16,7 +16,7 @@ export class DeliveryOrderDialogComponent {
     private _dialog: MatDialog
   ){
     console.log('Data received: ', data)
-    data.forEach(ele => {
+    data.obj.forEach(ele => {
       ele['is_delivered'] = false
     });
   }

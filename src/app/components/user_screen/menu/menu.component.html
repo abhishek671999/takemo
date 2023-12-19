@@ -9,7 +9,7 @@
             <div class="table-container">
                 <h2 class="text-center m-0">You are ordering from {{menu_response.restaurant_name}}</h2>
                 <h2 class="text-center m-0">Menu</h2>
-            <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+            <cdk-virtual-scroll-viewport itemSize="1" class="viewport" >
                 <mat-expansion-panel [expanded]="mainIndex === 0" *ngFor="let category of menu_response.menu; let mainIndex = index">
                     <mat-expansion-panel-header >
                         <mat-panel-title>

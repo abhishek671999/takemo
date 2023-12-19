@@ -21,7 +21,7 @@ export class ConfirmationDialogComponent {
     console.log('Picked items: ', pickedItems)
   }
 
-  public isPayment=false;
+  public isPayment;
   public platformFee = undefined || {};
   public totalAmount;
   public roundOffAmount;

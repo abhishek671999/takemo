@@ -44,7 +44,7 @@ export class PendingOrdersComponent {
 
   itemClicked(item){
     console.log('This item is clicked: ', item)
-    let dialogRef = this._dialog.open(DeliveryOrderDialogComponent, {data: item.obj})
+    let dialogRef = this._dialog.open(DeliveryOrderDialogComponent, {data: item})
   }
 
   ngOnDestroy(){

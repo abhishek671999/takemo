@@ -30,7 +30,7 @@ td {
 }
 
 .viewport {
-  height: 65vh;
+  height: 70vh;
 }
 
 .table-container {
@@ -121,7 +121,7 @@ p {
     display: inline;
   }
   .viewport {
-    height: 60vh;
+    height: 50vh;
   }
 }
 

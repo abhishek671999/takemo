@@ -1,5 +1,5 @@
 <div class="main-container">
-    <h1 mat-dialog-title>Deliver Order</h1>
+    <h1 mat-dialog-title>Deliver Order:: {{data.name}}</h1>
     <div mat-dialog-content>
         <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
                 <table class="table table-hover">
@@ -12,7 +12,7 @@
                     </thead>
                     <tbody class="text-center" >
                         <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
-                        <tr class="table-row" *ngFor="let order of data; let subIndex = index">
+                        <tr class="table-row" *ngFor="let order of data.obj; let subIndex = index">
                             <td class="col1" scope="col" >{{order.order_no}}</td>
                             <td class="col2" scope="col">
                                 <button mat-raised-button color="primary" *ngIf='!order.is_ready' (click)="updateStatusToReady(order)">Ready</button>
