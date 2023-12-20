@@ -185,4 +185,21 @@ export class EditMenuComponent {
       }
     );
   }
+
+  toggleCategoryAvailability(category){
+    console.log('Category toggled', category, category)
+    let body = {
+      category_id: category.category.id,
+      hide_category: !category.category.hide_category
+    }
+    console.log('This is body', body)
+    this._menuEditService.editCategoryAvailability(body).subscribe(
+      data => {
+        category.hide_category != category.hide_category
+      },
+      error => {
+        alert('Failed to toggle category')
+      }
+    )
+  }
 }

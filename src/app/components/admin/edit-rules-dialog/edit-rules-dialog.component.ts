@@ -27,6 +27,7 @@ export class EditRulesDialogComponent {
   }
   public checked = new FormControl(this.data['same_day_end_time'])
   public users;
+  public totalUsers;
 
   ngOnInit(){
     let params = {'rule_id': this.data.id}
@@ -34,6 +35,7 @@ export class EditRulesDialogComponent {
       data => {
         console.log('This is user data: ', data)
         this.users = data
+        this.totalUsers = data['users'].length
         this.users.forEach(element => {
           element.is_deleted = false
         });

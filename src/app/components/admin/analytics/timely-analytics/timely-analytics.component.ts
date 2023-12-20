@@ -15,6 +15,7 @@ export class TimelyAnalyticsComponent {
   timeFramesForTimelyAnalytics = [
     {displayValue: 'Last 30 days', actualValue: 'last_30_days' },
     {displayValue: 'Last month', actualValue: 'last_month' },
+    // { displayValue: 'Last week', actualValue: 'last_week'}, //future
     {displayValue: 'Last 12 months', actualValue: 'last_12_months' },
   ]
   categoryList = [{'name': 'select', 'id': 0}]

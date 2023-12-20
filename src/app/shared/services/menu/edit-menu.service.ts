@@ -13,9 +13,13 @@ export class EditMenuService {
   deleteItemEndpoint = 'inventory/delete_item/';
   deleteCategoryEndpoint = 'inventory/delete_category/';
   editItemAvailabilityEndpoint = 'inventory/edit_is_available/';
+  editCategoryAvailabilityEndpoint = 'inventory/hide_category/'
 
   constructor(private _http: HttpClient, public utility: Utility) {}
 
+  editCategoryAvailability(body){
+    return this._http.post(this.host + this.editCategoryAvailabilityEndpoint, body, {headers: this.utility.getHeaders()})
+  }
   editMenu(body) {
     console.log('This is the body: ', body);
     return this._http.post(this.host + this.editItemEndpoint, body, {

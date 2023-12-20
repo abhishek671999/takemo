@@ -1,5 +1,11 @@
 <div class="main-container">
-    <mat-slide-toggle [ngModel]='restaurantStatus' color="primary" (change)="toggleRestoOpen()"></mat-slide-toggle>
+    <div *ngIf="!menu_response; else elseBlock">
+        <div class="center-spin">
+            <mat-spinner diameter="100" style="margin: 0 auto"></mat-spinner>
+          </div>
+    </div>
+    <ng-template #elseBlock>
+        <mat-slide-toggle [ngModel]='restaurantStatus' color="primary" (change)="toggleRestoOpen()"></mat-slide-toggle>
     <div class="menu-container">
         <h4 class="text-center">Restaurant is open</h4>
         <h2 class="text-center">Edit menu</h2>
@@ -12,6 +18,7 @@
                             {{category.category.name}}
                         </mat-panel-title>
                         <div>
+                            <mat-slide-toggle color="primary" [ngModel]='!category.category.hide_category' (change)="toggleCategoryAvailability(category)"></mat-slide-toggle>
                             <mat-icon style="margin: 5px 4em 0 0;" title="Delete this category" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
                         </div>
                     </mat-expansion-panel-header>
@@ -56,5 +63,5 @@
             </cdk-virtual-scroll-viewport>
         </div> 
     </div>  
-
+    </ng-template>
 </div>
