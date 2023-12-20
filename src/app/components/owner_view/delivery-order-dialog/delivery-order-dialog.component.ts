@@ -21,6 +21,13 @@ export class DeliveryOrderDialogComponent {
     });
   }
 
+  ngOnInit(){
+    console.log('In ngOnitit', this.data.obj)
+    this.data = this.data.obj.filter(ele => {
+      ele.is_delivered == false
+    })
+  }
+
   updateStatusToDelivered(order){
     let body = {
       "restaurant_id": sessionStorage.getItem('restaurant_id'),
@@ -32,6 +39,7 @@ export class DeliveryOrderDialogComponent {
       data => {
         order.is_delivered = true
         order.is_ready = true
+        this.ngOnInit()
       },
       error => {
         console.log('Error while delivering orders')

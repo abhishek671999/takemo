@@ -3,6 +3,9 @@
     <div mat-dialog-content>
         <h3 style="display: inline; font-weight: bold;">Order Num :</h3><h3 style="display: inline;"> {{data.orderno}}</h3><br>
         <h3 style="display: inline; font-weight: bold;">Order Id  :</h3><h3 style="display: inline;"> {{data.order_id}}</h3><br>
+        <div *ngIf="data.ordered_by">
+            <h3 style="display: inline; font-weight: bold;">Ordered by  :</h3><h3 style="display: inline;"> {{data.ordered_by}}</h3><br>
+        </div>
         <h3 style="display: inline; font-weight: bold;">Order Value :</h3><h3 style="display: inline;"> {{data.total_restaurant_amount}}</h3><br>
         <h3 style="display: inline; font-weight: bold;">Platform Fee:</h3><h3 style="display: inline;"> {{data.total_platform_fee}}</h3><br>
         <h3 style="display: inline; font-weight: bold;">Total Amount:</h3><h3 style="display: inline;"> {{data.total_amount}}</h3><br>

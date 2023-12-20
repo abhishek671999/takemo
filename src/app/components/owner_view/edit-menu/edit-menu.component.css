@@ -32,6 +32,10 @@ html{
     width: 80%;
 }
 
+.category-toggle{
+    margin: 2em;
+}
+
 .addCategoryIcon{
     cursor: pointer;
     width: 30px;

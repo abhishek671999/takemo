@@ -15,11 +15,11 @@
                 <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of menu_response.menu; let mainIndex = index">
                     <mat-expansion-panel-header >
                         <mat-panel-title>
-                            {{category.category.name}}
+                            <b style="font-size: x-large;">{{category.category.name}}</b>
                         </mat-panel-title>
                         <div>
-                            <mat-slide-toggle color="primary" [ngModel]='!category.category.hide_category' (change)="toggleCategoryAvailability(category)"></mat-slide-toggle>
-                            <mat-icon style="margin: 5px 4em 0 0;" title="Delete this category" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
+                            <mat-slide-toggle class="category-toggle" color="primary" [ngModel]='!category.category.hide_category' (change)="toggleCategoryAvailability(category)"></mat-slide-toggle>
+                            <mat-icon style="margin: 10px 4em 0 0;" title="Delete this category" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
                         </div>
                     </mat-expansion-panel-header>
                     <div class="text-center">

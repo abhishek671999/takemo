@@ -57,14 +57,15 @@ export class TimelyAnalyticsComponent {
         });
       }
     )
-    this.createTimelyAnalytics() 
-    this._ruleService.getRules().subscribe(
+    
+    this._ruleService.getAllRules().subscribe(
       data => {
         data['rules'].forEach(element => {
           this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
         });
       }
     )
+    this.createTimelyAnalytics() 
   }
 
   onValueChange(value: string){

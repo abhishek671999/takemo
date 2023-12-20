@@ -21,7 +21,7 @@ export class CurrentOrdersComponent {
     'Order details',
     'Deliver',
     'Amount',
-    'Cancel',
+    // 'Cancel', temp disabled
     'Details',
   ];
 
@@ -84,6 +84,7 @@ export class CurrentOrdersComponent {
       total_amount: order.total_amount.toFixed(2),
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
+      ordered_by: order.ordered_by
     };
   }
 
