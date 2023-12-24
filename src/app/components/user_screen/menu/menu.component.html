@@ -13,7 +13,7 @@
                 <mat-expansion-panel [expanded]="mainIndex === 0" *ngFor="let category of menu_response.menu; let mainIndex = index">
                     <mat-expansion-panel-header >
                         <mat-panel-title>
-                            <b>{{category.category.name}}</b>
+                            <b style="font-size: x-large;">{{category.category.name}}</b>
                           </mat-panel-title>
                     </mat-expansion-panel-header>
                     <table class="table table-hover">
@@ -54,7 +54,7 @@
             <div class="order-summary fixed">
                 <div class="text-center amount">Total Amount:&nbsp;
                     &nbsp;₹ {{amount}} </div>
-                <div class="text-center prepare-summary"><button class="btn btn-primary" (click)="prepareSummary()" [disabled]="!amount">Place Order</button></div>
+                <div class="text-center prepare-summary"><button mat-raised-button color='primary' class="btn btn-primary" (click)="prepareSummary()" [disabled]="!amount">Place Order</button></div>
             </div>
         </div>
         <ng-template #resturantClosed>
@@ -62,7 +62,4 @@
             <h1 class="text-center">{{menu_response.restaurant_name}} is close at this moment</h1>
         </ng-template>
     </ng-template>
-    
-    
-
 </div>

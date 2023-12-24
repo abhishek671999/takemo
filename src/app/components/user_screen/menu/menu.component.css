@@ -20,7 +20,8 @@ td {
   padding-top: 2%;
   display: flex;
   height: inherit;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 1em;
   align-items: center;
   flex-direction: column;
 }
@@ -121,7 +122,7 @@ p {
     display: inline;
   }
   .viewport {
-    height: 50vh;
+    height: 60vh;
   }
 }
 
