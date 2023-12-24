@@ -8,6 +8,7 @@ import { PostPaymentComponent } from './post-payment/post-payment.component';
 import { CurrentOrdersComponent } from './current-orders/current-orders.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
+import { SupportComponent } from './support/support.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
         ]
       },
       { path: 'order-acknowledgement', component: PostPaymentComponent },
+      { path: 'support', component: SupportComponent}
     ],
   },
 ];

@@ -45,6 +45,7 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { MatSelectModule } from '@angular/material/select';
 import { OrderMoreDetailsDialogComponent } from '../shared/order-more-details-dialog/order-more-details-dialog.component';
+import { SupportComponent } from './support/support.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { OrderMoreDetailsDialogComponent } from '../shared/order-more-details-di
     OrderHistoryComponent,
     CancelledOrdersComponent,
     OrderMoreDetailsDialogComponent,
+    SupportComponent,
   ],
   imports: [
     CommonModule,

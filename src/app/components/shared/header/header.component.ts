@@ -86,11 +86,18 @@ export class HeaderComponent {
         action: () => {
           this.router.navigate(['./user/myorders'])
         }
+      },
+      'support': {
+        name: 'Support',
+        href: '',
+        action: () => {
+          this.router.navigate(['./user/support'])
+        }
       }
     }
   
     addAdminNavOptions(){
-      let adminNavOptions = ['shift', 'userOrders', 'billing', 'menu', 'analytics']
+      let adminNavOptions = ['userOrders', 'menu',  'billing', 'analytics', 'shift']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -100,7 +107,7 @@ export class HeaderComponent {
     }
   
   addRestaurantOwnerNavOptions(){
-    let restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'billing', 'orders']
+    let restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'orders']
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -127,7 +134,7 @@ export class HeaderComponent {
   }
 
     
-  dropdownList = [this.AvailableDropdownList['logout']] //this.AvailableDropdownList['profile']
+  dropdownList = [this.AvailableDropdownList['support'], this.AvailableDropdownList['logout']]
   username: string
   message: string
 
