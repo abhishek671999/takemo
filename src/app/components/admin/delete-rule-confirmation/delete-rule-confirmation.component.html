@@ -1,6 +1,7 @@
-<h1 mat-dialog-title>Delete</h1>
+<h1 mat-dialog-title>Delete??</h1>
 <div mat-dialog-content>
     <h3>Are you sure want to delete {{data.additionalData.rule_name}}??</h3>
+    <p class="text-warning">*This rule has <b>{{numberOfUsers}}</b> users enrolled</p>
     <div mat-dialog-actions class="action-container">
         <button mat-raised-button (click)="closeDialog()"> Cancel</button>
         <button mat-raised-button color="primary" (click)="onDelete()">Delete</button>

@@ -3,9 +3,7 @@ import { FormBuilder, FormControl, FormControlDirective, Validators } from '@ang
 import {  MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { AddUserToRuleComponent } from '../add-user-to-rule/add-user-to-rule.component';
-import {Chart} from 'chart.js';
 import { EditUserToRuleDialogComponent } from '../edit-user-to-rule-dialog/edit-user-to-rule-dialog.component';
-import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 import { DeleteUserConfirmationComponent } from '../delete-user-confirmation/delete-user-confirmation.component';

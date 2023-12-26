@@ -9,7 +9,7 @@
 }
 
 .main-box {
-  border: solid 3px black;
+  border: solid 1px rgb(65, 104, 244, 0.8);
   border-radius: 10px;
   width: 80%;
   height: max-content;
@@ -19,13 +19,14 @@
 
 .card-box {
   background-color: rgb(65, 104, 244, 0.8);
-  border: solid 2px black;
+  border: solid 1px rgb(65, 104, 244, 0.8);
   margin: 10px;
   padding: 10px;
   height: 10em;
   cursor: pointer;
   width: 10em;
   border-radius: 5px;
+  overflow: scroll;
 }
 
 @media screen and (max-width: 526px) {

@@ -43,18 +43,19 @@
                 <div class="text-center">
                     <button mat-raised-button color="primary" title='Add users to this shift' svgIcon="plus" (click)="addUser()">Add Users</button>
                 </div>
-                <table class="table table-hover">
+                <table class="table sorttable">
                     <thead class="text-center">
                         <tr>
+                            <th class="col1" scope="col">Sl.no</th>
                             <th class="col3" scope="col">Email</th>
                             <th class="col4" scope="col">Assigned To</th>
                             <th class="col5" scope="col">Delete</th>
                         </tr>
                     </thead>
                     <tbody class="text-center" >
-                        <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
-                        <tr class="table-row" *ngFor="let user of users.users; let subIndex = index">
-                            <td class="col3" >{{user.user_email}}</td>
+                        <tr class="item" *ngFor="let user of users.users; let subIndex = index">
+                            <td class="col1">{{subIndex + 1}}</td>
+                            <td class="col3">{{user.user_email}}</td>
                             <td class="col4">{{user.restaurant_name || user.company_name}}</td>
                             <td class="col5">
                                 <mat-icon *ngIf="!user.is_deleted" svgIcon="delete" (click)="deleteUser(user)"></mat-icon>
@@ -65,11 +66,9 @@
                 </table>
             </mat-expansion-panel>
         </cdk-virtual-scroll-viewport>
-
     </div>
     <ng-template #elseBlock>
-        No users for this rule: Add here
+        <h3 class="text-center">No users for this rule: Add here</h3>
         <button mat-button-raised color="primary" svgIcon="plus" (click)="addUser()">Add user</button>
-        please
     </ng-template>
 </div>

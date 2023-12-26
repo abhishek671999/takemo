@@ -36,8 +36,6 @@
     height: 400px;
 }
 
-
-
 @media screen and (max-width: 425px) {
     .form-container{
         flex-direction: column;
