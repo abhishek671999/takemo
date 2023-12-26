@@ -23,9 +23,10 @@ export class DeliveryOrderDialogComponent {
 
   ngOnInit(){
     console.log('In ngOnitit', this.data.obj)
-    this.data = this.data.obj.filter(ele => {
+    this.data.obj.filter(ele => {
       ele.is_delivered == false
     })
+    console.log('After filter: ', this.data)
   }
 
   updateStatusToDelivered(order){
