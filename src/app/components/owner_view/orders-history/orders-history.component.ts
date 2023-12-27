@@ -23,6 +23,7 @@ export class OrdersHistoryComponent {
     'Order No',
     'Order details',
     'Amount',
+    'Ordered By',
     'Details',
   ];
 

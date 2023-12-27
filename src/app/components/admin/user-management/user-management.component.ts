@@ -112,7 +112,7 @@ export class UserManagementComponent {
     let dialogRef = this.dialog.open(EditRulesDialogComponent, { data: rule });
     this.handlePostDialogClosure(
       dialogRef,
-      'Successfully edit the rule',
+      'Successfully edited the rule',
       'Failed to edit rule. Please contact Takemo'
     );
   }
@@ -127,7 +127,7 @@ export class UserManagementComponent {
     });
     this.handlePostDialogClosure(
       dialogRef,
-      'Successfully Delete the Rule',
+      'Successfully Deleted the rule',
       'Failed to delete rule. Please contact Takemo'
     );
   }

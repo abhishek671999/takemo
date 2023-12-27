@@ -23,6 +23,7 @@ export class CancelledOrdersComponent {
     'Order No',
     'Order details',
     'Amount',
+    'Ordered By',
     'Details',
   ];
 

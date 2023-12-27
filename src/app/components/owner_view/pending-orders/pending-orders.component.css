@@ -15,6 +15,15 @@
   height: max-content;
   display: flex;
   justify-content: center;
+  padding: 2em;
+}
+
+.content-box{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .card-box {
@@ -22,7 +31,7 @@
   border: solid 1px rgb(65, 104, 244, 0.8);
   margin: 10px;
   padding: 10px;
-  height: 10em;
+  height: 11em;
   cursor: pointer;
   width: 10em;
   border-radius: 5px;
@@ -30,13 +39,14 @@
 }
 
 @media screen and (max-width: 526px) {
-
-
+  
   .main-box {
     width: 95%;
     height: 80vh;
     overflow: scroll;
   }
+
+
 }
 
 ::-webkit-scrollbar {

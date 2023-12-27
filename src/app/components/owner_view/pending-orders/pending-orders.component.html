@@ -1,9 +1,9 @@
 <div class="main-container">
     <div class="main-box">
-        <div *ngIf="orderList.length > 0; else NoPendingOrderBlock">
+        <div class="content-box" *ngIf="orderList.length > 0; else NoPendingOrderBlock">
             <ng-container *ngFor="let item of orderList">
                 <button class="card-box" (click)="itemClicked(item)">
-                    <h2 class="text-center text-white">{{item.quantity}}</h2>
+                    <h2 style="font-size: xx-large;" class="text-center text-white">{{item.quantity}}</h2>
                     <h1 class="text-center text-white">{{item.name}}</h1>
                 </button>
             </ng-container>

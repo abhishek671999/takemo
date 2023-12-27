@@ -21,6 +21,7 @@ export class CurrentOrdersComponent {
     'Order details',
     'Deliver',
     'Amount',
+    'Ordered By',
     // 'Cancel', temp disabled
     'Details',
   ];
@@ -35,12 +36,9 @@ export class CurrentOrdersComponent {
   getRestaurantCurrentOrders(){
     let body = {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
-      _c: 'rule_id is optional',
       time_frame: 'current',
-      _c1: 'possible options for time_frame are today, this_week, this_month',
       start_date: '',
       end_date: '',
-      _c3: 'if the above both are given then time_frame is not needed',
     };
     this._ordersService.getRestaurantOrders(body).subscribe(
       (data) => {

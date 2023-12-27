@@ -23,8 +23,8 @@ export class DeliveryOrderDialogComponent {
 
   ngOnInit(){
     console.log('In ngOnitit', this.data.obj)
-    this.data.obj.filter(ele => {
-      ele.is_delivered == false
+    this.data.obj = this.data.obj.filter(ele => {
+      return ele.is_delivered == false
     })
     console.log('After filter: ', this.data)
   }
