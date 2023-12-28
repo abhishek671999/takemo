@@ -81,7 +81,7 @@ export class HeaderComponent {
         }
       },
       'userOrders': {
-        name: 'Orders',
+        name: 'My Orders',
         href: '',
         action: () => {
           this.router.navigate(['./user/myorders'])
@@ -93,11 +93,18 @@ export class HeaderComponent {
         action: () => {
           this.router.navigate(['./user/support'])
         }
+      },
+      'admin_current_orders': {
+        name: 'Orders',
+        href: '',
+        action: () => {
+          this.router.navigate(['./admin/orders'])
+        }
       }
     }
   
     addAdminNavOptions(){
-      let adminNavOptions = ['userOrders', 'menu',  'billing', 'analytics', 'shift']
+      let adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])

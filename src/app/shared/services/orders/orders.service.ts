@@ -21,7 +21,7 @@ export class OrdersService {
   private cancelOrderEndpoint = 'order/cancel_order/'
   private myCancelledOrdersEndpoint = 'order/get_my_canceled_orders/'
   private cancellledRestaurantOrdersEndpoint = 'order/get_restaurant_canceled_orders/'
-
+  private getRestaurantShiftOrders = 'order/get_restaurant_shift_orders/'
 
 
   getMyOrders(body){
@@ -59,7 +59,10 @@ export class OrdersService {
   getRestaurantOrders(body){
     return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {headers: this.utility.getHeaders()})
   }
-
+  
+  getRestaurantOrdersForAdmins(body){
+    return this._http.post(host + this.getRestaurantShiftOrders, body, {headers: this.utility.getHeaders()})
+  }
 
   cancelOrder(body){
     return this._http.post(host + this.cancelOrderEndpoint, body, {headers: this.utility.getHeaders()})

@@ -1,10 +1,13 @@
 <div class="main-container">
-  <div class="input-container">
+  <div *ngIf='!loadView' class="center-spin">
+    <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+  </div>
+  <div *ngIf="loadView" class="input-container">
     <mat-form-field *ngIf="!restaurantFlag">
       <mat-label>Select Restaurant</mat-label>
       <mat-select [(value)]="selectedRestaurant" (selectionChange)="onValueChange('none')">
-        <mat-option *ngFor="let time of restaurantList" [value]="time.restaurant_id">
-          {{time.displayValue}}
+        <mat-option *ngFor="let restaurant of restaurantList" [value]="restaurant.restaurant_id">
+          {{restaurant.displayValue}}
         </mat-option>
       </mat-select>
     </mat-form-field>

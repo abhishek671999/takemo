@@ -32,10 +32,11 @@ export class TimelyAnalyticsComponent {
   selectedItem  = this.itemList[0];
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
-  selectedRule = 2; // Todo: Get this after API call
+  selectedRule;
   ruleList = []
   totalAmount = 0;
   totalOrders = 0;
+  loadView = false
   
   chart2: any = []
   chart4: any = []
@@ -43,15 +44,12 @@ export class TimelyAnalyticsComponent {
   constructor(private _analyticsService: AnalyticsService,
         private _menuService: MenuService,  private _ruleService: RulesService){}
 
-  
   ngOnInit(){
     this._menuService.getMenu(this.selectedRestaurant).subscribe(
       data => {
         data['menu'].forEach(element => {
-          console.log('In menue iteration: ', element)
           this.categoryList.push({ 'name': element.category.name, 'id': element.category.id})
           element.category.items.forEach(element => {
-            console.log('in items: ', element)
             this.itemList.push({'name': element.name, 'id': element.id})
           });
         });
@@ -63,6 +61,8 @@ export class TimelyAnalyticsComponent {
         data['rules'].forEach(element => {
           this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
         });
+        this.selectedRule = this.ruleList[0].rule_id
+        this.loadView = true
       }
     )
     this.createTimelyAnalytics() 

@@ -50,11 +50,11 @@ export class SalesAnalyticsComponent {
   ]
 
   ruleList = []
-
+  loadView = false;
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  selectedRule = 2; // Todo: Get this after API call
+  selectedRule;
   totalAmount = 0;
   totalOrders = 0;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
@@ -66,7 +66,7 @@ export class SalesAnalyticsComponent {
     private _menuService: MenuService, private _ruleService: RulesService){}
 
   ngOnInit(){
-    this.createChart('today', 'all')
+    
     console.log('Get all rules called')
     this._ruleService.getAllRules().subscribe(
       data => {
@@ -74,6 +74,9 @@ export class SalesAnalyticsComponent {
         data['rules'].forEach(element => {
           this.ruleList.push({'rule_id_list': element.id, 'rule_name': element.name})
         });
+        this.selectedRule = this.ruleList[2].rule_id_list
+        this.createChart('today', 'all')
+        this.loadView = true
       }
     )
   }
@@ -90,13 +93,9 @@ export class SalesAnalyticsComponent {
     let body = {
       "rule_id_list": Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
-      "_comment": "rule_id is optional and 1(default) will be taken if not given",
       "time_frame": timeFrame,
-      "_comment1": "Possible options for above field: today, this_week, this_month, last_3_months, last_6_months, this_year, custom",
-      "_comment2": "if custom is given, 2 more fields, from_date and to_date must be sent",
       "item_wise": groupby == 'item_wise'? true : false,
       "category_wise": groupby == "category_wise"? true : false,
-      "_comment3": "item_wise or category_wise booean fields. Either or none must be used"
   }
   console.log('Body::: ', body)
   this._analyticsService.getSalesAnalyticsData(body).subscribe(

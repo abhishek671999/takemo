@@ -40,6 +40,9 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
 import { DeleteUserConfirmationComponent } from './delete-user-confirmation/delete-user-confirmation.component';
 import { DeleteRuleConfirmationComponent } from './delete-rule-confirmation/delete-rule-confirmation.component';
 import { Time24to12Format } from './time24to12.pipe';
+import { CurrentOrdersComponent } from './current-orders/current-orders.component';
+import { OrdersHomeComponent } from './orders-home/orders-home.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -57,7 +60,9 @@ import { Time24to12Format } from './time24to12.pipe';
     BillingComponent,
     DeleteUserConfirmationComponent,
     DeleteRuleConfirmationComponent,
-    Time24to12Format
+    Time24to12Format,
+    CurrentOrdersComponent,
+    OrdersHomeComponent
   ],
   imports: [
     CommonModule,
@@ -83,6 +88,7 @@ import { Time24to12Format } from './time24to12.pipe';
     PdfViewerModule,
     MatCheckboxModule,
     SharedModuleModule,
+    MatTableModule
   ],
   providers: [
     {

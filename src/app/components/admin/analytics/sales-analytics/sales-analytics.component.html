@@ -1,5 +1,8 @@
 <div class="main-container">
-  <div class="input-container">
+  <div *ngIf="!loadView" class="center-spin">
+    <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+  </div>
+  <div *ngIf='loadView' class="input-container">
     <mat-form-field>
       <mat-label>Select time frame</mat-label>
       <mat-select [(value)]="selectedTimeFrame" (selectionChange)="onValueChange()">
