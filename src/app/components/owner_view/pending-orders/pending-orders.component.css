@@ -12,10 +12,12 @@
   border: solid 1px rgb(65, 104, 244, 0.8);
   border-radius: 10px;
   width: 80%;
-  height: max-content;
+  height: 80vh;
   display: flex;
   justify-content: center;
-  padding: 2em;
+  padding: 1em;
+  overflow: scroll;
+  
 }
 
 .content-box{
@@ -24,6 +26,7 @@
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
+  padding: 0;
 }
 
 .card-box {
@@ -42,10 +45,18 @@
   
   .main-box {
     width: 95%;
-    height: 80vh;
-    overflow: scroll;
   }
 
+
+}
+
+@media screen and (max-width: 425px) {
+  
+  .card-box {
+    width: 9.5em;
+    padding: 0;
+  }
+  
 
 }
 
