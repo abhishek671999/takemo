@@ -177,6 +177,8 @@ export class HeaderComponent {
    }  
 
   onClick(index: number) {
+    let checkbox = document.getElementById('hamburger-checkbox') as HTMLInputElement;
+    checkbox.checked = false
     this.dropdownList[index].action();
   }
 }
