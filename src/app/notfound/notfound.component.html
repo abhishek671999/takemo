@@ -1,1 +1,8 @@
-<p>notfound works!</p>
+<p>notfound works! Still working</p>
+<div *ngIf="message;">
+    <h1>{{ message.notification.title }}</h1>
+    <h2>{{ message.notification.body }}</h2>
+  </div>
+  <div *ngIf="!message;">
+    No Message Arrived
+  </div>
