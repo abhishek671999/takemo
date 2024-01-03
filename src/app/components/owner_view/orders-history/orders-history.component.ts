@@ -17,6 +17,7 @@ export class OrdersHistoryComponent {
     {ViewValue: 'Today', actualValue: 'today'},
     {ViewValue: 'This week', actualValue: 'this_week'},
     {ViewValue: 'This month', actualValue: 'this_month'},
+    {ViewValue: 'Last month', actualValue: 'last_month'}
   ]
 
   displayedColumns: string[] = [
