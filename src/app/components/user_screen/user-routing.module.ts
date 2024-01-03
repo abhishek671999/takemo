@@ -9,6 +9,7 @@ import { CurrentOrdersComponent } from './current-orders/current-orders.componen
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { SupportComponent } from './support/support.component';
+import { WalletComponent } from './wallet/wallet.component';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
         ]
       },
       { path: 'order-acknowledgement', component: PostPaymentComponent },
-      { path: 'support', component: SupportComponent}
+      { path: 'support', component: SupportComponent},
+      { path: 'wallet', component: WalletComponent}
     ],
   },
 ];

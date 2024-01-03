@@ -46,6 +46,7 @@ import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.co
 import { MatSelectModule } from '@angular/material/select';
 import { OrderMoreDetailsDialogComponent } from '../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { SupportComponent } from './support/support.component';
+import { WalletComponent } from './wallet/wallet.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { SupportComponent } from './support/support.component';
     CancelledOrdersComponent,
     OrderMoreDetailsDialogComponent,
     SupportComponent,
+    WalletComponent,
   ],
   imports: [
     CommonModule,
