@@ -22,7 +22,7 @@ export class CurrentOrdersComponent {
     {displayValue: 'Today', actualValue: 'today' },
     {displayValue: 'This week', actualValue: 'this_week' },
     {displayValue: 'This month', actualValue: 'this_month' },
-    // { displayValue: 'Last week', actualValue: 'last_week'}, //future
+    { displayValue: 'Last month', actualValue: 'last_month'}, //future
   ]
   
   restaurantList = [
@@ -56,7 +56,7 @@ export class CurrentOrdersComponent {
         data['rules'].forEach(element => {
           this.ruleList.push({'rule_id_list': element.id, 'rule_name': element.name})
         });
-        this.selectedRule = this.ruleList[2].rule_id_list
+        this.selectedRule = this.ruleList[0].rule_id_list
         this.loadView = true
         let body = this.prepareRequestBodyRestaurantOrders()
         return this._ordersService.getRestaurantOrdersForAdmins(body)
@@ -81,14 +81,6 @@ export class CurrentOrdersComponent {
       end_date: '',
     };
     return body
-  }
-
-  getRules(){
-    this._ruleService.getAllRules().subscribe(
-      data => {
-        
-      }
-    )
   }
 
   getRestaurantCurrentForAdminsOrders(){

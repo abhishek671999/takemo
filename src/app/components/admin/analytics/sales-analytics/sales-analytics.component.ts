@@ -74,7 +74,7 @@ export class SalesAnalyticsComponent {
         data['rules'].forEach(element => {
           this.ruleList.push({'rule_id_list': element.id, 'rule_name': element.name})
         });
-        this.selectedRule = this.ruleList[2].rule_id_list
+        this.selectedRule = this.ruleList[0].rule_id_list
         this.createChart('today', 'all')
         this.loadView = true
       }

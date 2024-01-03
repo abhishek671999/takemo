@@ -62,10 +62,11 @@ export class TimelyAnalyticsComponent {
           this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
         });
         this.selectedRule = this.ruleList[0].rule_id
+        this.createTimelyAnalytics() 
         this.loadView = true
       }
     )
-    this.createTimelyAnalytics() 
+    
   }
 
   onValueChange(value: string){
