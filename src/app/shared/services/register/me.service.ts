@@ -10,6 +10,8 @@ export class MeService {
 
   meEndpoint = 'users/me/'
   rolesEndpoint = 'role/get_roles/'
+  private postPushNotificationTokenEndpoint = 'users/create_or_update_push_notification_token'
+
   constructor(private __httpClient: HttpClient, public utility: Utility) { }
 
   getMyInfo(){
@@ -18,6 +20,10 @@ export class MeService {
 
   getRoles(){
     return this.__httpClient.get(host+this.rolesEndpoint, {headers: this.utility.getHeaders()})
+  }
+
+  updatePostNotifcationToken(body){
+    return this.__httpClient.post(host+this.postPushNotificationTokenEndpoint, body, {headers: this.utility.getHeaders()})
   }
   
 }

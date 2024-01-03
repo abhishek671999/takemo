@@ -23,6 +23,11 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { PostLoginComponent } from './components/post-login/post-login.component';
 import { Utility, meAPIUtility } from './shared/site-variable';
 import { Login2Component } from './components/home_screen/login2/login2.component';
+import { environment } from '../environments/environments';
+import { initializeApp } from "firebase/app";
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+initializeApp(environment.firebase);
 
 @NgModule({
   declarations: [
@@ -50,7 +55,8 @@ import { Login2Component } from './components/home_screen/login2/login2.componen
     BrowserAnimationsModule,
     MaterialModule,
     CanvasJSAngularChartsModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    MatSnackBarModule
     ],
   providers: [Utility, meAPIUtility],
   bootstrap: [AppComponent],

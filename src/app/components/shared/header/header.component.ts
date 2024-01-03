@@ -4,6 +4,8 @@ import { ConnectComponentsService } from 'src/app/shared/services/connect-compon
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +16,10 @@ export class HeaderComponent {
   constructor(
     private _loginService: LoginService, 
     private router: Router,
-    private _meAPIutility: meAPIUtility) {
+    private _meAPIutility: meAPIUtility,
+    private _snackBar: MatSnackBar) {
     }
+    message:any = null;
     AvailableDropdownList = {
       'profile': {
         name: 'Profile',
@@ -143,9 +147,10 @@ export class HeaderComponent {
     
   dropdownList = [this.AvailableDropdownList['support'], this.AvailableDropdownList['logout']]
   username: string
-  message: string
 
   ngOnInit(){
+    
+    this.listen();
     let data = this._meAPIutility.getMeData().subscribe(data => {
       console.log('Header component: ', data)
     this.username = data['username'] ? data['username'] : data['email']
@@ -173,13 +178,24 @@ export class HeaderComponent {
           this.addUserNavOptions()
       }
     })
-    
    }  
 
   onClick(index: number) {
     let checkbox = document.getElementById('hamburger-checkbox') as HTMLInputElement;
     checkbox.checked = false
     this.dropdownList[index].action();
+  }
+
+  
+  listen() {
+    const messaging = getMessaging();
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      this.message=payload;
+      let snackRef = this._snackBar.open(this.message.notification.body, 'Ok', {
+        duration: 5 * 1000 //seconds
+      })
+    });
   }
 }
 

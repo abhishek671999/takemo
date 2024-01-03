@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
+import { getMessaging, getToken } from "firebase/messaging";
+import { environment } from 'src/environments/environments';
 
 @Component({
   selector: 'app-post-login',
@@ -20,6 +22,7 @@ export class PostLoginComponent {
   errorOccured = false
   myInfo;
   ngOnInit(){
+      this.requestPermission();
      console.log('In user component')
      this.meAPIUtility.getMeData().subscribe(data =>{
       this.myInfo = data
@@ -41,6 +44,32 @@ export class PostLoginComponent {
       
      })
       
+  }
+  requestPermission() {
+    const messaging = getMessaging();
+    getToken(messaging, 
+     { vapidKey: environment.firebase.vapidKey}).then(
+       (currentToken) => {
+         if (currentToken) {
+           console.log("Hurraaa!!! we got the token.....");
+           console.log(currentToken);
+           let body = {
+            token: currentToken
+           }
+           this._meService.updatePostNotifcationToken(body).subscribe(
+              data => {
+                console.log('Updated push notification successfully')
+              },
+              error => {
+                console.log('Error while posting token')
+              }
+           )
+         } else {
+           console.log('No registration token available. Request permission to generate one.');
+         }
+     }).catch((err) => {
+        console.log('An error occurred while retrieving token. ', err);
+    });
   }
 
   
