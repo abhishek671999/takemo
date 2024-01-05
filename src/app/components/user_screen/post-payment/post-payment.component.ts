@@ -19,11 +19,11 @@ export class PostPaymentComponent {
       iconRegistry.addSvgIconLiteral('fail', sanitizer.bypassSecurityTrustHtml(this.svgFailMark))
     }
 
-  transactionId = sessionStorage.getItem('transaction_id')
-  transactionAmount = sessionStorage.getItem('total_amount')
-  orderno = sessionStorage.getItem('order_no')
+  public transactionId;
+  public transactionAmount;
+  public orderno;
+  public redirectURL;
   
-
   success = false
   fail = false
 
@@ -37,6 +37,10 @@ export class PostPaymentComponent {
   
   
   ngOnInit(){
+    this.transactionId = sessionStorage.getItem('transaction_id')
+    this.transactionAmount = sessionStorage.getItem('total_amount')
+    this.orderno = sessionStorage.getItem('order_no')
+    this.redirectURL = sessionStorage.getItem('redirectURL')
     this._paymentService.getTransactionStatus(this.transactionId).subscribe(
       data => {
         console.log('Response: ', data)
@@ -44,7 +48,7 @@ export class PostPaymentComponent {
           this.success = true
           this.fail = false
           setTimeout(() => {
-            this.router.navigate(['/user/myorders'])
+            this.router.navigate([this.redirectURL])
           }, 5000);
         }else{
           this.success = false
@@ -59,4 +63,9 @@ export class PostPaymentComponent {
     )
   }
 
+  ngOnDestory(){
+    sessionStorage.removeItem('transaction_id')
+    sessionStorage.removeItem('total_amount')
+    sessionStorage.removeItem('order_no')
+  }
 }

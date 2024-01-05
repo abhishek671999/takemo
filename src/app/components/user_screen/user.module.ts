@@ -47,6 +47,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { OrderMoreDetailsDialogComponent } from '../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
+import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge-wallet-dialog.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { WalletComponent } from './wallet/wallet.component';
     OrderMoreDetailsDialogComponent,
     SupportComponent,
     WalletComponent,
+    RechargeWalletDialogComponent,
   ],
   imports: [
     CommonModule,

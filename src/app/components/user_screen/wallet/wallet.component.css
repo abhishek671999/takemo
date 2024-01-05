@@ -6,14 +6,23 @@
     flex-direction: column;
     align-items: center;
 }
+
 .viewport {
     height: 68vh;
 }
 
 .tab-group-container{
-    padding-top: 2em;
-    padding-bottom: 2em;
     border-radius: 10px;
     width: 80%;
     height: 30vh
+}
+
+.quick-access{
+    margin-top: 2em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5em;
+
 }

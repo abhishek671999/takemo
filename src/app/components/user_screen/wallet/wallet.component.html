@@ -1,6 +1,13 @@
 <div class="main-container">
-    <div class="current-balance">
-        <h1>Wallet Balance: </h1>
+    <div class="quick-access" >
+        <div class="current-balance">
+            <h1>Wallet Balance:&nbsp;₹&nbsp; {{currentWalletBalance}}</h1>
+        </div>
+        <div class="recharge-view">
+            <button mat-raised-button (click)="openRechargeDialog()">Recharge here</button>
+        </div>
+    
+       
     </div>
     <div style="white-space: pre;" class="tab-group-container">
         <cdk-virtual-scroll-viewport itemSize="500" class="viewport">

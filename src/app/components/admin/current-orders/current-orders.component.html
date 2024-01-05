@@ -30,8 +30,8 @@
               </mat-form-field>
         </div>
         
-    <cdk-virtual-scroll-viewport itemSize="500" class="viewport">
-        <table mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
+    <cdk-virtual-scroll-viewport  itemSize="500" class="viewport">
+        <table *ngIf="tableLoaded" mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
             <!-- Position Column -->
             <ng-container matColumnDef="Order No">
                 <th mat-header-cell *matHeaderCellDef>Order No.</th>
@@ -84,9 +84,12 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>          
+        <div *ngIf="!tableLoaded" class="center-spin">
+          <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+        </div>
+        <div *ngIf="currentOrders.length == 0 && tableLoaded">
+            <h1 class="text-center m-5">No Orders</h1>
+        </div>
     </cdk-virtual-scroll-viewport>
-    <div *ngIf="currentOrders.length == 0">
-        <h1 class="text-center m-5">No Orders</h1>
-    </div>
     </div>
 </div>

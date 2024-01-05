@@ -5,14 +5,14 @@
             <div>
                 <h2>Transaction id: {{transactionId}}</h2>
             </div>
-            <div>
+            <div *ngIf="orderno">
                 <h2>Order No: {{orderno}}</h2>
             </div>
             <div>
                 <h3>Transaction Amount: {{transactionAmount}}</h3>
             </div>   
             <div>
-                <button class="my-orders" mat-raised-button color="primary"><a href="/user/myorders">Click here to go MyOrders</a></button>
+                <button class="my-orders" mat-raised-button color="primary"><a href="{{redirectURL}}">Click here to return</a></button>
             </div>  
         </div>
     </div>
@@ -26,7 +26,7 @@
                 <h3>Transaction Amount: {{transactionAmount}}</h3>
             </div>  
             <div>
-                <button class="my-orders" mat-raised-button color="primary"><a href="/user/myorders">Click here to go MyOrders</a></button>
+                <button class="my-orders" mat-raised-button color="primary"><a href="{{redirectURL}}">Click here to return</a></button>
             </div>  
         </div>
     </div>

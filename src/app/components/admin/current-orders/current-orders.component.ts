@@ -45,6 +45,7 @@ export class CurrentOrdersComponent {
   ];
 
   ruleList = []
+  tableLoaded = false
   public currentOrders = [];
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
@@ -97,11 +98,14 @@ export class CurrentOrdersComponent {
   }
 
   unparseResponse(data) {
+    this.tableLoaded = false
     this.currentOrders = [];
+    this.currentOrdersDataSource.data = this.currentOrders;
     data['order_list'].map((ele) => {
       this.currentOrders.push(this.unParsedOrder(ele));
     });
     this.currentOrdersDataSource.data = this.currentOrders;
+    this.tableLoaded = true
   }
 
   unParsedOrder(order) {
