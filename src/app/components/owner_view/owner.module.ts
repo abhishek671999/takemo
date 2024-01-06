@@ -18,6 +18,7 @@ import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
 import { ConfirmOrderCancelComponent } from './confirm-order-cancel/confirm-order-cancel.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
+import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
 
 
 
@@ -31,6 +32,7 @@ import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.co
     OrdersHomeComponent,
     ConfirmOrderCancelComponent,
     CancelledOrdersComponent,
+    PointOfSaleComponent,
   ],
   imports: [
     CommonModule,

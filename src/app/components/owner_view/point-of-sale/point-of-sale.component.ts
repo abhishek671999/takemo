@@ -1,0 +1,87 @@
+import { Component } from '@angular/core';
+import { MenuService } from 'src/app/shared/services/menu/menu.service';
+
+@Component({
+  selector: 'app-point-of-sale',
+  templateUrl: './point-of-sale.component.html',
+  styleUrls: ['./point-of-sale.component.css']
+})
+export class PointOfSaleComponent {
+  constructor(private menuService: MenuService){}
+  public menu;
+  public summary = {
+    amount: 0,
+    itemList: []
+  }
+
+
+  ngOnInit(){
+    this.menuService.getMenu(sessionStorage.getItem('restaurant_id')).subscribe(
+      data => {
+        this.menu = data['menu'];
+        this.menu.map((category) => {
+          category.category.items.filter(
+            (element) => element.is_available == true
+          );
+        });
+        this.setQuantity();
+        console.log('THis is menu: ', this.menu)
+      }
+    )
+  }
+  setQuantity() {
+    console.log('Setting quantity:', this.menu);
+    this.menu.forEach((category) => {
+      category.category.items.forEach((item) => {
+        item.quantity = 0;
+      });
+    });
+  }
+
+  categoryClickEventHandler(category){
+    console.log(category)
+    let allCategoryBlock = Array.from(document.getElementsByClassName('category-wrapper')  as HTMLCollectionOf<HTMLElement>)
+    console.log(allCategoryBlock)
+    allCategoryBlock.forEach(element => {
+      element.classList.remove('show')
+      element.classList.add('hidden')
+    });
+    let categoryBlock = document.getElementById(category)
+    categoryBlock.classList.add('show')
+    categoryBlock.classList.remove('hidden')
+  }
+  
+  subItem(item) {
+    if (item.quantity > 0) {
+      item.quantity -= 1;
+      this.summary.amount -= item.price;
+    }
+    if(item.quantity == 0){
+      this.summary.itemList = this.summary.itemList.filter( x => x.id != item.id)
+    }
+  }
+
+  addItem(item) {
+    console.log(item)
+    let itemAdded = this.summary.itemList.find( x => x.id == item.id)
+    if(!itemAdded){
+      this.summary.itemList.push(item)
+    }
+    if (item.quantity < 10) {
+      item.quantity += 1;
+      this.summary.amount += item.price;
+    }
+  }
+
+  clearSummary(){
+    this.summary.amount = 0
+    this.summary.itemList.forEach( item => {
+      item.quantity = 0
+    })
+    this.summary.itemList = []
+  }
+
+  placeOrder(){
+    console.log('Place order api would be called here.')
+  }
+}

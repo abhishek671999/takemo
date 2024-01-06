@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-orders-home',
   templateUrl: './orders-home.component.html',
   styleUrls: ['./orders-home.component.css']
 })
+
 export class OrdersHomeComponent {
+
+  constructor(private router: Router){}
   navLinks = [
     {
       label: 'Pending',
@@ -28,4 +32,12 @@ export class OrdersHomeComponent {
       index: 3
     }
 ]; 
+
+navigateToPOS(){
+  this.router.navigate(['/owner/point-of-sale'])
+}
+
+navigateToEditMenu(){
+  this.router.navigate([`/owner/edit-menu/${sessionStorage.getItem('restaurant_id')}`])
+}
 }

@@ -49,7 +49,7 @@ export class ConfirmationDialogComponent {
           this.roundOffAmount = this.roundOffAmount.toFixed(3)
           this.totalAmount = this.totalAmount.toFixed(2)
         }
-        if(data['wallet_balance'] < this.pickedItems.amount){
+        if(data['wallet_balance'] > this.pickedItems.amount){
           this.walletPayMessage = 'You have insufficient balance. Available balance is ₹'+ data['wallet_balance']
         }else{
           this.walletPayMessage = 'Payment using Wallet. ' + `&nbsp;₹&nbsp;${this.pickedItems.amount} will be deducted from &nbsp;₹&nbsp;${data['wallet_balance']}`

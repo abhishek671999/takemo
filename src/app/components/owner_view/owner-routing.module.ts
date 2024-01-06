@@ -7,6 +7,7 @@ import { OrdersHistoryComponent } from './orders-history/orders-history.componen
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
 import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
+import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
 
 const routes: Routes = [
   { 
@@ -19,14 +20,17 @@ const routes: Routes = [
           { path: 'pending-orders', component: PendingOrdersComponent},
           { path: 'orders-history', component: OrdersHistoryComponent},
           { path: 'current-orders',  component: CurrentOrdersComponent},
-          { path: 'cancelled-orders', component: CancelledOrdersComponent}
+          { path: 'cancelled-orders', component: CancelledOrdersComponent},
+          
         ]
+      },
+      { path: 'point-of-sale',
+       component: PointOfSaleComponent
       },
       {
         path: 'edit-menu/:id', component: EditMenuComponent,
       }
     ],
-  
   }
 ];
 
