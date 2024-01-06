@@ -26,6 +26,9 @@ export class ConfirmationDialogComponent {
   public totalAmount;
   public roundOffAmount;
   public platformFeeAmount;
+  public paybyWalletCheck;
+  public walletPayMessage;
+  public isWalletPayment = false
 
   ngOnInit(){
     this.__ordersService.checkIfPaymentRequired().subscribe(
@@ -45,6 +48,12 @@ export class ConfirmationDialogComponent {
           this.platformFeeAmount = this.platformFee['platformFeeAmount'].toFixed(2)
           this.roundOffAmount = this.roundOffAmount.toFixed(3)
           this.totalAmount = this.totalAmount.toFixed(2)
+        }
+        if(data['wallet_balance'] < this.pickedItems.amount){
+          this.walletPayMessage = 'You have insufficient balance. Available balance is ₹'+ data['wallet_balance']
+        }else{
+          this.walletPayMessage = 'Payment using Wallet. ' + `&nbsp;₹&nbsp;${this.pickedItems.amount} will be deducted from &nbsp;₹&nbsp;${data['wallet_balance']}`
+          this.isWalletPayment = true
         }
       },
       error => {
@@ -84,6 +93,7 @@ export class ConfirmationDialogComponent {
   onProceedPaymentClick(){
     let body ={   
       "total_amount": this.pickedItems.amount,
+      "wallet": false,
       "order_list":this.pickedItems.items,
       "restaurant_id": this.pickedItems.restaurant_id
   }
@@ -104,4 +114,29 @@ export class ConfirmationDialogComponent {
     this.dialogRef.close({mode: 'payment'})
   }
 
+  onProceedwithWalletClick(){
+    let body = {
+      "total_amount": this.pickedItems.amount,
+      "wallet": true,
+      "order_list":this.pickedItems.items,
+      "restaurant_id": this.pickedItems.restaurant_id
+    }
+    this.__ordersService.createOrders(body).subscribe(
+      data => {
+        console.log('Payment done', data)
+        sessionStorage.setItem('transaction_id', data['transaction_id'])
+        sessionStorage.setItem('order_no', data['order_no'])
+        this.dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Your Order number is: ' + data['order_no'] } })
+        this.dialogRef.close({mode: 'wallet'})
+      },
+      error => {
+        this.dialog.open(ErrorMsgDialogComponent, {data: {msg: error.error.description}})
+        console.log('Error while paying: ', error.error.description)
+      }
+    )
+  }
+
+  checkValue(){
+    console.log('pay by check wallet check', this.paybyWalletCheck)
+  }
 }

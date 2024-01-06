@@ -1,6 +1,6 @@
 <div class="main-container">
     <form [formGroup]="rechargeForm">
-        <h1 mat-dialog-title>Add this shift??</h1>
+        <h1 mat-dialog-title>Recharge??</h1>
         <div mat-dialog-content>
             <div>
                 <mat-form-field class="form-field">
@@ -8,6 +8,11 @@
                     <input type="number" matInput placeholder="Amount" formControlName="amount">
                 </mat-form-field>
             </div>
+        </div>
+        <div class="disclaimer">
+            <small class="font-weight-bold">Platform fee would be levied while recharging.</small>
+            <small class="font-weight-bold">Not additional charges while ordering using wallet</small>
+            <small class="font-weight-bold text-warning">*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
         </div>
         <div mat-dialog-actions class="action-container">
             <button mat-raised-button (click)="closeDialog()"> Cancel</button>

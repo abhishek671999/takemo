@@ -90,22 +90,22 @@ export class CurrentOrdersComponent {
       (data) => {
         console.log('Current orders: ', data);
         this.unparseResponse(data);
+        this.tableLoaded = true
       },
       (error) => {
         console.log('Error: ', error);
+        this.tableLoaded = true
       }
     );
   }
 
-  unparseResponse(data) {
-    this.tableLoaded = false
+  unparseResponse(data) { 
     this.currentOrders = [];
     this.currentOrdersDataSource.data = this.currentOrders;
     data['order_list'].map((ele) => {
       this.currentOrders.push(this.unParsedOrder(ele));
     });
-    this.currentOrdersDataSource.data = this.currentOrders;
-    this.tableLoaded = true
+    this.currentOrdersDataSource.data = this.currentOrders; 
   }
 
   unParsedOrder(order) {
@@ -143,24 +143,6 @@ export class CurrentOrdersComponent {
     };
   }
 
-  deliverEntireOrder(order) {
-    console.log('Delivering: ', order);
-    let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
-      order_id: order.order_id,
-    };
-    console.log('THis is body: ', body);
-    this._ordersService.deliverEntireOrder(body).subscribe(
-      (data) => {
-        console.log(data);
-        order.is_delivered = true;
-        this.ngOnInit()
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
 
   displayMoreDetails(order) {
     console.log(order);
@@ -170,7 +152,9 @@ export class CurrentOrdersComponent {
   }
 
   onValueChange(){
+    this.tableLoaded = false
     this.getRestaurantCurrentForAdminsOrders()
+    
   }
 
 

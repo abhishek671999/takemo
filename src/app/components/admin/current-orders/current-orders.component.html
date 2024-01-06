@@ -32,26 +32,17 @@
         
     <cdk-virtual-scroll-viewport  itemSize="500" class="viewport">
         <table *ngIf="tableLoaded" mat-table [dataSource]="currentOrdersDataSource" class="mat-elevation-z8 demo-table">
-            <!-- Position Column -->
+
             <ng-container matColumnDef="Order No">
                 <th mat-header-cell *matHeaderCellDef>Order No.</th>
                 <td mat-cell *matCellDef="let element">{{element.orderno}}</td>
             </ng-container>
-        
-            <!-- Name Column -->
+
             <ng-container matColumnDef='Order details'>
                 <th mat-header-cell *matHeaderCellDef>Items</th>
                 <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.order_detail"></td>
             </ng-container>
 
-            <ng-container matColumnDef="Details">
-                <th mat-header-cell *matHeaderCellDef>Details</th>
-                <td mat-cell *matCellDef="let element">
-                    <button mat-raised-button color="primary" (click)="displayMoreDetails(element)">More Details</button>
-                </td>
-            </ng-container>
-            
-            <!-- Weight Column -->
             <ng-container matColumnDef='Amount'>
                 <th mat-header-cell *matHeaderCellDef>Amount</th>
                 <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_restaurant_amount}}</td>
@@ -62,28 +53,17 @@
                 <td mat-cell *matCellDef="let element">{{element.ordered_by}}</td>
             </ng-container>
 
-            <!-- Symbol Column -->
-            <ng-container matColumnDef="OrderedAt">
-                <th mat-header-cell *matHeaderCellDef>Ordered at</th>
-                <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
-            </ng-container>
-            
-            <ng-container matColumnDef="Location">
-                <th mat-header-cell *matHeaderCellDef>Location</th>
-                <td mat-cell *matCellDef="let element">{{element.Location}}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="Deliver">
-                <th mat-header-cell *matHeaderCellDef>Deliver</th>
-                <td mat-cell *matCellDef="let element">
-                    <button mat-raised-button color="primary" *ngIf='!element.is_delivered' (click)="deliverEntireOrder(element)">Deliver Order</button>
-                    <p class="text-center" *ngIf="element.is_delivered">Delivered</p>
-                </td>
-            </ng-container>
+            <ng-container matColumnDef="Details">
+              <th mat-header-cell *matHeaderCellDef>Details</th>
+              <td mat-cell *matCellDef="let element">
+                  <button mat-raised-button color="primary" (click)="displayMoreDetails(element)">More Details</button>
+              </td>
+          </ng-container>
             
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>          
+        </table>
+
         <div *ngIf="!tableLoaded" class="center-spin">
           <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
         </div>
