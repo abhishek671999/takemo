@@ -7,13 +7,13 @@
         <div class="category-bar">
             <div class="category-button" *ngFor="let category of menu">
                 <ul>
-                    <li class="category-bar-items {{category.category.name}}" (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
+                    <li class="category-bar-items {{category['category']['name'].replace(' ', '')}}" (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
                 </ul>
             </div>
         </div>
         <div class="item-bar">
             <ng-container *ngFor="let category of menu">
-                <div id="{{category.category.name}}" class="category-wrapper hidden">
+                <div id="{{category.category.name.replace(' ', '')}}" class="category-wrapper hidden">
                     <div class="item" *ngFor="let item of category.category.items">
                         <div class="item-card">
                             <div class="item-name">
@@ -36,24 +36,26 @@
             </ng-container>
         </div>
         <div class="summary-bar">
-            <table  class="table">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let item of summary.itemList">
-                        <td>{{item.name}}</td>
-                        <td>{{item.quantity}}</td>
-                        <td>&nbsp;₹&nbsp;{{item.price}}</td>
-                        <td>&nbsp;₹&nbsp; {{item.quantity * item.price}}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-section">
+                <table  class="table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of summary.itemList">
+                            <td>{{item.name}}</td>
+                            <td>{{item.quantity}}</td>
+                            <td>&nbsp;₹&nbsp;{{item.price}}</td>
+                            <td>&nbsp;₹&nbsp; {{item.quantity * item.price}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="summary-end">
                 <div class="amount-summary">
                     <h2 style="font-weight: bold;">Total Amount:&nbsp;₹&nbsp;{{summary.amount}}</h2>

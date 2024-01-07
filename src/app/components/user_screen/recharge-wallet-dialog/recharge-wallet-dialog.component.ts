@@ -15,11 +15,17 @@ export class RechargeWalletDialogComponent {
       private _formBuilder: FormBuilder,
       private dialogRef: MatDialogRef<RechargeWalletDialogComponent>
     ){}
-
+    
     rechargeForm = this._formBuilder.group({
       amount: ['', Validators.required]
     })
 
+    platformFeePercent =  0.01
+    platformFeePercentGST = 0.18
+    public rechargeValue;
+    public rechargeAmoutAfterPlateformFee = 0;
+
+    
     rechargeWallet(){
       let body = {
         amount: this.rechargeForm.value.amount
@@ -37,6 +43,13 @@ export class RechargeWalletDialogComponent {
         }
       )
     }
+
+    updateTotalAmount(){
+      this.rechargeValue = Number(this.rechargeForm.value.amount) ? Number(this.rechargeForm.value.amount) : 0
+      this.rechargeAmoutAfterPlateformFee = this.rechargeValue + this.rechargeValue * this.platformFeePercent * (1 + this.platformFeePercentGST) 
+      this.rechargeAmoutAfterPlateformFee = Number(this.rechargeAmoutAfterPlateformFee.toFixed(2))
+    }
+
 
     closeDialog(){
       this.dialogRef.close()

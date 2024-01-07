@@ -134,3 +134,8 @@
     display: flex;
     justify-content: space-between;
 }
+
+.table-section{
+    height: 85%;
+    overflow: auto;
+}

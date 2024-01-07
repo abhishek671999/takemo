@@ -14,34 +14,33 @@
             <table mat-table [dataSource]="walletTransactionHistoryDataSource" class="mat-elevation-z8 demo-table">
                 <ng-container matColumnDef="Sl_no">
                     <th mat-header-cell *matHeaderCellDef>Sl No</th>
-                    <td mat-cell *matCellDef="let element">{{element.orderno}}</td>
+                    <td mat-cell *matCellDef="let element; let i = index">{{i+1}}</td>
                 </ng-container>
             
                 <!-- Name Column -->
                 <ng-container matColumnDef='Date'>
                     <th mat-header-cell *matHeaderCellDef>Date</th>
-                    <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.order_detail"></td>
+                    <td mat-cell style="white-space: pre;" *matCellDef="let element" >{{element.date}}</td>
                 </ng-container>
     
                 <ng-container matColumnDef="Amount">
                     <th mat-header-cell *matHeaderCellDef>Amount</th>
                     <td mat-cell *matCellDef="let element">₹&nbsp;{{element.amount}}</td>
                 </ng-container>
+
+                <ng-container matColumnDef="effective_balance">
+                    <th mat-header-cell *matHeaderCellDef>Effective Balance</th>
+                    <td mat-cell *matCellDef="let element">₹&nbsp;{{element.effective_balance}}</td>
+                </ng-container>
                 
-                <!-- Weight Column -->
-                <ng-container matColumnDef='Type'>
-                    <th mat-header-cell *matHeaderCellDef>Type</th>
-                    <td mat-cell *matCellDef="let element">{{element.type}}</td>
-                </ng-container>
-    
-                <ng-container matColumnDef='Status'>
-                    <th mat-header-cell *matHeaderCellDef>Status</th>
-                    <td mat-cell *matCellDef="let element">{{element.Status}}</td>
-                </ng-container>
+                <ng-container matColumnDef="UTR">
+                    <th mat-header-cell *matHeaderCellDef>UTR</th>
+                    <td mat-cell *matCellDef="let element">{{element.utr}}</td>
+                </ng-container>  
     
                 <ng-container matColumnDef='Transaction_ID'>
                     <th mat-header-cell *matHeaderCellDef>Transaction ID</th>
-                    <td mat-cell *matCellDef="let element">{{element.Transaction_ID}}</td>
+                    <td mat-cell *matCellDef="let element">{{element.transaction_id}}</td>
                 </ng-container>
     
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

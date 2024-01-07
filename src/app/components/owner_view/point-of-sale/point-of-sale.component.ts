@@ -73,6 +73,7 @@ export class PointOfSaleComponent {
   }
 
   categoryClickEventHandler(category){
+    category = category.replace(' ', '')
     console.log(category)
     let allCategoryBlock = Array.from(document.getElementsByClassName('category-wrapper')  as HTMLCollectionOf<HTMLElement>)
     console.log(allCategoryBlock)

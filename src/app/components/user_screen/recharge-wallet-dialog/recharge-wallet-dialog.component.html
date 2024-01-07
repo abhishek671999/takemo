@@ -5,13 +5,13 @@
             <div>
                 <mat-form-field class="form-field">
                     <mat-label>Amount</mat-label>
-                    <input type="number" matInput placeholder="Amount" formControlName="amount">
+                    <input type="number" min="1" step="1" (input)="updateTotalAmount()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" matInput placeholder="Amount" formControlName="amount">
                 </mat-form-field>
             </div>
         </div>
         <div class="disclaimer">
-            <small class="font-weight-bold">Platform fee would be levied while recharging.</small>
-            <small class="font-weight-bold">Not additional charges while ordering using wallet</small>
+            <h2>Total Recharge Amount: {{rechargeAmoutAfterPlateformFee}}</h2>
+            <small class="font-weight-bold">Platform fee of 1% levied while recharging only. <b>Not</b> while ordering.</small>
             <small class="font-weight-bold text-warning">*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
         </div>
         <div mat-dialog-actions class="action-container">

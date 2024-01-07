@@ -19,9 +19,9 @@ export class WalletComponent {
     'Sl_no',
     'Date',
     'Amount',
-    'Type',
-    'Status',
+    'effective_balance',
     'Transaction_ID',
+    'UTR'
   ];
   WalletTransactionHistory = []
 
@@ -31,11 +31,20 @@ export class WalletComponent {
   ngOnInit(){
     this.paymentService.getWalletDetails().subscribe(
       data => {
+        console.log(data)
         this.currentWalletBalance = data['wallet_balance']
         data['recharges'].forEach(element => {
-          this.WalletTransactionHistory.push({'date': element.date, 'amount': element.amount, 'type': element.type, 'status': element.status, 'transaction_id': element.transaction_id})          
+          this.WalletTransactionHistory.push(
+            {'date': new Date(element.recharge_time).toLocaleString(), 
+            'amount': element.recharge_amount, 
+            'transaction_id': element.transaction_id,
+            'effective_balance': element.wallet_balance,
+            'utr': element.UTR
+
+          })          
         });
         this.walletTransactionHistoryDataSource.data = this.WalletTransactionHistory
+        console.log(this.WalletTransactionHistory)
       },
       error => {
         console.log('Error while loading wallet details')
