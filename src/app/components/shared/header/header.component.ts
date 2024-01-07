@@ -107,6 +107,13 @@ export class HeaderComponent {
         action: () => {
           this.router.navigate(['./user/wallet'])
         }
+      },
+      'POS': {
+        name: 'POS',
+        href: '',
+        action: () => {
+          this.router.navigate(['./owner/point-of-sale'])
+        }
       }
     }
   
@@ -121,7 +128,7 @@ export class HeaderComponent {
     }
   
   addRestaurantOwnerNavOptions(){
-    let restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'orders']
+    let restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'POS' ,'orders']
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -139,7 +146,7 @@ export class HeaderComponent {
   }
 
   addRestaurantStaffNavOptions(){
-    let restaurantStaffNavOptions = ['edit_menu', 'orders']
+    let restaurantStaffNavOptions = ['edit_menu', 'POS' ,'orders']
     for(let option of restaurantStaffNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
