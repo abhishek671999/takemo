@@ -12,8 +12,6 @@ export class MenuService {
   constructor(private _http: HttpClient, public utility: Utility) { }
   host = host
   _getMenuEndpoint = 'inventory/get_menu/'
-  _submit_url = 'inventory/create_order/'
-
 
   getMenu(id){
     let queryParams = new HttpParams()
@@ -21,10 +19,4 @@ export class MenuService {
     return this._http.get(this.host+this._getMenuEndpoint, {params: queryParams, headers: this.utility.getHeaders()})
   }
 
-  submitOrder(body){
-    this._http.post(this.host+this._submit_url, body).subscribe(
-      data => console.log('Successful ', data),
-      error => console.log('Error: ', error) 
-    )
-  }
 }

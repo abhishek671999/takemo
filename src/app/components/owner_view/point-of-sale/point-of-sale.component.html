@@ -17,17 +17,18 @@
                     <div class="item" *ngFor="let item of category.category.items">
                         <div class="item-card">
                             <div class="item-name">
-                                <p>{{item.name}}</p>
+                                <p style="margin: 0;">{{item.name}}</p>
+                                <p style="margin: 0;">&nbsp;₹&nbsp;{{item.price}}</p>
                             </div>
                             <div class="item-quantity">
-                                <div>
-                                    <i class="fa-solid fa-minus" (click)="subItem(item)"></i>
+                                <div class="icon-wrapper"  (click)="subItem(item)">
+                                    <i class="fa-solid fa-minus"  ></i>
                                 </div>
-                                <div>
+                                <div style="padding: 2px;">
                                     {{item.quantity}}
                                 </div>
-                                <div>
-                                    <i class="fa-solid fa-plus" (click)="addItem(item)"></i>
+                                <div class="icon-wrapper" (click)="addItem(item)">
+                                    <i class="fa-solid fa-plus" ></i>
                                 </div>
                             </div>
                         </div>
@@ -37,6 +38,7 @@
         </div>
         <div class="summary-bar">
             <div class="table-section">
+                <h2 class="text-center" style="font-size: bold;">Summary</h2>
                 <table  class="table">
                     <thead>
                         <tr>
@@ -44,14 +46,20 @@
                             <th>Quantity</th>
                             <th>Price</th>
                             <th>Amount</th>
+                            <th>Clear</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let item of summary.itemList">
                             <td>{{item.name}}</td>
-                            <td>{{item.quantity}}</td>
+                            <td><input type="number" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" style="width: 3em;" (change)="updateTotalAmount()" [(ngModel)]="item.quantity"></td>
                             <td>&nbsp;₹&nbsp;{{item.price}}</td>
                             <td>&nbsp;₹&nbsp; {{item.quantity * item.price}}</td>
+                            <td>
+                                <div (click)="clearItem(item)" class="icon-wrapper">
+                                    X
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

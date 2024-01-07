@@ -19,7 +19,7 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
 import { ConfirmOrderCancelComponent } from './confirm-order-cancel/confirm-order-cancel.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
-
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -45,6 +45,7 @@ import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
     MatInputModule,
     MatButtonModule,
     SharedModuleModule,
+    FormsModule
   ],
   exports: [],
 })

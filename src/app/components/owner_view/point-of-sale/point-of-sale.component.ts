@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { first } from 'rxjs';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
+import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -9,15 +12,21 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
   styleUrls: ['./point-of-sale.component.css']
 })
 export class PointOfSaleComponent {
-  constructor(private menuService: MenuService, private router: Router){}
+  constructor(
+    private menuService: MenuService, 
+    private router: Router, 
+    private orderService: OrdersService,
+    private dialog: MatDialog
+    ){}
   public menu;
-  public summary = {
-    amount: 0,
-    itemList: []
-  }
+  public summary;
 
 
   ngOnInit(){
+    this.summary = {
+      amount: 0,
+      itemList: []
+    }
     this.menuService.getMenu(sessionStorage.getItem('restaurant_id')).subscribe(
       data => {
         this.menu = data['menu'];
@@ -126,8 +135,41 @@ export class PointOfSaleComponent {
     this.summary.itemList = []
   }
 
+  preparePlaceOrderBody(){
+    let itemList = []
+    this.summary.itemList.forEach( ele => {
+      itemList.push(
+        {
+          item_id: ele.id,
+          quantity: ele.quantity
+        }
+      )
+    })
+    let body = {   
+      "pos": true,
+      "order_list": itemList,
+      "restaurant_id": sessionStorage.getItem('restaurant_id')
+    }
+    return body
+  }
+
   placeOrder(){
-    console.log('Place order api would be called here.')
+    let body = this.preparePlaceOrderBody()
+  console.log(body)
+  this.orderService.createOrders(body).subscribe(
+    data => {
+      let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {data: {msg: `Order created successfully. Order No: ${data['order_no']}`} })
+      dialogRef.afterClosed().subscribe(
+        data => {
+          this.ngOnInit()
+        }
+      )
+    },
+    error => {
+      this.dialog.open(ErrorMsgDialogComponent, {data: {msg: `Faile to create Order. ${error.error.error}`}})
+    }
+  )
+
   }
 
 
@@ -138,4 +180,26 @@ export class PointOfSaleComponent {
   navigateToPendingOrders(){
     this.router.navigate(['/owner/pending-orders'])
   }
+
+  clearItem(item){
+    console.log(item)
+    this.summary.itemList.filter( x => x.id == item.id).forEach(
+      ele => {
+        this.summary.amount -= ele.quantity * ele.price
+        ele.quantity = 0
+      }
+    )
+    this.summary.itemList = this.summary.itemList.filter( x => x.id != item.id)
+  }
+
+  updateTotalAmount(){
+    this.summary.amount = 0
+    this.summary.itemList.forEach(ele =>{
+      this.summary.amount += ele.quantity * ele.price
+    })
+    console.log(this.summary.itemList)
+    this.summary.itemList = this.summary.itemList.filter(ele => ele.quantity != 0)
+    
+  }
+
 }

@@ -86,6 +86,6 @@ html{
 .navigation{
     padding: 1em 2em 1em 2em;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 100%;
 }

@@ -1,5 +1,5 @@
 .navigation{
     padding: 1em 2em 0 2em;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 }
