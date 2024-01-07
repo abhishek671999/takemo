@@ -1,4 +1,8 @@
 <div class="main-container">
+    <div class="navigation">
+        <button mat-raised-button (click)="navigateToPendingOrders()" color="primary">Pending Orders</button>
+        <button mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
+    </div>
     <div *ngIf="!menu_response; else elseBlock">
         <div class="center-spin">
             <mat-spinner diameter="100" style="margin: 0 auto"></mat-spinner>

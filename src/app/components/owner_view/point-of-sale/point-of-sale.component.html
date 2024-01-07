@@ -1,18 +1,24 @@
 <div class="main-container">
+    <div class="navigation">
+        <button mat-raised-button (click)="navigateToEditMenu()" color="primary">Edit Menu</button>
+        <button mat-raised-button (click)="navigateToPendingOrders()" color="primary">Pending Orders</button>
+    </div>
     <div class="menu-container">
         <div class="category-bar">
             <div class="category-button" *ngFor="let category of menu">
                 <ul>
-                    <li (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
+                    <li class="category-bar-items {{category.category.name}}" (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
                 </ul>
             </div>
         </div>
         <div class="item-bar">
             <ng-container *ngFor="let category of menu">
-                <div id="{{category.category.name}}" class="category-wrapper">
+                <div id="{{category.category.name}}" class="category-wrapper hidden">
                     <div class="item" *ngFor="let item of category.category.items">
                         <div class="item-card">
-                            <p>{{item.name}}</p>
+                            <div class="item-name">
+                                <p>{{item.name}}</p>
+                            </div>
                             <div class="item-quantity">
                                 <div>
                                     <i class="fa-solid fa-minus" (click)="subItem(item)"></i>
@@ -43,15 +49,21 @@
                     <tr *ngFor="let item of summary.itemList">
                         <td>{{item.name}}</td>
                         <td>{{item.quantity}}</td>
-                        <td>{{item.price}}</td>
-                        <td>{{item.quantity * item.price}}</td>
+                        <td>&nbsp;₹&nbsp;{{item.price}}</td>
+                        <td>&nbsp;₹&nbsp; {{item.quantity * item.price}}</td>
                     </tr>
                 </tbody>
             </table>
-            <div class="action-section">
-                <button mat-raised-button (click)="clearSummary()">Clear Order</button>
-                <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0" color="primary">Place Order</button>
-            </div>  
+            <div class="summary-end">
+                <div class="amount-summary">
+                    <h2 style="font-weight: bold;">Total Amount:&nbsp;₹&nbsp;{{summary.amount}}</h2>
+                </div>
+                <div class="action-section">
+                    <button mat-raised-button (click)="clearSummary()">Clear</button>
+                    <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0" color="primary">Place</button>
+                </div>  
+            </div>
+            
         </div>    
     </div>
     

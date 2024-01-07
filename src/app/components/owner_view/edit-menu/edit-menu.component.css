@@ -82,3 +82,10 @@ html{
     background: rgb(217, 217, 246);
     border-radius: 10px;
 }
+
+.navigation{
+    padding: 1em 2em 1em 2em;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

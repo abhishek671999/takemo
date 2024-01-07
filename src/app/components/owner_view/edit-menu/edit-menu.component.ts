@@ -202,4 +202,12 @@ export class EditMenuComponent {
       }
     )
   }
+
+
+  navigateToPOS(){
+    this._router.navigate(['/owner/point-of-sale'])
+  }
+  navigateToPendingOrders(){
+    this._router.navigate(['/owner/pending-orders'])
+  }
 }
