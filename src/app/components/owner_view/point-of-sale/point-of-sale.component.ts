@@ -27,7 +27,7 @@ export class PointOfSaleComponent {
       amount: 0,
       itemList: []
     }
-    this.menuService.getMenu(sessionStorage.getItem('restaurant_id')).subscribe(
+    this.menuService.getPOSMenu(sessionStorage.getItem('restaurant_id')).subscribe(
       data => {
         this.menu = data['menu'];
         this.menu.map((category) => {

@@ -48,6 +48,7 @@ import { OrderMoreDetailsDialogComponent } from '../shared/order-more-details-di
 import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
 import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge-wallet-dialog.component';
+import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge
     SupportComponent,
     WalletComponent,
     RechargeWalletDialogComponent,
+    PostRechargePaymentComponent,
   ],
   imports: [
     CommonModule,

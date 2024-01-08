@@ -10,6 +10,7 @@ import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.co
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
+import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
 
 const routes: Routes = [
   {
@@ -29,7 +30,8 @@ const routes: Routes = [
       },
       { path: 'order-acknowledgement', component: PostPaymentComponent },
       { path: 'support', component: SupportComponent},
-      { path: 'wallet', component: WalletComponent}
+      { path: 'wallet', component: WalletComponent},
+      { path: 'recharge-acknowledgement', component: PostRechargePaymentComponent}
     ],
   },
 ];
