@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-cancelled-orders',
@@ -17,6 +18,7 @@ export class CancelledOrdersComponent {
     {ViewValue: 'Today', actualValue: 'today'},
     {ViewValue: 'This week', actualValue: 'this_week'},
     {ViewValue: 'This month', actualValue: 'this_month'},
+    {ViewValue: 'Calendar', actualValue: 'calendar'}
   ]
 
   displayedColumns: string[] = [
@@ -27,6 +29,11 @@ export class CancelledOrdersComponent {
     'Details',
   ];
 
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+  
   
   public currentOrders = []
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
@@ -38,26 +45,59 @@ export class CancelledOrdersComponent {
   }
 
   getRestaurantCancelledOrders(){
-    this.currentOrders = []
-    let body = {
-      "restaurant_id": sessionStorage.getItem('restaurant_id'),
-      "_c": "rule_id is optional",
-      "time_frame": this.selectedTimeFrame.actualValue,
-      "_c1": "possible options for time_frame are today, this_week, this_month",
-      "start_date": "",
-      "end_date": "",
-      "_c3": "if the above both are given then time_frame is not needed"
-  }
-  console.log(body)
-  this._orderService.getRestaurantCancelledOrders(body).subscribe(
-    data => {
-      console.log(data)
-      this.unparseResponse(data)
-    },
-    error => {
-      console.log(error)
+    let field = document.getElementById('calendarInputField')
+    if(this.selectedTimeFrame.actualValue == 'calendar'){
+      console.log(this.range.value)
+      field.classList.remove('hidden')
+    }else{
+      field.classList.add('hidden')
+      let body = {
+        "restaurant_id": sessionStorage.getItem('restaurant_id'),
+        "_c": "rule_id is optional",
+        "time_frame": this.selectedTimeFrame.actualValue,
+        "_c1": "possible options for time_frame are today, this_week, this_month",
+        "start_date": "",
+        "end_date": "",
+        "_c3": "if the above both are given then time_frame is not needed"
+      }
+      console.log(body)
+      this._orderService.getRestaurantCancelledOrders(body).subscribe(
+        data => {
+          console.log(data)
+          this.unparseResponse(data)
+        },
+        error => {
+          console.log(error)
+        }
+      )
     }
-  )
+  }
+
+  
+  dateChanged(){
+    console.log(this.range.value.start, this.range.value.end)
+    if(this.range.value.start && this.range.value.end){
+      let body = {
+        "restaurant_id": sessionStorage.getItem('restaurant_id'),
+        "_c": "rule_id is optional",
+        
+        "_c1": "possible options for time_frame are today, this_week, this_month",
+        "start_date": this.range.value.start,
+        "end_date": this.range.value.end,
+        "_c3": "if the above both are given then time_frame is not needed"
+    }
+    console.log(body)
+    this._orderService.getRestaurantOrders(body).subscribe(
+      data => {
+        console.log(data)
+        this.unparseResponse(data)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+    }
+    
   }
 
 

@@ -35,3 +35,21 @@
     background: rgb(217, 217, 246);
     border-radius: 10px;
 }
+
+.hidden{
+    display: none;
+}
+
+
+@media screen and (max-width: 425px) {
+
+    .input-container{
+        flex-direction: column;
+        justify-content: center;
+        row-gap: 1px;
+        gap: 0;
+        align-items: center;
+    }
+
+    
+}

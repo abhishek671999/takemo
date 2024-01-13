@@ -19,8 +19,11 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
 import { ConfirmOrderCancelComponent } from './confirm-order-cancel/confirm-order-cancel.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
-import { FormsModule } from '@angular/forms';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {JsonPipe} from '@angular/common';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -45,7 +48,12 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
     MatButtonModule,
     SharedModuleModule,
-    FormsModule
+    FormsModule,
+    JsonPipe,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatNativeDateModule,
+    ReactiveFormsModule
   ],
   exports: [],
 })
