@@ -3,7 +3,7 @@
     <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
   </div>
   <div *ngIf='loadView' class="input-container">
-    <mat-form-field>
+    <mat-form-field class="form-field">
       <mat-label>Select time frame</mat-label>
       <mat-select [(value)]="selectedTimeFrame" (selectionChange)="onValueChange()">
         <mat-option *ngFor="let time of timeFrames" [value]="time.actualValue">
@@ -11,7 +11,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field *ngIf="!restaurantFlag">
+    <mat-form-field  class="form-field" *ngIf="!restaurantFlag">
       <mat-label>Select Restaurant</mat-label>
       <mat-select [(value)]="selectedRestaurant" (selectionChange)="onValueChange()">
         <mat-option *ngFor="let time of restaurantList" [value]="time.restaurant_id">
@@ -19,7 +19,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field class="form-field">
       <mat-label>Select Shift</mat-label>
       <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange()">
         <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id_list">

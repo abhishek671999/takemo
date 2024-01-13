@@ -1,5 +1,5 @@
 .main-container{
-    height: 90vh;
+    height: 87vh;
 }
 
 .graph-container{
@@ -26,4 +26,30 @@
 .graph{
     border: solid 1px black;
     width: 50%;
+}
+
+
+@media screen and (max-width: 430px) {
+    .graph-container{
+        flex-direction: column;
+        justify-content: flex-start;
+        height: auto;
+        padding: 5px 0 5px 0;
+    }
+
+    .graph{
+        width: 95%;
+    }
+
+    .input-container{
+        justify-content: center;
+        row-gap: 1px;
+        gap: 0.2em;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .form-field{
+        width: calc(100vw / 2.1);
+    }
 }

@@ -102,7 +102,7 @@
     box-shadow: -20px 0 40px rgba(0, 0, 0,  0.3);
 }
 
-@media screen and (max-width: 425px) {
+/* @media screen and (max-width: 425px) {
     .hamburger, 
     .toggle-menu{
         display: block;
@@ -131,4 +131,4 @@
         padding: .3em 2em .7em 2em;
     }
 
-}
+} */
