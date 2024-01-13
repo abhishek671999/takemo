@@ -5,13 +5,13 @@
             <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Quantity</th>
+                    <th>Qty</th>
                     <th>Price</th>
                     <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of pickedItems.items">
+                <tr *ngFor="let item of pickedItems.itemList">
                     <td>{{item.name}}</td>
                     <td>{{item.quantity}}</td>
                     <td>{{item.price}}</td>
