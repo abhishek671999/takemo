@@ -4,6 +4,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class OrdersHistoryComponent {
 
-  constructor(private _orderService: OrdersService, private _dialog: MatDialog){}
+  constructor(private _orderService: OrdersService, private _dialog: MatDialog, private dateUtils: dateUtils){}
 
   timeFrames = [
     {ViewValue: 'Today', actualValue: 'today'},
@@ -45,16 +46,16 @@ export class OrdersHistoryComponent {
     this.getRestaurantCurrentOrders()
   }
 
+
   dateChanged(){
-    console.log(this.range.value.start, this.range.value.end)
+    console.log(this.range.value.start, this.range.value.end, typeof(this.range.value.start), this.range.value)
     if(this.range.value.start && this.range.value.end){
       let body = {
         "restaurant_id": sessionStorage.getItem('restaurant_id'),
         "_c": "rule_id is optional",
-        
         "_c1": "possible options for time_frame are today, this_week, this_month",
-        "start_date": this.range.value.start,
-        "end_date": this.range.value.end,
+        "start_date": this.dateUtils.getStandardizedDateFormate(this.range.value.start),
+        "end_date": this.dateUtils.getStandardizedDateFormate(this.range.value.end),
         "_c3": "if the above both are given then time_frame is not needed"
     }
     console.log(body)

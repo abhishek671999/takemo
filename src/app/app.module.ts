@@ -23,6 +23,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { PostLoginComponent } from './components/post-login/post-login.component';
 import { Utility, meAPIUtility } from './shared/site-variable';
 import { Login2Component } from './components/home_screen/login2/login2.component';
+import { dateUtils } from './shared/utils/date_utils';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,7 @@ import { Login2Component } from './components/home_screen/login2/login2.componen
     CanvasJSAngularChartsModule,
     NgApexchartsModule
     ],
-  providers: [Utility, meAPIUtility],
+  providers: [Utility, meAPIUtility, dateUtils],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
