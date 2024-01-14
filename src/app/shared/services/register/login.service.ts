@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { host, getToken, Utility, meAPIUtility } from '../../site-variable';
+import { host, Utility, meAPIUtility } from '../../site-variable';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({

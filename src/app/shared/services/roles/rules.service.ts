@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Utility, getHeaders, host } from '../../site-variable';
+import { Utility, host } from '../../site-variable';
 
 @Injectable({
   providedIn: 'root'
