@@ -14,7 +14,11 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 })
 export class OrdersHistoryComponent {
 
-  constructor(private _orderService: OrdersService, private _dialog: MatDialog, private dateUtils: dateUtils){}
+  constructor(
+    private _orderService: OrdersService, 
+    private _dialog: MatDialog, 
+    private dateUtils: dateUtils
+    ){}
 
   timeFrames = [
     {ViewValue: 'Today', actualValue: 'today'},
@@ -57,19 +61,18 @@ export class OrdersHistoryComponent {
         "start_date": this.dateUtils.getStandardizedDateFormate(this.range.value.start),
         "end_date": this.dateUtils.getStandardizedDateFormate(this.range.value.end),
         "_c3": "if the above both are given then time_frame is not needed"
-    }
+      }
     console.log(body)
     this._orderService.getRestaurantOrders(body).subscribe(
       data => {
         console.log(data)
         this.unparseResponse(data)
-      },
+       },
       error => {
         console.log(error)
-      }
-    )
-    }
-    
+        }
+      )
+    } 
   }
 
   getRestaurantCurrentOrders(){

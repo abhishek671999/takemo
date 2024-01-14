@@ -9,6 +9,8 @@ import {
   ApexChart
 } from "ng-apexcharts";
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
+import { FormControl, FormGroup } from '@angular/forms';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -36,6 +38,8 @@ export class SalesAnalyticsComponent {
     { displayValue: 'Last 3 months', actualValue: 'last_3_months'},
     { displayValue: 'Last 6 months', actualValue: 'last_6_months'},
     { displayValue: 'This year', actualValue: 'this_year'},
+    { displayValue: 'Calendar', actualValue: 'calendar'}
+
   ]
   groupList = [
     { displayValue:'All', actualValue: 'All'},
@@ -62,11 +66,14 @@ export class SalesAnalyticsComponent {
   chart1: any = []
   chart2: any = []
 
-  constructor(private _analyticsService: AnalyticsService,
-    private _menuService: MenuService, private _ruleService: RulesService){}
+  constructor(
+    private _analyticsService: AnalyticsService,
+    private _menuService: MenuService,
+    private _ruleService: RulesService,
+    private dateUtils: dateUtils
+    ){}
 
   ngOnInit(){
-    
     console.log('Get all rules called')
     this._ruleService.getAllRules().subscribe(
       data => {
@@ -75,43 +82,82 @@ export class SalesAnalyticsComponent {
           this.ruleList.push({'rule_id_list': element.id, 'rule_name': element.name})
         });
         this.selectedRule = this.ruleList[0].rule_id_list
-        this.createChart('today', 'all')
+        this.createChart(this.getRequestBodyPrepared())
         this.loadView = true
       }
     )
   }
 
-  onValueChange(){
-    console.log('Value changed')
-    this.chart1.destroy()
-    this.chart2.destroy()   
-    this.createChart(this.selectedTimeFrame, this.selectedGroup)
-  }
-
-  createChart(timeFrame, groupby){
-    console.log('Time frame', timeFrame, 'group by', groupby)
+  getRequestBodyPrepared(){
     let body = {
       "rule_id_list": Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
-      "time_frame": timeFrame,
-      "item_wise": groupby == 'item_wise'? true : false,
-      "category_wise": groupby == "category_wise"? true : false,
+      "item_wise": this.selectedGroup == 'item_wise'? true : false,
+      "category_wise": this.selectedGroup == "category_wise"? true : false
+    }
+    console.log('New: ', this.selectedTimeFrame, this.range.value.start, this.range.value.end)
+    if(this.selectedTimeFrame == 'calendar'){
+      if(this.range.value.start && this.range.value.end){
+        body['start_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.start)
+        body['end_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.end)
+      }
+      else{
+        body = null
+      }
+    }else{
+      body['time_frame'] =this.selectedTimeFrame
+    }
+    return body
   }
-  console.log('Body::: ', body)
-  this._analyticsService.getSalesAnalyticsData(body).subscribe(
-    data => {
-      console.log('Got response:: ', this.selectedGroup, data)
-      this.totalOrders = data['quantity']
-      this.totalAmount = data['total_amount']
-      this.chart1 = (this.selectedGroup == 'All')? this.createTotalOrdersAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalOrderChart(data): this.createItemWiseTotalOrderChart(data)
-      this.chart2 = (this.selectedGroup == 'All')? this.createTotalAmountAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalAmountChart(data): this.createItemWiseTotalAmountChart(data)
-    },
-    error => {
-      console.log('Error while loading analytics')
-    }    
-  )
+
+  onValueChange(){
+    let field = document.getElementById('calendarInputField')
+    console.log('Value changed')
+
+    if(this.selectedTimeFrame == 'calendar'){
+      field.classList.remove('hidden')
+      if(this.range.value.start && this.range.value.end){
+        this.chart1.destroy()
+        this.chart2.destroy() 
+        this.createChart(this.getRequestBodyPrepared())
+      }
+    }else{
+      field.classList.add('hidden')
+      this.chart1.destroy()
+      this.chart2.destroy() 
+      this.createChart(this.getRequestBodyPrepared())
+    }
+    
+  }
+
+  createChart(body){
+    console.log('Body::: ', body)
+    if(body){
+      this._analyticsService.getSalesAnalyticsData(body).subscribe(
+        data => {
+          console.log('Got response:: ', this.selectedGroup, data)
+          this.totalOrders = data['quantity']
+          this.totalAmount = data['total_amount']
+          this.chart1 = (this.selectedGroup == 'All')? this.createTotalOrdersAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalOrderChart(data): this.createItemWiseTotalOrderChart(data)
+          this.chart2 = (this.selectedGroup == 'All')? this.createTotalAmountAnalyticsChart(data): (this.selectedGroup == 'category_wise')? this.createCategoryWiseTotalAmountChart(data): this.createItemWiseTotalAmountChart(data)
+        },
+        error => {
+          console.log('Error while loading analytics')
+        }    
+      )
+    }
+    
   }
   
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+
+  dateChanged(){
+    this.createChart(this.getRequestBodyPrepared())   
+  }
+
   createTotalAmountAnalyticsChart(data){
     console.log('creating total amout chart')
     return new Chart('canvas1',{

@@ -25,9 +25,9 @@
             @if (range.controls.end.hasError('matEndDateInvalid')) {
               <mat-error>Invalid end date</mat-error>
             } -->
-          </mat-form-field>
+        </mat-form-field>
 
-        <mat-form-field >
+        <mat-form-field>
             <mat-label>Filter</mat-label>
             <input (keyup)="applyFilter($event.target)" matInput placeholder="Filter">
         </mat-form-field>

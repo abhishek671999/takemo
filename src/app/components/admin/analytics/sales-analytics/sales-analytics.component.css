@@ -25,7 +25,9 @@
     width: 50%;
 }
 
-
+.hidden{
+    display: none;
+}
 
 @media screen and (max-width: 425px) {
     .graph-container{
