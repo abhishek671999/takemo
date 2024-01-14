@@ -31,14 +31,23 @@ export class SalesAnalyticsComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
+
+  constructor(
+    private _analyticsService: AnalyticsService,
+    private _menuService: MenuService,
+    private _ruleService: RulesService,
+    private dateUtils: dateUtils
+    ){}
+    
   timeFrames = [
     { displayValue: 'Today', actualValue: 'today'},
+    { displayValue: 'Yesterday', actualValue: 'yesterday'},
     { displayValue: 'This week', actualValue: 'this_week'},
     { displayValue: 'This month', actualValue: 'this_month'},
     { displayValue: 'Last 3 months', actualValue: 'last_3_months'},
     { displayValue: 'Last 6 months', actualValue: 'last_6_months'},
     { displayValue: 'This year', actualValue: 'this_year'},
-    { displayValue: 'Calendar', actualValue: 'calendar'}
+    { displayValue: 'Calendar', actualValue: 'custom'}
 
   ]
   groupList = [
@@ -66,12 +75,12 @@ export class SalesAnalyticsComponent {
   chart1: any = []
   chart2: any = []
 
-  constructor(
-    private _analyticsService: AnalyticsService,
-    private _menuService: MenuService,
-    private _ruleService: RulesService,
-    private dateUtils: dateUtils
-    ){}
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+
+  
 
   ngOnInit(){
     console.log('Get all rules called')
@@ -96,8 +105,9 @@ export class SalesAnalyticsComponent {
       "category_wise": this.selectedGroup == "category_wise"? true : false
     }
     console.log('New: ', this.selectedTimeFrame, this.range.value.start, this.range.value.end)
-    if(this.selectedTimeFrame == 'calendar'){
+    if(this.selectedTimeFrame == 'custom'){
       if(this.range.value.start && this.range.value.end){
+        body['time_frame'] = this.selectedTimeFrame
         body['start_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.start)
         body['end_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.end)
       }
@@ -113,8 +123,8 @@ export class SalesAnalyticsComponent {
   onValueChange(){
     let field = document.getElementById('calendarInputField')
     console.log('Value changed')
-
-    if(this.selectedTimeFrame == 'calendar'){
+    console.log('THis is selected time frame', this.selectedTimeFrame)
+    if(this.selectedTimeFrame == 'custom'){
       field.classList.remove('hidden')
       if(this.range.value.start && this.range.value.end){
         this.chart1.destroy()
@@ -149,10 +159,7 @@ export class SalesAnalyticsComponent {
     
   }
   
-  range = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-  });
+  
 
   dateChanged(){
     this.createChart(this.getRequestBodyPrepared())   

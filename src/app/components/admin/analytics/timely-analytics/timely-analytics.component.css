@@ -22,10 +22,15 @@
     display: flex;
     justify-content: center;
     gap: 1em;
+    align-items: center;
 }
 .graph{
     border: solid 1px black;
     width: 50%;
+}
+
+.hidden{
+    display: none;
 }
 
 

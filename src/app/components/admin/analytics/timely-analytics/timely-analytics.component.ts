@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 
 @Component({
@@ -12,11 +14,19 @@ import { RulesService } from 'src/app/shared/services/roles/rules.service';
 })
 export class TimelyAnalyticsComponent {
 
+  constructor(private _analyticsService: AnalyticsService,
+    private _menuService: MenuService, 
+    private _ruleService: RulesService,
+    private dateUtils: dateUtils
+    ){}
+
   timeFramesForTimelyAnalytics = [
     {displayValue: 'Last 30 days', actualValue: 'last_30_days' },
     {displayValue: 'Last month', actualValue: 'last_month' },
     // { displayValue: 'Last week', actualValue: 'last_week'}, //future
-    {displayValue: 'Last 12 months', actualValue: 'last_12_months' },
+    { displayValue: 'Last 12 months', actualValue: 'last_12_months' },
+    { displayValue: 'Calendar', actualValue: 'custom'}
+    
   ]
   categoryList = [{'name': 'select', 'id': 0}]
   itemList = [{'name': 'select', 'id': 0}]
@@ -41,9 +51,13 @@ export class TimelyAnalyticsComponent {
   chart2: any = []
   chart4: any = []
 
-  constructor(private _analyticsService: AnalyticsService,
-        private _menuService: MenuService,  private _ruleService: RulesService){}
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
 
+
+  
   ngOnInit(){
     this._menuService.getMenu(this.selectedRestaurant).subscribe(
       data => {
@@ -62,51 +76,88 @@ export class TimelyAnalyticsComponent {
           this.ruleList.push({'rule_id': element.id, 'rule_name': element.name})
         });
         this.selectedRule = this.ruleList[0].rule_id
-        this.createTimelyAnalytics() 
+        this.createTimelyAnalytics(this.getRequestBodyPrepared()) 
         this.loadView = true
       }
     )
     
   }
 
+  
+
   onValueChange(value: string){
-    console.log('THis is before onValue change', value, this.selectedTimeFrameForTimelyAnalytics, this.selectedCategory, this.selectedItem)
+    let field = document.getElementById('calendarInputField')
+    
     if(value == 'item'){
       this.selectedCategory = {'name': 'select', 'id': 0}
     }else if(value == 'category'){
       this.selectedItem = {'name': 'select', 'id': 0}
     }
+    console.log('IN value change', this.selectedTimeFrameForTimelyAnalytics)
+    if(this.selectedTimeFrameForTimelyAnalytics == 'custom'){
+      field.classList.remove('hidden')
+      if(this.range.value.start && this.range.value.end){
+        this.chart2.destroy()
+        this.chart4.destroy()
+        this.createTimelyAnalytics(this.getRequestBodyPrepared())
+      }
+    }else{
+      field.classList.add('hidden')
+      this.chart2.destroy()
+      this.chart4.destroy()
+      this.createTimelyAnalytics(this.getRequestBodyPrepared())
+    }
+    
     console.log('THis is onValue change', value, this.selectedTimeFrameForTimelyAnalytics, this.selectedCategory, this.selectedItem)
-    this.chart2.destroy()
-    this.chart4.destroy()
-    this.createTimelyAnalytics()
+    
   }
 
-  createTimelyAnalytics(){
+  dateChanged(){
+    if(this.range.value.start && this.range.value.end){
+      this.createTimelyAnalytics(this.getRequestBodyPrepared())   
+    }
+  }
+
+  getRequestBodyPrepared(){
     let body = {
-      
       "rule_id_list": Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant,
-      "_comment": "rule_id is optional and 1(default) will be taken if not given",
-      "time_frame": this.selectedTimeFrameForTimelyAnalytics,
-      "_comment1": "Possible options for above field: last_30_days, last_month, last_12_months",
       "category_id": this.selectedCategory.id,
       "item_id": this.selectedCategory.id == 0? this.selectedItem.id: "",
-      "_comment2": "Either of category_id or item_id or none must be sent"
   }
-  console.log('this is body', body)
-  this._analyticsService.getTimelyAnalyticsData(body).subscribe(
-    data => {
-      console.log("Timely analytics", data[this.selectedTimeFrameForTimelyAnalytics], this.selectedTimeFrameForTimelyAnalytics)
-      this.totalOrders = data['quantity']
-      this.totalAmount = data['total_amount']
-      this.chart2  = this.createTimelyOrderAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
-      this.chart4 = this.createTimelyAmountAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
-        },
-    error => {
-      console.log('Error in create timely anlaytics')
+    console.log('New: ', this.selectedTimeFrameForTimelyAnalytics, this.range.value.start, this.range.value.end)
+    if(this.selectedTimeFrameForTimelyAnalytics == 'custom'){
+      if(this.range.value.start && this.range.value.end){
+        body['time_frame'] = this.selectedTimeFrameForTimelyAnalytics
+        body['start_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.start)
+        body['end_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.end)
+      }
+      else{
+        body = null
+      }
+    }else{
+      body['time_frame'] =this.selectedTimeFrameForTimelyAnalytics
     }
-  )
+    return body
+  }
+
+  createTimelyAnalytics(body){
+    console.log('this is body', body)
+    if(body){
+      this._analyticsService.getTimelyAnalyticsData(body).subscribe(
+        data => {
+          console.log("Timely analytics", data[this.selectedTimeFrameForTimelyAnalytics], this.selectedTimeFrameForTimelyAnalytics)
+          this.totalOrders = data['quantity']
+          this.totalAmount = data['total_amount']
+          this.chart2  = this.createTimelyOrderAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
+          this.chart4 = this.createTimelyAmountAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
+            },
+        error => {
+          console.log('Error in create timely anlaytics')
+        }
+      )
+    }
+    
   }
 
   createTimelyOrderAnalyticsChart(data, time_frame){
