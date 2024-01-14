@@ -10,13 +10,14 @@
 .pdf-viewer{
     display: block; 
     width: 70%;
-     min-height: 70vh;
+     min-height: 60vh;
      border: 1px solid black;
-     margin-top: 10px;
+     margin: 10px 0 10px 0;
 }
 
 .input-container{
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 1em;
 }

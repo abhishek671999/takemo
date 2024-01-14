@@ -19,8 +19,9 @@
                           panelClass="example-month-picker">
           </mat-datepicker>
         </mat-form-field>
+        <button mat-raised-button color="primary" [disabled]='!date.valid' (click)="onDateChange(v.value)">Submit</button>
       </div>
-      <button mat-raised-button color="primary" [disabled]='!date.valid' (click)="onDateChange(v.value)">Submit</button>
+      
       <pdf-viewer [src]="pdfSrc" 
               *ngIf="pdfSrc"
                     [render-text]="true"

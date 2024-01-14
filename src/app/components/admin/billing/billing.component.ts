@@ -64,9 +64,10 @@ export class BillingComponent {
   base64: string
 
   ngOnInit(){
+    var date = new Date()
     let body = {
         "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
-        "month_and_year": "12/2023"
+        "month_and_year": `${date.toLocaleString("default", { month: "2-digit" })}/${date.getFullYear()}`
     }
     this._billingService.getRestaurantBilling(body).subscribe(
       data => {
