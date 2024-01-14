@@ -26,6 +26,7 @@ export class CurrentOrdersComponent {
     'Details',
   ];
 
+  public showSpinner = true;
   public currentOrders = [];
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
@@ -34,6 +35,7 @@ export class CurrentOrdersComponent {
   }
 
   getRestaurantCurrentOrders(){
+    this.showSpinner = true
     let body = {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       time_frame: 'current',
@@ -44,6 +46,7 @@ export class CurrentOrdersComponent {
       (data) => {
         console.log('Current orders: ', data);
         this.unparseResponse(data);
+        this.showSpinner = false
       },
       (error) => {
         console.log('Error: ', error);

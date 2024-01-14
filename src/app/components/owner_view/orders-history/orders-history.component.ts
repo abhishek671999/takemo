@@ -56,11 +56,8 @@ export class OrdersHistoryComponent {
     if(this.range.value.start && this.range.value.end){
       let body = {
         "restaurant_id": sessionStorage.getItem('restaurant_id'),
-        "_c": "rule_id is optional",
-        "_c1": "possible options for time_frame are today, this_week, this_month",
         "start_date": this.dateUtils.getStandardizedDateFormate(this.range.value.start),
         "end_date": this.dateUtils.getStandardizedDateFormate(this.range.value.end),
-        "_c3": "if the above both are given then time_frame is not needed"
       }
     console.log(body)
     this._orderService.getRestaurantOrders(body).subscribe(
@@ -84,12 +81,9 @@ export class OrdersHistoryComponent {
       field.classList.add('hidden')
       let body = {
         "restaurant_id": sessionStorage.getItem('restaurant_id'),
-        "_c": "rule_id is optional",
         "time_frame": this.selectedTimeFrame.actualValue,
-        "_c1": "possible options for time_frame are today, this_week, this_month",
         "start_date": "",
         "end_date": "",
-        "_c3": "if the above both are given then time_frame is not needed"
     }
     console.log(body)
     this._orderService.getRestaurantOrders(body).subscribe(
