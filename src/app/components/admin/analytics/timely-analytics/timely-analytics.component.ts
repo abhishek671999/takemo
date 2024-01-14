@@ -25,7 +25,7 @@ export class TimelyAnalyticsComponent {
     {displayValue: 'Last month', actualValue: 'last_month' },
     // { displayValue: 'Last week', actualValue: 'last_week'}, //future
     { displayValue: 'Last 12 months', actualValue: 'last_12_months' },
-    { displayValue: 'Calendar', actualValue: 'custom'}
+    // { displayValue: 'Calendar', actualValue: 'custom'}
     
   ]
   categoryList = [{'name': 'select', 'id': 0}]

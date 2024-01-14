@@ -25,7 +25,7 @@ export class OrdersHistoryComponent {
     {ViewValue: 'This week', actualValue: 'this_week'},
     {ViewValue: 'This month', actualValue: 'this_month'},
     {ViewValue: 'Last month', actualValue: 'last_month'},
-    {ViewValue: 'Calendar', actualValue: 'calendar'}
+    {ViewValue: 'Calendar', actualValue: 'custom'}
   ]
 
   displayedColumns: string[] = [
@@ -47,55 +47,54 @@ export class OrdersHistoryComponent {
   });
 
   ngOnInit(){
-    this.getRestaurantCurrentOrders()
+    this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody())
   }
 
-
-  dateChanged(){
-    console.log(this.range.value.start, this.range.value.end, typeof(this.range.value.start), this.range.value)
-    if(this.range.value.start && this.range.value.end){
-      let body = {
-        "restaurant_id": sessionStorage.getItem('restaurant_id'),
-        "start_date": this.dateUtils.getStandardizedDateFormate(this.range.value.start),
-        "end_date": this.dateUtils.getStandardizedDateFormate(this.range.value.end),
+  getRestaurantOrdersAPIBody(){
+    let body = {
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
+    }
+    if(this.selectedTimeFrame.actualValue == 'custom'){
+      if(this.range.value.start && this.range.value.end){ 
+        body["time_frame"] = this.selectedTimeFrame.actualValue,
+        body["start_date"] = this.dateUtils.getStandardizedDateFormate(this.range.value.start),
+        body["end_date"] =  this.dateUtils.getStandardizedDateFormate(this.range.value.end)
       }
-    console.log(body)
-    this._orderService.getRestaurantOrders(body).subscribe(
-      data => {
-        console.log(data)
-        this.unparseResponse(data)
-       },
-      error => {
-        console.log(error)
-        }
-      )
-    } 
+      else{
+        body = null
+      }
+    }else{
+      body['time_frame'] = this.selectedTimeFrame.actualValue
+    }
+    return body
   }
 
-  getRestaurantCurrentOrders(){
+  onValueChange(){
     let field = document.getElementById('calendarInputField')
-    if(this.selectedTimeFrame.actualValue == 'calendar'){
+    if(this.selectedTimeFrame.actualValue == 'custom'){
       console.log(this.range.value)
       field.classList.remove('hidden')
+      
     }else{
       field.classList.add('hidden')
-      let body = {
-        "restaurant_id": sessionStorage.getItem('restaurant_id'),
-        "time_frame": this.selectedTimeFrame.actualValue,
-        "start_date": "",
-        "end_date": "",
     }
-    console.log(body)
-    this._orderService.getRestaurantOrders(body).subscribe(
-      data => {
-        console.log(data)
-        this.unparseResponse(data)
-      },
-      error => {
-        console.log(error)
-      }
-    )
+    this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody())
+  }
+
+
+  getRestaurantCurrentOrders(body){
+    if(body){
+      this._orderService.getRestaurantOrders(body).subscribe(
+        data => {
+          console.log(data)
+          this.unparseResponse(data)
+        },
+        error => {
+          console.log(error)
+        }
+      )
     }
+    
   }
 
 
