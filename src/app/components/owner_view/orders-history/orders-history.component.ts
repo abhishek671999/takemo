@@ -5,6 +5,7 @@ import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
+import { HttpParams } from '@angular/common/http';
 
 
 @Component({
@@ -19,6 +20,17 @@ export class OrdersHistoryComponent {
     private _dialog: MatDialog, 
     private dateUtils: dateUtils
     ){}
+
+    length = 50;
+    pageSize = 10;
+    pageIndex = 0;
+    pageSizeOptions = [5, 10, 25];
+    hidePageSize = false;
+    showPageSizeOptions = true;
+    showFirstLastButtons = true;
+    disabled = false;
+
+
 
   timeFrames = [
     {ViewValue: 'Today', actualValue: 'today'},
@@ -83,13 +95,17 @@ export class OrdersHistoryComponent {
 
 
   getRestaurantCurrentOrders(body){
+    let httpParams = new HttpParams()
+    httpParams = httpParams.append('offset', this.pageIndex * this.pageSize)
+    httpParams = httpParams.append('limit', this.pageSize)
     this.showSpinner = true
     if(body){
-      this._orderService.getRestaurantOrders(body).subscribe(
+      this._orderService.getRestaurantOrders(body, httpParams).subscribe(
         data => {
           console.log(data)
           this.unparseResponse(data)
           this.showSpinner = false
+          this.length = data['no_of_orders']
         },
         error => {
           console.log(error)

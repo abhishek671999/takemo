@@ -89,4 +89,15 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>          
     </cdk-virtual-scroll-viewport>
+    <mat-paginator #paginator
+               class="demo-paginator"
+               (page)="onValueChange()"
+               [length]="length"
+               [pageSize]="pageSize"
+               [showFirstLastButtons]="showFirstLastButtons"
+               [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+               [hidePageSize]="hidePageSize"
+               [pageIndex]="pageIndex"
+               aria-label="Select page">
+    </mat-paginator>
 </div>

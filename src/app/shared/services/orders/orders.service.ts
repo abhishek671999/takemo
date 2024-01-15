@@ -56,8 +56,8 @@ export class OrdersService {
     return this._http.post(host + this.deliverEntireOrderEndpoint, body, {headers: this.utility.getHeaders()})
   }
 
-  getRestaurantOrders(body){
-    return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {headers: this.utility.getHeaders()})
+  getRestaurantOrders(body, httpParams?){
+    return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {headers: this.utility.getHeaders(), params: httpParams})
   }
   
   getRestaurantOrdersForAdmins(body){

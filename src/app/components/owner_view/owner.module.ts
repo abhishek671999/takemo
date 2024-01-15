@@ -28,6 +28,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatProgressSpinnerModule,
     MatIconModule,
     MatCheckboxModule, 
-    MatRadioModule
+    MatRadioModule,
+    MatPaginatorModule
   ],
   exports: [],
 })
