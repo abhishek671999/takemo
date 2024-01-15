@@ -33,7 +33,16 @@
         </mat-form-field>
     </div>
 
-    <cdk-virtual-scroll-viewport itemSize="500" class="viewport">
+    <div *ngIf="showSpinner; else elseBlock">
+        <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+    </div>
+    <ng-template #elseBlock>
+        <div *ngIf="cancelledOrders.length == 0">
+            <h1 class="text-center m-5">No Orders</h1>
+        </div>
+    </ng-template>
+
+    <cdk-virtual-scroll-viewport *ngIf="!showSpinner && cancelledOrders.length !== 0" itemSize="500" class="viewport">
         <table mat-table [dataSource]="cancelledOrdersDataSource" class="mat-elevation-z8 demo-table">
             <!-- Position Column -->
             <ng-container matColumnDef="Order No">

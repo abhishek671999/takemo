@@ -36,7 +36,7 @@ export class OrdersHistoryComponent {
     'Details',
   ];
 
-  
+  public showSpinner = true;
   public cancelledOrders = []
   public cancelledOrdersDataSource = new MatTableDataSource(this.cancelledOrders)
 
@@ -83,14 +83,17 @@ export class OrdersHistoryComponent {
 
 
   getRestaurantCurrentOrders(body){
+    this.showSpinner = true
     if(body){
       this._orderService.getRestaurantOrders(body).subscribe(
         data => {
           console.log(data)
           this.unparseResponse(data)
+          this.showSpinner = false
         },
         error => {
           console.log(error)
+          this.showSpinner = false
         }
       )
     }
