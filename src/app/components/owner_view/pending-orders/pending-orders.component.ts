@@ -19,9 +19,11 @@ export class PendingOrdersComponent {
   updateSubscription: Subscription;
   refreshInterval = 5 // seconds
   public showSpinner = true;
+  public firstPageLoad = true
 
   ngOnInit(){
     this.getCurrentOrders()
+    this.firstPageLoad = false
     this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
       (val) => { this.getCurrentOrders()});
   }
