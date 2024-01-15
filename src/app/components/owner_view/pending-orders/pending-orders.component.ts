@@ -18,6 +18,7 @@ export class PendingOrdersComponent {
   currentOrders;
   updateSubscription: Subscription;
   refreshInterval = 5 // seconds
+  public showSpinner = true;
 
   ngOnInit(){
     this.getCurrentOrders()
@@ -26,6 +27,7 @@ export class PendingOrdersComponent {
   }
 
   getCurrentOrders(){
+    this.showSpinner = true
     let params = {'restaurant_id': sessionStorage.getItem('restaurant_id')}
     this._orderService.getCurrentOrdersCards(params).subscribe(
       data =>{ 
@@ -34,6 +36,7 @@ export class PendingOrdersComponent {
         for (let item in this.currentOrders){
           this.orderList.push({obj: this.currentOrders[item]['pending_order'], name: item, quantity: this.currentOrders[item]['pending_order'].length})
         }
+        this.showSpinner = false
       }, 
       error => {
         console.log('Error while getting data: ', error)
