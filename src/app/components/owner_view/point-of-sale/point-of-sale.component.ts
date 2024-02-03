@@ -44,11 +44,11 @@ export class PointOfSaleComponent {
 
 
   setQuantity() {
-    
     console.log('Setting quantity:', this.menu);
     this.menu.forEach((category) => {
       category.category.items.forEach((item) => {
         item.quantity = 0;
+        item.parcelQuantity = 0
       });
     });
 
@@ -110,7 +110,7 @@ export class PointOfSaleComponent {
       item.quantity -= 1;
       this.summary.amount -= item.price;
     }
-    if(item.quantity == 0){
+    if(item.quantity == 0 && item.parcelQuantity == 0){
       this.summary.itemList = this.summary.itemList.filter( x => x.id != item.id)
     }
   }
@@ -127,6 +127,37 @@ export class PointOfSaleComponent {
     }
   }
 
+  calculateItemAmount(item){
+    return item.price * (item.quantity + item.parcelQuantity)
+  }
+
+  addParcelItem(item){
+    console.log("Parcel: ", item)
+    let itemAdded = this.summary.itemList.find( x => x.id == item.id)
+    if(!itemAdded){
+      this.summary.itemList.push(item)
+    }
+    if (item.parcelQuantity < 10) {
+      item.parcelQuantity += 1;
+      this.summary.amount += item.price;
+    }
+  }
+
+  subParcelItem(item){
+    if (item.parcelQuantity > 0) {
+      item.parcelQuantity -= 1;
+      this.summary.amount -= item.price;
+    }
+    if(item.quantity == 0 && item.parcelQuantity == 0){
+      this.summary.itemList = this.summary.itemList.filter( x => x.id != item.id)
+    }
+  }
+
+  incrementParcelQuantity(item){
+    item.parcelQuantity += item.quantity
+    item.quantity = 0
+  }
+
   clearSummary(){
     this.summary.amount = 0
     this.summary.itemList.forEach( item => {
@@ -141,7 +172,8 @@ export class PointOfSaleComponent {
       itemList.push(
         {
           item_id: ele.id,
-          quantity: ele.quantity
+          quantity: ele.quantity,
+          parcel_quantity: ele.parcelQuantity
         }
       )
     })
@@ -168,8 +200,7 @@ export class PointOfSaleComponent {
     error => {
       this.dialog.open(ErrorMsgDialogComponent, {data: {msg: `Faile to create Order. ${error.error.error}`}})
     }
-  )
-
+    )
   }
 
 
@@ -187,6 +218,7 @@ export class PointOfSaleComponent {
       ele => {
         this.summary.amount -= ele.quantity * ele.price
         ele.quantity = 0
+        ele.parcelQuantity = 0
       }
     )
     this.summary.itemList = this.summary.itemList.filter( x => x.id != item.id)
@@ -199,7 +231,6 @@ export class PointOfSaleComponent {
     })
     console.log(this.summary.itemList)
     this.summary.itemList = this.summary.itemList.filter(ele => ele.quantity != 0)
-    
   }
 
 }

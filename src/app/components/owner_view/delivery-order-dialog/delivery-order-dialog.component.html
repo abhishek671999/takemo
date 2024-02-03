@@ -19,7 +19,8 @@
                                 <p *ngIf="order.is_ready">Marked Ready</p>
                             </td>
                             <td class="col3" scope="col">
-                                <button mat-raised-button color="primary" *ngIf='!order.is_delivered' (click)="updateStatusToDelivered(order)">Deliver</button>
+                                <button mat-raised-button color="primary" *ngIf='!(order.is_delivered || order.parcel)' (click)="updateStatusToDelivered(order)">Deliver</button>
+                                <button mat-raised-button color="deliver" *ngIf='!order.is_delivered && order.parcel' (click)="updateStatusToDelivered(order)">Parcel<mat-icon> directions_run</mat-icon></button>
                                 <p *ngIf="order.is_delivered">Delivered</p>
                             </td>
                                 <!-- <i class="fa-solid fa-plus"></i> -->

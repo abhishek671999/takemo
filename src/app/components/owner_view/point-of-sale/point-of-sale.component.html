@@ -15,21 +15,13 @@
             <ng-container *ngFor="let category of menu">
                 <div id="{{category.category.name.replace(' ', '')}}" class="category-wrapper hidden">
                     <div class="item" *ngFor="let item of category.category.items">
-                        <div class="item-card">
+                        <div class="item-card" (click)="addItem(item)">
                             <div class="item-name">
-                                <p style="margin: 0;">{{item.name}}</p>
+                                <p style="margin: 0;">
+                                    <img class="indicator-image" *ngIf="item.veg" src="../../../../assets/images/veg_icon.png">
+                                    <img class="indicator-image" *ngIf="item.non_veg" src="../../../../assets/images/non_veg_icon.png">
+                                    <img class="indicator-image" *ngIf="item.egg" src="../../../../assets/images/egg_icon.jpg">{{item.name}}</p>
                                 <p style="margin: 0;">&nbsp;₹&nbsp;{{item.price}}</p>
-                            </div>
-                            <div class="item-quantity">
-                                <div class="icon-wrapper"  (click)="subItem(item)">
-                                    <i class="fa-solid fa-minus"  ></i>
-                                </div>
-                                <div style="padding: 2px;">
-                                    {{item.quantity}}
-                                </div>
-                                <div class="icon-wrapper" (click)="addItem(item)">
-                                    <i class="fa-solid fa-plus" ></i>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -39,7 +31,7 @@
         <div class="summary-bar">
             <div class="table-section">
                 <h2 class="text-center" style="font-size: bold;">Summary</h2>
-                <table  class="table">
+                <table  class="table" style="width: 100%;">
                     <thead>
                         <tr>
                             <th>Item</th>
@@ -52,9 +44,35 @@
                     <tbody>
                         <tr *ngFor="let item of summary.itemList">
                             <td>{{item.name}}</td>
-                            <td><input type="number" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" style="width: 3em;" (change)="updateTotalAmount()" [(ngModel)]="item.quantity"></td>
+                            <td style="width: 40%;">
+                                <div class="item-quantity">
+                                    <!-- <input type="number" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" style="width: 3em;" (change)="updateTotalAmount()" [(ngModel)]="item.quantity"> -->
+                                    <div class="icon-wrapper"  (click)="subItem(item)">
+                                        <i class="fa-solid fa-minus"  ></i>
+                                    </div>
+                                    <div style="padding: 2px;">
+                                        {{item.quantity}}
+                                    </div>
+                                    <div class="icon-wrapper" (click)="addItem(item)">
+                                        <i class="fa-solid fa-plus" ></i>
+                                    </div>
+                                </div>
+                                <p (click)="incrementParcelQuantity(item)" style="text-decoration: underline; margin: 0;">Create Parcel</p>
+                                <div class="item-quantity" *ngIf="item.parcelQuantity">
+                                    <div class="icon-wrapper"  (click)="subParcelItem(item)">
+                                        <i class="fa-solid fa-minus"  ></i>
+                                    </div>
+                                    <div style="padding: 2px;">
+                                        {{item.parcelQuantity}}
+                                    </div>
+                                    <div class="icon-wrapper" (click)="addParcelItem(item)">
+                                        <i class="fa-solid fa-plus" ></i>
+                                    </div>
+                                </div>
+                                <p *ngIf="item.parcelQuantity"><b>{{item.parcelQuantity}}</b> Parcel | <b>{{item.quantity}}</b> Dine-in </p>
+                            </td>    
                             <td>&nbsp;₹&nbsp;{{item.price}}</td>
-                            <td>&nbsp;₹&nbsp; {{item.quantity * item.price}}</td>
+                            <td>&nbsp;₹&nbsp; {{calculateItemAmount(item)}}</td>
                             <td>
                                 <div (click)="clearItem(item)" class="icon-wrapper">
                                     X
