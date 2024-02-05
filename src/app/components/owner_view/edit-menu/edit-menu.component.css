@@ -47,6 +47,10 @@ html{
     border-radius: 10px;
 }
 
+:host ::ng-deep .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper{
+    width: 100%;
+}
+
 .col1{
     width: 10%;
 }

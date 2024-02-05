@@ -124,7 +124,8 @@ export class Login2Component {
         },
         (error) => {
           console.log('Error in authUser: ', error);
-          alert(error);
+        
+          alert(error.error);
         }
       );
   }

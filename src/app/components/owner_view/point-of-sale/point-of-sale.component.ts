@@ -5,6 +5,8 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
+import { PrinterService } from 'src/app/shared/services/printer/printer.service';
+import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -16,12 +18,14 @@ export class PointOfSaleComponent {
     private menuService: MenuService, 
     private router: Router, 
     private orderService: OrdersService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private printService: PrinterService
     ){}
   public menu;
   public summary;
-
-
+  private usbDriver = new UsbDriver();
+  private usbSought;
+  
   ngOnInit(){
     this.summary = {
       amount: 0,
@@ -185,14 +189,96 @@ export class PointOfSaleComponent {
     return body
   }
 
+  trimString(text, length){
+    return text.length > length ? text.substring(0, length - 3) + '...': text + '.'.repeat(length - text.length)
+  }
+
+  getFormattedDineInItemDetails(){
+    let formattedTable = ''
+    this.summary.itemList.forEach((element: any) => {
+      let itemAmount = ( element.quantity ) * element.price
+      formattedTable += `${element.name.substr(0, 20)}\t${element.quantity}\t${element.price}\t${itemAmount}\n`;
+    });
+    return formattedTable
+  }
+
+  getFormattedParcelItemDetails(){
+    let formattedTable = 'Parcel\n'
+    this.summary.itemList.forEach((element: any) => {
+      if(element.parcelQuantity > 0){
+        let itemAmount = ( element.parcelQuantity ) * element.price
+        formattedTable += `${element.name.substr(0, 20)}\t${element.parcelQuantity}\t${element.price}\t${itemAmount}\n`;
+      }
+    });
+    return formattedTable == 'Parcel\n' ? '': formattedTable
+  }
+
+  getPrintableText(){
+    let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`
+    let sectionHeader1 = '.............CASH/BILL...............'
+    let sectionSplitter = '....................................'
+    let tableHeader = 'DESCRIPTION\tQTY\tRATE\tAMOUNT'
+    let endNote = 'Thank you. Visit again'
+    let content = [
+      {
+        text: caffeeInfo,
+        size: 'xlarge',
+        justification: 'center',
+        bold: true
+      },
+      {
+        text: sectionHeader1,
+        bold: true,
+        justification: 'center'
+      },
+      {
+        text: tableHeader
+      },
+      {
+        text: this.getFormattedDineInItemDetails()
+      },
+      {
+        text: this.getFormattedParcelItemDetails()
+      },
+      {
+        text: sectionSplitter
+      },
+      {
+        text: endNote,
+        justification: 'center'
+      }
+    ]
+    return content
+  }
+
+  
+
+  async seekUSB(){ 
+    await this.usbDriver.requestUsb().subscribe(
+      data => {
+        console.log('my data', data)
+        this.printService.setDriver(this.usbDriver)
+        this.usbSought = true
+      }
+    )
+  }
+
   placeOrder(){
     let body = this.preparePlaceOrderBody()
-  console.log(body)
+    this.usbSought ? null : this.seekUSB()
+  console.log(this.usbSought)
   this.orderService.createOrders(body).subscribe(
     data => {
+      let orderNum = data['order_no']
       let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {data: {msg: `Order created successfully. Order No: ${data['order_no']}`} })
       dialogRef.afterClosed().subscribe(
         data => {
+          let printConnect = this.printService.init()
+          this.getPrintableText().forEach( ele =>
+            printConnect.writeCustomLine(ele)
+            )
+          printConnect.cut('partial')
+          printConnect.writeLine(`Order created successfully. Order No: ${orderNum}`).feed(5).cut().flush()
           this.ngOnInit()
         }
       )

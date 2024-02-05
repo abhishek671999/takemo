@@ -44,6 +44,7 @@ export class SalesAnalyticsComponent {
     { displayValue: 'Yesterday', actualValue: 'yesterday'},
     { displayValue: 'This week', actualValue: 'this_week'},
     { displayValue: 'This month', actualValue: 'this_month'},
+    { displayValue: 'Last month', actualValue: 'last_month'},
     { displayValue: 'Last 3 months', actualValue: 'last_3_months'},
     { displayValue: 'Last 6 months', actualValue: 'last_6_months'},
     { displayValue: 'This year', actualValue: 'this_year'},
