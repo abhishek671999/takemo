@@ -9,6 +9,7 @@ import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg
 import { PrinterService } from 'src/app/shared/services/printer/printer.service';
 import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 import { MatRadioButton } from '@angular/material/radio';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -22,7 +23,8 @@ export class PointOfSaleComponent {
     private router: Router, 
     private orderService: OrdersService,
     private dialog: MatDialog,
-    private printService: PrinterService
+    private printService: PrinterService,
+    private dateUtils: dateUtils
     ){}
   public menu;
   public summary;
@@ -202,8 +204,10 @@ export class PointOfSaleComponent {
   getFormattedDineInItemDetails(){
     let formattedTable = ''
     this.summary.itemList.forEach((element: any) => {
-      let itemAmount = ( element.quantity ) * element.price
-      formattedTable += `${element.name.substr(0, 20)}\t${element.quantity}\t${element.price}\t${itemAmount}\n`;
+      if(element.quantity > 0){
+        let itemAmount = ( element.quantity ) * element.price
+        formattedTable += `${element.name.substr(0, 20)}\t${element.quantity}\t${element.price}\t${itemAmount}\n`;
+      }
     });
     return formattedTable
   }
@@ -219,18 +223,30 @@ export class PointOfSaleComponent {
     return formattedTable == 'Parcel\n' ? '': formattedTable
   }
 
+  getTotalAmount(){
+    return `Total Amount: ${this.summary.amount}`
+  }
+  getFormattedCurrentDate(){
+    return this.dateUtils.getDateForRecipePrint()
+  }
+
+
   getPrintableText(){
     let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`
-    let sectionHeader1 = '.............CASH/BILL...............'
-    let sectionSplitter = '....................................'
-    let tableHeader = 'DESCRIPTION\tQTY\tRATE\tAMOUNT'
-    let endNote = 'Thank you. Visit again'
+    let sectionHeader1 = '................CASH/BILL..................'
+    let sectionSplitter = '..........................................'
+    let tableHeader = 'DESCRIPTION\t\t\tQTY\tRATE\tAMOUNT'
+    let endNote = 'Inclusive of GST (5%)\nThank you. Visit again'
     let content = [
       {
         text: caffeeInfo,
         size: 'xlarge',
         justification: 'center',
         bold: true
+      },
+      {
+        text: this.dateUtils.getDateForRecipePrint(),
+        justification: 'right'
       },
       {
         text: sectionHeader1,
@@ -245,6 +261,12 @@ export class PointOfSaleComponent {
       },
       {
         text: this.getFormattedParcelItemDetails()
+      },
+      {
+        text: this.getTotalAmount(),
+        bold: true,
+        justification: 'right',
+        size: 'xlarge'
       },
       {
         text: sectionSplitter
@@ -281,11 +303,13 @@ export class PointOfSaleComponent {
         data => {
           if(this.usbSought){
             let printConnect = this.printService.init()
-          this.getPrintableText().forEach( ele =>
-            printConnect.writeCustomLine(ele)
+            this.getPrintableText().forEach( ele =>{
+                if(ele.text != ''){
+                  printConnect.writeCustomLine(ele)
+                }
+              }
             )
-          printConnect.cut('partial')
-          printConnect.writeLine(`Order created successfully. Order No: ${orderNum}`).feed(5).cut().flush()
+          printConnect.writeCustomLine({text: `Order No: ${orderNum}`, size: 'xxlarge', bold: true, justification: 'center'}).feed(5).cut().flush()
           }
           this.ngOnInit()
         }

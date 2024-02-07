@@ -5,7 +5,7 @@ import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.se
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
-
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-timely-analytics',
@@ -17,7 +17,8 @@ export class TimelyAnalyticsComponent {
   constructor(private _analyticsService: AnalyticsService,
     private _menuService: MenuService, 
     private _ruleService: RulesService,
-    private dateUtils: dateUtils
+    private dateUtils: dateUtils,
+    private _meAPIutility: meAPIUtility
     ){}
 
   timeFramesForTimelyAnalytics = [
@@ -47,7 +48,8 @@ export class TimelyAnalyticsComponent {
   totalAmount = 0;
   totalOrders = 0;
   loadView = false
-  
+  isITTUser = this._meAPIutility.doesUsersBelongsToITT()
+
   chart2: any = []
   chart4: any = []
 
@@ -124,6 +126,7 @@ export class TimelyAnalyticsComponent {
       "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant,
       "category_id": this.selectedCategory.id,
       "item_id": this.selectedCategory.id == 0? this.selectedItem.id: "",
+      "pos": this.isITTUser ? false: true
   }
     console.log('New: ', this.selectedTimeFrameForTimelyAnalytics, this.range.value.start, this.range.value.end)
     if(this.selectedTimeFrameForTimelyAnalytics == 'custom'){

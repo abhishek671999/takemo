@@ -38,7 +38,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field class="form-field">
+    <mat-form-field *ngIf="isITTUser" class="form-field">
       <mat-label>Select Shift</mat-label>
       <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange()">
         <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id_list">

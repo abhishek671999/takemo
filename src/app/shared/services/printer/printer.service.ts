@@ -118,6 +118,7 @@ export class PrinterService  extends PrintBuilder{
    */
   flush() {
     this.driver?.write(this.builder?.flush());
+    console.log('Flushed')
   }
 
   writeCustomLine(printObj: any) {

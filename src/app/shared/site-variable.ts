@@ -80,4 +80,24 @@ export class meAPIUtility{
         }
         console.log('after deleting')
     }
+
+    doesUsersBelongsToITT(){
+        let validation = false;
+        this.getMeData().subscribe(
+            data => {
+                for(let company of data['companies']){
+                    if(company.role_name == 'corporate_admin' && company.id == 1){
+                        validation = true
+                    }
+                }
+                for(let restaurant of data['restaurants']){
+                    if(restaurant.role_name == 'restaurant_admin' && [1, 2].includes(restaurant.restaurant_id)){
+                        validation =  true
+                    }
+                }
+                
+            }
+        )
+        return validation
+    }
 }
