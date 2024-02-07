@@ -26,6 +26,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -57,7 +59,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatNativeDateModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    MatCheckboxModule, 
+    MatRadioModule
   ],
   exports: [],
 })

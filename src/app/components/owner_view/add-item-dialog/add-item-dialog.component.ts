@@ -11,7 +11,7 @@ import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service'
 })
 export class AddItemDialogComponent {
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data,
+    @Inject(MAT_DIALOG_DATA) public data,
     private _fb: FormBuilder,
     public dialogRef: MatDialogRef<AddItemDialogComponent>,
     private _editMenuService: EditMenuService
@@ -20,7 +20,7 @@ export class AddItemDialogComponent {
   addItemForm = this._fb.group({
     name: ['', Validators.required],
     price: ['', Validators.required],
-    isVeg: ['', Validators.required],
+    isVeg: ['veg', Validators.required],
   });
   addItem() {
     console.log('Adding this item: ', this.addItemForm.value);

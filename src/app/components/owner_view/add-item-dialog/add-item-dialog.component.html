@@ -1,5 +1,5 @@
 <div class="main-container">
-    <h1 mat-dialog-title>Add Item</h1>
+    <h1 mat-dialog-title>Add Item to {{data.category.name}}</h1>
     <form [formGroup]="addItemForm" (ngSubmit)="addItem()">
         <div mat-dialog-content>
             <mat-form-field class="form-field">
@@ -18,7 +18,7 @@
             </div>
             <div mat-dialog-actions class="action-button">
                 <div>
-                    <button mat-button>cancel</button>
+                    <button mat-button>Cancel</button>
                 </div>
                 <div>
                     <button mat-raised-button color="primary">Yes</button>

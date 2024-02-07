@@ -26,7 +26,7 @@ export class AddCategoryDialogComponent {
     categoryName: ['', [Validators.required]],
     itemName: ['', Validators.required],
     price: ['', Validators.required],
-    isVeg: ['', Validators.required],
+    isVeg: ['veg', Validators.required],
   });
 
   addCategory() {

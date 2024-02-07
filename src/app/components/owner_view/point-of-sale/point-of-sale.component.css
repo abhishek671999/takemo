@@ -4,7 +4,7 @@
 }
 
 .menu-container{
-    height: 100%;
+    height: 90%;
     display: flex;
 }
 
@@ -70,7 +70,7 @@
     border: 1px solid black;
     border-radius: 5px;
     width: 10em;
-    height: 8em;
+    height: 7em;
     text-align: center;
     overflow: auto;
     display: flex;
@@ -119,10 +119,6 @@
 ::-webkit-scrollbar-thumb {
     background: rgb(217, 217, 246);
     border-radius: 10px;
-}
-
-::-webkit-scrollbar:horizontal{
-    height: 6px;
 }
 
 .summary-bar{

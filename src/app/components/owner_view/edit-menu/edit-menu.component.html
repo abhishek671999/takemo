@@ -27,7 +27,7 @@
                             </div>
                         </mat-expansion-panel-header>
                         <div class="text-center">
-                            <button mat-raised-button color="primary" class="add-item-button" svgIcon="plus" (click)="addItem(category)">Add new Item to Category</button>
+                            <button mat-raised-button color="primary" class="add-item-button" svgIcon="plus" (click)="addItem(category)">Add new Item to {{category.category.name}}</button>
                         </div>
                         <table class="table table-hover">
                             <thead class="text-center">

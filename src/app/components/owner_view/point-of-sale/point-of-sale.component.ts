@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 import { PrinterService } from 'src/app/shared/services/printer/printer.service';
 import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
+import { MatRadioButton } from '@angular/material/radio';
 
 @Component({
   selector: 'app-point-of-sale',
   templateUrl: './point-of-sale.component.html',
-  styleUrls: ['./point-of-sale.component.css']
+  styleUrls: ['./point-of-sale.component.css'],
+  encapsulation : ViewEncapsulation.None,
 })
 export class PointOfSaleComponent {
   constructor(
@@ -25,7 +28,9 @@ export class PointOfSaleComponent {
   public summary;
   private usbDriver = new UsbDriver();
   private usbSought;
-  
+  public paymentFlag =false
+  public modeOfPayment: 'cash' | 'online' = 'online';
+
   ngOnInit(){
     this.summary = {
       amount: 0,
@@ -184,7 +189,8 @@ export class PointOfSaleComponent {
     let body = {   
       "pos": true,
       "order_list": itemList,
-      "restaurant_id": sessionStorage.getItem('restaurant_id')
+      "restaurant_id": sessionStorage.getItem('restaurant_id'),
+      "payment_mode": this.modeOfPayment
     }
     return body
   }
@@ -273,12 +279,14 @@ export class PointOfSaleComponent {
       let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {data: {msg: `Order created successfully. Order No: ${data['order_no']}`} })
       dialogRef.afterClosed().subscribe(
         data => {
-          let printConnect = this.printService.init()
+          if(this.usbSought){
+            let printConnect = this.printService.init()
           this.getPrintableText().forEach( ele =>
             printConnect.writeCustomLine(ele)
             )
           printConnect.cut('partial')
           printConnect.writeLine(`Order created successfully. Order No: ${orderNum}`).feed(5).cut().flush()
+          }
           this.ngOnInit()
         }
       )

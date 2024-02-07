@@ -117,8 +117,14 @@ export class HeaderComponent {
       }
     }
   
-    addAdminNavOptions(){
-      let adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
+    addAdminNavOptions(company){
+      let adminNavOptions
+      if(company.id == 1){
+        adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
+      }else{
+        adminNavOptions = ['userOrders', 'menu', 'admin_current_orders', 'analytics', 'shift']
+      }
+
       for(let option of adminNavOptions){
         if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
           this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -127,8 +133,14 @@ export class HeaderComponent {
       
     }
   
-  addRestaurantOwnerNavOptions(){
-    let restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'POS' ,'orders']
+  addRestaurantOwnerNavOptions(restaurant){
+    let restaurantOwnerNavOptions
+    if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
+      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'POS' ,'orders']
+    }else{
+      restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'POS' ,'orders']
+    }
+
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -167,7 +179,7 @@ export class HeaderComponent {
           if(company.role_name == 'corporate_admin'){
             sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
             console.log('company_id', sessionStorage.getItem('company_id'))
-            this.addAdminNavOptions()
+            this.addAdminNavOptions(company)
             break
           }
         }
@@ -176,7 +188,7 @@ export class HeaderComponent {
             console.log('setting restaurant id', data['restaurants'][0]['restaurant_id'])
             sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
             console.log(sessionStorage.getItem('restaurant_id'))
-            this.addRestaurantOwnerNavOptions()
+            this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
             this.addRestaurantStaffNavOptions()

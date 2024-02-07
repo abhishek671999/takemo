@@ -7,7 +7,7 @@
         <div class="category-bar">
             <div class="category-button" *ngFor="let category of menu">
                 <ul>
-                    <li class="category-bar-items {{category['category']['name'].replace(' ', '')}}" (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
+                    <li class="fs-5 category-bar-items {{category['category']['name'].replace(' ', '')}}" (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
                 </ul>
             </div>
         </div>
@@ -17,11 +17,11 @@
                     <div class="item" *ngFor="let item of category.category.items">
                         <div class="item-card" (click)="addItem(item)">
                             <div class="item-name">
-                                <p style="margin: 0;">
+                                <p class="p-1 fs-3">
                                     <img class="indicator-image" *ngIf="item.veg" src="../../../../assets/images/veg_icon.png">
                                     <img class="indicator-image" *ngIf="item.non_veg" src="../../../../assets/images/non_veg_icon.png">
                                     <img class="indicator-image" *ngIf="item.egg" src="../../../../assets/images/egg_icon.jpg">{{item.name}}</p>
-                                <p style="margin: 0;">&nbsp;₹&nbsp;{{item.price}}</p>
+                                <p class="m-1 fs-4">&nbsp;₹&nbsp;{{item.price}}</p>
                             </div>
                         </div>
                     </div>
@@ -85,6 +85,12 @@
             <div class="summary-end">
                 <div class="amount-summary">
                     <h2 style="font-weight: bold;">Total Amount:&nbsp;₹&nbsp;{{summary.amount}}</h2>
+                    <section class="example-section">
+                        <mat-radio-group class="smallRadio" [(ngModel)]="modeOfPayment">
+                            <mat-radio-button class="example-margin" value="cash">Cash</mat-radio-button>
+                            <mat-radio-button class="example-margin" value="online">Online</mat-radio-button>
+                          </mat-radio-group>
+                    </section>
                 </div>
                 <div class="action-section">
                     <button mat-raised-button (click)="clearSummary()">Clear</button>
