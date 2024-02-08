@@ -41,7 +41,7 @@ export class TimelyAnalyticsComponent {
   selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0].actualValue
   selectedCategory = this.categoryList[0];
   selectedItem  = this.itemList[0];
-  selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  selectedRestaurant: number| string = sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.restaurantList[0].restaurant_id;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
   selectedRule;
   ruleList = []
