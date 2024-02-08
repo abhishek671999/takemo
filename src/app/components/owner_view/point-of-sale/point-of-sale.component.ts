@@ -183,7 +183,7 @@ export class PointOfSaleComponent {
       itemList.push(
         {
           item_id: ele.id,
-          quantity: ele.quantity,
+          quantity: ele.quantity + ele.parcelQuantity,
           parcel_quantity: ele.parcelQuantity
         }
       )
@@ -235,7 +235,7 @@ export class PointOfSaleComponent {
     let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`
     let sectionHeader1 = '................CASH/BILL..................'
     let sectionSplitter = '..........................................'
-    let tableHeader = 'DESCRIPTION\t\t\tQTY\tRATE\tAMOUNT'
+    let tableHeader = 'DESCRIPTION\t\tQTY\tRATE\tAMOUNT'
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again'
     let content = [
       {

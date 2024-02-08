@@ -22,6 +22,6 @@ export class dateUtils{
         let minute: number = date.getMinutes();
         let second: number = date.getSeconds();
 
-        return `${year}-${month}-${day} ${hour}:${minute}:${second}`
+        return `${day}-${month}-${year} ${hour}:${minute}:${second}`
     }
 }
