@@ -7,12 +7,16 @@
 
 .col1, .col2{
     width: 100px;
+
 }
 
 .table{
     width: 200px;
 }
 
+.mat-deliver{
+    background-color: rgb(9, 166, 88);
+}
 ::-webkit-scrollbar {
     width: 6px;
     overflow-y: scroll;

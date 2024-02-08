@@ -6,9 +6,9 @@ import { Router } from "@angular/router"
 import { Observable } from "rxjs"
 
 // export let host = 'http://65.20.75.191:8001/api/v1/' // local test
-// export let host = 'https://takemotest.in/api/v1/'  // Demo test
+export let host = 'https://takemotest.in/api/v1/'  // Demo test
 // export let host = 'http://139.84.139.204:8000/api/v1/' 
-export let host = 'https://takemo.in/api/v1/' //Prod 
+// export let host = 'https://takemo.in/api/v1/' //Prod 
 
 @Injectable({
     providedIn: 'root'
@@ -79,5 +79,25 @@ export class meAPIUtility{
             this.cookieService.deleteAll('/')
         }
         console.log('after deleting')
+    }
+
+    doesUsersBelongsToITT(){
+        let validation = false;
+        this.getMeData().subscribe(
+            data => {
+                for(let company of data['companies']){
+                    if(company.role_name == 'corporate_admin' && company.id == 1){
+                        validation = true
+                    }
+                }
+                for(let restaurant of data['restaurants']){
+                    if(restaurant.role_name == 'restaurant_admin' && [1, 2].includes(restaurant.restaurant_id)){
+                        validation =  true
+                    }
+                }
+                
+            }
+        )
+        return validation
     }
 }

@@ -96,6 +96,10 @@ p {
   display: inline;
 }
 
+:host ::ng-deep .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper{
+  width: 100%;
+}
+
 @media screen and (max-width: 1024px) {
   .table-container {
     border-radius: 10px;
