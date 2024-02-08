@@ -36,6 +36,7 @@
                                     <th class="col2" scope="col">Item</th>
                                     <th class="col3" scope="col">Price</th>
                                     <th class="col4" scope="col">Availabe</th>
+                                    <th class="col4" scope="col">Favorite</th>
                                     <th class="col5" scope="col">Edit</th>
                                     <th class="col6" scope="col">Delete</th>
                                 </tr>
@@ -53,6 +54,9 @@
                                     <td class="col3" >₹ {{item.price}}</td>
                                     <td class="col4">
                                         <mat-slide-toggle color="primary" [ngModel]='item.is_available' (change)="toggleAvailability(item)"></mat-slide-toggle>
+                                    </td>
+                                    <td class="col4">
+                                        <mat-slide-toggle color="primary" [ngModel]='item.is_favourite' (change)="toggleFavorite(item)"></mat-slide-toggle>
                                     </td>
                                     <td class="col5" [class.disabled]="item.is_available">
                                             <mat-icon svgIcon="edit" title="Edit this item" (click)="editItem(item)"></mat-icon>

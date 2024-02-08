@@ -31,7 +31,7 @@ export class PointOfSaleComponent {
   private usbDriver = new UsbDriver();
   public usbSought;
   public paymentFlag = false;
-  public modeOfPayment: 'cash' | 'online' = 'online';
+  public modeOfPayment: 'cash' | 'online' | 'credit' = 'online';
 
   ngOnInit() {
     this.summary = {
@@ -211,10 +211,18 @@ export class PointOfSaleComponent {
     return body;
   }
 
-  trimString(text, length) {
+  trimString(text, length=20) {
     return text.length > length
       ? text.substring(0, length - 3) + '...'
       : text + '.'.repeat(length - text.length);
+  }
+
+  getPrintStatus(){
+    if(this.usbSought){
+      return "primary"
+    }else{
+      return "warn"
+    }
   }
 
   getFormattedDineInItemDetails() {
@@ -252,7 +260,7 @@ export class PointOfSaleComponent {
 
   getPrintableText() {
     let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
-    let sectionHeader1 = '................CASH/BILL..................';
+    let sectionHeader1 = `................${this.modeOfPayment}..................`
     let sectionSplitter = '..........................................';
     let tableHeader = 'DESCRIPTION\t\tQTY\tRATE\tAMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
@@ -319,7 +327,7 @@ export class PointOfSaleComponent {
           },
         });
         dialogRef.afterClosed().subscribe((data) => {
-          if (this.usbSought) {
+          if (this.usbSought) {     //to-do: Interchange dialogbox call and print call
             let printConnect = this.printService.init();
             this.getPrintableText().forEach((ele) => {
               if (ele.text != '') {
