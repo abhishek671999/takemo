@@ -99,6 +99,20 @@ export class EditMenuComponent {
       (error) => console.log('Toggle failed: ', error)
     );
   }
+  toggleFavorite(item) {
+    console.log('Toggled', item);
+    let body = {
+      item_id: item.id,
+      is_favourite: !item.is_favourite,
+    };
+    this._menuEditService.editItemAvailability(body).subscribe(
+      (data) => {
+        console.log('Toggle successfule: ', data);
+        item.is_favourite = !item.is_favourite;
+      },
+      (error) => console.log('Toggle failed: ', error)
+    );
+  }
 
   _handleDialogComponentAfterClose(dialogRef) {
     dialogRef.afterClosed().subscribe((result) => {

@@ -1,6 +1,6 @@
 <div class="main-container">
     <div class="navigation">
-        <button mat-raised-button [disabled]="usbSought" (click)="seekUSB()" color="primary">Connect to printer</button>
+        <button mat-raised-button [disabled]="usbSought" (click)="seekUSB()" color="{{getPrintStatus()}}">Connect to printer</button>
         <button mat-raised-button (click)="navigateToEditMenu()" color="primary">Edit Menu</button>
         <button mat-raised-button (click)="navigateToPendingOrders()" color="primary">Pending Orders</button>
     </div>
@@ -88,14 +88,20 @@
                     <h2 style="font-weight: bold;">Total Amount:&nbsp;₹&nbsp;{{summary.amount}}</h2>
                     <section class="example-section">
                         <mat-radio-group class="smallRadio" [(ngModel)]="modeOfPayment">
-                            <mat-radio-button class="example-margin" value="cash">Cash</mat-radio-button>
-                            <mat-radio-button class="example-margin" value="online">Online</mat-radio-button>
+                            <mat-radio-button class="m-5" value="cash">Cash</mat-radio-button>
+                            <mat-radio-button class="m-5" value="online">Online</mat-radio-button>
+                            <mat-radio-button class="m-5" value="credit">Credit</mat-radio-button>
                           </mat-radio-group>
                     </section>
                 </div>
+                <br>
                 <div class="action-section">
                     <button mat-raised-button (click)="clearSummary()">Clear</button>
-                    <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0" color="primary">Place</button>
+                    <div>
+                        <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || !usbSought" color="primary">Place</button>
+                        <small style="display: inline;" *ngIf="!usbSought">    Please connect Printer</small>
+                    </div>
+                    
                 </div>  
             </div>
             
