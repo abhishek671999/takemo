@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { HttpParams } from '@angular/common/http';
+import { PageEvent } from '@angular/material/paginator';
 
 
 @Component({
@@ -82,6 +83,7 @@ export class OrdersHistoryComponent {
   }
 
   onValueChange(){
+    this.pageIndex = 0
     let field = document.getElementById('calendarInputField')
     if(this.selectedTimeFrame.actualValue == 'custom'){
       console.log(this.range.value)
@@ -93,11 +95,18 @@ export class OrdersHistoryComponent {
     this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody())
   }
 
+  handlePageEvent(e: PageEvent) {
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody())
+  }
+
 
   getRestaurantCurrentOrders(body){
     let httpParams = new HttpParams()
     httpParams = httpParams.append('offset', this.pageIndex * this.pageSize)
-    httpParams = httpParams.append('limit', this.pageSize)
+    httpParams = httpParams.append('limit', (this.pageIndex * this.pageSize) + this.pageSize)
     this.showSpinner = true
     if(body){
       this._orderService.getRestaurantOrders(body, httpParams).subscribe(
