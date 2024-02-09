@@ -86,7 +86,7 @@ export class meAPIUtility{
         this.getMeData().subscribe(
             data => {
                 for(let company of data['companies']){
-                    if(company.role_name == 'corporate_admin' && company.id == 1){
+                    if(company.role_name == 'corporate_admin' && company.company_id == 1){
                         validation = true
                     }
                 }
