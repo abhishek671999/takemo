@@ -12,9 +12,7 @@
     flex-direction: column;
     align-items: center;
     height: fit-content;
-    width: 50vw;
-    background-color: white;
- 
+    width: 50vw; 
 }
 
 .icon-size {
@@ -30,4 +28,10 @@
 .my-orders a{
     text-decoration: none;
     color: white;
+}
+
+@media screen and (max-width: 430px) {
+    .window-container{
+        width: 90vw;
+    }
 }

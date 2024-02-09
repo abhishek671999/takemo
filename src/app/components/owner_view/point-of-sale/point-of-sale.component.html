@@ -99,7 +99,7 @@
                     <button mat-raised-button (click)="clearSummary()">Clear</button>
                     <div>
                         <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || !usbSought" color="primary">Place</button>
-                        <small style="display: inline;" *ngIf="!usbSought">    Please connect Printer</small>
+                        <small class="text-danger" style="display: block;" *ngIf="!usbSought">    Please connect Printer</small>
                     </div>
                     
                 </div>  
