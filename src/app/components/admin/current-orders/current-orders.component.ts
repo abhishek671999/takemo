@@ -5,6 +5,10 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { switchMap } from 'rxjs';
+import { FormControl, FormGroup } from '@angular/forms';
+import { PageEvent } from '@angular/material/paginator';
+import { HttpParams } from '@angular/common/http';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-current-orders',
@@ -15,14 +19,30 @@ export class CurrentOrdersComponent {
   constructor(
     private _ordersService: OrdersService,
     private _dialog: MatDialog,
-    private _ruleService: RulesService
+    private _ruleService: RulesService,
+    private dateUtils: dateUtils
   ) {}
-  
+
+  length = 50;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions = [5, 10, 25];
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  disabled = false;
+
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+
   timeFrames = [
-    {displayValue: 'Today', actualValue: 'today' },
-    {displayValue: 'This week', actualValue: 'this_week' },
-    {displayValue: 'This month', actualValue: 'this_month' },
-    { displayValue: 'Last month', actualValue: 'last_month'}, //future
+    { displayValue: 'Today', actualValue: 'today' },
+    { displayValue: 'This week', actualValue: 'this_week' },
+    { displayValue: 'This month', actualValue: 'this_month' },
+    { displayValue: 'Last month', actualValue: 'last_month'},
+    { displayValue: 'Calendar', actualValue: 'custom'} //future
   ]
   
   restaurantList = [
@@ -31,7 +51,7 @@ export class CurrentOrdersComponent {
     { displayValue: 'Tikkad kitchen', restaurant_id: 2}
   ]
 
-  selectedTimeFrames: string = this.timeFrames[0].actualValue
+  selectedTimeFrame = this.timeFrames[0]
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
   selectedRule;
   loadView = false;
@@ -77,26 +97,39 @@ export class CurrentOrdersComponent {
     let body = {
       restaurant_id: this.selectedRestaurant,
       rule_id_list:  Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
-      time_frame: this.selectedTimeFrames,
-      start_date: '',
-      end_date: '',
+      time_frame: this.selectedTimeFrame.actualValue,
     };
+    if(this.selectedTimeFrame.actualValue == 'custom'){
+      if(this.range.value.start && this.range.value.end){
+        body['start_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.start)
+        body['end_date'] = this.dateUtils.getStandardizedDateFormate(this.range.value.end)
+      }
+      else{
+        body = null
+      }
+    } 
     return body
   }
 
   getRestaurantCurrentForAdminsOrders(){
+    let httpParams = new HttpParams()
+    httpParams = httpParams.append('offset', this.pageIndex * this.pageSize)
+    httpParams = httpParams.append('limit', (this.pageIndex * this.pageSize) + this.pageSize)
     let body = this.prepareRequestBodyRestaurantOrders()
-    this._ordersService.getRestaurantOrdersForAdmins(body).subscribe(
-      (data) => {
-        console.log('Current orders: ', data);
-        this.unparseResponse(data);
-        this.tableLoaded = true
-      },
-      (error) => {
-        console.log('Error: ', error);
-        this.tableLoaded = true
-      }
-    );
+    if(body){
+      this._ordersService.getRestaurantOrdersForAdmins(body).subscribe(
+        (data) => {
+          console.log('Current orders: ', data);
+          this.unparseResponse(data);
+          this.tableLoaded = true
+          this.length = data['no_of_orders']
+        },
+        (error) => {
+          console.log('Error: ', error);
+          this.tableLoaded = true
+        }
+      );
+    }
   }
 
   unparseResponse(data) { 
@@ -152,10 +185,24 @@ export class CurrentOrdersComponent {
   }
 
   onValueChange(){
+    this.pageIndex = 0
+    let field = document.getElementById('calendarInputField')
+    if(this.selectedTimeFrame.actualValue == 'custom'){
+      console.log(this.range.value)
+      field.classList.remove('hidden')
+      
+    }else{
+      field.classList.add('hidden')
+    }
     this.tableLoaded = false
     this.getRestaurantCurrentForAdminsOrders()
     
   }
-
+  handlePageEvent(e: PageEvent) {
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.getRestaurantCurrentForAdminsOrders()
+  }
 
 }

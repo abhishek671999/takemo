@@ -43,6 +43,7 @@ import { Time24to12Format } from './time24to12.pipe';
 import { CurrentOrdersComponent } from './current-orders/current-orders.component';
 import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { MatTableModule } from '@angular/material/table';
     PdfViewerModule,
     MatCheckboxModule,
     SharedModuleModule,
-    MatTableModule
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [
     {
