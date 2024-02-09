@@ -31,7 +31,7 @@ export class PointOfSaleComponent {
   private usbDriver = new UsbDriver();
   public usbSought;
   public paymentFlag = false;
-  public modeOfPayment: 'cash' | 'online' | 'credit' = 'online';
+  public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
 
   ngOnInit() {
     this.summary = {
