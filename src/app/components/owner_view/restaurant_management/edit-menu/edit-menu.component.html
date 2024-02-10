@@ -37,6 +37,7 @@
                                     <th class="col3" scope="col">Price</th>
                                     <th class="col4" scope="col">Availabe</th>
                                     <th class="col4" scope="col">Favorite</th>
+                                    <th>Counter</th>
                                     <th class="col5" scope="col">Edit</th>
                                     <th class="col6" scope="col">Delete</th>
                                 </tr>
@@ -57,6 +58,15 @@
                                     </td>
                                     <td class="col4">
                                         <mat-slide-toggle color="primary" [ngModel]='item.is_favourite' (change)="toggleFavorite(item)"></mat-slide-toggle>
+                                    </td>
+                                    <td>
+                                        <mat-form-field>
+                                            <mat-label>Favorite food</mat-label>
+                                            <mat-select (selectionChange)="updateCounter(item)" [(value)]="item.counter.counter_id">
+                                                <mat-option>None</mat-option>
+                                                <mat-option *ngFor="let option of countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
                                     </td>
                                     <td class="col5" [class.disabled]="item.is_available">
                                             <mat-icon svgIcon="edit" title="Edit this item" (click)="editItem(item)"></mat-icon>

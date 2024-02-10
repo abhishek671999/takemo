@@ -20,6 +20,7 @@ import {
   svgPlusIcon,
 } from 'src/app/shared/icons/svg-icons';
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
   selector: 'app-edit-menu',
@@ -35,7 +36,8 @@ export class EditMenuComponent {
     private _dialog: MatDialog,
     private _menuService: MenuService,
     private _menuEditService: EditMenuService,
-    private _restaurantService: RestuarantService
+    private _restaurantService: RestuarantService,
+    private _counterService: CounterService
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -67,6 +69,9 @@ export class EditMenuComponent {
     ? 'Close restaurant'
     : 'Open restaurant';
 
+  countersAvailable;
+  
+
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
@@ -83,6 +88,11 @@ export class EditMenuComponent {
       (data) => (this.restaurantStatus = data['is_open']),
       (error) => console.log(error)
     );
+    this._counterService.getRestaurantCounter(this.restaurantId).subscribe(
+      data => {
+        this.countersAvailable = data['counters']
+      }
+    )
   }
 
   toggleAvailability(item) {
@@ -99,6 +109,27 @@ export class EditMenuComponent {
       (error) => console.log('Toggle failed: ', error)
     );
   }
+
+  updateCounter(item){
+    console.log(item)
+    let body = {
+      item_id: item.id,
+      name: item.name,
+      price: item.price,
+      veg: item.veg,
+      non_veg: item.non_veg,
+      egg: item.egg,
+      counter_id: item.counter.counter_id
+    };
+    this._menuEditService.editMenu(body).subscribe(
+      data => console.log(data),
+      error => {
+        alert("Couldn't update counter")
+        this.ngOnInit()
+      }
+    )
+  }
+
   toggleFavorite(item) {
     console.log('Toggled', item);
     let body = {
