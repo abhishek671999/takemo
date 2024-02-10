@@ -12,6 +12,7 @@ import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { FormControl, FormGroup } from '@angular/forms';
 import { meAPIUtility } from 'src/app/shared/site-variable';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 
 export type ChartOptions = {
@@ -35,7 +36,8 @@ export class SalesAnalyticsComponent {
     private _menuService: MenuService,
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
-    private _meAPIutility: meAPIUtility
+    private _meAPIutility: meAPIUtility,
+    private _counterService: CounterService
   ) {}
 
   timeFrames = [
@@ -75,6 +77,9 @@ export class SalesAnalyticsComponent {
   chart1: any = [];
   chart2: any = [];
 
+  counters = []
+  selectedCounterId;
+
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
@@ -94,6 +99,15 @@ export class SalesAnalyticsComponent {
       this.createChart(this.getRequestBodyPrepared());
       this.loadView = true;
     });
+    this._counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
+      data => {
+        console.log('counters available', data)
+        this.counters = data['counters']
+      },
+      error => {
+        console.log('Error: ', error)
+      }
+    )
   }
 
   getRequestBodyPrepared() {
@@ -109,6 +123,9 @@ export class SalesAnalyticsComponent {
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
       pos: this.isITTUser ? false: true,
     };
+    if(this.selectedCounterId){
+      body["counter_id"] = this.selectedCounterId
+    }
     console.log(
       'New: ',
       this.selectedTimeFrame,

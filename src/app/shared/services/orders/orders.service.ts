@@ -39,9 +39,7 @@ export class OrdersService {
     return this._http.post(host + this.createOrdersEnpoint, body, {headers: this.utility.getHeaders()} )
   }
 
-  getCurrentOrdersCards(params){
-    let httpParams = new HttpParams()
-    httpParams = httpParams.append('restaurant_id', params['restaurant_id'])
+  getCurrentOrdersCards(httpParams){
     return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams, headers: this.utility.getHeaders()})
   }
 

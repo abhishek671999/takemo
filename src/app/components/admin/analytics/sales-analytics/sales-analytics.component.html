@@ -29,6 +29,14 @@
         <mat-error>Invalid end date</mat-error>
       } -->
   </mat-form-field>
+
+  <mat-form-field *ngIf="counters.length > 0">
+    <mat-label>Counter Name</mat-label>
+    <mat-select (selectionChange)="onValueChange()" [(value)]="selectedCounterId">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let option of counters" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+    </mat-select>
+</mat-form-field>
   
     <mat-form-field  class="form-field" *ngIf="!restaurantFlag">
       <mat-label>Select Restaurant</mat-label>

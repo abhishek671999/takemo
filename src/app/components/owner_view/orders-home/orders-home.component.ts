@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
   selector: 'app-orders-home',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
 
 export class OrdersHomeComponent {
 
-  constructor(private router: Router){}
+  constructor(private router: Router, private _counterService: CounterService){}
   navLinks = [
     {
       label: 'Pending',
@@ -32,12 +33,23 @@ export class OrdersHomeComponent {
       index: 3
     }
 ]; 
+counters = []
+ngOnInit(){
+  this._counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
+    data => {
+      this.counters = data['counters']
+    },
+    error => {
+      alert("Couldn't fetch counters")
+    }
+  )
+}
 
 navigateToPOS(){
   this.router.navigate(['/owner/point-of-sale'])
 }
 
 navigateToEditMenu(){
-  this.router.navigate([`/owner/edit-menu/${sessionStorage.getItem('restaurant_id')}`])
+  this.router.navigate([`/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`])
 }
 }

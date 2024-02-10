@@ -58,7 +58,7 @@ export class HeaderComponent {
         name: 'Menu',
         href: '',
         action: () => {
-          this.router.navigate(['./owner/edit-menu/' + sessionStorage.getItem('restaurant_id')])
+          this.router.navigate(['./owner/settings/edit-menu/' + sessionStorage.getItem('restaurant_id')])
         }
       },
       'orders': {

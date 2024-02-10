@@ -21,7 +21,7 @@ import {
 import { MyOrdersComponent } from './my-orders/my-orders.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
-import { EditMenuComponent } from '../owner_view/edit-menu/edit-menu.component';
+import { EditMenuComponent } from '../owner_view/restaurant_management/edit-menu/edit-menu.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -95,7 +95,7 @@ import { PostRechargePaymentComponent } from './post-recharge-payment/post-recha
     ReactiveFormsModule,
     MatSlideToggleModule,
     SharedModuleModule,
-    MatSelectModule,    
+    MatSelectModule,
   ],
   exports: [],
 })

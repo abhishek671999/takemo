@@ -1,0 +1,36 @@
+<div class="main-container">
+            <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+                    <mat-expansion-panel [expanded]='true' class="expansion-panel">
+                        <table class="table table-hover">
+                            <thead class="text-center">
+                                <tr>
+                                    <th class="col1" scope="col">Id</th>
+                                    <th class="col2" scope="col">Name</th>
+                                    <th class="col3" scope="col">Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center" >
+                                <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                                <tr class="table-row"*ngFor="let counter of counterResponse; let mainIndex = index">
+                                    <td class="col1" >{{mainIndex+1}}</td>
+                                    <td class="col2" >{{counter.counter_name}}</td>
+                                    <td class="col3" >
+                                        <mat-icon  title="Delete this category" svgIcon="delete" (click)="deleteCounter(counter)"></mat-icon>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>
+                                        <mat-form-field class="example-full-width">
+                                            <mat-label>Counter name</mat-label>
+                                            <input type="text" matInput [formControl]="counterFormControl" placeholder="Counter">
+                                          </mat-form-field>
+                                    </td>
+                                    <td><button mat-raised-button  [disabled]="!counterFormControl.valid" color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCounter()">Add Counter</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </mat-expansion-panel>
+            </cdk-virtual-scroll-viewport>
+</div>
+

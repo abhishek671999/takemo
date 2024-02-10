@@ -4,14 +4,14 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
-import { EditFormDialogComponent } from '../edit-form-dialog/edit-form-dialog.component';
-import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
-import { AddCategoryDialogComponent } from '../add-category-dialog/add-category-dialog.component';
-import { AddItemDialogComponent } from '../add-item-dialog/add-item-dialog.component';
-import { SuccessfulDialogComponent } from '../successful-dialog/successful-dialog.component';
-import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { EditFormDialogComponent } from '../../edit-form-dialog/edit-form-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../../delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { AddCategoryDialogComponent } from '../../add-category-dialog/add-category-dialog.component';
+import { AddItemDialogComponent } from '../../add-item-dialog/add-item-dialog.component';
+import { SuccessfulDialogComponent } from '../../successful-dialog/successful-dialog.component';
+import { ErrorDialogComponent } from '../../error-dialog/error-dialog.component';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
-import { DeleteCategoryConfirmationDialogComponent } from '../delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
+import { DeleteCategoryConfirmationDialogComponent } from '../../delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import {
   svgAvilableIcon,
   svgDeleteIcon,
@@ -20,6 +20,7 @@ import {
   svgPlusIcon,
 } from 'src/app/shared/icons/svg-icons';
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
   selector: 'app-edit-menu',
@@ -35,7 +36,8 @@ export class EditMenuComponent {
     private _dialog: MatDialog,
     private _menuService: MenuService,
     private _menuEditService: EditMenuService,
-    private _restaurantService: RestuarantService
+    private _restaurantService: RestuarantService,
+    private _counterService: CounterService
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -67,6 +69,9 @@ export class EditMenuComponent {
     ? 'Close restaurant'
     : 'Open restaurant';
 
+  countersAvailable;
+  
+
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
@@ -83,6 +88,11 @@ export class EditMenuComponent {
       (data) => (this.restaurantStatus = data['is_open']),
       (error) => console.log(error)
     );
+    this._counterService.getRestaurantCounter(this.restaurantId).subscribe(
+      data => {
+        this.countersAvailable = data['counters']
+      }
+    )
   }
 
   toggleAvailability(item) {
@@ -99,6 +109,27 @@ export class EditMenuComponent {
       (error) => console.log('Toggle failed: ', error)
     );
   }
+
+  updateCounter(item){
+    console.log(item)
+    let body = {
+      item_id: item.id,
+      name: item.name,
+      price: item.price,
+      veg: item.veg,
+      non_veg: item.non_veg,
+      egg: item.egg,
+      counter_id: item.counter.counter_id
+    };
+    this._menuEditService.editMenu(body).subscribe(
+      data => console.log(data),
+      error => {
+        alert("Couldn't update counter")
+        this.ngOnInit()
+      }
+    )
+  }
+
   toggleFavorite(item) {
     console.log('Toggled', item);
     let body = {
@@ -200,28 +231,27 @@ export class EditMenuComponent {
     );
   }
 
-  toggleCategoryAvailability(category){
-    console.log('Category toggled', category, category)
+  toggleCategoryAvailability(category) {
+    console.log('Category toggled', category, category);
     let body = {
       category_id: category.category.id,
-      hide_category: !category.category.hide_category
-    }
-    console.log('This is body', body)
+      hide_category: !category.category.hide_category,
+    };
+    console.log('This is body', body);
     this._menuEditService.editCategoryAvailability(body).subscribe(
-      data => {
-        category.hide_category != category.hide_category
+      (data) => {
+        category.hide_category != category.hide_category;
       },
-      error => {
-        alert('Failed to toggle category')
+      (error) => {
+        alert('Failed to toggle category');
       }
-    )
+    );
   }
 
-
-  navigateToPOS(){
-    this._router.navigate(['/owner/point-of-sale'])
+  navigateToPOS() {
+    this._router.navigate(['/owner/point-of-sale']);
   }
-  navigateToPendingOrders(){
-    this._router.navigate(['/owner/pending-orders'])
+  navigateToPendingOrders() {
+    this._router.navigate(['/owner/pending-orders']);
   }
 }
