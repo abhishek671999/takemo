@@ -31,7 +31,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FoodCounterManagementComponent } from './restaurant_management/food-counter-management/food-counter-management.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { AddCounterDialogComponent } from './add-counter-dialog/add-counter-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +44,6 @@ import { AddCounterDialogComponent } from './add-counter-dialog/add-counter-dial
     CancelledOrdersComponent,
     PointOfSaleComponent,
     FoodCounterManagementComponent,
-    AddCounterDialogComponent,
   ],
   imports: [
     CommonModule,

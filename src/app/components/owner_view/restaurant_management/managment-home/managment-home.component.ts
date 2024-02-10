@@ -9,8 +9,9 @@ import { Router } from '@angular/router';
 export class ManagmentHomeComponent {
 
   managementPages = [
-    {name: 'Counter', href: "food-counter-management"},
-    {name: 'Edit Menu' , href: `edit-menu/${sessionStorage.getItem('restaurant_id')}` }
+    {name: 'Edit Menu' , href: `edit-menu/${sessionStorage.getItem('restaurant_id')}` },
+    {name: 'Counter', href: "food-counter-management"}
+    
     
   ]
 

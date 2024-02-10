@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
-import { AddCounterDialogComponent } from '../../add-counter-dialog/add-counter-dialog.component';
+
 import {FormControl, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';

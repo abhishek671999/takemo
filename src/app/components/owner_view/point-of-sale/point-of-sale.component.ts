@@ -146,7 +146,7 @@ export class PointOfSaleComponent {
     if (!itemAdded) {
       this.summary.itemList.push(item);
     }
-    if (item.quantity < 10) {
+    if (item.quantity < 30) {
       item.quantity += 1;
       this.summary.amount += item.price;
     }
