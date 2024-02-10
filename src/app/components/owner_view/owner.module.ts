@@ -29,6 +29,9 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { FoodCounterManagementComponent } from './restaurant_management/food-counter-management/food-counter-management.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { AddCounterDialogComponent } from './add-counter-dialog/add-counter-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     ConfirmOrderCancelComponent,
     CancelledOrdersComponent,
     PointOfSaleComponent,
+    FoodCounterManagementComponent,
+    AddCounterDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -63,7 +68,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatIconModule,
     MatCheckboxModule, 
     MatRadioModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatExpansionModule,
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule
   ],
   exports: [],
 })

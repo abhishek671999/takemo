@@ -4,14 +4,14 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
-import { EditFormDialogComponent } from '../edit-form-dialog/edit-form-dialog.component';
-import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
-import { AddCategoryDialogComponent } from '../add-category-dialog/add-category-dialog.component';
-import { AddItemDialogComponent } from '../add-item-dialog/add-item-dialog.component';
-import { SuccessfulDialogComponent } from '../successful-dialog/successful-dialog.component';
-import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { EditFormDialogComponent } from '../../edit-form-dialog/edit-form-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../../delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { AddCategoryDialogComponent } from '../../add-category-dialog/add-category-dialog.component';
+import { AddItemDialogComponent } from '../../add-item-dialog/add-item-dialog.component';
+import { SuccessfulDialogComponent } from '../../successful-dialog/successful-dialog.component';
+import { ErrorDialogComponent } from '../../error-dialog/error-dialog.component';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
-import { DeleteCategoryConfirmationDialogComponent } from '../delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
+import { DeleteCategoryConfirmationDialogComponent } from '../../delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import {
   svgAvilableIcon,
   svgDeleteIcon,
@@ -200,28 +200,27 @@ export class EditMenuComponent {
     );
   }
 
-  toggleCategoryAvailability(category){
-    console.log('Category toggled', category, category)
+  toggleCategoryAvailability(category) {
+    console.log('Category toggled', category, category);
     let body = {
       category_id: category.category.id,
-      hide_category: !category.category.hide_category
-    }
-    console.log('This is body', body)
+      hide_category: !category.category.hide_category,
+    };
+    console.log('This is body', body);
     this._menuEditService.editCategoryAvailability(body).subscribe(
-      data => {
-        category.hide_category != category.hide_category
+      (data) => {
+        category.hide_category != category.hide_category;
       },
-      error => {
-        alert('Failed to toggle category')
+      (error) => {
+        alert('Failed to toggle category');
       }
-    )
+    );
   }
 
-
-  navigateToPOS(){
-    this._router.navigate(['/owner/point-of-sale'])
+  navigateToPOS() {
+    this._router.navigate(['/owner/point-of-sale']);
   }
-  navigateToPendingOrders(){
-    this._router.navigate(['/owner/pending-orders'])
+  navigateToPendingOrders() {
+    this._router.navigate(['/owner/pending-orders']);
   }
 }

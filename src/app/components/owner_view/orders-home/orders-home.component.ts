@@ -38,6 +38,6 @@ navigateToPOS(){
 }
 
 navigateToEditMenu(){
-  this.router.navigate([`/owner/edit-menu/${sessionStorage.getItem('restaurant_id')}`])
+  this.router.navigate([`/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`])
 }
 }

@@ -358,7 +358,7 @@ export class PointOfSaleComponent {
 
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/edit-menu/${sessionStorage.getItem('restaurant_id')}`,
+      `/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`,
     ]);
   }
 
