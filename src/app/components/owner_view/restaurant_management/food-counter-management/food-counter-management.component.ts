@@ -45,7 +45,7 @@ export class FoodCounterManagementComponent {
 
 
   deleteCounter(counter){
-
+    
   }
 
   addCounter(){

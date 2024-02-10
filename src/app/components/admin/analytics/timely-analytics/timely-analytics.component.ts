@@ -6,6 +6,7 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { meAPIUtility } from 'src/app/shared/site-variable';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
   selector: 'app-timely-analytics',
@@ -18,7 +19,8 @@ export class TimelyAnalyticsComponent {
     private _menuService: MenuService, 
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
-    private _meAPIutility: meAPIUtility
+    private _meAPIutility: meAPIUtility,
+    private _counterService: CounterService
     ){}
 
   timeFramesForTimelyAnalytics = [
@@ -50,6 +52,9 @@ export class TimelyAnalyticsComponent {
   loadView = false
   isITTUser = this._meAPIutility.doesUsersBelongsToITT()
 
+  counters = []
+  selectedCounterId;
+
   chart2: any = []
   chart4: any = []
 
@@ -80,6 +85,16 @@ export class TimelyAnalyticsComponent {
         this.selectedRule = this.ruleList[0].rule_id
         this.createTimelyAnalytics(this.getRequestBodyPrepared()) 
         this.loadView = true
+      }
+    )
+
+    this._counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
+      data => {
+        console.log('counters available', data)
+        this.counters = data['counters']
+      },
+      error => {
+        console.log('Error: ', error)
       }
     )
     
@@ -128,6 +143,9 @@ export class TimelyAnalyticsComponent {
       "item_id": this.selectedCategory.id == 0? this.selectedItem.id: "",
       "pos": this.isITTUser ? false: true
   }
+    if(this.selectedCounterId){
+      body['counter_id'] = this.selectedCounterId
+    }
     console.log('New: ', this.selectedTimeFrameForTimelyAnalytics, this.range.value.start, this.range.value.end)
     if(this.selectedTimeFrameForTimelyAnalytics == 'custom'){
       if(this.range.value.start && this.range.value.end){

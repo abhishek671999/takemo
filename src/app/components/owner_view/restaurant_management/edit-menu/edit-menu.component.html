@@ -61,7 +61,7 @@
                                     </td>
                                     <td>
                                         <mat-form-field>
-                                            <mat-label>Favorite food</mat-label>
+                                            <mat-label>Counter Name</mat-label>
                                             <mat-select (selectionChange)="updateCounter(item)" [(value)]="item.counter.counter_id">
                                                 <mat-option>None</mat-option>
                                                 <mat-option *ngFor="let option of countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
