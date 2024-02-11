@@ -15,8 +15,8 @@
     <mat-form-field id="calendarInputField" class="hidden">
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input  [formGroup]="range" [rangePicker]="picker">
-        <input matStartDate (dateChange)="dateChanged()" formControlName="start" placeholder="Start date">
-        <input matEndDate (dateChange)="dateChanged()" formControlName="end" placeholder="End date">
+        <input matStartDate (dateChange)="onValueChange()" formControlName="start" placeholder="Start date">
+        <input matEndDate (dateChange)="onValueChange()" formControlName="end" placeholder="End date">
       </mat-date-range-input>
       <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
