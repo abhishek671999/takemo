@@ -1,0 +1,55 @@
+.main-container{
+    display: flex;
+    height: 80vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.input-container{
+    display: flex;
+    justify-content: center;
+    gap: 1em
+}
+
+.tab-group-container{
+    border-radius: 10px;
+    width: 80%;
+    height:70vh
+}
+
+
+.viewport {
+    height: 65vh;
+    width: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    overflow-y: scroll;
+    background: grey;
+    box-shadow: inset 0 0 4px #707070;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 246);
+    border-radius: 10px;
+}
+
+.hidden{
+    display: none;
+}
+
+
+@media screen and (max-width: 425px) {
+
+    .input-container{
+        flex-direction: column;
+        justify-content: center;
+        row-gap: 1px;
+        gap: 0;
+        align-items: center;
+    }
+
+    
+}

@@ -1,0 +1,23 @@
+.main-container{
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pdf-viewer{
+    display: block; 
+    width: 70%;
+     min-height: 60vh;
+     border: 1px solid black;
+     margin: 10px 0 10px 0;
+}
+
+.input-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}

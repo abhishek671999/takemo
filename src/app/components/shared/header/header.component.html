@@ -1,0 +1,18 @@
+<div class="main-header">
+    <div class="logo-home">
+      <a href="/home"><img src="assets/images/takemo_logo_transparent.png" alt="takemo-logo"></a>
+    </div>
+    <div>
+      <p style="color: white;">Welcome {{username}}</p>
+    </div>
+    <div class="navigation">
+      <input id='hamburger-checkbox' type="checkbox"
+                class="toggle-menu">
+      <div class="hamburger"></div>
+      <ul class="menu">
+        <li *ngFor="let item of dropdownList; index as i;" (click)="onClick(i)">
+          <p>{{item.name}}</p>
+      </ul>
+    </div>
+    {{message}}
+</div>

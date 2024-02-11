@@ -1,0 +1,23 @@
+<div class="main-container">
+    <form [formGroup]="rechargeForm">
+        <h1 mat-dialog-title>Recharge??</h1>
+        <div mat-dialog-content>
+            <div>
+                <mat-form-field class="form-field">
+                    <mat-label>Amount</mat-label>
+                    <input type="number" min="1" step="1" (input)="updateTotalAmount()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" matInput placeholder="Amount" formControlName="amount">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <h2>Total Recharge Amount: {{rechargeValue}}</h2>
+            <h4>Platform fee (Introductory offer): 0.0</h4>
+            <!-- <small class="font-weight-bold">Platform fee of 1% levied while recharging only. <b>Not</b> while ordering.</small> -->
+            <small class="font-weight-bold text-warning">*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
+        </div>
+        <div mat-dialog-actions class="action-container">
+            <button mat-raised-button (click)="closeDialog()"> Cancel</button>
+            <button mat-raised-button [disabled]="!rechargeForm.valid" color="primary" (click)="rechargeWallet()">Recharge</button>
+        </div>
+    </form>
+</div>

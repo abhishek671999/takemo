@@ -1,25 +1,60 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AboutComponent } from './about/about.component';
-import { PricingComponent } from './pricing/pricing.component';
-import { HomeComponent } from './home/home.component';
-import { ContactUsComponent } from './contact-us/contact-us.component';
-import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
-import { SignupComponent } from './signup/signup.component';
+import { HomeComponent } from './components/home_screen/home/home.component';
+import { NotfoundComponent } from './notfound/notfound.component';
+import { authGuard } from './gurd/auth/auth.guard';
+import { TestComponentNewComponent } from './test-component-new/test-component-new.component';
+import { PostLoginComponent } from './components/post-login/post-login.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent}, 
-  { path: 'about', component: AboutComponent},
-  { path: 'pricing', component: PricingComponent},
-  { path: 'contact', component: ContactUsComponent},
-  { path: 'forgot-password', component: ForgotpasswordComponent},
-  { path: 'signup', component: SignupComponent}
-  
+  {
+    path: '', redirectTo: 'home', pathMatch: 'full'
+  },
+  {
+    path: 'login2',
+    loadChildren: () =>
+      import('./components/home_screen/home.module').then(
+        (m) => m.HomeModule
+      ),
+  },
+  {
+    path: 'login',
+    loadChildren: () => 
+      import('./components/home_screen/home.module').then((m) => m.HomeModule)
+  },
+  {
+    path: 'user',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./components/user_screen/user.module').then((m) => m.UserModule),
+  },
+  {
+    path: 'home',
+    canActivate: [authGuard],
+    component: PostLoginComponent
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./components/admin/admin.module').then((m) => m.AdminModule)
+  },
+  {
+    path: 'owner',
+    canActivate: [authGuard],
+    loadChildren: () => 
+      import('./components/owner_view/owner.module').then((m) => m.OwnerModule)
+  },
+  {
+    path: 'test',
+    component: TestComponentNewComponent
+  },
+  { path: '**', component: NotfoundComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
-export const routingComponents = [AboutComponent, PricingComponent, HomeComponent]
+export class AppRoutingModule {}
+export const routingComponents = [HomeComponent];

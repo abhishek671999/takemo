@@ -1,0 +1,103 @@
+html{
+    --mat-standard-button-toggle-height: 20px;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 85vh;
+    background: rgba(240, 242, 245, 1);
+}
+.viewport {
+    height: 60vh;
+}
+
+.add-category-button{
+    font-size: large;
+}
+
+.add-item-button{
+    font-size: small;
+}
+
+.indicator-image{
+    width:30px;
+    height: auto;
+    float: left;
+}
+
+.menu-container{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-toggle{
+    margin: 2em;
+}
+
+.addCategoryIcon{
+    cursor: pointer;
+    width: 30px;
+    height: auto;
+    padding-bottom: 10px;
+}
+
+.expansion-panel{
+    border-radius: 10px;
+}
+
+:host ::ng-deep .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper{
+    width: 100%;
+}
+
+.col1{
+    width: 10%;
+}
+
+.col2{
+    width: 10%;
+    display: relative;
+}
+
+.col3{
+    width: 10%;
+}
+
+.col4{
+    width: 20%;
+}
+
+.col5{
+    width: 10%;
+}
+.col6{
+    width: 10%;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    overflow-y: scroll;
+    background: grey;
+    box-shadow: inset 0 0 4px #707070;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 246);
+    border-radius: 6px;
+}
+
+.navigation{
+    padding: 1em 2em 1em 2em;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+@media screen and (max-width: 425px){
+    .menu-container{
+        width: 98%;
+    }
+}

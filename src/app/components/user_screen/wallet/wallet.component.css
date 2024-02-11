@@ -1,0 +1,28 @@
+.main-container{
+    height: 90vh;
+    width: 100%;
+    border: solid 1px black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.viewport {
+    height: 68vh;
+}
+
+.tab-group-container{
+    border-radius: 10px;
+    width: 80%;
+    height: 30vh
+}
+
+.quick-access{
+    margin-top: 2em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5em;
+
+}

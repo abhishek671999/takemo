@@ -1,0 +1,87 @@
+<div class="main-container">
+  <div *ngIf='!loadView' class="center-spin">
+    <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+  </div>
+  <div *ngIf="loadView" class="input-container">
+    <mat-form-field class="form-field" *ngIf="!restaurantFlag">
+      <mat-label>Select Restaurant</mat-label>
+      <mat-select [(value)]="selectedRestaurant" (selectionChange)="onValueChange('none')">
+        <mat-option *ngFor="let restaurant of restaurantList" [value]="restaurant.restaurant_id">
+          {{restaurant.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="isITTUser" class="form-field">
+      <mat-label>Select Shift</mat-label>
+      <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange('none')">
+        <mat-option *ngFor="let rule of ruleList" [value]="rule.rule_id">
+          {{rule.rule_name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="form-field">
+      <mat-label>Select time frame</mat-label>
+      <mat-select [(value)]="selectedTimeFrameForTimelyAnalytics" (selectionChange)="onValueChange('none')" >
+        <mat-option *ngFor="let time of timeFramesForTimelyAnalytics" [value]="time.actualValue">
+          {{time.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    <mat-form-field id="calendarInputField" class="hidden">
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input  [formGroup]="range" [rangePicker]="picker">
+        <input matStartDate (dateChange)="dateChanged()" formControlName="start" placeholder="Start date">
+        <input matEndDate (dateChange)="dateChanged()" formControlName="end" placeholder="End date">
+      </mat-date-range-input>
+      <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    
+      <!-- @if (range.controls.start.hasError('matStartDateInvalid')) {
+        <mat-error>Invalid start date</mat-error>
+      }
+      @if (range.controls.end.hasError('matEndDateInvalid')) {
+        <mat-error>Invalid end date</mat-error>
+      } -->
+  </mat-form-field>
+
+  <mat-form-field *ngIf="counters.length > 0">
+    <mat-label>Counter Name</mat-label>
+    <mat-select (selectionChange)="onValueChange('none')" [(value)]="selectedCounterId">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let option of counters" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+    <mat-form-field class="form-field">
+      <mat-label>Item</mat-label>
+      <mat-select [(value)]="selectedItem" (selectionChange)="onValueChange('item')">
+        <mat-option *ngFor="let item of itemList" [value]="item">
+          {{item.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="form-field">
+      <mat-label>Category</mat-label>
+      <mat-select [(value)]="selectedCategory" (selectionChange)="onValueChange('category')">
+        <mat-option *ngFor="let category of categoryList" [value]="category">
+          {{category.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="total-view">
+    <b>Total Amount:&nbsp;₹ {{totalAmount}}</b>
+    <b>Total Orders: &nbsp;{{totalOrders}}</b>
+  </div>
+  <div class="graph-container">
+    <div class="graph">
+        <canvas id="canvas4"></canvas>
+    </div>
+    <div class="graph">
+        <canvas id="canvas3"></canvas>
+    </div>
+  </div>
+
+</div>

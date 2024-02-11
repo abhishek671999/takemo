@@ -1,0 +1,58 @@
+<div class="main-container">
+    <h4 mat-dialog-title>Proceed??</h4>
+    <div mat-dialog-content class="table-container">
+        <table  class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of pickedItems.items">
+                    <td>{{item.name}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.price}}</td>
+                    <td>{{item.quantity * item.price}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <p>Amount:&nbsp;&nbsp;₹ {{pickedItems.amount}}</p>
+        </div>
+        <div *ngIf="isPayment==true">
+            <mat-checkbox class="example-margin" [(ngModel)]="paybyWalletCheck" (change)="checkValue()"><b>Pay using Wallet</b></mat-checkbox>
+            <div *ngIf="!paybyWalletCheck;else elseBlock">
+                <!-- <p>Platform Fee: {{platformFee['platform_fee_percentage']}}% + Gst {{platformFee['platform_fee_gst_percentage']}}% = &nbsp;₹&nbsp;{{platformFeeAmount}}</p>
+                Round Off: {{roundOffAmount}} -->
+                <p>Platform Fee (Introductory offer): 0.0</p>
+                <div class="text-center amount">Total Amount:&nbsp;
+                    &nbsp;₹ {{totalAmount}} </div>
+                <small class="font-weight-bold text-warning">*Please use VPA/UPI id to pay if redirection to app doesn't work</small>
+            </div>
+            <ng-template  #elseBlock>
+                <p [ngClass]="isWalletPayment ? 'text-primary': 'text-warning' " [innerHTML]="this.walletPayMessage"></p>
+            </ng-template>
+        </div>
+    </div>
+    <div mat-dialog-actions class="button-container">
+        <div class="confirmation-buttons">
+            <button mat-raised-button (click)="onEditButtonClick()">Edit Order</button>
+        </div>
+        <ng-container *ngIf="isPayment == false; else payment">
+            <button mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
+        </ng-container>
+        <ng-template #payment>
+            <ng-container *ngIf="isPayment==true && !paybyWalletCheck; else walletPayment"><button mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay</button></ng-container>
+        </ng-template>
+        <ng-template #walletPayment>
+            <ng-container *ngIf="isPayment && isWalletPayment && paybyWalletCheck; else elseBlock"><button mat-raised-button (click)="onProceedwithWalletClick()" color="primary">Proceed with wallet</button></ng-container>
+        </ng-template>
+        <ng-template #elseBlock>
+            <button mat-raised-button disabled>Pay</button>
+        </ng-template>
+
+    </div>
+</div>

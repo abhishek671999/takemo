@@ -1,0 +1,43 @@
+<div class="login-window">
+    <div class="login-item">
+        <form [formGroup]="loginObj" class="form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)" novalidate>
+            <div class="form-group section">
+                <input placeholder="Email Address or Phone number" type="email" formControlName="username" autofocus class="form-control"
+                    [class.is-invalid]="loginFormControl.username.invalid && loginFormControl.username.touched"> 
+                    <div *ngIf="loginFormControl.username.valid || loginFormControl.username.untouched">
+                        <br>
+                    </div>
+                <div *ngIf="loginFormControl.username.invalid && loginFormControl.username.touched">
+                    <small class="text-danger" *ngIf="loginFormControl.username.errors?.['required']">Email or Phone number is required</small>
+                    <small class="text-danger" *ngIf="loginFormControl.username.errors?.['pattern']">Please provide a valid email address or phone number</small>
+                </div>
+                
+            </div>
+            <div class="form-group section">
+                <div class="password-field">
+                <input 
+                    placeholder="Password" 
+                    [type]="hide ? 'password' : 'text'"
+                    formControlName="password" 
+                    class="form-control password-field" 
+                    [class.is-invalid]="loginFormControl.password.invalid && loginFormControl.password.touched"><mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon></div>
+                    
+                <div *ngIf="loginFormControl.password.valid || loginFormControl.password.untouched">
+                  <br>
+                </div>
+                <small class="text-danger" [class.d-none]="loginFormControl.password.valid || loginFormControl.password.untouched">Password is required</small>
+            </div>
+            <div class="center">
+                <button [disabled]="!loginObj.valid" class="btn-login">Login</button>
+            </div>
+            <div>
+                <p class="anchor-forgot-pwd"><a href="login/forgot-password">Forgot password??</a></p>
+            </div>
+        </form>  
+        <div class="sign-up">
+            <p>Don't have an account? Create here</p>
+            <p><a class="anchor-sign-up" href="login/signup"> Sign up</a></p>
+        </div>
+    </div>
+    
+</div>

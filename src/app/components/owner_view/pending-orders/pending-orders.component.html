@@ -1,0 +1,28 @@
+<div class="main-container">
+    <div *ngIf="showSpinner && firstPageLoad;">
+        <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+    </div>
+    <mat-form-field *ngIf="counters.length > 0">
+        <mat-label>Counter Name</mat-label>
+        <mat-select (selectionChange)="getCurrentOrders()" [(value)]="selectedCounterId">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let option of counters" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    <div class="main-box"  *ngIf="orderList.length > 0; else NoPendingOrderBlock">
+        
+        <div class="content-box">
+            <ng-container *ngFor="let item of orderList">
+                <button class="card-box" (click)="itemClicked(item)">
+                    <h2 style="font-size: xx-large;" class="text-center text-white">{{item.quantity}}</h2>
+                    <h1 class="text-center text-white">{{item.name}}</h1>
+                </button>
+            </ng-container>
+        </div> 
+    </div>
+    <ng-template #NoPendingOrderBlock >
+        <div *ngIf="!showSpinner">
+            <h1 class="text-center" style="width: 100%;">No pending orders</h1>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,13 @@
+.form-field{
+    padding: 1em;
+}
+
+.action-buttons{
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    flex-direction: row-reverse;
+    justify-items: center;
+    align-items: center;
+    right: 0;
+}

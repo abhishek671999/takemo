@@ -1,0 +1,21 @@
+<div class="home-container">
+    <div class="overlay" *ngIf="showSpinner; else ElseBlock">
+        <div class="center-spin">
+          <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+        </div>
+    </div> 
+    <ng-template #ElseBlock>
+        <div class="nav-container" *ngIf="restaurantInfo">
+                <ul *ngFor="let info of restaurantInfo.restaurants; let i = index">
+                    <div class="restaurant-grid">
+                        <li (click)="onSelect(info)" class="nav-li" >
+                            <p>{{info.name}}</p>
+                        </li>
+                    </div>
+                        <!-- <img src="{{'data:image/jpg;base64,' + info.image}}"> -->
+                </ul> 
+        </div>
+    </ng-template>
+    
+    
+</div>

@@ -1,0 +1,120 @@
+.login-window {
+  display: flex;
+  position: relative;
+  height: 86vh;
+  background-image: url("../../../../assets/images/loginBG.jpg");
+  background-size: 100%;
+  background-size: cover;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  min-height: 86vh;
+}
+
+.login-item {
+  width: 25%;
+  height: fit-content;
+  position: relative;
+  border: 1px outset black;
+  border-radius: 0.5em;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 1);
+  opacity: 0.9;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+  background-color: rgba(0, 82, 204, 0.5);
+}
+
+@media screen and (max-width: 1024px) {
+  .login-item {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-item {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 526px) {
+  .login-item {
+    width: 90%;
+  }
+}
+
+.section {
+  padding-bottom: 10px;
+}
+
+.btn-login {
+  background-color: rgba(0, 82, 204, 1);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 40%;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.submit-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.anchor-forgot-pwd {
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  padding: 1em;
+}
+
+.anchor-sign-up {
+  background-color: rgba(66, 183, 41, 1);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 7px;
+  border-radius: 5px;
+}
+.sign-up {
+  padding: 0.5em;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.password-field {
+  width: 90%;
+  display: inline;
+}
+
+.input-icons i {
+  position: absolute;
+  right: 4%;
+}
+
+.input-icons {
+  margin-bottom: 10px;
+}
+
+.icon {
+  padding: 15px;
+  min-width: 40px;
+}
+
+.input-field {
+  padding: 10px;
+  width: 100%;
+}

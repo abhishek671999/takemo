@@ -1,0 +1,32 @@
+<div class="main-container">
+  <div class="input-container">
+    <mat-form-field *ngIf="!restaurantFlag">
+      <mat-label>Select Restaurant</mat-label>
+      <mat-select [(value)]="selectedRestaurant">
+        <mat-option *ngFor="let time of restaurantList" [value]="time.restaurant_id">
+          {{time.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>  
+      <mat-form-field>
+          <mat-label>Month and Year</mat-label>
+          <input matInput [matDatepicker]="dp" [formControl]="date" #v (change)="onDateChange('none')">
+          <mat-hint>MM/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp
+                          startView="multi-year"
+                          (monthSelected)="setMonthAndYear($event, dp)"
+                          panelClass="example-month-picker">
+          </mat-datepicker>
+        </mat-form-field>
+        <button mat-raised-button color="primary" [disabled]='!date.valid' (click)="onDateChange(v.value)">Submit</button>
+      </div>
+      
+      <pdf-viewer [src]="pdfSrc" 
+              *ngIf="pdfSrc"
+                    [render-text]="true"
+                    class="pdf-viewer"
+      ></pdf-viewer>
+      <button mat-raised-button color="primary" (click)="downloadPdf()">Download PDF </button>
+
+</div>

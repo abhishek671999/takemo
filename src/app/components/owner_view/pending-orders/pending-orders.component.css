@@ -1,0 +1,75 @@
+.main-container {
+  width: 100%;
+  height: 78vh;
+  border: solid 1px black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-box {
+  border: solid 1px rgb(65, 104, 244, 0.8);
+  border-radius: 10px;
+  width: 80%;
+  height: 75vh;
+  display: flex;
+  justify-content: center;
+  padding: 1em;
+  overflow: auto;
+  
+}
+
+.content-box{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0.5em;
+}
+
+.card-box {
+  background-color: rgb(65, 104, 244, 0.8);
+  border: solid 1px rgb(65, 104, 244, 0.8);
+  margin: 10px;
+  padding: 10px;
+  height: 11em;
+  cursor: pointer;
+  width: 10em;
+  border-radius: 5px;
+  overflow: auto;
+}
+
+@media screen and (max-width: 526px) {
+  
+  .main-box {
+    width: 95%;
+  }
+
+}
+
+@media screen and (max-width: 425px) {
+  
+  .card-box {
+    width: 9.5em;
+    padding: 0;
+  }
+  
+
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  overflow-y: scroll;
+  background: rgb(255, 255, 255);
+  box-shadow: inset 0 0 4px #707070;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(217, 217, 246);
+  border-radius: 1px;
+}
+::-webkit-scrollbar:horizontal {
+  display: none;
+}

@@ -1,0 +1,26 @@
+<div class="main-container">
+    <h2 mat-dialog-title>Order Details</h2>
+    <div mat-dialog-content>
+        <h3 style="display: inline; font-weight: bold;">Order Num :</h3><h3 style="display: inline;"> {{data.orderno}}</h3><br>
+        <h3 style="display: inline; font-weight: bold;">Order Id  :</h3><h3 style="display: inline;"> {{data.order_id}}</h3><br>
+        <div *ngIf="data.ordered_by">
+            <h3 style="display: inline; font-weight: bold;">Ordered by  :</h3><h3 style="display: inline;"> {{data.ordered_by}}</h3><br>
+        </div>
+        <h3 style="display: inline; font-weight: bold;">Order Value :</h3><h3 style="display: inline;"> {{data.total_restaurant_amount}}</h3><br>
+        <h3 style="display: inline; font-weight: bold;">Platform Fee:</h3><h3 style="display: inline;"> {{data.total_platform_fee}}</h3><br>
+        <h3 style="display: inline; font-weight: bold;">Total Amount:</h3><h3 style="display: inline;"> {{data.total_amount}}</h3><br>
+        <h3 style="display: inline; font-weight: bold;">Ordered At :</h3><h3 style="display: inline;"> {{data.OrderedAt}}</h3><br>
+        <div *ngIf="data.DeliveredAt">
+            <h3  style="display: inline; font-weight: bold;">Delivered At :</h3><h3 style="display: inline;"> {{data.DeliveredAt}}</h3><br>
+        </div>
+        <div *ngIf="data.refund_amount">
+            <h3  style="display: inline; font-weight: bold;">Refund Amount :</h3><h3 style="display: inline;"> {{data.refund_amount}}</h3><br>
+        </div>
+        <h3 style="display: inline; font-weight: bold;">Location :</h3><h3 style="display: inline;"> {{data.Location}}</h3><br>
+        <h3 style="display: inline; font-weight: bold;">transaction_id:</h3><h3 style="display: inline;"> {{data.payment_details.transaction_id || NA}}</h3><br>
+        <h3 style="display: inline; font-weight: bold;">UTR:  </h3><h3 style="display: inline;">{{data.payment_details.UTR || NA}}</h3><br>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button (click)="closeDialog()"> Close</button>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+:host /deep/ router-outlet + * {
+    background-image: url('../../../../assets/images/loginBG.jpg');
+    background-size: 100%;  
+    background-size: cover;
+}

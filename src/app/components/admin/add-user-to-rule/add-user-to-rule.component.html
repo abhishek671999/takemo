@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>Add User to shift??</h1>
+<div mat-dialog-content class="main-container">
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <mat-label>Company Name</mat-label>
+        <mat-select [disabled]="disableCompanyField()" [(value)]="selected_company">
+          <mat-option *ngFor="let company of companies" [value]=company>{{company.company_name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field  class="example-full-width">
+        <mat-label>Restaurant Name</mat-label>
+        <mat-select [disabled]="disableRestaurantField()"[(value)]="selected_restaurant">
+          <mat-option *ngFor="let restaurant of restaurants" [value]="restaurant">{{restaurant.restaurant_name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+          <mat-label>Name</mat-label>
+          <input matInput type="text"
+                 placeholder="Pick one"
+                 [formControl]="formControl"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+      </mat-form-field>
+    </form>
+    <button mat-raised-button (click)="onClick()" [disabled]="!isDisabled()">Add User</button>
+</div>
