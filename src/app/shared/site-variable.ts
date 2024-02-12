@@ -78,7 +78,7 @@ export class meAPIUtility{
             this.cookieService.delete('token')
             this.cookieService.deleteAll('/')
         }
-        console.log('after deleting')
+        console.log('after deleting', this.cookieService.getAll())
     }
 
     doesUsersBelongsToITT(){
