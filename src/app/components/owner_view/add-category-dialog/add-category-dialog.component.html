@@ -22,7 +22,7 @@
         </div>
         <div class="action-container" mat-dialog-actions>
             <button mat-button (click)="close()" type='button'>Cancel</button>
-            <button  mat-raised-button color="primary" type='submit'>Add Category</button>
+            <button  mat-raised-button color="primary" type='submit' [disabled]="!addCategoryForm.valid">Add Category</button>
         </div>
     </form>
 

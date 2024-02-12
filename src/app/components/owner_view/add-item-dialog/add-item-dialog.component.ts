@@ -21,6 +21,7 @@ export class AddItemDialogComponent {
     name: ['', Validators.required],
     price: ['', Validators.required],
     isVeg: ['veg', Validators.required],
+    counterId: ['']
   });
   addItem() {
     console.log('Adding this item: ', this.addItemForm.value);
@@ -32,6 +33,7 @@ export class AddItemDialogComponent {
       veg: this.addItemForm.value.isVeg == 'veg' ? true : false,
       non_veg: this.addItemForm.value.isVeg == 'non_veg' ? true : false,
       egg: this.addItemForm.value.isVeg == 'egg' ? true : false,
+      counter_id: this.addItemForm.value.counterId
     };
     this._editMenuService.addItem(body).subscribe(
       (data) => {

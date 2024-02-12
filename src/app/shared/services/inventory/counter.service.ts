@@ -9,6 +9,7 @@ export class CounterService {
 
   private restaurantCounterEndpoint = 'inventory/get_restaurant_counters/'
   private addCounterEndpoint = 'inventory/add_counter/'
+  private editCounterEndpoint = 'inventory/edit_counter/'
 
   constructor(private _http: HttpClient, private _utility: Utility) { }
 
@@ -20,6 +21,10 @@ export class CounterService {
 
   addRestaurantCounter(body){
     return this._http.post(host+this.addCounterEndpoint, body, {headers: this._utility.getHeaders()})
+  }
+
+  editRestaurantCounter(body){
+    return this._http.post(host+this.editCounterEndpoint, body, {headers: this._utility.getHeaders()})
   }
 
 }

@@ -7,14 +7,23 @@
                                     <th class="col1" scope="col">Id</th>
                                     <th class="col2" scope="col">Name</th>
                                     <th class="col3" scope="col">Edit</th>
+                                    <th class="col4" scope="col">Delete</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center" >
                                 <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
                                 <tr class="table-row"*ngFor="let counter of counterResponse; let mainIndex = index">
                                     <td class="col1" >{{mainIndex+1}}</td>
-                                    <td class="col2" >{{counter.counter_name}}</td>
-                                    <td class="col3" >
+                                    <td class="col2" >
+                                        <mat-form-field class="example-full-width">
+                                            <mat-label>Counter name</mat-label>
+                                            <input type="text" matInput value={{counter.counter_name}}  (blur)="editCounter(counter, $event)" placeholder={{counter.counter_name}} [disabled]="!counter.is_edit">
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="col3">
+                                        <mat-icon svgIcon="edit" title="Edit this item" (click)="enableEditCounter(counter)"></mat-icon>
+                                    </td>
+                                    <td>
                                         <mat-icon  title="Delete this category" svgIcon="delete" (click)="deleteCounter(counter)"></mat-icon>
                                     </td>
                                 </tr>
