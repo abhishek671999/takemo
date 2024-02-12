@@ -32,6 +32,7 @@ export class PointOfSaleComponent {
   public usbSought;
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
+  public printerRequired = false;
 
   ngOnInit() {
     this.summary = {
@@ -42,6 +43,7 @@ export class PointOfSaleComponent {
       .getPOSMenu(sessionStorage.getItem('restaurant_id'))
       .subscribe((data) => {
         this.menu = data['menu'];
+        this.printerRequired = data['printer_required'];
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -314,37 +316,40 @@ export class PointOfSaleComponent {
     });
   }
 
+  printRecipt(orderNum){
+    if (this.usbSought ) {     //to-do: Interchange dialogbox call and print call
+      let printConnect = this.printService.init();
+      this.getPrintableText().forEach((ele) => {
+        if (ele.text != '') {
+          printConnect.writeCustomLine(ele);
+        }
+      });
+      printConnect
+        .writeCustomLine({
+          text: `Order No: ${orderNum}`,
+          size: 'xxlarge',
+          bold: true,
+          justification: 'center',
+        })
+        .feed(5)
+        .cut()
+        .flush();
+    }
+  }
+
   placeOrder() {
     let body = this.preparePlaceOrderBody();
-    this.usbSought ? null : this.seekUSB();
-    console.log(this.usbSought);
+    this.printerRequired && !this.usbSought ? this.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
         let orderNum = data['order_no'];
+        this.printRecipt(orderNum)
         let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
           data: {
             msg: `Order created successfully. Order No: ${data['order_no']}`,
           },
         });
         dialogRef.afterClosed().subscribe((data) => {
-          if (this.usbSought) {     //to-do: Interchange dialogbox call and print call
-            let printConnect = this.printService.init();
-            this.getPrintableText().forEach((ele) => {
-              if (ele.text != '') {
-                printConnect.writeCustomLine(ele);
-              }
-            });
-            printConnect
-              .writeCustomLine({
-                text: `Order No: ${orderNum}`,
-                size: 'xxlarge',
-                bold: true,
-                justification: 'center',
-              })
-              .feed(5)
-              .cut()
-              .flush();
-          }
           this.ngOnInit();
         });
       },
