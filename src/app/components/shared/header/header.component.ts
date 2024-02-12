@@ -118,6 +118,7 @@ export class HeaderComponent {
     }
   
     addAdminNavOptions(company){
+      this.location = company.company_name
       let adminNavOptions
       if(company.id == 1){
         adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
@@ -135,6 +136,7 @@ export class HeaderComponent {
   
   addRestaurantOwnerNavOptions(restaurant){
     let restaurantOwnerNavOptions
+    this.location = restaurant.restaurant_name
     if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
       restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'POS' ,'orders']
     }else{
@@ -170,6 +172,8 @@ export class HeaderComponent {
   dropdownList = [this.AvailableDropdownList['support'], this.AvailableDropdownList['logout']]
   username: string
   message: string
+  location: string
+
 
   ngOnInit(){
     let data = this._meAPIutility.getMeData().subscribe(data => {

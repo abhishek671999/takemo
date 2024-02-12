@@ -205,7 +205,7 @@ export class EditMenuComponent {
   addItem(category) {
     console.log('Add item', category);
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
-      data: Object.assign(category, { restaurant_id: this.restaurantId }),
+      data: Object.assign(category, { restaurant_id: this.restaurantId, counters: this.countersAvailable }),
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }

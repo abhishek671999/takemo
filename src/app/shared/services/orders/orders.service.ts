@@ -14,6 +14,7 @@ export class OrdersService {
   private checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/'
   private createOrdersEnpoint = 'order/create_order/'
   private deliverIndividualOrderEndpoint = 'order/deliver_single_item/'
+  private deliverAllOrdersEndpoint = 'order/deliver_all_pending_orders/'
   private deliverEntireOrderEndpoint = 'order/deliver_entire_order/'
   private getRestaurantOrdersEndpoint = 'order/get_restaurant_orders/'
   private getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/'
@@ -46,12 +47,17 @@ export class OrdersService {
   updateOrderStatus(body){
     return this._http.post(host + this.updateOrderStatusEndpoint, body, {headers: this.utility.getHeaders()})
   }
+
   deliverIndividualOrder(body){
     return this._http.post(host + this.deliverIndividualOrderEndpoint, body, {headers: this.utility.getHeaders()})
   }
 
   deliverEntireOrder(body){
     return this._http.post(host + this.deliverEntireOrderEndpoint, body, {headers: this.utility.getHeaders()})
+  }
+
+  deliverAllOrders(body){
+    return this._http.post(host + this.deliverAllOrdersEndpoint, body, {headers: this.utility.getHeaders()})
   }
 
   getRestaurantOrders(body, httpParams?){

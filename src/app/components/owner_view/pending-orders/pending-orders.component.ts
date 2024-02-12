@@ -5,6 +5,7 @@ import { DeliveryOrderDialogComponent } from '../delivery-order-dialog/delivery-
 import { Observable,Subscription, interval  } from 'rxjs';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { HttpParams } from '@angular/common/http';
+import { DeliverAllOrdersDialogComponent } from '../deliver-all-orders-dialog/deliver-all-orders-dialog.component';
 
 @Component({
   selector: 'app-pending-orders',
@@ -64,11 +65,22 @@ export class PendingOrdersComponent {
     )
   }
 
+  deliverAllOrders(){
+    let data = this.selectedCounterId ? {'counter': this.counters.filter(x => x.counter_id == this.selectedCounterId)[0]} : null
+    let dialog = this._dialog.open(DeliverAllOrdersDialogComponent, {data: data})
+    dialog.afterClosed().subscribe( () => {
+      this.updateSubscription.unsubscribe()
+      this.ngOnInit()
+    })
+  }
 
   itemClicked(item){
     console.log('This item is clicked: ', item)
     let dialogRef = this._dialog.open(DeliveryOrderDialogComponent, {data: item})
-    dialogRef.afterClosed().subscribe( () => this.ngOnInit())
+    dialogRef.afterClosed().subscribe( () => {
+      this.updateSubscription.unsubscribe()
+      this.ngOnInit()
+    })
   }
 
   ngOnDestroy(){

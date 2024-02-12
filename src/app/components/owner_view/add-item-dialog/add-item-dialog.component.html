@@ -8,8 +8,16 @@
             </mat-form-field>
             <mat-form-field  class="form-field">
                 <mat-label >Price</mat-label>
-            <input matInput placeholder="price" formControlName="price">
+            <input matInput type="number" placeholder="price" formControlName="price">
             </mat-form-field>
+            <mat-form-field>
+                <mat-label>Counter Name</mat-label>
+                <mat-select formControlName="counterId">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let option of data.counters" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
             <mat-radio-group formControlName="isVeg">
                 <mat-radio-button value='veg'>Veg</mat-radio-button>
                 <mat-radio-button value="non_veg">Non Veg</mat-radio-button>
@@ -21,7 +29,7 @@
                     <button mat-button>Cancel</button>
                 </div>
                 <div>
-                    <button mat-raised-button color="primary">Yes</button>
+                    <button mat-raised-button color="primary" [disabled]="!addItemForm.valid">Yes</button>
                 </div>
             </div>
     </form>
