@@ -12,8 +12,9 @@ export class LoginService {
   constructor(private _http: HttpClient, private _router: Router, public cookieService: CookieService, 
     public utility: Utility, private meAPIUtility: meAPIUtility) {}
 
-  _host = host;
   _login_endpoint = 'rest-auth/login/';
+  _logout_endpoint = 'rest-auth/logout/';
+
 
   login(user: any) {
     if (Number(user.username)) {
@@ -22,7 +23,25 @@ export class LoginService {
     const body = { username: user.username, password: user.password };
 
     return this._http
-      .post<any>(this._host + this._login_endpoint, body)
+      .post<any>(host + this._login_endpoint, body)
+  }
+
+  logOut() {
+    this._http.post(host + this._logout_endpoint, {}, {headers: this.utility.getHeaders()}).subscribe(
+      data => {
+        console.log('Logging out', data)
+        sessionStorage.clear()
+        this.meAPIUtility.removeMeData()
+        this._router.navigate(['login']);
+      },
+      error => {
+        alert('Failed to Logout. Try again. Contact Takemo if persists')
+        sessionStorage.clear()
+        this.meAPIUtility.removeMeData()
+        this._router.navigate(['login']);
+      }
+    )
+    
   }
 
   errorHandler(error: HttpErrorResponse) {
@@ -34,10 +53,4 @@ export class LoginService {
     return token.length != 0 || token != '' || token != null
   }
 
-  logOut() {
-    sessionStorage.removeItem('restaurant_id')
-    sessionStorage.removeItem('company_id')
-    this.meAPIUtility.removeMeData()
-    this._router.navigate(['login']);
-  }
 }
