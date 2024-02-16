@@ -44,6 +44,7 @@ import { CurrentOrdersComponent } from './current-orders/current-orders.componen
 import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatCheckboxModule,
     SharedModuleModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSlideToggleModule
   ],
   providers: [
     {

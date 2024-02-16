@@ -8,6 +8,16 @@
     gap: 20px;
 }
 
+.table-container{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+.viewport {
+    height: 67vh;
+}
+
 .total-view{
     padding-top: 2em;
     display: flex;
