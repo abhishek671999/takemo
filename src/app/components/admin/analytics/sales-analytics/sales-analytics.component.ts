@@ -13,7 +13,7 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { FormControl, FormGroup } from '@angular/forms';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
-
+import { MatTableDataSource } from '@angular/material/table';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -72,19 +72,24 @@ export class SalesAnalyticsComponent {
   totalAmount = 0;
   totalOrders = 0;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false;
-  isITTUser = this._meAPIutility.doesUsersBelongsToITT()
+  isITTUser = this._meAPIutility.doesUsersBelongsToITT();
 
   chart1: any = [];
   chart2: any = [];
 
-  counters = []
+  counters = [];
   selectedCounterId;
+  tableView = true;
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
 
+  ELEMENT_DATA = [];
+
+  displayedColumns: string[] = ['position', 'name', 'quantity', 'total_amount'];
+  public dataSource = new MatTableDataSource()
   ngOnInit() {
     console.log('Get all rules called');
     this._ruleService.getAllRules().subscribe((data) => {
@@ -99,19 +104,26 @@ export class SalesAnalyticsComponent {
       this.createChart(this.getRequestBodyPrepared());
       this.loadView = true;
     });
-    this._counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
-      data => {
-        console.log('counters available', data)
-        this.counters = data['counters']
-      },
-      error => {
-        console.log('Error: ', error)
-      }
-    )
+    this._counterService
+      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .subscribe(
+        (data) => {
+          console.log('counters available', data);
+          this.counters = data['counters'];
+        },
+        (error) => {
+          console.log('Error: ', error);
+        }
+      );
+  }
+
+  onToggle(event){
+    this.tableView = !this.tableView
+    this.onValueChange()
   }
 
   getRequestBodyPrepared() {
-    console.log('This is in body: ', this.isITTUser)
+    console.log('This is in body: ', this.isITTUser);
     let body = {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
@@ -121,10 +133,10 @@ export class SalesAnalyticsComponent {
         : this.selectedRestaurant,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
-      pos: this.isITTUser ? false: true,
+      pos: this.isITTUser ? false : true,
     };
-    if(this.selectedCounterId){
-      body["counter_id"] = this.selectedCounterId
+    if (this.selectedCounterId) {
+      body['counter_id'] = this.selectedCounterId;
     }
     console.log(
       'New: ',
@@ -152,21 +164,86 @@ export class SalesAnalyticsComponent {
 
   onValueChange() {
     let field = document.getElementById('calendarInputField');
-    console.log('Value changed');
-    console.log('THis is selected time frame', this.selectedTimeFrame);
+
     if (this.selectedTimeFrame == 'custom') {
       field.classList.remove('hidden');
       if (this.range.value.start && this.range.value.end) {
-        this.chart1.destroy();
-        this.chart2.destroy();
-        this.createChart(this.getRequestBodyPrepared());
+        try{
+          this.chart1.destroy();
+          this.chart2.destroy();
+        }catch(error){
+          console.log(error)
+        }
       }
     } else {
       field.classList.add('hidden');
-      this.chart1.destroy();
-      this.chart2.destroy();
-      this.createChart(this.getRequestBodyPrepared());
+      try{
+        this.chart1.destroy();
+        this.chart2.destroy();
+      }catch(error){
+        console.log(error)
+      }
     }
+
+    this.createChart(this.getRequestBodyPrepared());
+  }
+  parseAllOrders(data) {
+    let parsedArray = []
+    let quantity = data['quantity']
+    let amount = data['amount']
+    let paymentList = []
+    Object.entries(amount).forEach(([key, value], index) => paymentList.push(key.split('_')[0]))
+    paymentList.forEach((value, index) => {
+      parsedArray.push(
+        {
+          position: index + 1,
+          name: value,
+          quantity: quantity[value+'_quantity'],
+          total_amount: amount[value+'_amount']
+        }
+      )
+    }
+    )
+    return parsedArray
+  }
+
+  parseOrdersCategoryWise(data) {
+    let parsedArray = [];
+    let categoryWiseData = data['category_wise_data'];
+    Object.entries(categoryWiseData).forEach(([key, value], index) => {
+      parsedArray.push({
+        position: index,
+        name: key,
+        quantity: value['quantity'],
+        total_amount: value['total_amount'],
+      });
+    });
+    return parsedArray;
+  }
+
+  parseOrdersItemWise(data) {
+    let parsedArray = [];
+    let itemWiseData = data['item_wise_data'];
+    console.log('itemwise', itemWiseData)
+    Object.entries(itemWiseData).forEach(([key, value], index) => {
+      parsedArray.push({
+        position: index,
+        name: key,
+        quantity: value['quantity'],
+        total_amount: value['total_amount'],
+      });
+    });
+    return parsedArray;
+  }
+
+  parseResponse(data) {
+    let parsedOrders =
+      this.selectedGroup == 'All'
+        ? this.parseAllOrders(data)
+        : this.selectedGroup == 'category_wise'
+        ? this.parseOrdersCategoryWise(data)
+        : this.parseOrdersItemWise(data);
+    return parsedOrders;
   }
 
   createChart(body) {
@@ -177,18 +254,23 @@ export class SalesAnalyticsComponent {
           console.log('Got response:: ', this.selectedGroup, data);
           this.totalOrders = data['quantity']['total_quantity'];
           this.totalAmount = data['amount']['total_amount'];
-          this.chart1 =
-            this.selectedGroup == 'All'
-              ? this.createTotalOrdersAnalyticsChart(data)
-              : this.selectedGroup == 'category_wise'
-              ? this.createCategoryWiseTotalOrderChart(data)
-              : this.createItemWiseTotalOrderChart(data);
-          this.chart2 =
-            this.selectedGroup == 'All'
-              ? this.createTotalAmountAnalyticsChart(data)
-              : this.selectedGroup == 'category_wise'
-              ? this.createCategoryWiseTotalAmountChart(data)
-              : this.createItemWiseTotalAmountChart(data);
+          if (this.tableView) {
+            this.dataSource.data = this.parseResponse(data);
+            console.log(this.dataSource.data)
+          } else {
+            this.chart1 =
+              this.selectedGroup == 'All'
+                ? this.createTotalOrdersAnalyticsChart(data)
+                : this.selectedGroup == 'category_wise'
+                ? this.createCategoryWiseTotalOrderChart(data)
+                : this.createItemWiseTotalOrderChart(data);
+            this.chart2 =
+              this.selectedGroup == 'All'
+                ? this.createTotalAmountAnalyticsChart(data)
+                : this.selectedGroup == 'category_wise'
+                ? this.createCategoryWiseTotalAmountChart(data)
+                : this.createItemWiseTotalAmountChart(data);
+          }
         },
         (error) => {
           console.log('Error while loading analytics');

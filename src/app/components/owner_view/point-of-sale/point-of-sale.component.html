@@ -86,12 +86,19 @@
             <div class="summary-end">
                 <div class="amount-summary">
                     <h2 style="font-weight: bold;">Total Amount:&nbsp;₹&nbsp;{{summary.amount}}</h2>
-                    <section class="example-section">
-                        <mat-radio-group class="smallRadio" [(ngModel)]="modeOfPayment">
-                            <mat-radio-button class="m-5 p-1" value="cash">Cash</mat-radio-button>
-                            <mat-radio-button class="m-5 p-1" value="upi">UPI</mat-radio-button>
-                            <mat-radio-button class="m-5 p-1" value="credit">Credit</mat-radio-button>
-                            <mat-radio-button class="m-5 p-1 bg-danger" value="card">Card</mat-radio-button>
+                    <section class="mop-section">
+                        <mat-radio-group class="radio-group" [(ngModel)]="modeOfPayment">
+                            <div class="radio-button-container">
+                                <div class="sub-container">
+                                    <mat-radio-button class="ml-2 mr-2 p-1" value="cash"><p>Cash</p></mat-radio-button>
+                                    <mat-radio-button class="ml-2 mr-2 p-1" value="upi"><p>UPI</p></mat-radio-button>
+                                </div>
+                                <div class="sub-container">
+                                    <mat-radio-button class="ml-2 mr-2 p-1" value="credit"><p>Credit</p></mat-radio-button>
+                                    <mat-radio-button class="ml-2 mr-2 p-1 bg-danger" value="card"><p>Card</p></mat-radio-button>
+                                </div>  
+                            </div>
+
                           </mat-radio-group>
                     </section>
                 </div>

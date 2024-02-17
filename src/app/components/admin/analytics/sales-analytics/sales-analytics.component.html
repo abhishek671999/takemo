@@ -63,17 +63,68 @@
       </mat-radio-button>
       </mat-radio-group>
   </div>
+  <div class="text-center">
+    <p style="display: inline-block;">Graph &nbsp;</p>
+    <mat-slide-toggle
+          class="example-margin"
+          [checked] ="tableView"
+          (toggleChange)="onToggle($event)">
+        Table
+      </mat-slide-toggle>
+  </div>
   <div class="total-view">
     <b>Total Amount:&nbsp;₹&nbsp;{{totalAmount}}</b>
     <b>Total Orders: {{totalOrders}}</b>
   </div>
-  <div class="graph-container">
-      <div class="graph">
-          <canvas id="canvas1"></canvas>
-      </div>
-      <div class="graph">
-          <canvas id="canvas2"></canvas>
-      </div>
-  </div>
+ 
+  
+      <div *ngIf="tableView; else graphView">
+        <div class="graph-container">
+          <div class="table-container">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
+              <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+            
+              <!-- Position Column -->
+              <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef> No. </th>
+                <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+              </ng-container>
+            
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+              </ng-container>
+            
+              <!-- Weight Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> Quantity </th>
+                <td mat-cell *matCellDef="let element"> {{element.quantity}} </td>
+              </ng-container>
+            
+              <!-- Symbol Column -->
+              <ng-container matColumnDef="total_amount">
+                <th mat-header-cell *matHeaderCellDef> Total Amount </th>
+                <td mat-cell *matCellDef="let element"> {{element.total_amount}} </td>
+              </ng-container>
+            
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <ng-template #graphView>
+        <div class="graph-container">
+          <div class="graph">
+            <canvas id="canvas1"></canvas>
+          </div>
+          <div class="graph">
+              <canvas id="canvas2"></canvas>
+          </div>
+        </div>
+      </ng-template>
+  
 </div>
