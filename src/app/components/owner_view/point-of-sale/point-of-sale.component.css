@@ -97,6 +97,28 @@
     border-radius: 5px;
     text-align: center;
 }
+.mop-section{
+    width: 100%;
+}
+.radio-group{
+    width: 100%;
+}
+
+.radio-group p{
+    font-size: large;
+    margin: 0;
+}
+
+.radio-button-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.radio-button-container >  .sub-container{
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
 
 ::-webkit-scrollbar {
     width: 6px;

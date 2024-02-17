@@ -164,21 +164,10 @@ export class SalesAnalyticsComponent {
 
   onValueChange() {
     let field = document.getElementById('calendarInputField');
-    console.log('Value changed');
-    console.log('THis is selected time frame', this.selectedTimeFrame);
-    if(!this.tableView){
-      if (this.selectedTimeFrame == 'custom') {
-        field.classList.remove('hidden');
-        if (this.range.value.start && this.range.value.end) {
-          try{
-            this.chart1.destroy();
-            this.chart2.destroy();
-          }catch(error){
-            console.log(error)
-          }
-        }
-      } else {
-        field.classList.add('hidden');
+
+    if (this.selectedTimeFrame == 'custom') {
+      field.classList.remove('hidden');
+      if (this.range.value.start && this.range.value.end) {
         try{
           this.chart1.destroy();
           this.chart2.destroy();
@@ -186,7 +175,16 @@ export class SalesAnalyticsComponent {
           console.log(error)
         }
       }
+    } else {
+      field.classList.add('hidden');
+      try{
+        this.chart1.destroy();
+        this.chart2.destroy();
+      }catch(error){
+        console.log(error)
+      }
     }
+
     this.createChart(this.getRequestBodyPrepared());
   }
   parseAllOrders(data) {
@@ -198,7 +196,7 @@ export class SalesAnalyticsComponent {
     paymentList.forEach((value, index) => {
       parsedArray.push(
         {
-          position: index,
+          position: index + 1,
           name: value,
           quantity: quantity[value+'_quantity'],
           total_amount: amount[value+'_amount']
