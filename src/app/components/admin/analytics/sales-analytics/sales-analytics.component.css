@@ -9,7 +9,7 @@
 }
 
 .table-container{
-    height: 100%;
+    height: 60vh;
     width: 100%;
     overflow: auto;
 }
@@ -27,7 +27,9 @@
 .input-container{
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 2em;
+
 }
 
 .graph{
@@ -44,7 +46,6 @@
         flex-direction: column;
         justify-content: flex-start;
         padding: 5px 0 5px 0;
-        height: auto;
     }
 
     .graph{
@@ -54,12 +55,14 @@
     .input-container{
         flex-direction: column;
         justify-content: center;
+        align-items: center;
         row-gap: 1px;
         gap: 0;
-        align-items: center;
     }
 
-    
+    .total-view{
+        padding-top: 1em;
+    }
 }
 
 ::ng-deep .mat-form-field-wrapper{
