@@ -29,7 +29,6 @@ export class PointOfSaleComponent {
   ) {}
   public menu;
   public summary;
-  public usbSought;
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
   public printerRequired = false;
@@ -209,6 +208,7 @@ export class PointOfSaleComponent {
       order_list: itemList,
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       payment_mode: this.modeOfPayment,
+      printer_conneted: this.printerConn.usbSought
     };
     return body;
   }
@@ -338,12 +338,6 @@ export class PointOfSaleComponent {
         size: 'xxlarge',
         bold: true,
         justification: 'center'
-      },
-      {
-        text: caffeeInfo,
-        size: 'xlarge',
-        justification: 'center',
-        bold: true,
       }
     ]
     content.forEach(ele => 
