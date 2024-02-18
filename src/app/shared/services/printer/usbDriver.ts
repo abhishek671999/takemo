@@ -17,8 +17,8 @@ export class UsbDriver extends PrintDriver {
         this.productId = productId
     }
 
-    public connect(){
-        navigator.usb.getDevices().then((devices: any[]) => {
+    public async connect(){
+        await navigator.usb.getDevices().then((devices: any[]) => {
             this.device = devices.find( (device: any) => {
               return device.vendorId == this.vendorId && device.productId == this.productId
             })
@@ -74,11 +74,19 @@ export class UsbDriver extends PrintDriver {
     }
 
     public async write(data: Uint8Array): Promise<void>{
-        console.log('IN write: ', this.endPoint, this.isConnected)
-        if(this.endPoint){
-          this.device?.transferOut(this.endPoint.endpointNumber, data)
-        }else{
-          console.log('Transfer failed:: ')
+        console.log('IN write: ', this.endPoint, this.isConnected, this.device)
+        try{
+          if(this.endPoint){
+            await this.device?.transferOut(this.endPoint.endpointNumber, data)
+            console.log('After transfer out: ', this.device)
+          }else{
+            console.log('Transfer failed:: ')
+          }
+        }catch (error){
+
+          console.log('Error caught: ', error)
+          await this.connect()
+          this.device?.transferOut(this.endPoint.endpointNumber, data)  
         }
       }
 }
