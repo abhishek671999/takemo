@@ -34,7 +34,7 @@ export class UsbDriver extends PrintDriver {
             let result = this.device?.claimInterface(0)
             return result
           }).then( (result: any) => {
-            console.log('This is result: ', result)
+            console.log('This is error result: ', result)
             const endPoints: any[] | undefined = this.device?.configuration?.interfaces[0].alternate.endpoints;
             if(endPoints){
               this.endPoint = endPoints.find((endPoint: any) => endPoint.direction === 'out');

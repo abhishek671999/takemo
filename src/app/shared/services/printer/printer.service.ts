@@ -122,7 +122,7 @@ export class PrinterService  extends PrintBuilder{
   }
 
   writeCustomLine(printObj: any) {
-    this.builder?.setBold(printObj.bold).setJustification(printObj.justification).setSize(printObj.size).setUnderline(false).writeLine(printObj.text).setBold(false).setJustification('left').setSize('normal').setUnderline(false).writeLine('')
+    this.builder?.setBold(printObj.bold).setJustification(printObj.justification).setSize(printObj.size).setUnderline(printObj.underline).writeLine(printObj.text).setBold(false).setJustification('left').setSize('normal').setUnderline(false).writeLine('')
     return this
   }
 }

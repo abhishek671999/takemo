@@ -10,6 +10,7 @@ import { PrinterService } from 'src/app/shared/services/printer/printer.service'
 import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 import { MatRadioButton } from '@angular/material/radio';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
+import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -23,12 +24,11 @@ export class PointOfSaleComponent {
     private router: Router,
     private orderService: OrdersService,
     private dialog: MatDialog,
-    private printService: PrinterService,
+    public printerConn: PrintConnectorService,
     private dateUtils: dateUtils
   ) {}
   public menu;
   public summary;
-  private usbDriver = new UsbDriver();
   public usbSought;
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
@@ -220,7 +220,7 @@ export class PointOfSaleComponent {
   }
 
   getPrintStatus(){
-    if(this.usbSought){
+    if(this.printerConn.usbSought){
       return "primary"
     }else{
       return "warn"
@@ -232,9 +232,9 @@ export class PointOfSaleComponent {
     this.summary.itemList.forEach((element: any) => {
       if (element.quantity > 0) {
         let itemAmount = element.quantity * element.price;
-        formattedTable += `${element.name.substr(0, 20)}\t${
+        formattedTable += `${this.trimString(element.name)}\t${
           element.quantity
-        }\t${element.price}\t${itemAmount}\n`;
+        }\t${element.price}\tRs.${itemAmount}\n`;
       }
     });
     return formattedTable;
@@ -245,9 +245,9 @@ export class PointOfSaleComponent {
     this.summary.itemList.forEach((element: any) => {
       if (element.parcelQuantity > 0) {
         let itemAmount = element.parcelQuantity * element.price;
-        formattedTable += `${element.name.substr(0, 20)}\t${
+        formattedTable += `${this.trimString(element.name)}\t${
           element.parcelQuantity
-        }\t${element.price}\t${itemAmount}\n`;
+        }\t${element.price}\tRs.${itemAmount}\n`;
       }
     });
     return formattedTable == 'Parcel\n' ? '' : formattedTable;
@@ -262,7 +262,7 @@ export class PointOfSaleComponent {
 
   getPrintableText() {
     let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
-    let sectionHeader1 = `................${this.modeOfPayment}..................`
+    let sectionHeader1 = `................${this.modeOfPayment.toUpperCase()}..................`
     let sectionSplitter = '..........................................';
     let tableHeader = 'DESCRIPTION\t\tQTY\tRATE\tAMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
@@ -284,6 +284,7 @@ export class PointOfSaleComponent {
       },
       {
         text: tableHeader,
+        underline: true
       },
       {
         text: this.getFormattedDineInItemDetails(),
@@ -308,17 +309,9 @@ export class PointOfSaleComponent {
     return content;
   }
 
-  async seekUSB() {
-    await this.usbDriver.requestUsb().subscribe((data) => {
-      console.log('my data', data);
-      this.printService.setDriver(this.usbDriver);
-      this.usbSought = true;
-    });
-  }
-
   printRecipt(orderNum){
-    if (this.usbSought ) {     //to-do: Interchange dialogbox call and print call
-      let printConnect = this.printService.init();
+    if (this.printerConn.usbSought ) {     //to-do: Interchange dialogbox call and print call
+      let printConnect = this.printerConn.printService.init();
       this.getPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
@@ -336,10 +329,34 @@ export class PointOfSaleComponent {
         .flush();
     }
   }
+  testPrint(){
+    let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
+    let printConnect = this.printerConn.printService.init();
+    let content = [
+      {
+        text: 'This is Test print',
+        size: 'xxlarge',
+        bold: true,
+        justification: 'center'
+      },
+      {
+        text: caffeeInfo,
+        size: 'xlarge',
+        justification: 'center',
+        bold: true,
+      }
+    ]
+    content.forEach(ele => 
+      printConnect.writeCustomLine(ele)
+      )
+      printConnect.feed(5)
+      .cut()
+      .flush();
+  }
 
   placeOrder() {
     let body = this.preparePlaceOrderBody();
-    this.printerRequired && !this.usbSought ? this.seekUSB() : null;
+    this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
         let orderNum = data['order_no'];
