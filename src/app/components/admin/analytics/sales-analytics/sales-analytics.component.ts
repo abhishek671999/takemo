@@ -164,7 +164,6 @@ export class SalesAnalyticsComponent {
 
   onValueChange() {
     let field = document.getElementById('calendarInputField');
-
     if (this.selectedTimeFrame == 'custom') {
       field.classList.remove('hidden');
       if (this.range.value.start && this.range.value.end) {
@@ -184,9 +183,9 @@ export class SalesAnalyticsComponent {
         console.log(error)
       }
     }
-
     this.createChart(this.getRequestBodyPrepared());
   }
+  
   parseAllOrders(data) {
     let parsedArray = []
     let quantity = data['quantity']
