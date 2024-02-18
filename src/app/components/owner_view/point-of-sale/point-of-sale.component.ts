@@ -329,6 +329,30 @@ export class PointOfSaleComponent {
         .flush();
     }
   }
+  testPrint(){
+    let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
+    let printConnect = this.printerConn.printService.init();
+    let content = [
+      {
+        text: 'This is Test print',
+        size: 'xxlarge',
+        bold: true,
+        justification: 'center'
+      },
+      {
+        text: caffeeInfo,
+        size: 'xlarge',
+        justification: 'center',
+        bold: true,
+      }
+    ]
+    content.forEach(ele => 
+      printConnect.writeCustomLine(ele)
+      )
+      printConnect.feed(5)
+      .cut()
+      .flush();
+  }
 
   placeOrder() {
     let body = this.preparePlaceOrderBody();

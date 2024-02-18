@@ -1,6 +1,7 @@
 <div class="main-container">
     <div class="navigation">
-        <button mat-raised-button [hidden]="!printerRequired" [disabled]="printerConn.usbSought" (click)="printerConn.seekUSB()" color="{{getPrintStatus()}}">Connect to printer</button>
+        <button mat-raised-button [hidden]="!printerRequired || printerConn.usbSought" [disabled]="printerConn.usbSought" (click)="printerConn.seekUSB()" color="{{getPrintStatus()}}">Connect to printer</button>
+        <button mat-raised-button [hidden]="!printerConn.usbSought" (click)="testPrint()" color="primary">Test print</button>
         <button mat-raised-button (click)="navigateToEditMenu()" color="primary">Edit Menu</button>
         <button mat-raised-button (click)="navigateToPendingOrders()" color="primary">Pending Orders</button>
     </div>
