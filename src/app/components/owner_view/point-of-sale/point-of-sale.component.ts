@@ -43,7 +43,7 @@ export class PointOfSaleComponent {
       .getPOSMenu(sessionStorage.getItem('restaurant_id'))
       .subscribe((data) => {
         this.menu = data['menu'];
-        this.printerRequired = !data['printer_required'];
+        this.printerRequired = data['printer_required'];
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -308,19 +308,6 @@ export class PointOfSaleComponent {
     ];
     return content;
   }
-
-  // async seekUSB() {
-  //   await this.usbDriver.requestUsb().subscribe((data) => {
-  //     console.log('my data', data);
-  //     this.printerConn.printService.setDriver(this.usbDriver);
-  //     this.printerConn.printService.isConnected.subscribe(result => {
-  //       console.log('usb observer', result)
-  //       this.usbSought = result
-  //     }
-        
-  //       )
-  //   });
-  // }
 
   printRecipt(orderNum){
     if (this.printerConn.usbSought ) {     //to-do: Interchange dialogbox call and print call
