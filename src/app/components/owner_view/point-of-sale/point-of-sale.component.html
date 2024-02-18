@@ -1,6 +1,6 @@
 <div class="main-container">
     <div class="navigation">
-        <button mat-raised-button [hidden]="!printerRequired" [disabled]="usbSought" (click)="seekUSB()" color="{{getPrintStatus()}}">Connect to printer</button>
+        <button mat-raised-button [hidden]="!printerRequired" [disabled]="printerConn.usbSought" (click)="printerConn.seekUSB()" color="{{getPrintStatus()}}">Connect to printer</button>
         <button mat-raised-button (click)="navigateToEditMenu()" color="primary">Edit Menu</button>
         <button mat-raised-button (click)="navigateToPendingOrders()" color="primary">Pending Orders</button>
     </div>
@@ -106,8 +106,8 @@
                 <div class="action-section">
                     <button mat-raised-button (click)="clearSummary()">Clear</button>
                     <div>
-                        <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || (!usbSought && printerRequired)" color="primary">Place</button>
-                        <small class="text-danger" style="display: block;" *ngIf="!usbSought && printerRequired">    Please connect Printer</small>
+                        <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || (!printerConn.usbSought && printerRequired)" color="primary">Place</button>
+                        <small class="text-danger" style="display: block;" *ngIf="!printerConn.usbSought && printerRequired">    Please connect Printer</small>
                     </div>
                     
                 </div>  

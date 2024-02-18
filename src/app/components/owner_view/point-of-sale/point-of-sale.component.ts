@@ -10,6 +10,7 @@ import { PrinterService } from 'src/app/shared/services/printer/printer.service'
 import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 import { MatRadioButton } from '@angular/material/radio';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
+import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -23,12 +24,11 @@ export class PointOfSaleComponent {
     private router: Router,
     private orderService: OrdersService,
     private dialog: MatDialog,
-    private printService: PrinterService,
+    public printerConn: PrintConnectorService,
     private dateUtils: dateUtils
   ) {}
   public menu;
   public summary;
-  private usbDriver = new UsbDriver();
   public usbSought;
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
@@ -220,7 +220,7 @@ export class PointOfSaleComponent {
   }
 
   getPrintStatus(){
-    if(this.usbSought){
+    if(this.printerConn.usbSought){
       return "primary"
     }else{
       return "warn"
@@ -309,22 +309,9 @@ export class PointOfSaleComponent {
     return content;
   }
 
-  async seekUSB() {
-    await this.usbDriver.requestUsb().subscribe((data) => {
-      console.log('my data', data);
-      this.printService.setDriver(this.usbDriver);
-      this.printService.isConnected.subscribe(result => {
-        console.log('usb observer', result)
-        this.usbSought = result
-      }
-        
-        )
-    });
-  }
-
   printRecipt(orderNum){
-    if (this.usbSought ) {     //to-do: Interchange dialogbox call and print call
-      let printConnect = this.printService.init();
+    if (this.printerConn.usbSought ) {     //to-do: Interchange dialogbox call and print call
+      let printConnect = this.printerConn.printService.init();
       this.getPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
@@ -345,7 +332,7 @@ export class PointOfSaleComponent {
 
   placeOrder() {
     let body = this.preparePlaceOrderBody();
-    this.printerRequired && !this.usbSought ? this.seekUSB() : null;
+    this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
         let orderNum = data['order_no'];

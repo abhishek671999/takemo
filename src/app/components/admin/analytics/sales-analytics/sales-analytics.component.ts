@@ -212,7 +212,7 @@ export class SalesAnalyticsComponent {
     let categoryWiseData = data['category_wise_data'];
     Object.entries(categoryWiseData).forEach(([key, value], index) => {
       parsedArray.push({
-        position: index,
+        position: index + 1,
         name: key,
         quantity: value['quantity'],
         total_amount: value['total_amount'],
@@ -227,7 +227,7 @@ export class SalesAnalyticsComponent {
     console.log('itemwise', itemWiseData)
     Object.entries(itemWiseData).forEach(([key, value], index) => {
       parsedArray.push({
-        position: index,
+        position: index + 1,
         name: key,
         quantity: value['quantity'],
         total_amount: value['total_amount'],
