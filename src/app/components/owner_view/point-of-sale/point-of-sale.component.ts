@@ -232,9 +232,9 @@ export class PointOfSaleComponent {
     this.summary.itemList.forEach((element: any) => {
       if (element.quantity > 0) {
         let itemAmount = element.quantity * element.price;
-        formattedTable += `${element.name.substr(0, 20)}\t${
+        formattedTable += `${this.trimString(element.name)}\t${
           element.quantity
-        }\t${element.price}\t${itemAmount}\n`;
+        }\t${element.price}\tRs.${itemAmount}\n`;
       }
     });
     return formattedTable;
@@ -245,9 +245,9 @@ export class PointOfSaleComponent {
     this.summary.itemList.forEach((element: any) => {
       if (element.parcelQuantity > 0) {
         let itemAmount = element.parcelQuantity * element.price;
-        formattedTable += `${element.name.substr(0, 20)}\t${
+        formattedTable += `${this.trimString(element.name)}\t${
           element.parcelQuantity
-        }\t${element.price}\t${itemAmount}\n`;
+        }\t${element.price}\tRs.${itemAmount}\n`;
       }
     });
     return formattedTable == 'Parcel\n' ? '' : formattedTable;
@@ -262,7 +262,7 @@ export class PointOfSaleComponent {
 
   getPrintableText() {
     let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
-    let sectionHeader1 = `................${this.modeOfPayment}..................`
+    let sectionHeader1 = `................${this.modeOfPayment.toUpperCase()}..................`
     let sectionSplitter = '..........................................';
     let tableHeader = 'DESCRIPTION\t\tQTY\tRATE\tAMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
@@ -284,6 +284,7 @@ export class PointOfSaleComponent {
       },
       {
         text: tableHeader,
+        underline: true
       },
       {
         text: this.getFormattedDineInItemDetails(),
@@ -312,7 +313,12 @@ export class PointOfSaleComponent {
     await this.usbDriver.requestUsb().subscribe((data) => {
       console.log('my data', data);
       this.printService.setDriver(this.usbDriver);
-      this.usbSought = true;
+      this.printService.isConnected.subscribe(result => {
+        console.log('usb observer', result)
+        this.usbSought = result
+      }
+        
+        )
     });
   }
 
