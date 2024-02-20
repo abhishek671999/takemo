@@ -16,7 +16,7 @@ import { PrintConnectorService } from 'src/app/shared/services/printer/print-con
   selector: 'app-point-of-sale',
   templateUrl: './point-of-sale.component.html',
   styleUrls: ['./point-of-sale.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class PointOfSaleComponent {
   constructor(
@@ -32,6 +32,8 @@ export class PointOfSaleComponent {
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
   public printerRequired = false;
+  public disablePlace = false
+  public restaurantParcel = false
 
   ngOnInit() {
     this.summary = {
@@ -43,6 +45,7 @@ export class PointOfSaleComponent {
       .subscribe((data) => {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
+        this.restaurantParcel = data['restaurant_parcel']
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -50,12 +53,10 @@ export class PointOfSaleComponent {
         });
         this.setQuantity();
         this.showOnlyFirstCategory();
-        console.log('THis is menu: ', this.menu);
       });
   }
 
   setQuantity() {
-    console.log('Setting quantity:', this.menu);
     this.menu.forEach((category) => {
       category.category.items.forEach((item) => {
         item.quantity = 0;
@@ -66,7 +67,6 @@ export class PointOfSaleComponent {
 
   showOnlyFirstCategory() {
     setTimeout(() => {
-      console.log('trying to show only first element');
       let allCategoryBlock = Array.from(
         document.getElementsByClassName(
           'category-wrapper'
@@ -99,13 +99,11 @@ export class PointOfSaleComponent {
 
   categoryClickEventHandler(category) {
     category = category.replace(' ', '');
-    console.log(category);
     let allCategoryBlock = Array.from(
       document.getElementsByClassName(
         'category-wrapper'
       ) as HTMLCollectionOf<HTMLElement>
     );
-    console.log(allCategoryBlock);
     allCategoryBlock.forEach((element) => {
       element.classList.remove('show');
       element.classList.add('hidden');
@@ -120,7 +118,6 @@ export class PointOfSaleComponent {
       ) as HTMLCollectionOf<HTMLElement>
     );
     allCategoryBar.forEach((ele) => {
-      console.log('Cateogry contains', ele.classList.contains(category));
       if (ele.classList.contains(category)) {
         ele.classList.add('active');
       } else {
@@ -146,10 +143,13 @@ export class PointOfSaleComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
+      console.log('Item pushed')
+      
     }
     if (item.quantity < 30) {
       item.quantity += 1;
       this.summary.amount += item.price;
+      console.log('Item added')
     }
   }
 
@@ -349,6 +349,7 @@ export class PointOfSaleComponent {
   }
 
   placeOrder() {
+    this.disablePlace = true
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
@@ -363,11 +364,13 @@ export class PointOfSaleComponent {
         dialogRef.afterClosed().subscribe((data) => {
           this.ngOnInit();
         });
+        this.disablePlace = false
       },
       (error) => {
         this.dialog.open(ErrorMsgDialogComponent, {
           data: { msg: `Faile to create Order. ${error.error.error}` },
         });
+        this.disablePlace = false
       }
     );
   }
