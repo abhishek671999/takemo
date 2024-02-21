@@ -191,10 +191,12 @@ export class HeaderComponent {
           if(restaurant.role_name == 'restaurant_admin'){
             console.log('setting restaurant id', data['restaurants'][0]['restaurant_id'])
             sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
-            console.log(sessionStorage.getItem('restaurant_id'))
+            sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
+            sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
+            sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
             this.addRestaurantStaffNavOptions()
             break
           }

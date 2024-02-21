@@ -18,27 +18,21 @@ export class EditMenuService {
   constructor(private _http: HttpClient, public utility: Utility) {}
 
   editCategoryAvailability(body){
-    return this._http.post(this.host + this.editCategoryAvailabilityEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(this.host + this.editCategoryAvailabilityEndpoint, body)
   }
   editMenu(body) {
     console.log('This is the body: ', body);
-    return this._http.post(this.host + this.editItemEndpoint, body, {
-      headers: this.utility.getHeaders(),
-    });
+    return this._http.post(this.host + this.editItemEndpoint, body);
   }
 
   addItem(body) {
     console.log('This is the body: ', body);
-    return this._http.post(this.host + this.addItemEndpoint, body, {
-      headers: this.utility.getHeaders(),
-    });
+    return this._http.post(this.host + this.addItemEndpoint, body);
   }
 
   addCategory(body) {
     console.log('This is the body: ', body);
-    return this._http.post(this.host + this.addCategoryEndpoint, body, {
-      headers: this.utility.getHeaders(),
-    });
+    return this._http.post(this.host + this.addCategoryEndpoint, body);
   }
 
   deleteItem(body) {
@@ -57,7 +51,6 @@ export class EditMenuService {
 
   editItemAvailability(body) {
     return this._http.post(
-      this.host + this.editItemAvailabilityEndpoint, body, { headers: this.utility.getHeaders() }
-    );
+      this.host + this.editItemAvailabilityEndpoint, body);
   }
 }
