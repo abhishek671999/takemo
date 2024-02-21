@@ -9,7 +9,7 @@ import { HeaderComponent } from './components/home_screen/header/header.componen
 import { FooterComponent } from './components/home_screen/footer/footer.component';
 import { SignupComponent } from './components/home_screen/signup/signup.component';
 import { ForgotpasswordComponent } from './components/home_screen/forgotpassword/forgotpassword.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ContactUsComponent } from './components/home_screen/contact-us/contact-us.component';
 import { LoginComponent } from './components/home_screen/login/login.component';
 import { NotfoundComponent } from './notfound/notfound.component';
@@ -25,6 +25,7 @@ import { Utility, meAPIUtility } from './shared/site-variable';
 import { Login2Component } from './components/home_screen/login2/login2.component';
 import { dateUtils } from './shared/utils/date_utils';
 import { MatTabsModule } from '@angular/material/tabs';
+import { AuthInterceptorInterceptor } from './shared/services/auth-interceptor.interceptor';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     NgApexchartsModule,
 
     ],
-  providers: [Utility, meAPIUtility, dateUtils],
+  providers: [Utility, meAPIUtility, dateUtils, 
+      { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
