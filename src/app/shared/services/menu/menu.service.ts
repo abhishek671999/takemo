@@ -16,13 +16,13 @@ export class MenuService {
   getMenu(id){
     let queryParams = new HttpParams()
     queryParams = queryParams.append('restaurant_id', id.toString())
-    return this._http.get(host+this._getMenuEndpoint, {params: queryParams, headers: this.utility.getHeaders()})
+    return this._http.get(host+this._getMenuEndpoint, {params: queryParams})
   }
 
   getPOSMenu(id){
     let queryParams = new HttpParams()
     queryParams = queryParams.append('restaurant_id', id.toString())
-    return this._http.get(host+this._getPOSMenuEndpoing, {params: queryParams, headers: this.utility.getHeaders()})
+    return this._http.get(host+this._getPOSMenuEndpoing, {params: queryParams})
   }
 
 }

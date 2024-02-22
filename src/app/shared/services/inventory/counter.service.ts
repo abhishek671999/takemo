@@ -16,15 +16,15 @@ export class CounterService {
   getRestaurantCounter(id){
     let queryParams = new HttpParams()
     queryParams = queryParams.append('restaurant_id', id.toString())
-    return this._http.get(host+this.restaurantCounterEndpoint, {params: queryParams, headers: this._utility.getHeaders()})
+    return this._http.get(host+this.restaurantCounterEndpoint, {params: queryParams})
   }
 
   addRestaurantCounter(body){
-    return this._http.post(host+this.addCounterEndpoint, body, {headers: this._utility.getHeaders()})
+    return this._http.post(host+this.addCounterEndpoint, body)
   }
 
   editRestaurantCounter(body){
-    return this._http.post(host+this.editCounterEndpoint, body, {headers: this._utility.getHeaders()})
+    return this._http.post(host+this.editCounterEndpoint, body,)
   }
 
 }
