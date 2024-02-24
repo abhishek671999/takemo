@@ -419,6 +419,7 @@ export class PointOfSaleComponent {
 
   placeOrder() {
     this.disablePlace = true
+    this.getCounterPrintableText()
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
