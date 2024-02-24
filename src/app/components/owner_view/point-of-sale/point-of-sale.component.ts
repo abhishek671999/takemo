@@ -289,13 +289,13 @@ export class PointOfSaleComponent {
     let content = [
       {
         text: this.restaurantName,
-        size: 'xxlarge',
+        size: 'large',
         justification: 'center',
         bold: true,
       },
       {
-        text: this.restaurantAddress.replace(',', '\n'),
-        size: 'xxlarge',
+        text: this.restaurantAddress.replace(/-/gi, '\n'),
+        size: 'large',
         justification: 'center',
         bold: true,
       },
@@ -381,24 +381,25 @@ export class PointOfSaleComponent {
           justification: 'center',
         })
         .feed(5)
-        .cut('partial')
+        .cut()
+        .flush()
 
-        this.getCounterPrintableText().forEach(ele =>{
-          ele.forEach(element => {
-            printConnect.writeCustomLine(element)
-          }
-          );
-          printConnect
-          .writeCustomLine({
-            text: `Order No: ${orderNum}`,
-            size: 'xxlarge',
-            bold: true,
-            justification: 'center',
-          })
-          .feed(5).cut('partial')
-        })
-        printConnect
-        .flush();
+        // this.getCounterPrintableText().forEach(ele =>{
+        //   ele.forEach(element => {
+        //     printConnect.writeCustomLine(element)
+        //   }
+        //   );
+        //   printConnect
+        //   .writeCustomLine({
+        //     text: `Order No: ${orderNum}`,
+        //     size: 'xxlarge',
+        //     bold: true,
+        //     justification: 'center',
+        //   })
+        //   .feed(5).cut('partial')
+        // })
+        // printConnect
+        // .flush();
     }
   }
   testPrint(){
