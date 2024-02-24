@@ -1,3 +1,7 @@
+th{
+    margin: 0;
+}
+
 .main-container{
     height: 89vh;
     width: 100%;
@@ -46,6 +50,10 @@
     font-weight: bold;
 }
 
+.green-bar{
+    background-color: green;
+}
+
 
 .category-button li:hover{
    padding: 0.3em 1em 0.7em 1em;
@@ -54,7 +62,7 @@
 .item-bar{
     margin: 0.5em;
     border: 1px solid ;
-    width: 60%;
+    width: 46%;
     overflow: auto;
     height: 90%;
 }
@@ -69,26 +77,46 @@
 .item-card{
     border: 1px solid black;
     border-radius: 5px;
-    width: 10em;
-    height: 8em;
+    width: 9em;
+    height: 4.7em;
     text-align: center;
     overflow: auto;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
+.item-type{
+    width: 5px;
+}
+
+.col1{
+    width: 35%;
+}
+
+.col2{
+    width: 25%;
+}
+
+.col3{
+    width: 20%;
+}
+
+.col4{
+    width: 10%;
+}
+
+.col5{
+    width: 10%;
+}
 .item-name{
-    padding: 0.5em;
+    padding: 0 0.5em;
     overflow: auto;
 }
 
 .item-quantity{
     display: flex;
     justify-content: space-around;
-    align-items: center;
-    padding: 0.5em;
-    
+    align-items: center;   
 }
 
 .icon-wrapper{
@@ -111,7 +139,8 @@
 
 .radio-button-container{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .radio-button-container >  .sub-container{
@@ -147,7 +176,7 @@
 .summary-bar{
     margin: .5em;
     border: 1px solid ;
-    width: 30%;
+    width: 36%;
     height: 90%;
     display: flex;
     flex-direction: column;

@@ -64,8 +64,8 @@ export class meAPIUtility{
                     observer.next(data)
                 })
             }
-        })
-        return meDataObservable
+        });
+        return meDataObservable;
     }
 
     removeMeData(){

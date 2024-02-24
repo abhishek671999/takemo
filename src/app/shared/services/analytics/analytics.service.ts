@@ -13,10 +13,10 @@ export class AnalyticsService {
   constructor(private _httpClient: HttpClient, public utility: Utility) { }
 
   getSalesAnalyticsData(body){
-    return this._httpClient.post(host+this._salesAnalyticEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._httpClient.post(host+this._salesAnalyticEndpoint, body)
   }
 
   getTimelyAnalyticsData(body){
-    return this._httpClient.post(host+this._timelyAnalyticsEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._httpClient.post(host+this._timelyAnalyticsEndpoint, body)
   }
 }

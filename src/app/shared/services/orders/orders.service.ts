@@ -27,56 +27,56 @@ export class OrdersService {
 
   getMyOrders(body){
     console.log('Get current orders called')
-    return this._http.post(host + this.orderHistoryEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.orderHistoryEndpoint, body)
   }
 
   checkIfPaymentRequired(){
     let httpParams = new HttpParams()
     httpParams = httpParams.append('restaurant_id', sessionStorage.getItem('restaurant_id'))
-    return this._http.get(host + this.checkIfPaymentRequiredEndpoint, {headers: this.utility.getHeaders(), params: httpParams})
+    return this._http.get(host + this.checkIfPaymentRequiredEndpoint, {params: httpParams})
   }
 
   createOrders(body){
-    return this._http.post(host + this.createOrdersEnpoint, body, {headers: this.utility.getHeaders()} )
+    return this._http.post(host + this.createOrdersEnpoint, body )
   }
 
   getCurrentOrdersCards(httpParams){
-    return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams, headers: this.utility.getHeaders()})
+    return this._http.get(host + this.getCurrentOrdersCardsEndpoint, {params: httpParams})
   }
 
   updateOrderStatus(body){
-    return this._http.post(host + this.updateOrderStatusEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.updateOrderStatusEndpoint, body)
   }
 
   deliverIndividualOrder(body){
-    return this._http.post(host + this.deliverIndividualOrderEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.deliverIndividualOrderEndpoint, body)
   }
 
   deliverEntireOrder(body){
-    return this._http.post(host + this.deliverEntireOrderEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.deliverEntireOrderEndpoint, body)
   }
 
   deliverAllOrders(body){
-    return this._http.post(host + this.deliverAllOrdersEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.deliverAllOrdersEndpoint, body)
   }
 
   getRestaurantOrders(body, httpParams?){
-    return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {headers: this.utility.getHeaders(), params: httpParams})
+    return this._http.post(host + this.getRestaurantOrdersEndpoint, body, {params: httpParams})
   }
   
   getRestaurantOrdersForAdmins(body){
-    return this._http.post(host + this.getRestaurantShiftOrders, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.getRestaurantShiftOrders, body,)
   }
 
   cancelOrder(body){
-    return this._http.post(host + this.cancelOrderEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.cancelOrderEndpoint, body, )
   }
 
   getCancelledOrders(body){
-    return this._http.post(host + this.myCancelledOrdersEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.myCancelledOrdersEndpoint, body)
   }
 
   getRestaurantCancelledOrders(body){
-    return this._http.post(host + this.cancellledRestaurantOrdersEndpoint, body, {headers: this.utility.getHeaders()})
+    return this._http.post(host + this.cancellledRestaurantOrdersEndpoint, body)
   }
 }

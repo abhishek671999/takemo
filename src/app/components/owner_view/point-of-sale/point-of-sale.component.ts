@@ -11,12 +11,14 @@ import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 import { MatRadioButton } from '@angular/material/radio';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
+import { meAPIUtility } from 'src/app/shared/site-variable';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
   selector: 'app-point-of-sale',
   templateUrl: './point-of-sale.component.html',
   styleUrls: ['./point-of-sale.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class PointOfSaleComponent {
   constructor(
@@ -25,13 +27,21 @@ export class PointOfSaleComponent {
     private orderService: OrdersService,
     private dialog: MatDialog,
     public printerConn: PrintConnectorService,
-    private dateUtils: dateUtils
+    private dateUtils: dateUtils,
+    private _counterService: CounterService
   ) {}
   public menu;
   public summary;
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
   public printerRequired = false;
+  public disablePlace = false
+  public restaurantParcel = false
+
+  public restaurantName = null;
+  public restaurantAddress = null
+  counters = [];
+
 
   ngOnInit() {
     this.summary = {
@@ -43,6 +53,7 @@ export class PointOfSaleComponent {
       .subscribe((data) => {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
+        this.restaurantParcel = data['restaurant_parcel']
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -50,12 +61,23 @@ export class PointOfSaleComponent {
         });
         this.setQuantity();
         this.showOnlyFirstCategory();
-        console.log('THis is menu: ', this.menu);
       });
+      this._counterService
+      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .subscribe(
+        (data) => {
+          console.log('counters available', data);
+          this.counters = data['counters'];
+        },
+        (error) => {
+          console.log('Error: ', error);
+        }
+      );
+    this.restaurantName = sessionStorage.getItem('restaurant_name')
+    this.restaurantAddress = sessionStorage.getItem('restaurant_address')
   }
 
   setQuantity() {
-    console.log('Setting quantity:', this.menu);
     this.menu.forEach((category) => {
       category.category.items.forEach((item) => {
         item.quantity = 0;
@@ -66,7 +88,6 @@ export class PointOfSaleComponent {
 
   showOnlyFirstCategory() {
     setTimeout(() => {
-      console.log('trying to show only first element');
       let allCategoryBlock = Array.from(
         document.getElementsByClassName(
           'category-wrapper'
@@ -99,13 +120,11 @@ export class PointOfSaleComponent {
 
   categoryClickEventHandler(category) {
     category = category.replace(' ', '');
-    console.log(category);
     let allCategoryBlock = Array.from(
       document.getElementsByClassName(
         'category-wrapper'
       ) as HTMLCollectionOf<HTMLElement>
     );
-    console.log(allCategoryBlock);
     allCategoryBlock.forEach((element) => {
       element.classList.remove('show');
       element.classList.add('hidden');
@@ -120,7 +139,6 @@ export class PointOfSaleComponent {
       ) as HTMLCollectionOf<HTMLElement>
     );
     allCategoryBar.forEach((ele) => {
-      console.log('Cateogry contains', ele.classList.contains(category));
       if (ele.classList.contains(category)) {
         ele.classList.add('active');
       } else {
@@ -146,10 +164,13 @@ export class PointOfSaleComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
+      console.log('Item pushed')
+      
     }
     if (item.quantity < 30) {
       item.quantity += 1;
       this.summary.amount += item.price;
+      console.log('Item added')
     }
   }
 
@@ -187,11 +208,12 @@ export class PointOfSaleComponent {
   }
 
   clearSummary() {
-    this.summary.amount = 0;
-    this.summary.itemList.forEach((item) => {
-      item.quantity = 0;
-    });
-    this.summary.itemList = [];
+    // this.summary.amount = 0;
+    // this.summary.itemList.forEach((item) => {
+    //   item.quantity = 0;
+    // });
+    // this.summary.itemList = [];
+    this.getCounterPrintableText()
   }
 
   preparePlaceOrderBody() {
@@ -260,16 +282,20 @@ export class PointOfSaleComponent {
     return this.dateUtils.getDateForRecipePrint();
   }
 
-  getPrintableText() {
-    let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
-    let sectionHeader1 = `................${this.modeOfPayment.toUpperCase()}..................`
-    let sectionSplitter = '..........................................';
+  getCustomerPrintableText() {
+    let sectionHeader1 = `................ ${this.modeOfPayment.toUpperCase()} ..................`
     let tableHeader = 'DESCRIPTION\t\tQTY\tRATE\tAMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
     let content = [
       {
-        text: caffeeInfo,
-        size: 'xlarge',
+        text: this.restaurantName,
+        size: 'large',
+        justification: 'center',
+        bold: true,
+      },
+      {
+        text: this.restaurantAddress.replace(/-/gi, '\n'),
+        size: 'large',
         justification: 'center',
         bold: true,
       },
@@ -281,6 +307,7 @@ export class PointOfSaleComponent {
         text: sectionHeader1,
         bold: true,
         justification: 'center',
+        size: 'large'
       },
       {
         text: tableHeader,
@@ -299,9 +326,6 @@ export class PointOfSaleComponent {
         size: 'xlarge',
       },
       {
-        text: sectionSplitter,
-      },
-      {
         text: endNote,
         justification: 'center',
       },
@@ -309,10 +333,42 @@ export class PointOfSaleComponent {
     return content;
   }
 
+  getCounterPrintableText(){
+    let countersWithOrders = []
+    this.counters.forEach(counterEle => {
+      let counterItemList = this.summary.itemList.filter(itemEle => itemEle.counter.counter_id == counterEle.counter_id)
+      if(counterItemList.length){
+        let formattedText = ''
+        counterItemList.forEach(element => {
+          let itemAmount = element.quantity * element.price;
+          formattedText += `${this.trimString(element.name)}\t${
+            element.quantity
+          }\t${element.price}\tRs.${itemAmount}\n`;
+        })
+        let printObj = [
+          {
+            text: counterEle.counter_name,
+            justification: 'center',
+            size: 'xxlarge',
+            bold: true,
+          },
+          {
+            text: formattedText,
+            size: 'large',
+          }
+
+      ]
+        countersWithOrders.push(printObj)
+      }
+    } )
+    console.log(countersWithOrders)
+    return countersWithOrders
+  }
+
   printRecipt(orderNum){
     if (this.printerConn.usbSought ) {     //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
-      this.getPrintableText().forEach((ele) => {
+      this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
         }
@@ -326,11 +382,27 @@ export class PointOfSaleComponent {
         })
         .feed(5)
         .cut()
-        .flush();
+        .flush()
+
+        // this.getCounterPrintableText().forEach(ele =>{
+        //   ele.forEach(element => {
+        //     printConnect.writeCustomLine(element)
+        //   }
+        //   );
+        //   printConnect
+        //   .writeCustomLine({
+        //     text: `Order No: ${orderNum}`,
+        //     size: 'xxlarge',
+        //     bold: true,
+        //     justification: 'center',
+        //   })
+        //   .feed(5).cut('partial')
+        // })
+        // printConnect
+        // .flush();
     }
   }
   testPrint(){
-    let caffeeInfo = `MATHAS COFFEES\n(VINAYAKA ENTERPRISE)\nNear Ashoka pillar\nJayanagar 1st block\nBengaluru.560011\nGSTIN:29A0NPT4745M22`;
     let printConnect = this.printerConn.printService.init();
     let content = [
       {
@@ -349,6 +421,8 @@ export class PointOfSaleComponent {
   }
 
   placeOrder() {
+    this.disablePlace = true
+    this.getCounterPrintableText()
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
@@ -363,11 +437,13 @@ export class PointOfSaleComponent {
         dialogRef.afterClosed().subscribe((data) => {
           this.ngOnInit();
         });
+        this.disablePlace = false
       },
       (error) => {
         this.dialog.open(ErrorMsgDialogComponent, {
           data: { msg: `Faile to create Order. ${error.error.error}` },
         });
+        this.disablePlace = false
       }
     );
   }
