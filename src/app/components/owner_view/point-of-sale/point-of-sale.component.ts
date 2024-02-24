@@ -160,17 +160,15 @@ export class PointOfSaleComponent {
   }
 
   addItem(item) {
-    console.log(item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
-    if (!itemAdded) {
-      this.summary.itemList.push(item);
-      console.log('Item pushed')
-      
+    if(itemAdded){
+      itemAdded.quantity += 1;
+      this.summary.amount += itemAdded.price
     }
-    if (item.quantity < 30) {
-      item.quantity += 1;
-      this.summary.amount += item.price;
-      console.log('Item added')
+    else{
+      item.quantity += 1
+      this.summary.amount += item.price
+      this.summary.itemList.push(item)
     }
   }
 
@@ -237,7 +235,7 @@ export class PointOfSaleComponent {
 
   trimString(text, length=16) {
     return text.length > length
-      ? text.substring(0, length - 3) + '...'
+      ? text.substring(0, length - 2) + '..'
       : text + '.'.repeat(length - text.length);
   }
 
@@ -249,14 +247,21 @@ export class PointOfSaleComponent {
     }
   }
 
+  getFixedLengthString(string, length, prefix=true, fixValue='0'){
+    string = String(string)
+    console.log('string length', string.toLocaleString().length)
+    return string.length == length? string: prefix ? fixValue.repeat(length - string.length) + string: string + fixValue.repeat(length - string.length)
+  }
+
   getFormattedDineInItemDetails() {
     let formattedTable = '';
-    this.summary.itemList.forEach((element: any) => {
+    this.summary.itemList.forEach((element: any, index) => {
       if (element.quantity > 0) {
+        let slNo = this.getFixedLengthString(index+1, 2)
         let itemAmount = element.quantity * element.price;
-        formattedTable += `${this.trimString(element.name)}\t${
-          element.quantity
-        }\t${element.price}\tRs.${itemAmount}\n`;
+        let trimmedName = this.getFixedLengthString(element.name.substring(0, 12), 12, false, ' ')
+        let remainingName = trimmedName == element.name ? '': '\t' + element.name.substring(12, 30) + '\n'
+        formattedTable += `${slNo}\t${trimmedName} \t${this.getFixedLengthString(element.quantity, 2, true, '0')}   ${element.price}     Rs.${itemAmount}\n${remainingName}`;
       }
     });
     return formattedTable;
@@ -277,16 +282,17 @@ export class PointOfSaleComponent {
 
   getTotalAmount() {
     let gstAmount = ((this.summary.amount * 0.05) / 2).toFixed(2)
-    return `SGST(2.5%): ${gstAmount}   CGST(2.5%): ${gstAmount}\nTotal Amount: Rs.${this.summary.amount}`;
+    return `SGST(2.5%): Rs.${gstAmount}   CGST(2.5%): Rs.${gstAmount}\nTotal Amount: Rs.${this.summary.amount}`;
   }
   getFormattedCurrentDate() {
     return this.dateUtils.getDateForRecipePrint();
   }
 
   getCustomerPrintableText() {
-    let sectionHeader1 = `................ ${this.modeOfPayment.toUpperCase()} ..................`
-    let tableHeader = 'DESCRIPTION\tQTY\tRATE\tAMOUNT';
+    let sectionHeader1 = '_'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '_'.repeat(16)
+    let tableHeader = 'Sl.no  DESCRIPTION \tQTY  RATE  AMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
+    let sectionSeperatorCharacters = '_'.repeat(45)
     let content = [
       {
         text: this.restaurantName,
@@ -318,9 +324,17 @@ export class PointOfSaleComponent {
         text: this.getFormattedParcelItemDetails(),
       },
       {
+        text: sectionSeperatorCharacters,
+        justification: 'center'
+      },
+      {
         text: this.getTotalAmount(),
         bold: true,
         justification: 'right',
+      },
+      {
+        text: sectionSeperatorCharacters,
+        justification: 'center'
       },
       {
         text: endNote,
