@@ -202,19 +202,19 @@ export class PointOfSaleComponent {
     }
   }
 
+  clearSummary() {
+    this.summary.amount = 0;
+    this.summary.itemList.forEach((item) => {
+      item.quantity = 0;
+    });
+    this.summary.itemList = [];
+  }
+  
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
   }
 
-  clearSummary() {
-    // this.summary.amount = 0;
-    // this.summary.itemList.forEach((item) => {
-    //   item.quantity = 0;
-    // });
-    // this.summary.itemList = [];
-    this.getCounterPrintableText()
-  }
 
   preparePlaceOrderBody() {
     let itemList = [];
@@ -235,7 +235,7 @@ export class PointOfSaleComponent {
     return body;
   }
 
-  trimString(text, length=20) {
+  trimString(text, length=16) {
     return text.length > length
       ? text.substring(0, length - 3) + '...'
       : text + '.'.repeat(length - text.length);
@@ -276,7 +276,8 @@ export class PointOfSaleComponent {
   }
 
   getTotalAmount() {
-    return `Total Amount: ${this.summary.amount}`;
+    let gstAmount = ((this.summary.amount * 0.05) / 2).toFixed(2)
+    return `SGST(2.5%): ${gstAmount}   CGST(2.5%): ${gstAmount}\nTotal Amount: Rs.${this.summary.amount}`;
   }
   getFormattedCurrentDate() {
     return this.dateUtils.getDateForRecipePrint();
@@ -284,18 +285,16 @@ export class PointOfSaleComponent {
 
   getCustomerPrintableText() {
     let sectionHeader1 = `................ ${this.modeOfPayment.toUpperCase()} ..................`
-    let tableHeader = 'DESCRIPTION\t\tQTY\tRATE\tAMOUNT';
+    let tableHeader = 'DESCRIPTION\tQTY\tRATE\tAMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
     let content = [
       {
         text: this.restaurantName,
-        size: 'large',
         justification: 'center',
         bold: true,
       },
       {
         text: this.restaurantAddress.replace(/-/gi, '\n'),
-        size: 'large',
         justification: 'center',
         bold: true,
       },
@@ -307,7 +306,6 @@ export class PointOfSaleComponent {
         text: sectionHeader1,
         bold: true,
         justification: 'center',
-        size: 'large'
       },
       {
         text: tableHeader,
@@ -323,7 +321,6 @@ export class PointOfSaleComponent {
         text: this.getTotalAmount(),
         bold: true,
         justification: 'right',
-        size: 'xlarge',
       },
       {
         text: endNote,
@@ -376,7 +373,7 @@ export class PointOfSaleComponent {
       printConnect
         .writeCustomLine({
           text: `Order No: ${orderNum}`,
-          size: 'xxlarge',
+          size: 'large',
           bold: true,
           justification: 'center',
         })
@@ -440,8 +437,10 @@ export class PointOfSaleComponent {
         this.disablePlace = false
       },
       (error) => {
+        console.log('Place order response', error)
+        let errorMsg = error.status != 0 ? `Failed to create Order. ${error.error.error}`: 'Failed to create order. No internet'
         this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: `Faile to create Order. ${error.error.error}` },
+          data: { msg: errorMsg },
         });
         this.disablePlace = false
       }
