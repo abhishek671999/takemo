@@ -208,11 +208,12 @@ export class PointOfSaleComponent {
   }
 
   clearSummary() {
-    this.summary.amount = 0;
-    this.summary.itemList.forEach((item) => {
-      item.quantity = 0;
-    });
-    this.summary.itemList = [];
+    // this.summary.amount = 0;
+    // this.summary.itemList.forEach((item) => {
+    //   item.quantity = 0;
+    // });
+    // this.summary.itemList = [];
+    this.getCounterPrintableText()
   }
 
   preparePlaceOrderBody() {
@@ -421,6 +422,7 @@ export class PointOfSaleComponent {
 
   placeOrder() {
     this.disablePlace = true
+    this.getCounterPrintableText()
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
     this.orderService.createOrders(body).subscribe(
