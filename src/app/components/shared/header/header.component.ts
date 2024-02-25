@@ -189,14 +189,17 @@ export class HeaderComponent {
         }
         for(let restaurant of data['restaurants']){
           if(restaurant.role_name == 'restaurant_admin'){
-            console.log('setting restaurant id', data['restaurants'][0]['restaurant_id'])
             sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
             sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
+            sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
             this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
             sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
+            sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
+            sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
+            sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
             this.addRestaurantStaffNavOptions()
             break
           }

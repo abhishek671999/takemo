@@ -13,14 +13,14 @@ export class dateUtils{
         return `${year}-${month}-${day}`
       }
 
-    getDateForRecipePrint(date: Date = new Date()){
+    getDateForRecipePrint(date: Date = new Date(), time=true){
         var year = date.toLocaleString("default", { year: "numeric" });
         var month = date.toLocaleString("default", { month: "2-digit" });
         var day = date.toLocaleString("default", { day: "2-digit" });
         
-        let hour: number = date.getHours();
-        let minute: number = date.getMinutes();
-        let second: number = date.getSeconds();
+        let hour: number | '' = time? date.getHours(): '';
+        let minute: number | '' = time? date.getMinutes(): '';
+        let second: number | '' = time? date.getSeconds(): '';
 
         return `${day}-${month}-${year} ${hour}:${minute}:${second}`
     }
