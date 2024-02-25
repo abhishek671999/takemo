@@ -35,13 +35,13 @@ export class PointOfSaleComponent {
   public paymentFlag = false;
   public modeOfPayment: 'cash' | 'upi' | 'credit' | 'card' = 'upi';
   public printerRequired = false;
-  public disablePlace = false
-  public restaurantParcel = false
+  public disablePlace = false;
+  public restaurantParcel = false;
 
   public restaurantName = null;
-  public restaurantAddress = null
+  public restaurantAddress = null;
+  public restaurantGST = null;
   counters = [];
-
 
   ngOnInit() {
     this.summary = {
@@ -53,7 +53,7 @@ export class PointOfSaleComponent {
       .subscribe((data) => {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
-        this.restaurantParcel = data['restaurant_parcel']
+        this.restaurantParcel = data['restaurant_parcel'];
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -62,7 +62,7 @@ export class PointOfSaleComponent {
         this.setQuantity();
         this.showOnlyFirstCategory();
       });
-      this._counterService
+    this._counterService
       .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
       .subscribe(
         (data) => {
@@ -73,8 +73,9 @@ export class PointOfSaleComponent {
           console.log('Error: ', error);
         }
       );
-    this.restaurantName = sessionStorage.getItem('restaurant_name')
-    this.restaurantAddress = sessionStorage.getItem('restaurant_address')
+    this.restaurantName = sessionStorage.getItem('restaurant_name');
+    this.restaurantAddress = sessionStorage.getItem('restaurant_address');
+    this.restaurantGST = sessionStorage.getItem('restaurant_gst')
   }
 
   setQuantity() {
@@ -161,14 +162,13 @@ export class PointOfSaleComponent {
 
   addItem(item) {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
-    if(itemAdded){
+    if (itemAdded) {
       itemAdded.quantity += 1;
-      this.summary.amount += itemAdded.price
-    }
-    else{
-      item.quantity += 1
-      this.summary.amount += item.price
-      this.summary.itemList.push(item)
+      this.summary.amount += itemAdded.price;
+    } else {
+      item.quantity += 1;
+      this.summary.amount += item.price;
+      this.summary.itemList.push(item);
     }
   }
 
@@ -207,12 +207,11 @@ export class PointOfSaleComponent {
     });
     this.summary.itemList = [];
   }
-  
+
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
   }
-
 
   preparePlaceOrderBody() {
     let itemList = [];
@@ -228,40 +227,57 @@ export class PointOfSaleComponent {
       order_list: itemList,
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       payment_mode: this.modeOfPayment,
-      printer_conneted: this.printerConn.usbSought
+      printer_conneted: this.printerConn.usbSought,
     };
     return body;
   }
 
-  trimString(text, length=16) {
+  trimString(text, length = 16) {
     return text.length > length
       ? text.substring(0, length - 2) + '..'
       : text + '.'.repeat(length - text.length);
   }
 
-  getPrintStatus(){
-    if(this.printerConn.usbSought){
-      return "primary"
-    }else{
-      return "warn"
+  getPrintStatus() {
+    if (this.printerConn.usbSought) {
+      return 'primary';
+    } else {
+      return 'warn';
     }
   }
 
-  getFixedLengthString(string, length, prefix=true, fixValue='0'){
-    string = String(string)
-    console.log('string length', string.toLocaleString().length)
-    return string.length == length? string: prefix ? fixValue.repeat(length - string.length) + string: string + fixValue.repeat(length - string.length)
+  getFixedLengthString(string, length, prefix = true, fixValue = '0') {
+    string = String(string);
+    console.log('string length', string.toLocaleString().length);
+    return string.length > length
+      ? string.substring(0, length)
+      : prefix
+      ? fixValue.repeat(length - string.length) + string
+      : string + fixValue.repeat(length - string.length);
   }
 
   getFormattedDineInItemDetails() {
     let formattedTable = '';
     this.summary.itemList.forEach((element: any, index) => {
       if (element.quantity > 0) {
-        let slNo = this.getFixedLengthString(index+1, 2)
         let itemAmount = element.quantity * element.price;
-        let trimmedName = this.getFixedLengthString(element.name.substring(0, 12), 12, false, ' ')
-        let remainingName = trimmedName == element.name ? '': '\t' + element.name.substring(12, 30) + '\n'
-        formattedTable += `${slNo}\t${trimmedName} \t${this.getFixedLengthString(element.quantity, 2, true, '0')}   ${element.price}     Rs.${itemAmount}\n${remainingName}`;
+        let trimmedName = this.getFixedLengthString(
+          element.name.substring(0, 14),
+          14,
+          false,
+          ' '
+        );
+        let remainingName =
+          trimmedName.trim() == element.name
+            ? ''
+            : this.getFixedLengthString(element.name.substring(14, 30), 40, false, ' ');
+
+        formattedTable += `- ${trimmedName}  ${this.getFixedLengthString(
+          element.quantity,
+          2,
+          true,
+          '0'
+        )}   ${element.price}    Rs.${itemAmount}\n\t${remainingName}`;
       }
     });
     return formattedTable;
@@ -280,24 +296,30 @@ export class PointOfSaleComponent {
     return formattedTable == 'Parcel\n' ? '' : formattedTable;
   }
 
+  getGstDetails(){
+    let gstAmount = (this.summary.amount * 0.05) .toFixed(2);
+    return `GST @ 5%: Rs.${gstAmount}`
+  }
+
   getTotalAmount() {
-    let gstAmount = ((this.summary.amount * 0.05) / 2).toFixed(2)
-    return `SGST(2.5%): Rs.${gstAmount}   CGST(2.5%): Rs.${gstAmount}\nTotal Amount: Rs.${this.summary.amount}`;
+    return `Total Amount: Rs.${this.summary.amount}`;
   }
   getFormattedCurrentDate() {
     return this.dateUtils.getDateForRecipePrint();
   }
 
   getCustomerPrintableText() {
-    let sectionHeader1 = '_'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '_'.repeat(16)
-    let tableHeader = 'Sl.no  DESCRIPTION \tQTY  RATE  AMOUNT';
+    let sectionHeader1 =
+      '-'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '-'.repeat(16);
+    let tableHeader = ' DESCRIPTION      QTY  RATE  AMOUNT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
-    let sectionSeperatorCharacters = '_'.repeat(45)
+    let sectionSeperatorCharacters = '-'.repeat(40);
     let content = [
       {
         text: this.restaurantName,
         justification: 'center',
         bold: true,
+        size: 'xlarge'
       },
       {
         text: this.restaurantAddress.replace(/-/gi, '\n'),
@@ -315,10 +337,12 @@ export class PointOfSaleComponent {
       },
       {
         text: tableHeader,
-        underline: true
+        underline: true,
+        justification: 'center'
       },
       {
         text: this.getFormattedDineInItemDetails(),
+        justification: 'center'
       },
       {
         text: this.getFormattedParcelItemDetails(),
@@ -328,8 +352,18 @@ export class PointOfSaleComponent {
         justification: 'center'
       },
       {
+        text: this.getGstDetails(),
+        bold: true,
+        justification: 'right'
+      },
+      {
+        text: sectionSeperatorCharacters,
+        justification: 'center'
+      },
+      {
         text: this.getTotalAmount(),
         bold: true,
+        size: 'xlarge',
         justification: 'right',
       },
       {
@@ -340,22 +374,28 @@ export class PointOfSaleComponent {
         text: endNote,
         justification: 'center',
       },
+      {
+        text: this.restaurantGST,
+        justification: 'center'
+      }
     ];
     return content;
   }
 
-  getCounterPrintableText(){
-    let countersWithOrders = []
-    this.counters.forEach(counterEle => {
-      let counterItemList = this.summary.itemList.filter(itemEle => itemEle.counter.counter_id == counterEle.counter_id)
-      if(counterItemList.length){
-        let formattedText = ''
-        counterItemList.forEach(element => {
+  getCounterPrintableText() {
+    let countersWithOrders = [];
+    this.counters.forEach((counterEle) => {
+      let counterItemList = this.summary.itemList.filter(
+        (itemEle) => itemEle.counter.counter_id == counterEle.counter_id
+      );
+      if (counterItemList.length) {
+        let formattedText = '';
+        counterItemList.forEach((element) => {
           let itemAmount = element.quantity * element.price;
           formattedText += `${this.trimString(element.name)}\t${
             element.quantity
           }\t${element.price}\tRs.${itemAmount}\n`;
-        })
+        });
         let printObj = [
           {
             text: counterEle.counter_name,
@@ -366,18 +406,18 @@ export class PointOfSaleComponent {
           {
             text: formattedText,
             size: 'large',
-          }
-
-      ]
-        countersWithOrders.push(printObj)
+          },
+        ];
+        countersWithOrders.push(printObj);
       }
-    } )
-    console.log(countersWithOrders)
-    return countersWithOrders
+    });
+    console.log(countersWithOrders);
+    return countersWithOrders;
   }
 
-  printRecipt(orderNum){
-    if (this.printerConn.usbSought ) {     //to-do: Interchange dialogbox call and print call
+  printRecipt(orderNum) {
+    if (this.printerConn.usbSought) {
+      //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
@@ -391,55 +431,53 @@ export class PointOfSaleComponent {
           bold: true,
           justification: 'center',
         })
-        .feed(5)
+        .feed(4)
         .cut()
-        .flush()
+        .flush();
 
-        // this.getCounterPrintableText().forEach(ele =>{
-        //   ele.forEach(element => {
-        //     printConnect.writeCustomLine(element)
-        //   }
-        //   );
-        //   printConnect
-        //   .writeCustomLine({
-        //     text: `Order No: ${orderNum}`,
-        //     size: 'xxlarge',
-        //     bold: true,
-        //     justification: 'center',
-        //   })
-        //   .feed(5).cut('partial')
-        // })
-        // printConnect
-        // .flush();
+      // this.getCounterPrintableText().forEach(ele =>{
+      //   ele.forEach(element => {
+      //     printConnect.writeCustomLine(element)
+      //   }
+      //   );
+      //   printConnect
+      //   .writeCustomLine({
+      //     text: `Order No: ${orderNum}`,
+      //     size: 'xxlarge',
+      //     bold: true,
+      //     justification: 'center',
+      //   })
+      //   .feed(5).cut('partial')
+      // })
+      // printConnect
+      // .flush();
     }
   }
-  testPrint(){
+  testPrint() {
     let printConnect = this.printerConn.printService.init();
     let content = [
       {
         text: 'This is Test print',
         size: 'xxlarge',
         bold: true,
-        justification: 'center'
-      }
-    ]
-    content.forEach(ele => 
-      printConnect.writeCustomLine(ele)
-      )
-      printConnect.feed(5)
-      .cut()
-      .flush();
+        justification: 'center',
+      },
+    ];
+    content.forEach((ele) => printConnect.writeCustomLine(ele));
+    printConnect.feed(5).cut().flush();
   }
 
   placeOrder() {
-    this.disablePlace = true
-    this.getCounterPrintableText()
+    this.disablePlace = true;
+    this.getCounterPrintableText();
     let body = this.preparePlaceOrderBody();
-    this.printerRequired && !this.printerConn.usbSought? this.printerConn.seekUSB() : null;
+    this.printerRequired && !this.printerConn.usbSought
+      ? this.printerConn.seekUSB()
+      : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
         let orderNum = data['order_no'];
-        this.printRecipt(orderNum)
+        this.printRecipt(orderNum);
         let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
           data: {
             msg: `Order created successfully. Order No: ${data['order_no']}`,
@@ -448,15 +486,18 @@ export class PointOfSaleComponent {
         dialogRef.afterClosed().subscribe((data) => {
           this.ngOnInit();
         });
-        this.disablePlace = false
+        this.disablePlace = false;
       },
       (error) => {
-        console.log('Place order response', error)
-        let errorMsg = error.status != 0 ? `Failed to create Order. ${error.error.error}`: 'Failed to create order. No internet'
+        console.log('Place order response', error);
+        let errorMsg =
+          error.status != 0
+            ? `Failed to create Order. ${error.error.error}`
+            : 'Failed to create order. No internet';
         this.dialog.open(ErrorMsgDialogComponent, {
           data: { msg: errorMsg },
         });
-        this.disablePlace = false
+        this.disablePlace = false;
       }
     );
   }

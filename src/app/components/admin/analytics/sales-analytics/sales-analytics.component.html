@@ -114,6 +114,7 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
           </div>
+          <button mat-raised-button (click)="printSalesAnalytics()" color="primary">Print Report</button>
         </div>
       </div>
       <ng-template #graphView>

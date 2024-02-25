@@ -21,8 +21,9 @@
                             <div class="item-type" [ngClass]="{'bg-success': item.veg, 'bg-danger': item.non_veg, 'bg-warning': item.egg}">
                             </div>
                             <div class="item-name">
-                                <p class="p-1 fs-6 m-0">
+                                <p class="pr-1 pl-1 pt-1 fs-6 m-0">
                                 {{item.name}}</p>
+                                <p class="fs-8 m-0">₹&nbsp;{{item.price}}</p>
                             </div>
                         </div>
                     </div>
@@ -67,7 +68,7 @@
                                 <p *ngIf="item.parcelQuantity"><b>{{item.parcelQuantity}}</b> Parcel | <b>{{item.quantity}}</b> Dine-in </p>
                             </td>    
                             <td class="col3">&nbsp;₹&nbsp;{{item.price}}</td>
-                            <td class="col4">&nbsp;₹&nbsp; {{calculateItemAmount(item)}}</td>
+                            <td class="col4">&nbsp;₹&nbsp;{{calculateItemAmount(item)}}</td>
                             <td class="col5">
                                 <mat-icon (click)="clearItem(item)" >delete</mat-icon>
                             </td>
