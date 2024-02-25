@@ -249,8 +249,8 @@ export class PointOfSaleComponent {
   getFixedLengthString(string, length, prefix = true, fixValue = '0') {
     string = String(string);
     console.log('string length', string.toLocaleString().length);
-    return string.length == length
-      ? string
+    return string.length > length
+      ? string.substring(0, length)
       : prefix
       ? fixValue.repeat(length - string.length) + string
       : string + fixValue.repeat(length - string.length);
@@ -431,7 +431,7 @@ export class PointOfSaleComponent {
           bold: true,
           justification: 'center',
         })
-        .feed(5)
+        .feed(4)
         .cut()
         .flush();
 

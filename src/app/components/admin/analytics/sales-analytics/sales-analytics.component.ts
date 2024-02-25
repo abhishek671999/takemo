@@ -14,6 +14,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MatTableDataSource } from '@angular/material/table';
+import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -37,7 +38,8 @@ export class SalesAnalyticsComponent {
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
     private _meAPIutility: meAPIUtility,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    public printerConn: PrintConnectorService
   ) {}
 
   timeFrames = [
@@ -89,11 +91,9 @@ export class SalesAnalyticsComponent {
   ELEMENT_DATA = [];
 
   displayedColumns: string[] = ['position', 'name', 'quantity', 'total_amount'];
-  public dataSource = new MatTableDataSource()
+  public dataSource = new MatTableDataSource();
   ngOnInit() {
-    console.log('Get all rules called');
     this._ruleService.getAllRules().subscribe((data) => {
-      console.log('Rules data', data);
       data['rules'].forEach((element) => {
         this.ruleList.push({
           rule_id_list: element.id,
@@ -108,7 +108,6 @@ export class SalesAnalyticsComponent {
       .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
       .subscribe(
         (data) => {
-          console.log('counters available', data);
           this.counters = data['counters'];
         },
         (error) => {
@@ -117,13 +116,12 @@ export class SalesAnalyticsComponent {
       );
   }
 
-  onToggle(event){
-    this.tableView = !this.tableView
-    this.onValueChange()
+  onToggle(event) {
+    this.tableView = !this.tableView;
+    this.onValueChange();
   }
 
   getRequestBodyPrepared() {
-    console.log('This is in body: ', this.isITTUser);
     let body = {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
@@ -138,12 +136,6 @@ export class SalesAnalyticsComponent {
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
     }
-    console.log(
-      'New: ',
-      this.selectedTimeFrame,
-      this.range.value.start,
-      this.range.value.end
-    );
     if (this.selectedTimeFrame == 'custom') {
       if (this.range.value.start && this.range.value.end) {
         body['time_frame'] = this.selectedTimeFrame;
@@ -167,43 +159,42 @@ export class SalesAnalyticsComponent {
     if (this.selectedTimeFrame == 'custom') {
       field.classList.remove('hidden');
       if (this.range.value.start && this.range.value.end) {
-        try{
+        try {
           this.chart1.destroy();
           this.chart2.destroy();
-        }catch(error){
-          console.log(error)
+        } catch (error) {
+          console.log(error);
         }
       }
     } else {
       field.classList.add('hidden');
-      try{
+      try {
         this.chart1.destroy();
         this.chart2.destroy();
-      }catch(error){
-        console.log(error)
+      } catch (error) {
+        console.log(error);
       }
     }
     this.createChart(this.getRequestBodyPrepared());
   }
-  
+
   parseAllOrders(data) {
-    let parsedArray = []
-    let quantity = data['quantity']
-    let amount = data['amount']
-    let paymentList = []
-    Object.entries(amount).forEach(([key, value], index) => paymentList.push(key.split('_')[0]))
+    let parsedArray = [];
+    let quantity = data['quantity'];
+    let amount = data['amount'];
+    let paymentList = [];
+    Object.entries(amount).forEach(([key, value], index) =>
+      paymentList.push(key.split('_')[0])
+    );
     paymentList.forEach((value, index) => {
-      parsedArray.push(
-        {
-          position: index + 1,
-          name: value,
-          quantity: quantity[value+'_quantity'],
-          total_amount: amount[value+'_amount']
-        }
-      )
-    }
-    )
-    return parsedArray
+      parsedArray.push({
+        position: index + 1,
+        name: value,
+        quantity: quantity[value + '_quantity'],
+        total_amount: amount[value + '_amount'],
+      });
+    });
+    return parsedArray;
   }
 
   parseOrdersCategoryWise(data) {
@@ -223,7 +214,6 @@ export class SalesAnalyticsComponent {
   parseOrdersItemWise(data) {
     let parsedArray = [];
     let itemWiseData = data['item_wise_data'];
-    console.log('itemwise', itemWiseData)
     Object.entries(itemWiseData).forEach(([key, value], index) => {
       parsedArray.push({
         position: index + 1,
@@ -246,16 +236,13 @@ export class SalesAnalyticsComponent {
   }
 
   createChart(body) {
-    console.log('Body::: ', body);
     if (body) {
       this._analyticsService.getSalesAnalyticsData(body).subscribe(
         (data) => {
-          console.log('Got response:: ', this.selectedGroup, data);
           this.totalOrders = data['quantity']['total_quantity'];
           this.totalAmount = data['amount']['total_amount'];
           if (this.tableView) {
             this.dataSource.data = this.parseResponse(data);
-            console.log(this.dataSource.data)
           } else {
             this.chart1 =
               this.selectedGroup == 'All'
@@ -479,5 +466,85 @@ export class SalesAnalyticsComponent {
         },
       },
     });
+  }
+
+  async printSalesAnalytics() {
+    let a = (await this.printerConn.usbSought)
+      ? null
+      : this.printerConn.seekUSB();
+    console.log(a);
+    if (this.printerConn.usbSought) {
+      let printConnect = this.printerConn.printService.init();
+      this.getPrintableText().forEach((ele) => {
+        printConnect.writeCustomLine(ele);
+      });
+      printConnect.feed(4).cut().flush();
+    } else {
+      console.log('No printer connected');
+    }
+  }
+
+  getPrintableText() {
+    let sectionSeperatorCharacters = '-'.repeat(40);
+    let content = [
+      {
+        text: sessionStorage.getItem('restaurant_name'),
+        size: 'xlarge',
+        bold: true,
+        justification: 'center',
+      },
+      {
+        text: this.getDatesection(),
+        justification: 'left',
+      },
+      {
+        text: sectionSeperatorCharacters,
+      },
+      {
+        text: this.getFormattedTableToPrint(),
+        justification: 'center',
+      },
+    ];
+    console.log('Content: ', content);
+    return content;
+  }
+
+  getFormattedTableToPrint() {
+    let tableHeader = 'No  Title               Orders  Amount  \n';
+    let formattedText = '';
+    this.dataSource.data.forEach((ele) => {
+      let slNo = this.getFixedLengthString(ele['position'], 2, true, '0');
+      let title = this.getFixedLengthString(ele['name'], 18, false, ' ');
+      let orders = this.getFixedLengthString(ele['quantity'], 6, true, ' ');
+      let amount = this.getFixedLengthString(
+        'Rs' + ele['total_amount'],
+        7,
+        false,
+        ' '
+      );
+
+      formattedText += `${slNo}  ${title}  ${orders}  ${amount}\n`;
+    });
+    return formattedText == '' ? '' : tableHeader + formattedText;
+  }
+
+  getDatesection() {
+    let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+    let printDate = this.dateUtils.getDateForRecipePrint();
+    let reportDate =
+      this.selectedTimeFrame == 'yesterday'
+        ? this.dateUtils.getDateForRecipePrint(yesterday, false)
+        : this.dateUtils.getDateForRecipePrint();
+    return `Print date: ${printDate}\n Report date: ${reportDate}`;
+  }
+
+  getFixedLengthString(string, length, prefix = true, fixValue = '0') {
+    string = String(string);
+    console.log('string length', string.toLocaleString().length);
+    return string.length > length
+      ? string.substring(0, length)
+      : prefix
+      ? fixValue.repeat(length - string.length) + string
+      : string + fixValue.repeat(length - string.length);
   }
 }
