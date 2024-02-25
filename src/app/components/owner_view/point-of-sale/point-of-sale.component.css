@@ -109,6 +109,7 @@ th{
     width: 10%;
 }
 .item-name{
+    width: 100%;
     padding: 0 0.5em;
     overflow: auto;
 }
