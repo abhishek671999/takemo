@@ -75,7 +75,7 @@ export class PointOfSaleComponent {
       );
     this.restaurantName = sessionStorage.getItem('restaurant_name');
     this.restaurantAddress = sessionStorage.getItem('restaurant_address');
-    this.restaurantGST = sessionStorage.getItem('restaurant_gst')
+    this.restaurantGST = sessionStorage.getItem('restaurant_gst');
   }
 
   setQuantity() {
@@ -260,24 +260,15 @@ export class PointOfSaleComponent {
     let formattedTable = '';
     this.summary.itemList.forEach((element: any, index) => {
       if (element.quantity > 0) {
-        let itemAmount = element.quantity * element.price;
-        let trimmedName = this.getFixedLengthString(
-          element.name.substring(0, 14),
-          14,
-          false,
-          ' '
-        );
-        let remainingName =
-          trimmedName.trim() == element.name
-            ? ''
-            : this.getFixedLengthString(element.name.substring(14, 30), 40, false, ' ');
-
-        formattedTable += `- ${trimmedName}  ${this.getFixedLengthString(
-          element.quantity,
-          2,
-          true,
-          '0'
-        )}   ${element.price}    Rs.${itemAmount}\n\t${remainingName}`;
+        let trimmedName = this.getFixedLengthString(element.name.substring(0, 24),24,false,' ');
+        let remainingName = trimmedName.trim() == element.name? '': ' ' + this.getFixedLengthString(element.name.substring(24, 48),24,
+                false,
+                ' '
+              ) + '\n';
+        let itemQty = this.getFixedLengthString(element.quantity,3,true,' ')
+        let itemPrice = this.getFixedLengthString(element.price,4, true, ' ' )
+        let itemAmount = this.getFixedLengthString(element.quantity * element.price, 4, true, ' ')
+        formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
       }
     });
     return formattedTable;
@@ -296,9 +287,9 @@ export class PointOfSaleComponent {
     return formattedTable == 'Parcel\n' ? '' : formattedTable;
   }
 
-  getGstDetails(){
-    let gstAmount = (this.summary.amount * 0.05) .toFixed(2);
-    return `GST @ 5%: Rs.${gstAmount}`
+  getGstDetails() {
+    let gstAmount = (this.summary.amount * 0.05).toFixed(2);
+    return `GST @ 5%: Rs.${gstAmount}`;
   }
 
   getTotalAmount() {
@@ -311,15 +302,15 @@ export class PointOfSaleComponent {
   getCustomerPrintableText() {
     let sectionHeader1 =
       '-'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '-'.repeat(16);
-    let tableHeader = ' DESCRIPTION      QTY  RATE  AMOUNT';
+    let tableHeader = '       DESCRIPTION         QTY  RATE  AMT ';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
-    let sectionSeperatorCharacters = '-'.repeat(40);
+    let sectionSeperatorCharacters = '-'.repeat(42);
     let content = [
       {
         text: this.restaurantName,
         justification: 'center',
         bold: true,
-        size: 'xlarge'
+        size: 'xlarge',
       },
       {
         text: this.restaurantAddress.replace(/-/gi, '\n'),
@@ -338,27 +329,27 @@ export class PointOfSaleComponent {
       {
         text: tableHeader,
         underline: true,
-        justification: 'center'
+        justification: 'left',
       },
       {
         text: this.getFormattedDineInItemDetails(),
-        justification: 'center'
+        justification: 'left',
       },
       {
         text: this.getFormattedParcelItemDetails(),
       },
       {
         text: sectionSeperatorCharacters,
-        justification: 'center'
+        justification: 'center',
       },
       {
         text: this.getGstDetails(),
         bold: true,
-        justification: 'right'
+        justification: 'right',
       },
       {
         text: sectionSeperatorCharacters,
-        justification: 'center'
+        justification: 'center',
       },
       {
         text: this.getTotalAmount(),
@@ -368,7 +359,7 @@ export class PointOfSaleComponent {
       },
       {
         text: sectionSeperatorCharacters,
-        justification: 'center'
+        justification: 'center',
       },
       {
         text: endNote,
@@ -376,8 +367,8 @@ export class PointOfSaleComponent {
       },
       {
         text: this.restaurantGST,
-        justification: 'center'
-      }
+        justification: 'center',
+      },
     ];
     return content;
   }
@@ -457,10 +448,9 @@ export class PointOfSaleComponent {
     let printConnect = this.printerConn.printService.init();
     let content = [
       {
-        text: 'This is Test print',
-        size: 'xxlarge',
-        bold: true,
-        justification: 'center',
+        text: 'This is Test print'.toUpperCase().repeat(50),
+        size: 'normal',
+        justification: 'left',
       },
     ];
     content.forEach((ele) => printConnect.writeCustomLine(ele));
