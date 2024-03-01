@@ -13,26 +13,16 @@ export class OrdersHomeComponent {
   constructor(private router: Router, private _counterService: CounterService){}
   navLinks = [
     {
-      label: 'Pending',
-      link: '/owner/pending-orders',
-        index: 0
-    },
-    {
-      label: 'Current',
-      link: '/owner/current-orders',
-      index: 1
-    },
-    {
-        label: 'History',
-        link: '/owner/orders-history',
-        index: 2
-    },
-    {
-      label: 'Cancelled',
-      link: '/owner/cancelled-orders',
-      index: 3
-    }
-]; 
+      label: 'History',
+      link: '/owner/orders-history',
+      index: 0
+  },
+      // {
+    //   label: 'Cancelled',
+    //   link: '/owner/cancelled-orders',
+    //   index: 3
+    // }
+  ]
 counters = []
 ngOnInit(){
   this._counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
@@ -43,7 +33,23 @@ ngOnInit(){
       alert("Couldn't fetch counters")
     }
   )
-}
+  console.log(sessionStorage.getItem('restaurant_kds'))
+  if (sessionStorage.getItem('restaurant_kds') == 'true'){
+    debugger
+        this.navLinks.push(
+          {
+            label: 'Pending',
+            link: '/owner/pending-orders',
+              index: 1
+          },
+          {
+            label: 'Current',
+            link: '/owner/current-orders',
+            index: 2
+          },
+        )
+      }
+  }
 
 navigateToPOS(){
   this.router.navigate(['/owner/point-of-sale'])

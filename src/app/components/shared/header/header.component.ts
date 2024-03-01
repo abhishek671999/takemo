@@ -65,7 +65,8 @@ export class HeaderComponent {
           name: 'Orders',
           href: '',
           action: () => {
-            this.router.navigate(['./owner/pending-orders'])
+            let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+            this.router.navigate([navigationURL]);
           }
       },
       'logout': {
@@ -193,6 +194,7 @@ export class HeaderComponent {
             sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
+            sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
             this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
@@ -200,6 +202,7 @@ export class HeaderComponent {
             sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
+            sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
             this.addRestaurantStaffNavOptions()
             break
           }
