@@ -498,8 +498,9 @@ export class PointOfSaleComponent {
     ]);
   }
 
-  navigateToPendingOrders() {
-    this.router.navigate(['/owner/pending-orders']);
+  navigateToOrders() {
+    let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+    this.router.navigate([navigationURL]);
   }
 
   clearItem(item) {
