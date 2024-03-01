@@ -17,7 +17,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 })
 export class MenuComponent {
   amount: number = 0;
-  orderList = { items: [], amount: 0, restaurant_id: null };
+  orderList = { itemList: [], amount: 0, restaurant_id: null };
   constructor(
     private _menuService: MenuService,
     private _route: ActivatedRoute,
@@ -29,7 +29,9 @@ export class MenuComponent {
   menu_response: any;
   showSpinner = true;
   restaurant_id: number;
-
+  menu;
+  hideCategory = true
+  currentCategory = null;
   ngOnInit() {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -37,14 +39,16 @@ export class MenuComponent {
       this._menuService.getMenu(this.restaurant_id).subscribe(
         (data) => {
           this.menu_response = data
-          console.log(this.menu_response);
-          this.menu_response.menu.map((category) => {
+          this.menu = data['menu']
+          console.log('Menu response', data);
+          this.menu.map((category) => {
             category.category.items.filter(
               (element) => element.is_available == true
             );
           });
           this.setQuantity();
           this.showSpinner = false;
+          this.showOnlyFirstCategory();
         },
         (error) => {
           console.log('Error while getting menu: ', error)
@@ -52,27 +56,67 @@ export class MenuComponent {
           alert('Error while loading menu')
         }
       );
-    });
-
-    
+    });    
   }
 
   setQuantity() {
     console.log('Setting quantity:', this.menu_response);
-    this.menu_response.menu.forEach((category) => {
+    this.menu.forEach((category) => {
       category.category.items.forEach((item) => {
         item.quantity = 0;
+        item.parcelQuantity = 0;
       });
     });
   }
 
-  addItem(item) {
+  togglehideCategory(){
+    this.hideCategory = !this.hideCategory
+    let categoryBar = document.getElementById('collapsable-category-bar') as HTMLElement;
+    categoryBar.style.zIndex = this.hideCategory ? '5': '0'
+  }
+
+  showOnlyFirstCategory() {
+    setTimeout(() => {
+      let allCategoryBlock = Array.from(
+        document.getElementsByClassName(
+          'category-wrapper'
+        ) as HTMLCollectionOf<HTMLElement>
+      );
+      allCategoryBlock.forEach((ele, index) => {
+        if (index == 0) {
+          this.currentCategory = ele.id
+          ele.classList.add('show');
+          ele.classList.remove('hidden');
+        } else {
+          ele.classList.remove('show');
+          ele.classList.add('hidden');
+        }
+      });
+
+      let allCategoryBar = Array.from(
+        document.getElementsByClassName(
+          'category-bar-items'
+        ) as HTMLCollectionOf<HTMLElement>
+      );
+      allCategoryBar.forEach((ele, index) => {
+        if (index == 0) {
+          ele.classList.add('active');
+        } else {
+          ele.classList.remove('active');
+        }
+      });
+    }, 10);
+  }
+
+  addItem(item,event) {
+    event.stopPropagation()
     if (item.quantity < 10) {
       item.quantity += 1;
       this.amount += item.price;
     }
   }
-  subItem(item) {
+  subItem(item, event) {
+    event.stopPropagation()
     if (item.quantity > 0) {
       item.quantity -= 1;
       this.amount -= item.price;
@@ -84,12 +128,13 @@ export class MenuComponent {
       category.category.items.forEach((item) => {
         if (item.quantity) {
           let itemSummary = {
-            item_id: item.id,
+            id: item.id,
             name: item.name,
             quantity: item.quantity,
             price: item.price,
+            parcelQuantity: item.parcelQuantity
           };
-          this.orderList.items.push(itemSummary);
+          this.orderList.itemList.push(itemSummary);
         }
       });
     });
@@ -106,9 +151,39 @@ export class MenuComponent {
         if(result.mode == 'wallet'){
           this._router.navigate(['/user/myorders'])
         }
-        this.orderList = { items: [], amount: 0, restaurant_id: null };
+        this.orderList = { itemList: [], amount: 0, restaurant_id: null };
       } else {
-        this.orderList = { items: [], amount: 0, restaurant_id: null };
+        this.orderList = { itemList: [], amount: 0, restaurant_id: null };
+      }
+    });
+  }
+
+  categoryClickEventHandler(category) {
+    this.currentCategory = category
+    category = category.replace(' ', '');
+    let allCategoryBlock = Array.from(
+      document.getElementsByClassName(
+        'category-wrapper'
+      ) as HTMLCollectionOf<HTMLElement>
+    );
+    allCategoryBlock.forEach((element) => {
+      element.classList.remove('show');
+      element.classList.add('hidden');
+    });
+    let categoryBlock = document.getElementById(category);
+    categoryBlock.classList.add('show');
+    categoryBlock.classList.remove('hidden');
+
+    let allCategoryBar = Array.from(
+      document.getElementsByClassName(
+        'category-bar-items'
+      ) as HTMLCollectionOf<HTMLElement>
+    );
+    allCategoryBar.forEach((ele) => {
+      if (ele.classList.contains(category)) {
+        ele.classList.add('active');
+      } else {
+        ele.classList.remove('active');
       }
     });
   }

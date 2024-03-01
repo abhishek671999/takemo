@@ -14,3 +14,29 @@
     gap: 2em;
 }
 
+
+.item-quantity{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;   
+}
+
+.col1{
+    width: 35%;
+}
+
+.col2{
+    width: 35%;
+}
+
+.col3{
+    width: 20%;
+}
+
+.col4{
+    width: 10%;
+}
+
+.col5{
+    width: 10%;
+}
