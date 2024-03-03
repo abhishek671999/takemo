@@ -12,11 +12,7 @@ export class OrdersHomeComponent {
 
   constructor(private router: Router, private _counterService: CounterService){}
   navLinks = [
-    {
-      label: 'History',
-      link: '/owner/orders-history',
-      index: 0
-  },
+  
       // {
     //   label: 'Cancelled',
     //   link: '/owner/cancelled-orders',
@@ -35,7 +31,6 @@ ngOnInit(){
   )
   console.log(sessionStorage.getItem('restaurant_kds'))
   if (sessionStorage.getItem('restaurant_kds') == 'true'){
-    debugger
         this.navLinks.push(
           {
             label: 'Pending',
@@ -47,6 +42,19 @@ ngOnInit(){
             link: '/owner/current-orders',
             index: 2
           },
+          {
+            label: 'History',
+            link: '/owner/orders-history',
+            index: 0
+          }
+        )
+      }else{
+        this.navLinks.push(
+          {
+            label: 'History',
+            link: '/owner/orders-history',
+            index: 0
+        }
         )
       }
   }

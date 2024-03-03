@@ -55,7 +55,13 @@ export class PendingOrdersComponent {
         this.currentOrders = data
         this.orderList = []
         for (let item in this.currentOrders){
-          this.orderList.push({obj: this.currentOrders[item]['pending_order'], name: item, quantity: this.currentOrders[item]['pending_order'].length})
+          this.orderList.push({
+            obj: this.currentOrders[item]['pending_order'], 
+            name: item, 
+            quantity: this.currentOrders[item]['pending_order'].length,
+            parcelQuantity: this.currentOrders[item]['pending_order'].filter((ele) => ele.parcel).length
+            }
+          )
         }
         this.showSpinner = false
       }, 
@@ -76,7 +82,10 @@ export class PendingOrdersComponent {
 
   itemClicked(item){
     console.log('This item is clicked: ', item)
-    let dialogRef = this._dialog.open(DeliveryOrderDialogComponent, {data: item})
+    let dialogRef = this._dialog.open(DeliveryOrderDialogComponent, {
+      data: item, 
+      height: 'auto',
+      width:  'auto',})
     dialogRef.afterClosed().subscribe( () => {
       this.updateSubscription.unsubscribe()
       this.ngOnInit()

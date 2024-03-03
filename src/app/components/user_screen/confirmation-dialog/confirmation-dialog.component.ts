@@ -37,7 +37,7 @@ export class ConfirmationDialogComponent {
   public restaurantParcel = false;
 
   ngOnInit() {
-    this.dialogRef.updateSize('100vw', '80vh')
+    this.dialogRef.updateSize('100vw', 'auto')
     this.__ordersService.checkIfPaymentRequired().subscribe(
       (data) => {
         console.log(data);
@@ -198,7 +198,7 @@ export class ConfirmationDialogComponent {
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
-    this.summary.amount += 5
+    this.summary.amount += (5 * item.parcelQuantity)
   }
 
   subParcelItem(item) {
@@ -219,6 +219,7 @@ export class ConfirmationDialogComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
+      this.summary.amount += 5
     }
     if (item.parcelQuantity < 10) {
       item.parcelQuantity += 1;

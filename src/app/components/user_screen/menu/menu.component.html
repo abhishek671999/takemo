@@ -7,14 +7,8 @@
   <ng-template #elseBlock>
     <div *ngIf="menu_response.is_open; else resturantClosed">
       <h2 class="text-center mt-2 mb-0">
-        You are ordering from {{ menu_response.restaurant_name }}
+        {{ menu_response.restaurant_name }}
       </h2>
-      <button
-        (click)="togglehideCategory()"
-        (clickOutside)="hideCategory = true"
-      >
-        Menu
-      </button>
       <h2 class="text-center m-0">{{currentCategory}}</h2>
       <div class="menu-container">
         <div
@@ -45,8 +39,9 @@
             >
               <div class="item" *ngFor="let item of category.category.items">
                 <div class="item-card" (click)="addItem(item, $event)">
-                  <div
-                    class="item-type m-0 p-0"
+                  <div style="display: flex; justify-content: flex-start; height: 70%;">
+                    <div
+                    class="item-type"
                     [ngClass]="{
                       'bg-success': item.veg,
                       'bg-danger': item.non_veg,
@@ -58,6 +53,7 @@
                       {{ item.name }}
                     </p>
                     <p class="fs-8 m-0">₹&nbsp;{{ item.price }}</p>
+                  </div>
                   </div>
                   <div class="item-quantity">
                     <mat-icon (click)="subItem(item, $event)">remove_circle</mat-icon>
@@ -71,6 +67,9 @@
             </div>
           </ng-container>
         </div>
+        <button class="toggle-category-button" color="primary" mat-fab (click)="togglehideCategory()" (clickOutside)="hideCategory = true">
+          <mat-icon>menu</mat-icon>
+        </button>
         <!-- <div class="summary-bar">
                       <div class="table-section">
                         <table class="table" style="width: 100%">

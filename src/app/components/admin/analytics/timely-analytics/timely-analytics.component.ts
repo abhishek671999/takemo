@@ -50,7 +50,7 @@ export class TimelyAnalyticsComponent {
   totalAmount = 0;
   totalOrders = 0;
   loadView = false
-  isITTUser = this._meAPIutility.doesUsersBelongsToITT()
+  isITTUser = this._meAPIutility.doesUserBelongsToITT()
 
   counters = []
   selectedCounterId;

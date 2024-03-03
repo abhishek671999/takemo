@@ -85,7 +85,7 @@ export class HeaderComponent {
         name: 'My Orders',
         href: '',
         action: () => {
-          this.router.navigate(['./user/myorders'])
+          this.router.navigate(['./user/myorders/current-orders'])
         }
       },
       'support': {
@@ -152,7 +152,7 @@ export class HeaderComponent {
   }
 
   addUserNavOptions(){
-    let userNavOptions = ['wallet', 'menu', 'userOrders']
+    let userNavOptions = [ 'menu', 'userOrders']
     for(let option of userNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])

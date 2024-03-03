@@ -65,16 +65,24 @@ export class SalesAnalyticsComponent {
     { displayValue: 'Tikkad kitchen', restaurant_id: 2 },
   ];
 
+  paymentMethods = [   // hardcode
+    { displayValue: 'All', codedList: [2,5,6,7,8] },
+    { displayValue: 'Mobile', codedList: [2] },
+    { displayValue: 'POS', codedList: [5,6,7,8] }
+  ]
+
   ruleList = [];
   loadView = false;
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  selectPaymentMethod: number[] = this.paymentMethods[0].codedList
   selectedRule;
   totalAmount = 0;
   totalOrders = 0;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false;
-  isITTUser = this._meAPIutility.doesUsersBelongsToITT();
+  isITTUser = this._meAPIutility.doesUserBelongsToITT();
+  isRaviGobiUser = this._meAPIutility.doesUserBelongsToRaviGobi()
 
   chart1: any = [];
   chart2: any = [];
@@ -135,6 +143,9 @@ export class SalesAnalyticsComponent {
     };
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
+    }
+    if(this.isRaviGobiUser){
+      body['payment_mode_list'] = this.selectPaymentMethod
     }
     if (this.selectedTimeFrame == 'custom') {
       if (this.range.value.start && this.range.value.end) {

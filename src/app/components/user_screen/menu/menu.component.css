@@ -98,6 +98,7 @@ p {
 
 .category-bar{
   position: fixed;
+  right: 0;
   margin: 0.5em;
   border: 1px solid ;
   width: max-content;
@@ -105,7 +106,7 @@ p {
   z-index: 5;
   background-color: aliceblue;
   border-radius: 5px;
-  height: 75vh;
+  height: 60vh;
 }
 
 .category-wrapper{
@@ -113,6 +114,7 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
+  justify-content: space-around;
 }
 
 .category-button ul{
@@ -136,7 +138,7 @@ p {
   border: 1px solid ;
   width: 100%;
   overflow: auto;
-  height: 90%;
+  height: 67vh;
 }
 
 .item-card{
@@ -148,7 +150,7 @@ p {
   overflow: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+
   margin: 0;
   padding: 0;
 }
@@ -159,7 +161,7 @@ p {
 
 .item-name{
   width: 100%;
-  height: 50%;
+  height: 100%;
   padding: 0 0.5em;
   overflow: auto;
 }
@@ -170,9 +172,21 @@ p {
   align-items: center;   
 }
 
+.item-type{
+  width: 6px;
+}
+
 .menu-container{
   height: 90%;
   display: flex;
+  flex-direction: column;
+}
+
+.toggle-category-button{
+  position: fixed;
+  bottom: 20vh;
+  right: 6vw;
+  align-self: last baseline;
 }
 
 .hidden{
