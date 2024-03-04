@@ -54,6 +54,14 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field *ngIf="isRaviGobiUser" class="form-field">
+      <mat-label>Payment method</mat-label>
+      <mat-select [(value)]="selectPaymentMethod" (selectionChange)="onValueChange()">
+        <mat-option *ngFor="let method of paymentMethods" [value]="method.codedList">
+          {{method.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-radio-group
       aria-labelledby="example-radio-group-label"
       class="example-radio-group"

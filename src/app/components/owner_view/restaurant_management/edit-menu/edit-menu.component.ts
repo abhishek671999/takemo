@@ -251,7 +251,8 @@ export class EditMenuComponent {
   navigateToPOS() {
     this._router.navigate(['/owner/point-of-sale']);
   }
-  navigateToPendingOrders() {
-    this._router.navigate(['/owner/pending-orders']);
+  navigateToOrders() {
+    let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+    this._router.navigate([navigationURL]);
   }
 }

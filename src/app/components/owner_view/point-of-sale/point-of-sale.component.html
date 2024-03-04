@@ -1,108 +1,176 @@
 <div class="main-container">
-    <div class="navigation">
-        <button mat-raised-button [hidden]="!printerRequired || printerConn.usbSought" [disabled]="printerConn.usbSought" (click)="printerConn.seekUSB()" color="{{getPrintStatus()}}">Connect to printer</button>
-        <button mat-raised-button [hidden]="!printerConn.usbSought" (click)="testPrint()" color="primary">Test print</button>
-        <button mat-raised-button (click)="navigateToEditMenu()" color="primary">Edit Menu</button>
-        <button mat-raised-button (click)="navigateToPendingOrders()" color="primary">Pending Orders</button>
+  <div class="navigation">
+    <button
+      mat-raised-button
+      [hidden]="!printerRequired || printerConn.usbSought"
+      [disabled]="printerConn.usbSought"
+      (click)="printerConn.seekUSB()"
+      color="{{ getPrintStatus() }}"
+    >
+      Connect to printer
+    </button>
+    <button
+      mat-raised-button
+      [hidden]="!printerConn.usbSought"
+      (click)="testPrint()"
+      color="primary"
+    >
+      Test print
+    </button>
+    <button mat-raised-button (click)="navigateToEditMenu()" color="primary">
+      Edit Menu
+    </button>
+    <button
+      mat-raised-button
+      (click)="navigateToOrders()"
+      color="primary"
+    >
+      Orders
+    </button>
+  </div>
+  <div class="menu-container">
+    <div class="category-bar">
+      <div class="category-button" *ngFor="let category of menu">
+        <ul>
+          <li
+            class="fs-6 category-bar-items {{
+              category['category']['name'].replace(' ', '')
+            }}"
+            (click)="categoryClickEventHandler(category['category']['name'])"
+          >
+            {{ category.category.name }}
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="menu-container">
-        <div class="category-bar">
-            <div class="category-button" *ngFor="let category of menu">
-                <ul>
-                    <li class="fs-6 category-bar-items {{category['category']['name'].replace(' ', '')}}" (click)="categoryClickEventHandler(category['category']['name'])">{{category.category.name}}</li>
-                </ul>
+    <div class="item-bar">
+      <ng-container *ngFor="let category of menu">
+        <div
+          id="{{ category.category.name.replace(' ', '') }}"
+          class="category-wrapper hidden"
+        >
+          <div class="item" *ngFor="let item of category.category.items">
+            <div class="item-card" (click)="addItem(item)">
+              <div
+                class="item-type"
+                [ngClass]="{
+                  'bg-success': item.veg,
+                  'bg-danger': item.non_veg,
+                  'bg-warning': item.egg
+                }"
+              ></div>
+              <div class="item-name">
+                <p class="pr-1 pl-1 pt-1 m-0">
+                  {{ item.name }}
+                </p>
+                <p class="fs-8 m-0">₹&nbsp;{{ item.price }}</p>
+              </div>
             </div>
+          </div>
         </div>
-        <div class="item-bar">
-            <ng-container *ngFor="let category of menu">
-                <div id="{{category.category.name.replace(' ', '')}}" class="category-wrapper hidden">
-                    <div class="item" *ngFor="let item of category.category.items">
-                        <div class="item-card" (click)="addItem(item)">
-                            <div class="item-type" [ngClass]="{'bg-success': item.veg, 'bg-danger': item.non_veg, 'bg-warning': item.egg}">
-                            </div>
-                            <div class="item-name">
-                                <p class="pr-1 pl-1 pt-1 fs-6 m-0">
-                                {{item.name}}</p>
-                                <p class="fs-8 m-0">₹&nbsp;{{item.price}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
-        <div class="summary-bar">
-            <div class="table-section">
-                <table  class="table" style="width: 100%;">
-                    <thead class="text-center">
-                        <tr>
-                            <th class="col1">Item</th>
-                            <th class="col2">Quantity</th>
-                            <th class="col3">Price</th>
-                            <th class="col4">Amount</th>
-                            <th class="col5">Clear</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-center">
-                        <tr *ngFor="let item of summary.itemList">
-                            <td class="col1">{{item.name}}</td>
-                            <td class="col2">
-                                <div class="item-quantity">
-                                    <mat-icon  (click)="subItem(item)">remove_circle</mat-icon>
-                                    <div style="padding: 2px;">
-                                        {{item.quantity}}
-                                    </div>
-                                        <mat-icon (click)="addItem(item)">add_circle</mat-icon>
-                                </div>
-                                <p *ngIf="restaurantParcel && item.parcel_available" (click)="incrementParcelQuantity(item)" style="text-decoration: underline; margin: 0; cursor: pointer;">Create Parcel</p>
-                                <div class="item-quantity" *ngIf="item.parcelQuantity">
-                                    <div class="icon-wrapper"  (click)="subParcelItem(item)">
-                                        <i class="fa-solid fa-minus"  ></i>
-                                    </div>
-                                    <div style="padding: 2px;">
-                                        {{item.parcelQuantity}}
-                                    </div>
-                                    <div class="icon-wrapper" (click)="addParcelItem(item)">
-                                        <i class="fa-solid fa-plus" ></i>
-                                    </div>
-                                </div>
-                                <p *ngIf="item.parcelQuantity"><b>{{item.parcelQuantity}}</b> Parcel | <b>{{item.quantity}}</b> Dine-in </p>
-                            </td>    
-                            <td class="col3">&nbsp;₹&nbsp;{{item.price}}</td>
-                            <td class="col4">&nbsp;₹&nbsp;{{calculateItemAmount(item)}}</td>
-                            <td class="col5">
-                                <mat-icon (click)="clearItem(item)" >delete</mat-icon>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="summary-end">
-                <div class="amount-summary">
-                    <h4 style="font-weight: bold;">Total Amount:&nbsp;₹&nbsp;{{summary.amount}}</h4>
-                    <section class="mop-section">
-                        <mat-radio-group class="radio-group" [(ngModel)]="modeOfPayment">
-                            <div class="radio-button-container">
-                                    <mat-radio-button class="ml-2 mr-2 p-1" value="cash"><p>Cash</p></mat-radio-button>
-                                    <mat-radio-button class="ml-2 mr-2 p-1" value="upi"><p>UPI</p></mat-radio-button>
-                                    <mat-radio-button class="ml-2 mr-2 p-1" value="credit"><p>Credit</p></mat-radio-button>
-                                    <mat-radio-button class="ml-2 mr-2 p-1 bg-danger" value="card"><p>Card</p></mat-radio-button>
-                            </div>
-
-                          </mat-radio-group>
-                    </section>
-                </div>
-                <br>
-                <div class="action-section">
-                    <button mat-raised-button (click)="clearSummary()">Clear</button>
-                    <div>
-                        <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || (!printerConn.usbSought && printerRequired) || disablePlace" color="primary">Place</button>
-                        <small class="text-danger" style="display: block;" *ngIf="!printerConn.usbSought && printerRequired">    Please connect Printer</small>
-                    </div>
-                    
-                </div>  
-            </div>
-            
-        </div>    
+      </ng-container>
     </div>
-    
+    <div class="summary-bar">
+      <div class="table-section">
+        <table class="table" style="width: 100%">
+          <thead class="text-center">
+            <tr>
+              <th class="col1">Item</th>
+              <th class="col2">Quantity</th>
+              <th class="col3">Price</th>
+              <th class="col4">Amount</th>
+              <th class="col5">Clear</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            <tr *ngFor="let item of summary.itemList">
+              <td class="col1">{{ item.name }}</td>
+              <td class="col2">
+                <div class="item-quantity">
+                  <mat-icon (click)="subItem(item)">remove_circle</mat-icon>
+                  <div style="padding: 2px">
+                    {{ item.quantity }}
+                  </div>
+                  <mat-icon (click)="addItem(item)">add_circle</mat-icon>
+                </div>
+                <p
+                  *ngIf="restaurantParcel && item.parcel_available"
+                  (click)="incrementParcelQuantity(item)"
+                  style="text-decoration: underline; margin: 0; cursor: pointer"
+                >
+                  Create Parcel
+                </p>
+                <div class="item-quantity" *ngIf="item.parcelQuantity">
+                  <mat-icon (click)="subParcelItem(item)">remove_circle</mat-icon>
+                  <div style="padding: 2px">
+                    {{ item.parcelQuantity }}
+                  </div>
+                  <mat-icon (click)="addParcelItem(item)">add_circle</mat-icon>
+                </div>
+                <p *ngIf="item.parcelQuantity">
+                  <b>{{ item.parcelQuantity }}</b> Parcel |
+                  <b>{{ item.quantity }}</b> Dine-in
+                </p>
+              </td>
+              <td class="col3">&nbsp;₹&nbsp;{{ item.price }}</td>
+              <td class="col4">&nbsp;₹&nbsp;{{ calculateItemAmount(item) }}</td>
+              <td class="col5">
+                <mat-icon (click)="clearItem(item)">delete</mat-icon>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="summary-end">
+        <div class="amount-summary">
+          <h4 style="font-weight: bold; " class="m-0">
+            Total Amount:&nbsp;₹&nbsp;{{ summary.amount }}
+          </h4>
+          <section class="mop-section">
+            <mat-radio-group class="radio-group" [(ngModel)]="modeOfPayment">
+              <div class="radio-button-container">
+                <mat-radio-button class="ml-2 mr-2 p-1" value="cash"
+                  ><p>Cash</p></mat-radio-button
+                >
+                <mat-radio-button class="ml-2 mr-2 p-1" value="upi"
+                  ><p>UPI</p></mat-radio-button
+                >
+                <mat-radio-button class="ml-2 mr-2 p-1" value="credit"
+                  ><p>Credit</p></mat-radio-button
+                >
+                <mat-radio-button class="ml-2 mr-2 p-1 bg-danger" value="card"
+                  ><p>Card</p></mat-radio-button
+                >
+              </div>
+            </mat-radio-group>
+          </section>
+        </div>
+        <p class="mb-2"></p>
+        <div class="action-section">
+          <button mat-raised-button (click)="clearSummary()">Clear</button>
+          <div>
+            <button
+              mat-raised-button
+              (click)="placeOrder()"
+              [disabled]="
+                summary.amount == 0 ||
+                (!printerConn.usbSought && printerRequired) ||
+                disablePlace
+              "
+              color="primary"
+            >
+              Place
+            </button>
+            <small
+              class="text-danger"
+              style="display: block"
+              *ngIf="!printerConn.usbSought && printerRequired"
+            >
+              Please connect Printer</small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,8 +1,32 @@
-.main-container{
-    width: 23em;
-}
+
 .viewport {
     height: 480px;
+}
+
+.cards-wrapper{
+    display: flex;
+    gap: 1em;
+    overflow: auto;
+    flex-wrap: wrap;
+}
+.deliver-card{
+    display: flex;
+    width: 7em;
+    height: 5em;
+    border: solid 1px rgb(65, 104, 244, 0.8);
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.blue{
+    background-color: rgb(65, 104, 244, 0.8);
+}
+
+.green{
+    background-color: rgb(9, 166, 88);
 }
 
 .col1, .col2{
