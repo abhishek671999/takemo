@@ -13,7 +13,7 @@ th{
 }
 
 .category-bar{
-    margin: 0.5em;
+    margin: 0.2em;
     border: 1px solid ;
     width: 18%;
     height: 90%;
@@ -60,7 +60,7 @@ th{
 }
 
 .item-bar{
-    margin: 0.5em;
+    margin: 0.2em;
     border: 1px solid ;
     width: 46%;
     overflow: auto;
@@ -83,6 +83,11 @@ th{
     overflow: auto;
     display: flex;
     justify-content: flex-start;
+}
+
+
+.item-card  p{
+    font-size: medium;
 }
 
 .item-type{
@@ -142,12 +147,18 @@ th{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
-.radio-button-container >  .sub-container{
-    display: flex;
-    justify-content: center;
-    gap: 2em;
+.radio-button-container p{
+    font-size: small;
+    margin: 0;
+    padding: 0;
+}
+
+.mat-mdc-radio-button .mdc-radio{
+    margin: 0;
+    padding: 0;
 }
 
 ::-webkit-scrollbar {
@@ -170,12 +181,12 @@ th{
 
 ::-webkit-scrollbar-thumb {
     background: rgb(217, 217, 246);
-    border-radius: 10px;
+    border-radius: 7px;
 }
 
 
 .summary-bar{
-    margin: .5em;
+    margin: .2em;
     border: 1px solid ;
     width: 36%;
     height: 90%;
@@ -207,4 +218,25 @@ th{
     height: 85%;
     overflow: auto;
     width: 100%;
+}
+
+
+@media screen and (max-width: 850px) {
+
+    :host ::ng-deep .mat-mdc-radio-button .mdc-radio  {
+        --mdc-radio-state-layer-size: 20px;
+    }
+    .item-card{
+        width: 6.5em;
+        height: 4.7em;
+        
+    }
+
+    .item-card  p{
+        font-size: small;
+    }
+
+    .summary-bar{
+        width: 40%;
+    }
 }

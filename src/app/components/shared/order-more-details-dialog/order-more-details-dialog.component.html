@@ -8,6 +8,9 @@
         </div>
         <h3 style="display: inline; font-weight: bold;">Order Value :</h3><h3 style="display: inline;"> {{data.total_restaurant_amount}}</h3><br>
         <h3 style="display: inline; font-weight: bold;">Platform Fee:</h3><h3 style="display: inline;"> {{data.total_platform_fee}}</h3><br>
+        <div *ngIf="data.parcel_charges">
+            <h3  style="display: inline; font-weight: bold;">Parcel Charges :</h3><h3 style="display: inline;"> {{data.parcel_charges}}</h3><br>
+        </div>
         <h3 style="display: inline; font-weight: bold;">Total Amount:</h3><h3 style="display: inline;"> {{data.total_amount}}</h3><br>
         <h3 style="display: inline; font-weight: bold;">Ordered At :</h3><h3 style="display: inline;"> {{data.OrderedAt}}</h3><br>
         <div *ngIf="data.DeliveredAt">

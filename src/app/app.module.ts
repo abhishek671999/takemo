@@ -26,6 +26,8 @@ import { Login2Component } from './components/home_screen/login2/login2.componen
 import { dateUtils } from './shared/utils/date_utils';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AuthInterceptorInterceptor } from './shared/services/auth-interceptor.interceptor';
+import { ConfirmActionDialogComponent } from './components/shared/confirm-action-dialog/confirm-action-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ import { AuthInterceptorInterceptor } from './shared/services/auth-interceptor.i
     AdminLandingComponent,
     PostLoginComponent,
     Login2Component,
+    ConfirmActionDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +57,7 @@ import { AuthInterceptorInterceptor } from './shared/services/auth-interceptor.i
     MaterialModule,
     CanvasJSAngularChartsModule,
     NgApexchartsModule,
-
+    MatDialogModule
     ],
   providers: [Utility, meAPIUtility, dateUtils, 
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}

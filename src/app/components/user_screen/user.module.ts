@@ -49,6 +49,7 @@ import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
 import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge-wallet-dialog.component';
 import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
+import { ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { PostRechargePaymentComponent } from './post-recharge-payment/post-recha
     WalletComponent,
     RechargeWalletDialogComponent,
     PostRechargePaymentComponent,
+    ClickOutsideDirective
   ],
   imports: [
     CommonModule,

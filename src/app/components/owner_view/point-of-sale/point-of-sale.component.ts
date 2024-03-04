@@ -41,6 +41,7 @@ export class PointOfSaleComponent {
   public restaurantName = null;
   public restaurantAddress = null;
   public restaurantGST = null;
+  public parcelCharges = 5; // hardcode
   counters = [];
 
   ngOnInit() {
@@ -54,6 +55,7 @@ export class PointOfSaleComponent {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
         this.restaurantParcel = data['restaurant_parcel'];
+        this.restaurantParcel = true
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -181,17 +183,18 @@ export class PointOfSaleComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
+      this.summary.amount += itemAdded.price + this.parcelCharges;
     }
     if (item.parcelQuantity < 10) {
       item.parcelQuantity += 1;
-      this.summary.amount += item.price;
+      this.summary.amount += item.price + this.parcelCharges;
     }
   }
 
   subParcelItem(item) {
     if (item.parcelQuantity > 0) {
       item.parcelQuantity -= 1;
-      this.summary.amount -= item.price;
+      this.summary.amount -= (item.price + this.parcelCharges);
     }
     if (item.quantity == 0 && item.parcelQuantity == 0) {
       this.summary.itemList = this.summary.itemList.filter(
@@ -211,6 +214,7 @@ export class PointOfSaleComponent {
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
+    this.summary.amount += (this.parcelCharges * item.parcelQuantity)
   }
 
   preparePlaceOrderBody() {
@@ -275,16 +279,26 @@ export class PointOfSaleComponent {
   }
 
   getFormattedParcelItemDetails() {
-    let formattedTable = 'Parcel\n';
+    let inititalString = '------------------Parcel------------------\n'
+    let formattedTable = inititalString;
+    let totalParcelItem = 0; 
     this.summary.itemList.forEach((element: any) => {
       if (element.parcelQuantity > 0) {
-        let itemAmount = element.parcelQuantity * element.price;
-        formattedTable += `${this.trimString(element.name)}\t${
-          element.parcelQuantity
-        }\t${element.price}\tRs.${itemAmount}\n`;
+        let trimmedName = this.getFixedLengthString(element.name.substring(0, 24),24,false,' ');
+        let remainingName = trimmedName.trim() == element.name? '': ' ' + this.getFixedLengthString(element.name.substring(24, 48),24,
+                false,
+                ' '
+              ) + '\n';
+        let itemQty = this.getFixedLengthString(element.parcelQuantity,3,true,' ')
+        let itemPrice = this.getFixedLengthString(element.price,4, true, ' ' )
+        let itemAmount = this.getFixedLengthString(element.parcelQuantity * element.price, 4, true, ' ')
+        totalParcelItem += element.parcelQuantity 
+
+        formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
       }
     });
-    return formattedTable == 'Parcel\n' ? '' : formattedTable;
+    let parcelInfo = `${this.getFixedLengthString('Parcel Charges Rs5/item', 24, false, ' ')}   ${this.getFixedLengthString(totalParcelItem, 3, true, ' ')}  ${this.getFixedLengthString('5', 4, true, ' ')}  ${this.getFixedLengthString(totalParcelItem * 5, 4, true, ' ')}`
+    return formattedTable == inititalString ? '' : formattedTable + parcelInfo;
   }
 
   getGstDetails() {
@@ -302,7 +316,7 @@ export class PointOfSaleComponent {
   getCustomerPrintableText() {
     let sectionHeader1 =
       '-'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '-'.repeat(16);
-    let tableHeader = '       DESCRIPTION         QTY  RATE  AMT ';
+    let tableHeader = '       DESCRIPTION         QTY  RATE   AMT';
     let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
     let sectionSeperatorCharacters = '-'.repeat(42);
     let content = [
@@ -337,6 +351,7 @@ export class PointOfSaleComponent {
       },
       {
         text: this.getFormattedParcelItemDetails(),
+        justification: 'left'
       },
       {
         text: sectionSeperatorCharacters,
@@ -498,8 +513,9 @@ export class PointOfSaleComponent {
     ]);
   }
 
-  navigateToPendingOrders() {
-    this.router.navigate(['/owner/pending-orders']);
+  navigateToOrders() {
+    let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+    this.router.navigate([navigationURL]);
   }
 
   clearItem(item) {
