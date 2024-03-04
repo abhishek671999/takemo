@@ -81,7 +81,7 @@ export class meAPIUtility{
         console.log('after deleting', this.cookieService.getAll())
     }
 
-    doesUsersBelongsToITT(){
+    doesUserBelongsToITT(){
         let validation = false;
         this.getMeData().subscribe(
             data => {
@@ -92,6 +92,21 @@ export class meAPIUtility{
                 }
                 for(let restaurant of data['restaurants']){
                     if(restaurant.role_name == 'restaurant_admin' && [1, 2].includes(restaurant.restaurant_id)){
+                        validation =  true
+                    }
+                }
+                
+            }
+        )
+        return validation
+    }
+
+    doesUserBelongsToRaviGobi(){
+        let validation = false;
+        this.getMeData().subscribe(
+            data => {
+                for(let restaurant of data['restaurants']){
+                    if([7].includes(restaurant.restaurant_id)){
                         validation =  true
                     }
                 }

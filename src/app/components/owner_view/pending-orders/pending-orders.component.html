@@ -17,7 +17,7 @@
         <div class="content-box">
             <ng-container *ngFor="let item of orderList">
                 <button class="card-box" (click)="itemClicked(item)">
-                    <h2 style="font-size: xx-large;" class="text-center text-white">{{item.quantity}}</h2>
+                    <h2 style="font-size: xx-large; display: inline-block;" class="text-center text-white">{{item.quantity}}  </h2><h2 style="display: inline-block;" class="text-white" *ngIf="item.parcelQuantity > 0">&nbsp;({{item.parcelQuantity}}P)</h2>
                     <h1 class="text-center text-white">{{item.name}}</h1>
                 </button>
             </ng-container>

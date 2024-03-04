@@ -1,7 +1,12 @@
 <div class="main-container">
-    <h1 mat-dialog-title>Deliver Order: {{data.name}}</h1>
-    <div mat-dialog-content>
-        <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+    <h1 style="display: inline-block;" mat-dialog-title>{{data.name}}</h1><div style="display: inline-block; width: 1em; height: 1em;" class="green"></div><p style="display: inline-block;">Parcel</p>
+    <mat-dialog-content>
+        <div class="cards-wrapper">
+            <div class="deliver-card" [ngClass]="{'blue': !(order.is_delivered || order.parcel), 'green': !order.is_delivered && order.parcel}" *ngFor="let order of data.obj; let subIndex = index" (click)="updateStatusToDelivered(order)">
+                <p  class="fs-2">{{order.order_no}}</p>
+            </div>
+        </div>
+        <!-- <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
                 <table class="table table-hover">
                     <thead class="text-center">
                         <tr>
@@ -11,7 +16,7 @@
                         </tr>
                     </thead>
                     <tbody class="text-center" >
-                        <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                        <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         
                         <tr class="table-row" *ngFor="let order of data.obj; let subIndex = index">
                             <td class="col1" scope="col" >{{order.order_no}}</td>
                             <td class="col2" scope="col">
@@ -23,10 +28,13 @@
                                 <button mat-raised-button color="deliver" *ngIf='!order.is_delivered && order.parcel' (click)="updateStatusToDelivered(order)">Parcel<mat-icon> directions_run</mat-icon></button>
                                 <p *ngIf="order.is_delivered">Delivered</p>
                             </td>
-                                <!-- <i class="fa-solid fa-plus"></i> -->
+                                 <i class="fa-solid fa-plus"></i>
                         </tr>
                     </tbody>
                 </table>
-        </cdk-virtual-scroll-viewport>
-    </div>
+        </cdk-virtual-scroll-viewport> -->
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-raised-button color="primary" (click)="deliverAllOrders()">Deliver All</button>
+    </mat-dialog-actions>
 </div>

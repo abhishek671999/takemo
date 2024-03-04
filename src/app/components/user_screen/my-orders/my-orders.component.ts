@@ -33,11 +33,11 @@ export class MyOrdersComponent {
       link: '/user/myorders/order-history',
       index: 1
     },
-    {
-        label: 'Cancelled',
-        link: '/user/myorders/cancelled-orders',
-        index: 2
-    },
+    // {
+    //     label: 'Cancelled',
+    //     link: '/user/myorders/cancelled-orders',
+    //     index: 2
+    // },
 ];  
 
   constructor(private _ordersService: OrdersService, private _router: Router){}
