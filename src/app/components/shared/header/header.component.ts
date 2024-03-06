@@ -75,7 +75,7 @@ export class HeaderComponent {
         action: () => this._loginService.logOut(),
       },
       'menu':{
-        name: 'Menu',
+        name: 'Outlets',
         href: '',
         action: () => {
           this.router.navigate(['./user'])

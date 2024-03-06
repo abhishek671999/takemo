@@ -27,7 +27,8 @@ export class PostLoginComponent {
         if(this.myInfo['restaurants'].length > 0){
           console.log('navigating to owner')
           sessionStorage.setItem('restaurant_id', this.myInfo['restaurants'][0]['restaurant_id'])
-          let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+          sessionStorage.setItem('required_components', this.myInfo['restaurants'][0]['order_status'])
+          let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/unconfirmed-orders'
           this._router.navigate([navigationURL]);
         }
         else if(this.myInfo['companies'].length > 0){

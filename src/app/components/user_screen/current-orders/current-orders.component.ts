@@ -33,6 +33,7 @@ export class CurrentOrdersComponent {
   }
 
   getMyOrders(){
+    this.currentOrdersDataSource.data = []
     let body = {
       "time_frame": "current"
     }
@@ -62,15 +63,16 @@ export class CurrentOrdersComponent {
           order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
       OrderedAt: ordered_time,
-      OrderStatus: order.line_items.length != 1?
-        order.line_items.map(this.addOrderStatus).map(items => items.status).join('<br>') : 
-        order.line_items.map(this.addOrderStatus)[0].status,
+      OrderStatus:  order.order_status,//order.line_items.length != 1?
+        // order.line_items.map(this.addOrderStatus).map(items => items.status).join('<br>') : 
+        // order.line_items.map(this.addOrderStatus)[0].status,
       Location: order.restaurant_name,
       order_id: order.order_id,
       payment_details: order.payment_details,
       total_amount: order.total_amount.toFixed(2),
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
+      order_address: order.address
     }
   }
 
@@ -79,7 +81,14 @@ export class CurrentOrdersComponent {
   }
 
   addOrderStatus(order){
-    let status = order.ready_quantity == 0 ? `<p class="text-warning"> being prepared </p>` : `<p class="text-success">${order.ready_quantity} of ${order.item_quantity} ready<p>`
+    let status = ''
+    console.log(order.restaurant_type)
+    if(order.restaurant_type == "E-Commerce"){
+       status = 'testing'
+    }else{
+      status = order.ready_quantity == 0 ? `<p class="text-warning"> being prepared </p>` : `<p class="text-success">${order.ready_quantity} of ${order.item_quantity} ready<p>`
+    }
+    
     return { 
       status: `<b>${order.item_name}</b> ${status}`
     }
