@@ -36,6 +36,7 @@ import { UnconfirmedOrdersComponent } from './unconfirmed-orders/unconfirmed-ord
 import { ConfirmedOrdersComponent } from './confirmed-orders/confirmed-orders.component';
 import { DeliveredOrdersComponent } from './delivered-orders/delivered-orders.component';
 import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle'
 
 @NgModule({
   declarations: [
@@ -78,7 +79,7 @@ import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.compo
     MatRadioModule,
     MatPaginatorModule,
     MatExpansionModule,
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatSlideToggleModule
   ],
   exports: [],
 })

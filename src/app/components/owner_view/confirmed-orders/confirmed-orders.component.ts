@@ -30,8 +30,14 @@ export class ConfirmedOrdersComponent {
   ];
 
   public showSpinner = true;
+  public itemWiseView = false
   public currentOrders = [];
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
+
+  public confirmedItemOrders = [];
+  public confirmedItemOrdersDataSource = new MatTableDataSource(this.confirmedItemOrders);
+  public confirmedItemOrdersColumn = ['slno', 'item', 'quantity', 'amount' ]
+
   public orderStatusOptions = [
     {displayValue: 'New order', actualValue: 'unconfirmed'},
     {displayValue: 'Confirmed', actualValue: 'confirmed'},
@@ -52,6 +58,7 @@ export class ConfirmedOrdersComponent {
       (data) => {
         console.log('Current orders: ', data);
         this.unparseResponse(data);
+        this.unparseResponseItemWise(data)
         this.showSpinner = false
       },
       (error) => {
@@ -67,6 +74,20 @@ export class ConfirmedOrdersComponent {
     });
     this.currentOrdersDataSource.data = this.currentOrders;
     console.log(this.currentOrders)
+  }
+
+  unparseResponseItemWise(data){
+    this.confirmedItemOrders = []
+    Object.entries(data["item_wise"]['item_wise_data']).forEach(([key, value], index) => {
+      this.confirmedItemOrders.push({
+        position: index + 1,
+        name: key,
+        item_id: value['item_id'],
+        quantity: value['quantity'],
+        amount: value['total_amount'],
+      });
+    });
+    this.confirmedItemOrdersDataSource.data = this.confirmedItemOrders
   }
 
   unParsedOrder(order) {
@@ -161,5 +182,11 @@ export class ConfirmedOrdersComponent {
       } ,
       error => alert(error)
     )
+  }
+
+  onToggle(event) {
+    console.log('Toggled: ', this.itemWiseView)
+    this.itemWiseView = !this.itemWiseView;
+    this.getEcomOrders();
   }
 }
