@@ -33,6 +33,12 @@ export class MenuComponent {
   menu;
   hideCategory = true;
   currentCategory = null;
+  summary = {
+    amount: 0,
+    itemList: [],
+  };
+  
+
   ngOnInit() {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -127,10 +133,32 @@ export class MenuComponent {
     }
   }
 
+  updateSummary(orderList) {
+    if (orderList.itemList.length == 0) {
+      this.setQuantity()
+      this.amount = 0
+    } else {
+      this.amount = orderList.amount
+      orderList.itemList.forEach(item => {
+        this.menu_response.menu.forEach(category => {
+          category.category.items.forEach(menuItem => {
+            if (menuItem.id == item.id) {
+              menuItem.quantity = item.quantity
+              menuItem.parcelQuantity = item.parcelQuantity
+            } else {
+              menuItem.quantity = 0
+              menuItem.parcelQuantity = 0
+            }
+          })
+        })
+      })
+    }
+  }
+
   prepareSummary() {
     this.menu_response.menu.forEach((category) => {
       category.category.items.forEach((item) => {
-        if (item.quantity) {
+        if (item.quantity || item.parcelQuantity) {
           let itemSummary = {
             id: item.id,
             name: item.name,
@@ -144,8 +172,7 @@ export class MenuComponent {
     });
     this.orderList.amount = this.amount;
     this.orderList.restaurant_id = this.restaurant_id;
-    this.orderList.restaurant_parcel = this.restaurantParcel
-    console.log(this.orderList);
+    
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
       data: this.orderList,
     });
@@ -154,15 +181,14 @@ export class MenuComponent {
 
       if (result) {
         console.log(result);
-        if (result.mode == 'wallet') {
-          this._router.navigate(['/user/myorders']);
-        } else if (result.summary) {
-          this.orderList = result.summary;
+        if(result.mode == 'wallet'){
+          this._router.navigate(['/user/myorders'])
         }
-        // this.orderList = { itemList: [], amount: 0, restaurant_id: null };
-      } //else {
-      //   this.orderList = { itemList: [], amount: 0, restaurant_id: null };
-      // }
+        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel };
+        this.updateSummary(result.orderList)
+      } else {
+        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel };
+      }
     });
   }
 
