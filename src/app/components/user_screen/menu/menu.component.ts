@@ -32,6 +32,12 @@ export class MenuComponent {
   menu;
   hideCategory = true
   currentCategory = null;
+  summary = {
+    amount: 0,
+    itemList: [],
+  };
+  
+
   ngOnInit() {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -123,10 +129,31 @@ export class MenuComponent {
     }
   }
 
+  updateSummary(orderList) {
+    if (orderList.itemList.length == 0) {
+      this.setQuantity()
+      this.amount = 0
+    } else {
+      orderList.itemList.forEach(item => {
+        this.menu_response.menu.forEach(category => {
+          category.category.items.forEach(menuItem => {
+            if (menuItem.id == item.id) {
+              menuItem.quantity = item.quantity
+              menuItem.parcelQuantity = item.parcelQuantity
+            } else {
+              menuItem.quantity = 0
+              menuItem.parcelQuantity = 0
+            }
+          })
+        })
+      })
+    }
+  }
+
   prepareSummary() {
     this.menu_response.menu.forEach((category) => {
       category.category.items.forEach((item) => {
-        if (item.quantity) {
+        if (item.quantity || item.parcelQuantity) {
           let itemSummary = {
             id: item.id,
             name: item.name,
@@ -140,7 +167,7 @@ export class MenuComponent {
     });
     this.orderList.amount = this.amount;
     this.orderList.restaurant_id = this.restaurant_id;
-    console.log(this.orderList);
+    console.log("Order list", this.orderList);
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
       data: this.orderList,
     });
@@ -152,6 +179,7 @@ export class MenuComponent {
           this._router.navigate(['/user/myorders'])
         }
         this.orderList = { itemList: [], amount: 0, restaurant_id: null };
+        this.updateSummary(result.orderList)
       } else {
         this.orderList = { itemList: [], amount: 0, restaurant_id: null };
       }
