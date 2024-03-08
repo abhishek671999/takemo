@@ -22,9 +22,7 @@ export class ConfirmationDialogComponent {
     private __ordersService: OrdersService,
     private dialog: MatDialog,
     private _router: Router
-  ) {
-    console.log('Picked items: ', summary);
-  }
+  ) {}
 
   public isPayment;
   public platformFee = undefined || {};
@@ -35,9 +33,11 @@ export class ConfirmationDialogComponent {
   public walletPayMessage;
   public isWalletPayment = false;
   public restaurantParcel = false;
+  public parcelCharges = 5 // hardcode
 
   ngOnInit() {
-    this.dialogRef.updateSize('100vw', 'auto')
+    this.dialogRef.updateSize('auto', 'auto')
+    this.dialogRef.disableClose = true
     this.__ordersService.checkIfPaymentRequired().subscribe(
       (data) => {
         console.log(data);
@@ -80,7 +80,7 @@ export class ConfirmationDialogComponent {
   }
 
   onEditButtonClick() {
-    this.dialogRef.close(false);
+    this.dialogRef.close({'orderList': this.summary})
   }
 
 
@@ -198,14 +198,14 @@ export class ConfirmationDialogComponent {
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
-    this.summary.amount += (5 * item.parcelQuantity)
+    this.summary.amount += ( this.parcelCharges * item.parcelQuantity)
   }
 
   subParcelItem(item) {
     if (item.parcelQuantity > 0) {
       item.parcelQuantity -= 1;
       this.summary.amount -= item.price;
-      this.summary.amount -= 5
+      this.summary.amount -= this.parcelCharges
     }
     if (item.quantity == 0 && item.parcelQuantity == 0) {
       this.summary.itemList = this.summary.itemList.filter(
@@ -219,12 +219,12 @@ export class ConfirmationDialogComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
-      this.summary.amount += 5
+      this.summary.amount += this.parcelCharges
     }
     if (item.parcelQuantity < 10) {
       item.parcelQuantity += 1;
       this.summary.amount += item.price;
-      this.summary.amount += 5
+      this.summary.amount += this.parcelCharges
     }
   }
 
@@ -237,7 +237,7 @@ export class ConfirmationDialogComponent {
     this.summary.itemList
       .filter((x) => x.id == item.id)
       .forEach((ele) => {
-        this.summary.amount -= ele.quantity * ele.price;
+        this.summary.amount -= (ele.quantity * ele.price) + (ele.parcelQuantity * (ele.price + this.parcelCharges)) ;
         ele.quantity = 0;
         ele.parcelQuantity = 0;
       });
