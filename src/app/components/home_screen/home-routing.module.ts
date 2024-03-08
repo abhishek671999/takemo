@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsAndConditionsComponent } from './terms-and-conditions/terms-and-conditions.component';
 import { Login2Component } from './login2/login2.component';
+import { RefundCancellationPolicyComponent } from './refund-cancellation-policy/refund-cancellation-policy.component';
 
 const routes: Routes = [
   {
@@ -25,7 +26,9 @@ const routes: Routes = [
       { path: 'signup', component: SignupComponent },
       { path: 'privacy-policy', component: PrivacyPolicyComponent},
       { path: 'terms-and-conditions', component: TermsAndConditionsComponent},
-      { path: '**', component: AboutComponent}
+      { path: 'refund-cancellation-policy', component: RefundCancellationPolicyComponent},
+      { path: '**', component: AboutComponent},
+
     ],
   },
 ];
