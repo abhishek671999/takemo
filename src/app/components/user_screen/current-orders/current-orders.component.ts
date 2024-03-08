@@ -23,13 +23,7 @@ export class CurrentOrdersComponent {
   refreshInterval = 5 // seconds
 
   ngOnInit(){
-    this.getMyOrders()
-    this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
-      (val) => {
-        this.getMyOrders()
-      }
-    )
-    
+    this.getMyOrders()    
   }
 
   getMyOrders(){

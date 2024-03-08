@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import { config } from 'rxjs';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -21,8 +23,10 @@ export class ConfirmationDialogComponent {
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     private __ordersService: OrdersService,
     private dialog: MatDialog,
-    private _router: Router
-  ) {}
+    private _router: Router,
+    private _snackBar: MatSnackBar
+  ) {
+  }
 
   public isPayment;
   public platformFee = undefined || {};
@@ -41,6 +45,8 @@ export class ConfirmationDialogComponent {
   public parcelCharges = 5 // hardcode
 
   ngOnInit() {
+    this.totalAmount = this.summary.amount;
+    this.restaurantParcel = this.summary.restaurant_parcel;
     this.dialogRef.disableClose = true;
     this.dialogRef.updateSize('auto', 'auto')
     this.__ordersService.checkIfPaymentRequired().subscribe(
@@ -48,8 +54,6 @@ export class ConfirmationDialogComponent {
         console.log(data);
         this.isPayment = data['payment_required'];
         this.paymentMethod = this.isPayment ? data['payment_mode'] : 'others';
-        this.totalAmount = this.summary.amount;
-        this.restaurantParcel = this.summary.restaurant_parcel;
         if (data['tax_inclusive']) {
           console.log('INcluding tax');
           this.platformFee['platform_fee_percentage'] =
@@ -226,6 +230,9 @@ export class ConfirmationDialogComponent {
         (x) => x.id != item.id
       );
     }
+    if (this.summary.itemList.length == 0) {
+      this.dialogRef.close({'orderList': this.summary})
+    }
   }
 
   incrementParcelQuantity(item) {
@@ -244,6 +251,9 @@ export class ConfirmationDialogComponent {
       this.summary.itemList = this.summary.itemList.filter(
         (x) => x.id != item.id
       );
+    }
+    if (this.summary.itemList.length == 0) {
+      this.dialogRef.close({'orderList': this.summary})
     }
   }
 
@@ -277,6 +287,10 @@ export class ConfirmationDialogComponent {
     this.summary.itemList = this.summary.itemList.filter(
       (x) => x.id != item.id
     );
+
+    if (this.summary.itemList.length == 0) {
+      this.dialogRef.close({'orderList': this.summary})
+    }
   }
 
   getGrandTotalAmount() {
@@ -285,5 +299,24 @@ export class ConfirmationDialogComponent {
 
   getUPILink() {
     return `upi://pay?pa=${this.upiId}&pn=sender&cu=INR&am=${this.summary.amount}`;
+  }
+
+  copyMessage(val: string) {
+    const selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = val;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
+    document.execCommand('copy');
+    document.body.removeChild(selBox);
+    this.openSnackBar('UPI id copied to clipboard')
+  }
+
+  openSnackBar(msg: string, action: string='', duration=3000) {
+    this._snackBar.open(msg, action, {duration: duration})
   }
 }

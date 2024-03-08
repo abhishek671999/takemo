@@ -50,6 +50,7 @@ import { WalletComponent } from './wallet/wallet.component';
 import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge-wallet-dialog.component';
 import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
 import { ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
     MatSlideToggleModule,
     SharedModuleModule,
     MatSelectModule,
+    MatSnackBarModule
   ],
   exports: [],
 })
