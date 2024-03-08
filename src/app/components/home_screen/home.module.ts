@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { Login2Component } from './login2/login2.component';
+import { RefundCancellationPolicyComponent } from './refund-cancellation-policy/refund-cancellation-policy.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { Login2Component } from './login2/login2.component';
     ErrorDialogComponent,
     PrivacyPolicyComponent,
     TermsAndConditionsComponent,
+    RefundCancellationPolicyComponent,
  ],
   imports: [
     CommonModule, 
