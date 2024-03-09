@@ -37,7 +37,8 @@ export class EditMenuComponent {
     private _menuService: MenuService,
     private _menuEditService: EditMenuService,
     private _restaurantService: RestuarantService,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    private _editMenuService: EditMenuService
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -70,6 +71,8 @@ export class EditMenuComponent {
     : 'Open restaurant';
 
   countersAvailable;
+
+  public restaurantType = sessionStorage.getItem('restaurantType')
   
 
   ngOnInit() {
@@ -254,5 +257,30 @@ export class EditMenuComponent {
   navigateToOrders() {
     let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
     this._router.navigate([navigationURL]);
+  }
+
+  isRestaurantType(val: string) {
+    return this.restaurantType == val
+  }
+
+  editInventory(item, event) {
+    let body = {
+      item_id: item.id,
+      name: item.name,
+      price: item.price,
+      inventory_stock: event.target.value,
+      veg: item.veg,
+      non_veg: item.non_veg,
+      egg: item.egg,
+    };
+    this._editMenuService.editMenu(body).subscribe(
+      (data) => {
+        console.log('Successfully updated')
+        item.inventory_stock = event.target.value
+      },
+      (error) => {
+        console.log('Error while updating', error)
+      }
+    );
   }
 }

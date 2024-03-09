@@ -1,0 +1,28 @@
+<div class="main-container">
+    <h2>Profile</h2>
+    <div class="user-info-form-wrapper">
+        <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="submitForm()" > 
+            <mat-form-field >
+                <mat-label>First name</mat-label>
+                <input matInput formControlName="firstName">
+            </mat-form-field>
+            <mat-form-field >
+                <mat-label>Last name</mat-label>
+                <input matInput formControlName="lastName">
+            </mat-form-field>
+            <mat-form-field >
+                <mat-label>Address</mat-label>
+                <input type="text" matInput formControlName="address">
+            </mat-form-field>
+            <mat-form-field >
+                <mat-label>Mobile number</mat-label>
+                <input matInput formControlName="mobileNumber">
+            </mat-form-field>
+            <mat-form-field >
+                <mat-label>Email Address</mat-label>
+                <input type="text" matInput formControlName="email">
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit">Submit</button>
+          </form>
+    </div>
+</div>

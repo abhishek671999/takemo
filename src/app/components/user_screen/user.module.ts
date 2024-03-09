@@ -51,6 +51,7 @@ import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge
 import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
 import { ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { ProfileComponent } from '../shared/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     WalletComponent,
     RechargeWalletDialogComponent,
     PostRechargePaymentComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    ProfileComponent
   ],
   imports: [
     CommonModule,
@@ -99,7 +101,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatSlideToggleModule,
     SharedModuleModule,
     MatSelectModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+
   ],
   exports: [],
 })

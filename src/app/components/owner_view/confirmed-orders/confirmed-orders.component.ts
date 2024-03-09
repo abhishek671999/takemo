@@ -32,6 +32,7 @@ export class ConfirmedOrdersComponent {
   public showSpinner = true;
   public itemWiseView = false
   public currentOrders = [];
+  public data;
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
   public confirmedItemOrders = [];
@@ -46,6 +47,11 @@ export class ConfirmedOrdersComponent {
   ]
   ngOnInit() {
     this.getEcomOrders()
+    this.data = [
+      { OrderID: 10248, CustomerID: 'VINET', EmployeeID: 5, ShipCity: 'Reims' },
+      { OrderID: 10249, CustomerID: 'TOMSP', EmployeeID: 6, ShipCity: 'Münster' },
+      { OrderID: 10250, CustomerID: 'HANAR', EmployeeID: 4, ShipCity: 'Lyon' }
+  ];
   }
 
   getEcomOrders(){

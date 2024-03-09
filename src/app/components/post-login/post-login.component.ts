@@ -27,8 +27,18 @@ export class PostLoginComponent {
       this.showSpinner = false
         if(this.myInfo['restaurants'].length > 0){
           console.log('navigating to owner')
-          sessionStorage.setItem('restaurant_id', this.myInfo['restaurants'][0]['restaurant_id'])
-          sessionStorage.setItem('required_components', this.myInfo['restaurants'][0]['order_status'])
+          sessionStorage.setItem(
+            'restaurant_id',
+            this.myInfo['restaurants'][0]['restaurant_id']
+          ); // hardcode
+          sessionStorage.setItem(
+            'required_components',
+            this.myInfo['restaurants'][0]['order_status']
+          );
+          sessionStorage.setItem(
+            'restaurantType',
+            (this.myInfo['restaurants'][0]['type'] as string).toLowerCase()
+          );
           let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/unconfirmed-orders'
           this._router.navigate([navigationURL]);
         }

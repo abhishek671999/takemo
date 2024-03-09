@@ -195,6 +195,7 @@ export class HeaderComponent {
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
             sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
+            sessionStorage.setItem('restaurantType', (data['restaurants'][0]['type'] as string).toLowerCase());
             this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
@@ -203,6 +204,7 @@ export class HeaderComponent {
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
             sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
+            sessionStorage.setItem('restaurantType', (data['restaurants'][0]['type'] as string).toLowerCase());
             this.addRestaurantStaffNavOptions()
             break
           }
