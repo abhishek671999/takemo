@@ -22,8 +22,7 @@ export class Utility {
       this.setToken(token);
       return token;
     } else {
-      this.router.navigate(['login']);
-      return null;
+      return '';
     }
   }
 

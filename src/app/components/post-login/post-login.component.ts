@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
+import { LoginService } from 'src/app/shared/services/register/login.service';
 
 @Component({
   selector: 'app-post-login',
@@ -12,7 +13,7 @@ import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
 export class PostLoginComponent {
   constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService, 
     private _utility: Utility, private _meAPIUtility: meAPIUtility,
-    public meAPIUtility: meAPIUtility ){
+    public meAPIUtility: meAPIUtility, public loginService: LoginService ){
     // this.myInfo = this.meAPIUtility.getMeData()
   }
 
@@ -37,8 +38,8 @@ export class PostLoginComponent {
           this._router.navigate(['admin/user-management'])          
         }
         else{
-          console.log('Navigating to user')
-          this._router.navigate(['user/'])
+          console.log('Navigating to user', this.loginService.redirectURL)
+          this.loginService.redirectURL ? this._router.navigate([this.loginService.redirectURL]) : this._router.navigate(['user/'])
         }
       
      })

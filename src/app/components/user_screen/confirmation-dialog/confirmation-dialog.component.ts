@@ -39,7 +39,8 @@ export class ConfirmationDialogComponent {
   public isWalletPayment = false;
   public restaurantParcel = false;
 
-  public upiId = 'pascitopcprivatelimited.ibz@icici';
+  // public upiId = 'pascitopcprivatelimited.ibz@icici';
+  public upiId = '8296577900@hdfcbank';
   public transactionId = '';
   public deliveryAddress = '';
   public parcelCharges = 5 // hardcode
@@ -211,10 +212,10 @@ export class ConfirmationDialogComponent {
     console.log('Add item: ', item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     console.log('item added: ', itemAdded, this.summary.itemList);
-    if (itemAdded) {
+    if (itemAdded && itemAdded.inventory_stock ? (itemAdded.quantity + itemAdded.parcelQuantity) <= itemAdded.inventory_stock : true) {
       itemAdded.quantity += 1;
       this.summary.amount += itemAdded.price;
-    } else {
+    } else if( (itemAdded.quantity + itemAdded.parcelQuantity) < itemAdded.inventory_stock) {
       item.quantity += 1;
       this.summary.amount += item.price;
       this.summary.itemList.push(item);
@@ -264,7 +265,7 @@ export class ConfirmationDialogComponent {
       this.summary.itemList.push(item);
       this.summary.amount += this.parcelCharges
     }
-    if (item.parcelQuantity < 10) {
+    if (item.parcelQuantity < 10 && itemAdded.inventory_stock ? (itemAdded.quantity + itemAdded.parcelQuantity) < itemAdded.inventory_stock : true) {
       item.parcelQuantity += 1;
       this.summary.amount += item.price;
       this.summary.amount += this.parcelCharges
