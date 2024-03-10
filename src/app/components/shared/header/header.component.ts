@@ -138,10 +138,13 @@ export class HeaderComponent {
   addRestaurantOwnerNavOptions(restaurant){
     let restaurantOwnerNavOptions
     this.location = restaurant.restaurant_name
+    if (restaurant.type.toLowerCase() == 'restaurant') {
+      restaurantOwnerNavOptions.push('POS')
+    }
     if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
-      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'POS' ,'orders']
+      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu',  ,'orders']
     }else{
-      restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'POS' ,'orders']
+      restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
     }
 
     for(let option of restaurantOwnerNavOptions){
@@ -170,7 +173,7 @@ export class HeaderComponent {
   }
 
     
-  dropdownList = [this.AvailableDropdownList['support'], this.AvailableDropdownList['logout']]
+  dropdownList = [ this.AvailableDropdownList['logout']]
   username: string
   message: string
   location: string

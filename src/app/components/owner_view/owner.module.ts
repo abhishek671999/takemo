@@ -37,6 +37,7 @@ import { ConfirmedOrdersComponent } from './confirmed-orders/confirmed-orders.co
 import { DeliveredOrdersComponent } from './delivered-orders/delivered-orders.component';
 import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle'
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle'
     MatInputModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
+    PdfViewerModule
   ],
   exports: [],
 })

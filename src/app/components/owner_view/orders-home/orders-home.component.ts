@@ -61,7 +61,9 @@ export class OrdersHomeComponent {
   };
 
   addComponents(requestedComponents) {
-    requestedComponents.forEach((ele) => {
+    let restaurantType = sessionStorage.getItem('restaurantType').toLowerCase()
+    let componentsNeeded = restaurantType == "e-commerce"? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : ['pending', 'current', 'history' ]
+    componentsNeeded.forEach((ele) => {
       this.navLinks.push(this.availableNavlinks[ele]);
     });
   }

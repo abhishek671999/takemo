@@ -11,6 +11,7 @@ import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/succe
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { config } from 'rxjs';
+import { MeService } from 'src/app/shared/services/register/me.service';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -24,9 +25,9 @@ export class ConfirmationDialogComponent {
     private __ordersService: OrdersService,
     private dialog: MatDialog,
     private _router: Router,
-    private _snackBar: MatSnackBar
-  ) {
-  }
+    private _snackBar: MatSnackBar,
+    private meService: MeService
+  ) {}
 
   public isPayment;
   public platformFee = undefined || {};
@@ -38,18 +39,23 @@ export class ConfirmationDialogComponent {
   public paymentMethod;
   public isWalletPayment = false;
   public restaurantParcel = false;
+  showQRcode = false;
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
-  public upiId = '8296577900@hdfcbank';
+  public upiId = '8296577900@ibl';
   public transactionId = '';
   public deliveryAddress = '';
-  public parcelCharges = 5 // hardcode
+  public parcelCharges = 5; // hardcode
 
   ngOnInit() {
+    this.dialogRef.updateSize('100%')
+    this.meService.getMyInfo().subscribe((data) => {
+      this.deliveryAddress = data['address'];
+    });
     this.totalAmount = this.summary.amount;
     this.restaurantParcel = this.summary.restaurant_parcel;
     this.dialogRef.disableClose = true;
-    this.dialogRef.updateSize('auto', 'auto')
+    this.dialogRef.updateSize('auto', 'auto');
     this.__ordersService.checkIfPaymentRequired().subscribe(
       (data) => {
         console.log(data);
@@ -92,7 +98,7 @@ export class ConfirmationDialogComponent {
   }
 
   onEditButtonClick() {
-    this.dialogRef.close({'orderList': this.summary})
+    this.dialogRef.close({ orderList: this.summary });
   }
 
   preparePlaceOrderBody(wallet = null) {
@@ -164,18 +170,16 @@ export class ConfirmationDialogComponent {
     let body = this.preparePlaceOrderBody();
 
     this.__ordersService.createEcomOrders(body).subscribe(
-      data => {
+      (data) => {
         let successDialogRef = this.dialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Your Order id is: ' + data['order_id'] },
+          data: { msg: 'Your Order id is: ' + data['order_no'] },
         });
-        successDialogRef.afterClosed().subscribe(
-          data => {
-            this.dialogRef.close()
-            this._router.navigate(['/user/myorders'])
-          }
-        )
+        successDialogRef.afterClosed().subscribe((data) => {
+          this.dialogRef.close();
+          this._router.navigate(['/user/myorders']);
+        });
       },
-      error => {
+      (error) => {
         this.dialog.open(ErrorMsgDialogComponent, {
           data: { msg: error.error.description },
         });
@@ -212,10 +216,18 @@ export class ConfirmationDialogComponent {
     console.log('Add item: ', item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     console.log('item added: ', itemAdded, this.summary.itemList);
-    if (itemAdded && itemAdded.inventory_stock ? (itemAdded.quantity + itemAdded.parcelQuantity) <= itemAdded.inventory_stock : true) {
+    if (
+      itemAdded && itemAdded.inventory_stock
+        ? itemAdded.quantity + itemAdded.parcelQuantity <=
+          itemAdded.inventory_stock
+        : true
+    ) {
       itemAdded.quantity += 1;
       this.summary.amount += itemAdded.price;
-    } else if( (itemAdded.quantity + itemAdded.parcelQuantity) < itemAdded.inventory_stock) {
+    } else if (
+      itemAdded.quantity + itemAdded.parcelQuantity <
+      itemAdded.inventory_stock
+    ) {
       item.quantity += 1;
       this.summary.amount += item.price;
       this.summary.itemList.push(item);
@@ -232,21 +244,21 @@ export class ConfirmationDialogComponent {
       );
     }
     if (this.summary.itemList.length == 0) {
-      this.dialogRef.close({'orderList': this.summary})
+      this.dialogRef.close({ orderList: this.summary });
     }
   }
 
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
-    this.summary.amount += ( this.parcelCharges * item.parcelQuantity)
+    this.summary.amount += this.parcelCharges * item.parcelQuantity;
   }
 
   subParcelItem(item) {
     if (item.parcelQuantity > 0) {
       item.parcelQuantity -= 1;
       this.summary.amount -= item.price;
-      this.summary.amount -= this.parcelCharges
+      this.summary.amount -= this.parcelCharges;
     }
     if (item.quantity == 0 && item.parcelQuantity == 0) {
       this.summary.itemList = this.summary.itemList.filter(
@@ -254,7 +266,7 @@ export class ConfirmationDialogComponent {
       );
     }
     if (this.summary.itemList.length == 0) {
-      this.dialogRef.close({'orderList': this.summary})
+      this.dialogRef.close({ orderList: this.summary });
     }
   }
 
@@ -263,12 +275,17 @@ export class ConfirmationDialogComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
-      this.summary.amount += this.parcelCharges
+      this.summary.amount += this.parcelCharges;
     }
-    if (item.parcelQuantity < 10 && itemAdded.inventory_stock ? (itemAdded.quantity + itemAdded.parcelQuantity) < itemAdded.inventory_stock : true) {
+    if (
+      item.parcelQuantity < 10 && itemAdded.inventory_stock
+        ? itemAdded.quantity + itemAdded.parcelQuantity <
+          itemAdded.inventory_stock
+        : true
+    ) {
       item.parcelQuantity += 1;
       this.summary.amount += item.price;
-      this.summary.amount += this.parcelCharges
+      this.summary.amount += this.parcelCharges;
     }
   }
 
@@ -281,7 +298,9 @@ export class ConfirmationDialogComponent {
     this.summary.itemList
       .filter((x) => x.id == item.id)
       .forEach((ele) => {
-        this.summary.amount -= (ele.quantity * ele.price) + (ele.parcelQuantity * (ele.price + this.parcelCharges)) ;
+        this.summary.amount -=
+          ele.quantity * ele.price +
+          ele.parcelQuantity * (ele.price + this.parcelCharges);
         ele.quantity = 0;
         ele.parcelQuantity = 0;
       });
@@ -290,7 +309,7 @@ export class ConfirmationDialogComponent {
     );
 
     if (this.summary.itemList.length == 0) {
-      this.dialogRef.close({'orderList': this.summary})
+      this.dialogRef.close({ orderList: this.summary });
     }
   }
 
@@ -314,10 +333,15 @@ export class ConfirmationDialogComponent {
     selBox.select();
     document.execCommand('copy');
     document.body.removeChild(selBox);
-    this.openSnackBar('UPI id copied to clipboard')
+    this.openSnackBar('UPI id copied to clipboard');
   }
 
-  openSnackBar(msg: string, action: string='', duration=3000) {
-    this._snackBar.open(msg, action, {duration: duration})
+  openSnackBar(msg: string, action: string = '', duration = 3000) {
+    this._snackBar.open(msg, action, { duration: duration });
+  }
+
+  openQRcode() {
+    console.log('Opening qr code');
+    this.showQRcode = !this.showQRcode;
   }
 }

@@ -29,10 +29,19 @@ export class ConfirmedOrdersComponent {
     'Details',
   ];
 
+  viewOptions = [
+      { actualValue: 'orderwise', displayValue: 'Order Wise' },
+      { actualValue: 'itemwise', displayValue: 'Item Wise' },
+      { actualValue: 'report', displayValue: 'Report'}
+  ]
+  ViewSelection = this.viewOptions[0].actualValue
+
   public showSpinner = true;
   public itemWiseView = false
   public currentOrders = [];
   public data;
+  base64: string;
+  pdfSrc: string
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
   public confirmedItemOrders = [];
@@ -65,12 +74,29 @@ export class ConfirmedOrdersComponent {
         console.log('Current orders: ', data);
         this.unparseResponse(data);
         this.unparseResponseItemWise(data)
+        this.base64 = data['pdf_base64']
+        console.log('PDF Base64', this.base64)
+        this.printPdf()
         this.showSpinner = false
       },
       (error) => {
         console.log('Error: ', error);
       }
     );
+  }
+
+  printPdf() {
+    //let json: any =  { "type":"Buffer", "data":this.blob }
+    //let bufferOriginal = Buffer.from(json.data);
+    const byteArray = new Uint8Array(
+      atob(this.base64)
+        .split("")
+        .map(char => char.charCodeAt(0))
+    );
+    const file = new Blob([byteArray], { type: "application/pdf" });
+    const fileURL = URL.createObjectURL(file);
+    this.pdfSrc = fileURL;
+    //window.open(fileURL);
   }
 
   unparseResponse(data) {
