@@ -37,6 +37,7 @@ export class ProfileComponent {
         this.meData = data;
         console.log('In profile', this.meData);
         this.updateForm();
+        this.meUtility.setMeData(this.meData)
       },
       (error) => {
         console.log('Error in fetching me data');

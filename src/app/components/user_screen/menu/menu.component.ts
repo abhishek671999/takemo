@@ -43,6 +43,7 @@ export class MenuComponent {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurant_id = parseInt(params.get('id'));
+      sessionStorage.setItem('restaurant_id', String(this.restaurant_id))
       this._menuService.getMenu(this.restaurant_id).subscribe(
         (data) => {
           this.menu_response = data;
@@ -172,7 +173,6 @@ export class MenuComponent {
     });
     this.orderList.amount = this.amount;
     this.orderList.restaurant_id = this.restaurant_id;
-    
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
       data: this.orderList,
     });

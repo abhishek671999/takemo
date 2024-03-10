@@ -19,7 +19,6 @@ export class CurrentOrdersComponent {
 
   constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
 
-  updateSubscription: Subscription;
   refreshInterval = 5 // seconds
 
   ngOnInit(){
@@ -90,10 +89,6 @@ export class CurrentOrdersComponent {
 
   applyFilter(filterValue){
     this.currentOrdersDataSource.filter = (filterValue as HTMLInputElement).value.trim().toLowerCase()
-  }
-
-  ngOnDestroy(){
-    this.updateSubscription.unsubscribe()
   }
 
   displayMoreDetails(order) {

@@ -93,6 +93,7 @@ export class ConfirmationDialogComponent {
       },
       (error) => {
         console.log(error);
+        alert(error.error)
       }
     );
   }

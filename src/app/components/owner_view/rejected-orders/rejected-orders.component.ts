@@ -93,7 +93,8 @@ export class RejectedOrdersComponent {
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
       ordered_by: order.ordered_by,
-      orderStatus: order.order_status
+      orderStatus: order.order_status,
+      user_name: order.user_name
     };
   }
 
