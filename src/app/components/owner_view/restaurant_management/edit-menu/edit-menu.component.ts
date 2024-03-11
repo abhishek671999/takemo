@@ -213,7 +213,7 @@ export class EditMenuComponent {
     this._handleDialogComponentAfterClose(dialogRef);
   }
 
-  toggleRestoOpen() {
+  toggleRestOpen() {
     console.log('Restaurant toggled');
     let body = {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
@@ -255,7 +255,8 @@ export class EditMenuComponent {
     this._router.navigate(['/owner/point-of-sale']);
   }
   navigateToOrders() {
-    let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+    let navigationURL =
+          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
     this._router.navigate([navigationURL]);
   }
 

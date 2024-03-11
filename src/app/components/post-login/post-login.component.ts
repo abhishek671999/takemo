@@ -45,9 +45,7 @@ export class PostLoginComponent {
           (this.myInfo['restaurants'][0]['type'] as string).toLowerCase()
         );
         let navigationURL =
-          sessionStorage.getItem('restaurant_kds') == 'true'
-            ? '/owner/pending-orders'
-            : '/owner/unconfirmed-orders';
+          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
         this._router.navigate([navigationURL]);
       } else if (this.myInfo['companies'].length > 0) {
         console.log('Navigationto admin');

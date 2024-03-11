@@ -60,7 +60,7 @@ export class OrdersHomeComponent {
     },
   };
 
-  addComponents(requestedComponents) {
+  addComponents() {
     let restaurantType = sessionStorage.getItem('restaurantType').toLowerCase()
     let componentsNeeded = restaurantType == "e-commerce"? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : ['pending', 'current', 'history' ]
     componentsNeeded.forEach((ele) => {
@@ -68,6 +68,7 @@ export class OrdersHomeComponent {
     });
   }
   ngOnInit() {
+    this.addComponents() //temp-fix
     this._counterService
       .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
       .subscribe(
@@ -78,10 +79,8 @@ export class OrdersHomeComponent {
           alert("Couldn't fetch counters");
         }
       );
-    console.log(sessionStorage.getItem('restaurant_kds'));
-    let required_components = sessionStorage.getItem('required_components').split(',')
-    console.log('Required com: ', required_components)
-    this.addComponents(required_components)
+
+
   }
 
   navigateToPOS() {

@@ -42,6 +42,7 @@ export class ConfirmedOrdersComponent {
   public data;
   base64: string;
   pdfSrc: string
+  excelBase64: string;
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
   public confirmedItemOrders = [];
@@ -75,6 +76,7 @@ export class ConfirmedOrdersComponent {
         this.unparseResponse(data);
         this.unparseResponseItemWise(data)
         this.base64 = data['pdf_base64']
+        this.excelBase64 = data['excel_base64']
         console.log('PDF Base64', this.base64)
         this.printPdf()
         this.showSpinner = false
@@ -97,6 +99,36 @@ export class ConfirmedOrdersComponent {
     const fileURL = URL.createObjectURL(file);
     this.pdfSrc = fileURL;
     //window.open(fileURL);
+  }
+
+  
+  downloadexcel() {
+    const byteArray = new Uint8Array(
+      atob(this.excelBase64)
+        .split("")
+        .map(char => char.charCodeAt(0))
+    );
+    const file = new Blob([byteArray], { type: "application/xls" });
+    const fileURL = URL.createObjectURL(file);
+    let xlsName = "reports.xls";
+    if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
+      (window.navigator as any).msSaveOrOpenBlob(file, xlsName);
+    } else {
+      //window.open(fileURL);
+
+      // Construct the 'a' element
+      let link = document.createElement("a");
+      link.download = xlsName;
+      link.target = "_blank";
+
+      // Construct the URI
+      link.href = fileURL;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup the DOM
+      document.body.removeChild(link);
+    }
   }
 
   unparseResponse(data) {

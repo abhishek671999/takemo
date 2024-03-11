@@ -189,6 +189,7 @@
                   </ejs-spreadsheet> -->
       </ng-template>
       <ng-template #reportView>
+        <button mat-raised-button color='primary' (click)="downloadexcel()">Download report</button>
         <pdf-viewer [src]="pdfSrc" 
         *ngIf="pdfSrc"
               [render-text]="true"
