@@ -54,13 +54,13 @@ export class AddCategoryDialogComponent {
           },
           (error) => {
             console.log(error);
-            this._dialogRef.close({ success: 'failed' });
+            this._dialogRef.close({ success: 'failed',  errorMsg: error.error.description });
           }
         );
       },
       (error) => {
         console.log(error);
-        this._dialogRef.close({ success: 'failed' });
+        this._dialogRef.close({ success: 'failed',   errorMsg: error.error.description});
       }
     );
   }

@@ -11,6 +11,7 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
 import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
 import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
+import { ProfileComponent } from '../shared/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,7 @@ const routes: Routes = [
     component: UserComponent,
     children: [
       { path: '', component: HomeComponent },
+      { path: 'profile', component: ProfileComponent},
       { path: 'menu/:id', component: MenuComponent },
       { 
         path: 'myorders', 
@@ -34,6 +36,7 @@ const routes: Routes = [
       { path: 'recharge-acknowledgement', component: PostRechargePaymentComponent}
     ],
   },
+  
 ];
 
 @NgModule({

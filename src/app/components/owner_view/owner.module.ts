@@ -32,6 +32,12 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { FoodCounterManagementComponent } from './restaurant_management/food-counter-management/food-counter-management.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DeliverAllOrdersDialogComponent } from './deliver-all-orders-dialog/deliver-all-orders-dialog.component';
+import { UnconfirmedOrdersComponent } from './unconfirmed-orders/unconfirmed-orders.component';
+import { ConfirmedOrdersComponent } from './confirmed-orders/confirmed-orders.component';
+import { DeliveredOrdersComponent } from './delivered-orders/delivered-orders.component';
+import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle'
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 @NgModule({
   declarations: [
@@ -46,6 +52,10 @@ import { DeliverAllOrdersDialogComponent } from './deliver-all-orders-dialog/del
     PointOfSaleComponent,
     FoodCounterManagementComponent,
     DeliverAllOrdersDialogComponent,
+    UnconfirmedOrdersComponent,
+    ConfirmedOrdersComponent,
+    DeliveredOrdersComponent,
+    RejectedOrdersComponent,
   ],
   imports: [
     CommonModule,
@@ -70,7 +80,12 @@ import { DeliverAllOrdersDialogComponent } from './deliver-all-orders-dialog/del
     MatRadioModule,
     MatPaginatorModule,
     MatExpansionModule,
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatSlideToggleModule,
+    PdfViewerModule
   ],
   exports: [],
 })

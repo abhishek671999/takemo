@@ -21,7 +21,7 @@ export class OrderHistoryComponent {
   ]
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
 
-  historyColumns: string[] = ['Order No', 'Order details', 'Amount', 'Details']
+  historyColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'Details']
   public orderHistory = []
   public orderHistoryDataSource = new MatTableDataSource(this.orderHistory)
   
@@ -105,6 +105,7 @@ export class OrderHistoryComponent {
       total_amount: order.total_amount.toFixed(2),
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
+      OrderStatus:  order.order_status,
     }
   }
 
