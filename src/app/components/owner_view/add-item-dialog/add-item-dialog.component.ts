@@ -41,8 +41,7 @@ export class AddItemDialogComponent {
         this.dialogRef.close({ success: 'ok' });
       },
       (error) => {
-        console.log(error);
-        this.dialogRef.close({ success: 'failed' });
+        this.dialogRef.close({ success: 'failed', errorMsg: error.error.description });
       }
     );
   }

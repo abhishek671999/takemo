@@ -21,6 +21,7 @@ import {
 } from 'src/app/shared/icons/svg-icons';
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-edit-menu',
@@ -159,7 +160,8 @@ export class EditMenuComponent {
         }, 2000);
         this.ngOnInit();
       } else if (result.success == 'failed') {
-        let dialogRef = this._dialog.open(ErrorDialogComponent);
+        console.log(result)
+        let dialogRef = this._dialog.open(ErrorMsgDialogComponent, { data: {msg: result.errorMsg}});
         setTimeout(() => {
           dialogRef.close();
         }, 2000);
@@ -228,7 +230,7 @@ export class EditMenuComponent {
         console.log(data);
       },
       (error) => {
-        alert('Some thing went wrong');
+        alert('Something went wrong');
         console.log('Error while toggling: ', error);
       }
     );

@@ -139,6 +139,7 @@ export class MenuComponent {
       this.setQuantity()
       this.amount = 0
     } else {
+      this.setQuantity()
       this.amount = orderList.amount
       orderList.itemList.forEach(item => {
         this.menu_response.menu.forEach(category => {
@@ -146,9 +147,6 @@ export class MenuComponent {
             if (menuItem.id == item.id) {
               menuItem.quantity = item.quantity
               menuItem.parcelQuantity = item.parcelQuantity
-            } else {
-              menuItem.quantity = 0
-              menuItem.parcelQuantity = 0
             }
           })
         })

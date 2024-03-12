@@ -22,8 +22,9 @@ export class LoginService {
   ) {}
 
   public redirectURL = null;
+  public logginStatus = false
   _login_endpoint = 'rest-auth/login/';
-  _logout_endpoint = 'rest-auth/logout/';
+  _logout_endpoint = 'users/logout/';
 
   login(user: any) {
     if (Number(user.username)) {
@@ -43,6 +44,7 @@ export class LoginService {
       )
       .subscribe(
         (data) => {
+          this.logginStatus = false
           console.log('Logging out', data);
           sessionStorage.clear();
           this.meAPIUtility.removeMeData();
