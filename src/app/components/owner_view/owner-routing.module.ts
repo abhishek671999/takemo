@@ -8,6 +8,10 @@ import { EditMenuComponent } from './restaurant_management/edit-menu/edit-menu.c
 import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
 import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
+import { UnconfirmedOrdersComponent } from './unconfirmed-orders/unconfirmed-orders.component';
+import { ConfirmedOrdersComponent } from './confirmed-orders/confirmed-orders.component';
+import { DeliveredOrdersComponent } from './delivered-orders/delivered-orders.component';
+import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.component';
 
 const routes: Routes = [
   {
@@ -22,6 +26,10 @@ const routes: Routes = [
           { path: 'orders-history', component: OrdersHistoryComponent },
           { path: 'current-orders', component: CurrentOrdersComponent },
           { path: 'cancelled-orders', component: CancelledOrdersComponent },
+          { path: 'unconfirmed-orders', component: UnconfirmedOrdersComponent},
+          { path: 'confirmed-orders', component: ConfirmedOrdersComponent},
+          { path: 'delivered-orders', component: DeliveredOrdersComponent},
+          { path: 'rejected-orders', component: RejectedOrdersComponent}
         ],
       },
       { path: 'point-of-sale', component: PointOfSaleComponent },

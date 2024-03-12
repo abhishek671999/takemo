@@ -46,6 +46,17 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+      
+    <mat-form-field  class="form-field" *ngIf="hasOrderTypes">
+      <mat-label>Select Order state</mat-label>
+      <mat-select [(value)]="selectedOrderStatus" (selectionChange)="onValueChange()">
+        <mat-option *ngFor="let orderType of orderTypes" [value]="orderType.actualValue">
+          {{orderType.displayValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
     <mat-form-field *ngIf="isITTUser" class="form-field">
       <mat-label>Select Shift</mat-label>
       <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange()">

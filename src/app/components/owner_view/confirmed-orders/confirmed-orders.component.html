@@ -1,0 +1,200 @@
+<div class="main-container">
+  <div style="white-space: pre" class="tab-group-container">
+    <div *ngIf="showSpinner; else elseBlock">
+      <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
+    </div>
+    <ng-template #elseBlock>
+      <div *ngIf="currentOrders.length == 0">
+        <h1 class="text-center m-5">No Orders</h1>
+      </div>
+    </ng-template>
+    <cdk-virtual-scroll-viewport
+      *ngIf="!showSpinner"
+      itemSize="500"
+      class="viewport"
+    >
+      <div class="text-center">
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="example-radio-group"
+          [(ngModel)]="ViewSelection">
+          <mat-radio-button class="example-radio-button" *ngFor="let selection of viewOptions" [value]="selection.actualValue">{{
+            selection.displayValue
+          }}</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div *ngIf="ViewSelection == 'itemwise'; else orderWiseView">
+        <table
+          mat-table
+          [dataSource]="confirmedItemOrdersDataSource"
+          class="mat-elevation-z8 demo-table"
+        >
+          <!-- Position Column -->
+          <ng-container matColumnDef="slno">
+            <th mat-header-cell *matHeaderCellDef>SL No.</th>
+            <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="item">
+            <th mat-header-cell *matHeaderCellDef>Item</th>
+            <td mat-cell style="white-space: pre" *matCellDef="let element">
+              {{ element.name }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantity</th>
+            <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Amount</th>
+            <td mat-cell *matCellDef="let element">
+              ₹&nbsp;{{ element.amount }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="confirmedItemOrdersColumn"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: confirmedItemOrdersColumn"
+          ></tr>
+        </table>
+      </div>
+      <ng-template #orderWiseView>
+        <ng-container *ngIf="ViewSelection == 'orderwise'; else reportView">
+            <table
+            mat-table
+            [dataSource]="currentOrdersDataSource"
+            class="mat-elevation-z8 demo-table"
+          >
+            <!-- Position Column -->
+            <ng-container matColumnDef="Order No">
+              <th mat-header-cell *matHeaderCellDef>Order No.</th>
+              <td mat-cell *matCellDef="let element">{{ element.orderno }}</td>
+            </ng-container>
+  
+            <!-- Name Column -->
+            <ng-container matColumnDef="Order details">
+              <th mat-header-cell *matHeaderCellDef>Items</th>
+              <td
+                mat-cell
+                style="white-space: pre"
+                *matCellDef="let element"
+                [innerHTML]="element.order_detail"
+              ></td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell style="white-space: pre" *matCellDef="let element">
+                <mat-form-field>
+                  <mat-label>Status</mat-label>
+                  <mat-select
+                    (selectionChange)="updateStatus(element)"
+                    [(value)]="element.orderStatus"
+                  >
+                    <mat-option
+                      *ngFor="let status of orderStatusOptions"
+                      [value]="status.actualValue"
+                      >{{ status.displayValue }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Details">
+              <th mat-header-cell *matHeaderCellDef>Details</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="displayMoreDetails(element)"
+                >
+                  More Details
+                </button>
+              </td>
+            </ng-container>
+  
+            <!-- Weight Column -->
+            <ng-container matColumnDef="Amount">
+              <th mat-header-cell *matHeaderCellDef>Amount</th>
+              <td mat-cell *matCellDef="let element">
+                ₹&nbsp;{{ element.total_restaurant_amount }}
+              </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Ordered By">
+              <th mat-header-cell *matHeaderCellDef>Ordered By</th>
+              <td mat-cell *matCellDef="let element">{{ element.ordered_by }}</td>
+            </ng-container>
+  
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="OrderedAt">
+              <th mat-header-cell *matHeaderCellDef>Ordered at</th>
+              <td mat-cell *matCellDef="let element">{{ element.OrderedAt }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Location">
+              <th mat-header-cell *matHeaderCellDef>Location</th>
+              <td mat-cell *matCellDef="let element">{{ element.Location }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Deliver">
+              <th mat-header-cell *matHeaderCellDef>Deliver</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  *ngIf="!element.is_delivered"
+                  (click)="deliverEntireOrder(element)"
+                >
+                  Deliver Order
+                </button>
+                <p class="text-center" *ngIf="element.is_delivered">Delivered</p>
+              </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Cancel">
+              <th mat-header-cell *matHeaderCellDef>Cancel</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-raised-button
+                  color
+                  *ngIf="!element.is_cancelled"
+                  (click)="cancelOrder(element)"
+                >
+                  Cancel Order
+                </button>
+                <p class="text-center" *ngIf="element.is_cancelled">Cancelled</p>
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>  
+        </ng-container>
+
+
+        <!-- <ejs-spreadsheet>
+                    <e-sheets>
+                      <e-sheet>
+                          <e-ranges>
+                              <e-range [dataSource]='data'></e-range>
+                              </e-ranges>
+                          </e-sheet>
+                      </e-sheets>
+                  </ejs-spreadsheet> -->
+      </ng-template>
+      <ng-template #reportView>
+        <button mat-raised-button color='primary' (click)="downloadexcel()">Download report</button>
+        <pdf-viewer [src]="pdfSrc" 
+        *ngIf="pdfSrc"
+              [render-text]="true"
+              class="pdf-viewer"></pdf-viewer>
+      </ng-template>
+    </cdk-virtual-scroll-viewport>
+  </div>
+</div>

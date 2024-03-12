@@ -45,6 +45,7 @@ export class LoginComponent {
     console.log(this.loginObj);
     this._loginService.login(this.loginObj.value).subscribe(
       (data) => {
+        this._loginService.logginStatus = true
         this._utility.setToken(data['key'])
         localStorage.setItem('token', data['key']);
         this._router.navigate(['home']);

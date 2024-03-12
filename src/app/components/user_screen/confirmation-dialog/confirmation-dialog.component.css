@@ -5,6 +5,11 @@
     align-items: center;
 }
 
+.upi-transaction-form{
+    display: flex;
+    flex-direction: column;
+
+}
 .dialog-title {
     display: flex;
     justify-content: space-between;
@@ -23,6 +28,14 @@
     display: flex;
     justify-content: space-around;
     align-items: center;   
+}
+
+.qr-img{
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+    right: 0;
 }
 
 td{

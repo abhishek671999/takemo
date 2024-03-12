@@ -40,7 +40,7 @@ export class EditFormDialogComponent {
       },
       (error) => {
         console.log('Error while updating', error),
-          this.dialogRef.close({ success: 'failed' });
+          this.dialogRef.close({ success: 'failed',  errorMsg: error.error.description });
       }
     );
   }

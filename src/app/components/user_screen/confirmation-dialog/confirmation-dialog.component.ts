@@ -9,6 +9,9 @@ import { Router } from '@angular/router';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import { config } from 'rxjs';
+import { MeService } from 'src/app/shared/services/register/me.service';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -21,7 +24,9 @@ export class ConfirmationDialogComponent {
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     private __ordersService: OrdersService,
     private dialog: MatDialog,
-    private _router: Router
+    private _router: Router,
+    private _snackBar: MatSnackBar,
+    private meService: MeService
   ) {}
 
   public isPayment;
@@ -31,18 +36,31 @@ export class ConfirmationDialogComponent {
   public platformFeeAmount;
   public paybyWalletCheck;
   public walletPayMessage;
+  public paymentMethod;
   public isWalletPayment = false;
   public restaurantParcel = false;
-  public parcelCharges = 5 // hardcode
+  showQRcode = false;
+
+  // public upiId = 'pascitopcprivatelimited.ibz@icici';
+  public upiId = '8296577900@ibl';
+  public transactionId = '';
+  public deliveryAddress = '';
+  public parcelCharges = 5; // hardcode
 
   ngOnInit() {
-    this.dialogRef.updateSize('auto', 'auto')
-    this.dialogRef.disableClose = true
+    this.dialogRef.updateSize('100%')
+    this.meService.getMyInfo().subscribe((data) => {
+      this.deliveryAddress = data['address'];
+    });
+    this.totalAmount = this.summary.amount;
+    this.restaurantParcel = this.summary.restaurant_parcel;
+    this.dialogRef.disableClose = true;
+    this.dialogRef.updateSize('auto', 'auto');
     this.__ordersService.checkIfPaymentRequired().subscribe(
       (data) => {
         console.log(data);
         this.isPayment = data['payment_required'];
-        this.totalAmount = this.summary.amount;
+        this.paymentMethod = this.isPayment ? data['payment_mode'] : 'others';
         if (data['tax_inclusive']) {
           console.log('INcluding tax');
           this.platformFee['platform_fee_percentage'] =
@@ -75,16 +93,16 @@ export class ConfirmationDialogComponent {
       },
       (error) => {
         console.log(error);
+        alert(error.error)
       }
     );
   }
 
   onEditButtonClick() {
-    this.dialogRef.close({'orderList': this.summary})
+    this.dialogRef.close({ orderList: this.summary });
   }
 
-
-  preparePlaceOrderBody(wallet=null) {
+  preparePlaceOrderBody(wallet = null) {
     let itemList = [];
     this.summary.itemList.forEach((ele) => {
       itemList.push({
@@ -97,15 +115,19 @@ export class ConfirmationDialogComponent {
       order_list: itemList,
       restaurant_id: this.summary.restaurant_id,
     };
-    if(wallet != null){
-      body['wallet'] = wallet
+    if (wallet != null) {
+      body['wallet'] = wallet;
+    }
+    if (this.transactionId != '' || this.deliveryAddress != '') {
+      body['transaction_id'] = this.transactionId;
+      body['address'] = this.deliveryAddress;
     }
     return body;
   }
 
   onConfirmButtonClick() {
     //this.dialogRef.close({mode: 'wallet'})
-    let body = this.preparePlaceOrderBody()
+    let body = this.preparePlaceOrderBody();
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
         console.log('Payment done', data);
@@ -126,7 +148,7 @@ export class ConfirmationDialogComponent {
   }
 
   onProceedPaymentClick() {
-    let body = this.preparePlaceOrderBody(false)
+    let body = this.preparePlaceOrderBody(false);
 
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
@@ -145,8 +167,29 @@ export class ConfirmationDialogComponent {
     this.dialogRef.close({ mode: 'payment' });
   }
 
+  onProceedPayViaVPAClick() {
+    let body = this.preparePlaceOrderBody();
+
+    this.__ordersService.createEcomOrders(body).subscribe(
+      (data) => {
+        let successDialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+          data: { msg: 'Your Order id is: ' + data['order_no'] },
+        });
+        successDialogRef.afterClosed().subscribe((data) => {
+          this.dialogRef.close();
+          this._router.navigate(['/user/myorders']);
+        });
+      },
+      (error) => {
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: error.error.description },
+        });
+      }
+    );
+  }
+
   onProceedwithWalletClick() {
-    let body = this.preparePlaceOrderBody(true)
+    let body = this.preparePlaceOrderBody(true);
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
         console.log('Payment done', data);
@@ -174,10 +217,18 @@ export class ConfirmationDialogComponent {
     console.log('Add item: ', item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     console.log('item added: ', itemAdded, this.summary.itemList);
-    if (itemAdded) {
+    if (
+      itemAdded && itemAdded.inventory_stock
+        ? itemAdded.quantity + itemAdded.parcelQuantity <=
+          itemAdded.inventory_stock
+        : true
+    ) {
       itemAdded.quantity += 1;
       this.summary.amount += itemAdded.price;
-    } else {
+    } else if (
+      itemAdded.quantity + itemAdded.parcelQuantity <
+      itemAdded.inventory_stock
+    ) {
       item.quantity += 1;
       this.summary.amount += item.price;
       this.summary.itemList.push(item);
@@ -193,24 +244,30 @@ export class ConfirmationDialogComponent {
         (x) => x.id != item.id
       );
     }
+    if (this.summary.itemList.length == 0) {
+      this.dialogRef.close({ orderList: this.summary });
+    }
   }
 
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
-    this.summary.amount += ( this.parcelCharges * item.parcelQuantity)
+    this.summary.amount += this.parcelCharges * item.parcelQuantity;
   }
 
   subParcelItem(item) {
     if (item.parcelQuantity > 0) {
       item.parcelQuantity -= 1;
       this.summary.amount -= item.price;
-      this.summary.amount -= this.parcelCharges
+      this.summary.amount -= this.parcelCharges;
     }
     if (item.quantity == 0 && item.parcelQuantity == 0) {
       this.summary.itemList = this.summary.itemList.filter(
         (x) => x.id != item.id
       );
+    }
+    if (this.summary.itemList.length == 0) {
+      this.dialogRef.close({ orderList: this.summary });
     }
   }
 
@@ -219,12 +276,17 @@ export class ConfirmationDialogComponent {
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
-      this.summary.amount += this.parcelCharges
+      this.summary.amount += this.parcelCharges;
     }
-    if (item.parcelQuantity < 10) {
+    if (
+      item.parcelQuantity < 10 && itemAdded.inventory_stock
+        ? itemAdded.quantity + itemAdded.parcelQuantity <
+          itemAdded.inventory_stock
+        : true
+    ) {
       item.parcelQuantity += 1;
       this.summary.amount += item.price;
-      this.summary.amount += this.parcelCharges
+      this.summary.amount += this.parcelCharges;
     }
   }
 
@@ -237,16 +299,50 @@ export class ConfirmationDialogComponent {
     this.summary.itemList
       .filter((x) => x.id == item.id)
       .forEach((ele) => {
-        this.summary.amount -= (ele.quantity * ele.price) + (ele.parcelQuantity * (ele.price + this.parcelCharges)) ;
+        this.summary.amount -=
+          ele.quantity * ele.price +
+          ele.parcelQuantity * (ele.price + this.parcelCharges);
         ele.quantity = 0;
         ele.parcelQuantity = 0;
       });
     this.summary.itemList = this.summary.itemList.filter(
       (x) => x.id != item.id
     );
+
+    if (this.summary.itemList.length == 0) {
+      this.dialogRef.close({ orderList: this.summary });
+    }
   }
 
   getGrandTotalAmount() {
     return this.summary.amount;
+  }
+
+  getUPILink() {
+    return `upi://pay?pa=${this.upiId}&pn=sender&cu=INR&am=${this.summary.amount}`;
+  }
+
+  copyMessage(val: string) {
+    const selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = val;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
+    document.execCommand('copy');
+    document.body.removeChild(selBox);
+    this.openSnackBar('UPI id copied to clipboard');
+  }
+
+  openSnackBar(msg: string, action: string = '', duration = 3000) {
+    this._snackBar.open(msg, action, { duration: duration });
+  }
+
+  openQRcode() {
+    console.log('Opening qr code');
+    this.showQRcode = !this.showQRcode;
   }
 }
