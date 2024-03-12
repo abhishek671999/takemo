@@ -8,6 +8,7 @@ import { Utility, host } from '../../site-variable';
 export class MeService {
 
   meEndpoint = 'users/me/'
+  updateUserDetailsEndpoint = 'users/update_user_profile/'
   rolesEndpoint = 'role/get_roles/'
   constructor(private __httpClient: HttpClient, public utility: Utility) { }
 
@@ -19,4 +20,7 @@ export class MeService {
     return this.__httpClient.get(host+this.rolesEndpoint, {headers: this.utility.getHeaders()})
   }
   
+  updateUserDetails(body) {
+    return this.__httpClient.post(host+this.updateUserDetailsEndpoint, body)
+  }
 }

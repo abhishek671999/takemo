@@ -77,6 +77,10 @@ html{
     width: 10%;
 }
 
+.table-row{
+    overflow: auto;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     overflow-y: scroll;
@@ -99,5 +103,6 @@ html{
 @media screen and (max-width: 425px){
     .menu-container{
         width: 98%;
+        overflow: auto;
     }
 }

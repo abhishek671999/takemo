@@ -65,7 +65,8 @@ export class HeaderComponent {
           name: 'Orders',
           href: '',
           action: () => {
-            let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+            let navigationURL =
+          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
             this.router.navigate([navigationURL]);
           }
       },
@@ -75,7 +76,7 @@ export class HeaderComponent {
         action: () => this._loginService.logOut(),
       },
       'menu':{
-        name: 'Menu',
+        name: 'Outlets',
         href: '',
         action: () => {
           this.router.navigate(['./user'])
@@ -138,10 +139,13 @@ export class HeaderComponent {
   addRestaurantOwnerNavOptions(restaurant){
     let restaurantOwnerNavOptions
     this.location = restaurant.restaurant_name
+    if (restaurant.type.toLowerCase() == 'restaurant') {
+      restaurantOwnerNavOptions.push('POS')
+    }
     if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
-      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu', 'POS' ,'orders']
+      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu',  ,'orders']
     }else{
-      restaurantOwnerNavOptions = ['analytics', 'edit_menu', 'POS' ,'orders']
+      restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
     }
 
     for(let option of restaurantOwnerNavOptions){
@@ -170,7 +174,7 @@ export class HeaderComponent {
   }
 
     
-  dropdownList = [this.AvailableDropdownList['support'], this.AvailableDropdownList['logout']]
+  dropdownList = [ this.AvailableDropdownList['logout']]
   username: string
   message: string
   location: string
@@ -195,6 +199,7 @@ export class HeaderComponent {
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
             sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
+            sessionStorage.setItem('restaurantType', (data['restaurants'][0]['type'] as string).toLowerCase());
             this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
@@ -203,6 +208,7 @@ export class HeaderComponent {
             sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
             sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
             sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
+            sessionStorage.setItem('restaurantType', (data['restaurants'][0]['type'] as string).toLowerCase());
             this.addRestaurantStaffNavOptions()
             break
           }

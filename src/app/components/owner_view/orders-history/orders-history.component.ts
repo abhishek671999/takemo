@@ -161,7 +161,8 @@ export class OrdersHistoryComponent {
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
       ordered_by: order.ordered_by,
-      parcel_charges: order.parcel_charges
+      parcel_charges: order.parcel_charges,
+      user_name: order.user_name
     };
   }
 

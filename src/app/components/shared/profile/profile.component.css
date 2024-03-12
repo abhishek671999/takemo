@@ -1,0 +1,20 @@
+.main-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 85vh;
+    width: 100%;
+}
+
+.user-info-form-wrapper{
+    border-radius: 5px;
+    border: 1px black solid;
+
+}
+
+.profile-form{
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+}

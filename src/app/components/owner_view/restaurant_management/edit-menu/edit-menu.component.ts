@@ -21,6 +21,7 @@ import {
 } from 'src/app/shared/icons/svg-icons';
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-edit-menu',
@@ -37,7 +38,8 @@ export class EditMenuComponent {
     private _menuService: MenuService,
     private _menuEditService: EditMenuService,
     private _restaurantService: RestuarantService,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    private _editMenuService: EditMenuService
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -70,6 +72,8 @@ export class EditMenuComponent {
     : 'Open restaurant';
 
   countersAvailable;
+
+  public restaurantType = sessionStorage.getItem('restaurantType')
   
 
   ngOnInit() {
@@ -156,7 +160,8 @@ export class EditMenuComponent {
         }, 2000);
         this.ngOnInit();
       } else if (result.success == 'failed') {
-        let dialogRef = this._dialog.open(ErrorDialogComponent);
+        console.log(result)
+        let dialogRef = this._dialog.open(ErrorMsgDialogComponent, { data: {msg: result.errorMsg}});
         setTimeout(() => {
           dialogRef.close();
         }, 2000);
@@ -210,7 +215,7 @@ export class EditMenuComponent {
     this._handleDialogComponentAfterClose(dialogRef);
   }
 
-  toggleRestoOpen() {
+  toggleRestOpen() {
     console.log('Restaurant toggled');
     let body = {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
@@ -225,7 +230,7 @@ export class EditMenuComponent {
         console.log(data);
       },
       (error) => {
-        alert('Some thing went wrong');
+        alert('Something went wrong');
         console.log('Error while toggling: ', error);
       }
     );
@@ -252,7 +257,33 @@ export class EditMenuComponent {
     this._router.navigate(['/owner/point-of-sale']);
   }
   navigateToOrders() {
-    let navigationURL = sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': '/owner/orders-history'
+    let navigationURL =
+          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
     this._router.navigate([navigationURL]);
+  }
+
+  isRestaurantType(val: string) {
+    return this.restaurantType == val
+  }
+
+  editInventory(item, event) {
+    let body = {
+      item_id: item.id,
+      name: item.name,
+      price: item.price,
+      inventory_stock: event.target.value,
+      veg: item.veg,
+      non_veg: item.non_veg,
+      egg: item.egg,
+    };
+    this._editMenuService.editMenu(body).subscribe(
+      (data) => {
+        console.log('Successfully updated')
+        item.inventory_stock = event.target.value
+      },
+      (error) => {
+        console.log('Error while updating', error)
+      }
+    );
   }
 }

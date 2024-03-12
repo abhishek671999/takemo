@@ -59,6 +59,13 @@ export class SalesAnalyticsComponent {
     { displayValue: 'Category Wise', actualValue: 'category_wise' },
   ];
 
+  orderTypes = [
+    { displayValue: 'New orders', actualValue: 'unconfirmed' },
+    { displayValue: 'Confirmed', actualValue: 'confirmed' },
+    { displayValue: 'Delivered', actualValue: 'delivered' },
+    { displayValue: 'Rejected', actualValue: 'rejected'}
+  ]
+
   restaurantList = [
     // { displayValue: 'All', restaurant_id: 0},
     { displayValue: 'Amulya Kitchen', restaurant_id: 1 },
@@ -77,10 +84,12 @@ export class SalesAnalyticsComponent {
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
   selectPaymentMethod: number[] = this.paymentMethods[0].codedList
+  selectedOrderStatus: string = this.orderTypes[0].actualValue
   selectedRule;
   totalAmount = 0;
   totalOrders = 0;
   restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false;
+  hasOrderTypes = sessionStorage.getItem('restaurantType') == 'e-commerce' ? true : false;
   isITTUser = this._meAPIutility.doesUserBelongsToITT();
   isRaviGobiUser = this._meAPIutility.doesUserBelongsToRaviGobi()
 
@@ -146,6 +155,10 @@ export class SalesAnalyticsComponent {
     }
     if(this.isRaviGobiUser){
       body['payment_mode_list'] = this.selectPaymentMethod
+    }
+    if (this.hasOrderTypes) {
+      body['order_status'] = this.selectedOrderStatus
+      body['ecom'] = this.hasOrderTypes
     }
     if (this.selectedTimeFrame == 'custom') {
       if (this.range.value.start && this.range.value.end) {
