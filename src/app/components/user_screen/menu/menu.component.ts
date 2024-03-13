@@ -121,7 +121,7 @@ export class MenuComponent {
 
   addItem(item, event) {
     event.stopPropagation();
-    if (item.quantity < 10 && item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true) {
+    if ((item.quantity < 30) && (item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true)) {
       item.quantity += 1;
       this.amount += item.price;
     }

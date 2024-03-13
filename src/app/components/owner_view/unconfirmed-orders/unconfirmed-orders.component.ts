@@ -95,7 +95,8 @@ export class UnconfirmedOrdersComponent {
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
       ordered_by: order.ordered_by,
       orderStatus: order.order_status,
-      user_name: order.user_name
+      user_name: order.user_name,
+      order_address: order.order_address
     };
   }
 
