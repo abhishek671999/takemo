@@ -83,19 +83,32 @@
           >*Please use VPA/UPI id to pay if redirection to app doesn't
           work</small
         >
-        <div style="width: 100%; display: flex; justify-content: space-between; gap: 1em">
-          <div>
-            <small (click)="copyMessage(upiId)">
-              UPI id: <b>{{ upiId }} </b>
-            </small> <i (click)="copyMessage(upiId)" class="fa-regular fa-copy"></i>
+        <div *ngIf="isPayment && paymentMethod == 'pay_to_VPA_and_verify'">
+          <div style="width: 100%; display: flex; justify-content: space-between; gap: 1em">
+            <div>
+              <small (click)="copyMessage(upiId)">
+                UPI id: <b>{{ upiId }} </b>
+              </small> <i (click)="copyMessage(upiId)" class="fa-regular fa-copy"></i>
+            </div>
+            <div>
+              <small *ngIf="!showQRcode" style='text-align: right; cursor: pointer;' (click)="openQRcode()"><b>Open QR code</b></small>
+              <small *ngIf="showQRcode" style='text-align: right; cursor: pointer;' (click)="openQRcode()"><b>Close QR code</b></small>
+            </div>
+            
           </div>
-          <div>
-            <small *ngIf="!showQRcode" style='text-align: right; cursor: pointer;' (click)="openQRcode()"><b>Open QR code</b></small>
-            <small *ngIf="showQRcode" style='text-align: right; cursor: pointer;' (click)="openQRcode()"><b>Close QR code</b></small>
+          <img class="qr-img" src="/assets/images/payment_QR_code.jpg" *ngIf="showQRcode">
+          <div class="upi-transaction-form">
+            <mat-form-field>
+              <mat-label>Enter transaction ID after payment</mat-label>
+              <input matInput placeholder="" [(ngModel)]="transactionId" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Delivery Address</mat-label>
+              <input matInput placeholder="" [(ngModel)]="deliveryAddress" />
+            </mat-form-field>
           </div>
-          
         </div>
-        <img class="qr-img" src="/assets/images/payment_QR_code.jpg" *ngIf="showQRcode">
+        
         <!-- <a href="{{
           'upi://pay?pa=' + upiId + '&pn=sender&cu=INR&am=' + summary.amount
         }}"><mat-icon
@@ -103,16 +116,7 @@
           >launch  </mat-icon
         ></a> -->
         
-        <div class="upi-transaction-form">
-          <mat-form-field>
-            <mat-label>Enter transaction ID after payment</mat-label>
-            <input matInput placeholder="" [(ngModel)]="transactionId" />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Delivery Address</mat-label>
-            <input matInput placeholder="" [(ngModel)]="deliveryAddress" />
-          </mat-form-field>
-        </div>
+
       </div>
       <ng-template #elseBlock>
         <p
