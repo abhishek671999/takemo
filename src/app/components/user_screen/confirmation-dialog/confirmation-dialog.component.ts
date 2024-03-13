@@ -217,12 +217,7 @@ export class ConfirmationDialogComponent {
     console.log('Add item: ', item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     console.log('item added: ', itemAdded, this.summary.itemList);
-    if (
-      itemAdded && itemAdded.inventory_stock
-        ? itemAdded.quantity + itemAdded.parcelQuantity <=
-          itemAdded.inventory_stock
-        : true
-    ) {
+    if ((item.quantity < 30) && (item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true)) {
       itemAdded.quantity += 1;
       this.summary.amount += itemAdded.price;
     } else if (
@@ -278,12 +273,7 @@ export class ConfirmationDialogComponent {
       this.summary.itemList.push(item);
       this.summary.amount += this.parcelCharges;
     }
-    if (
-      item.parcelQuantity < 10 && itemAdded.inventory_stock
-        ? itemAdded.quantity + itemAdded.parcelQuantity <
-          itemAdded.inventory_stock
-        : true
-    ) {
+    if((item.quantity < 30) && (item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true)) {
       item.parcelQuantity += 1;
       this.summary.amount += item.price;
       this.summary.amount += this.parcelCharges;
