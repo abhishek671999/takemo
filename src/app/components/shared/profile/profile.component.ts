@@ -50,7 +50,7 @@ export class ProfileComponent {
       firstName: this.meData['first_name'] || '',
       lastName: this.meData['last_name'] || '',
       address: this.meData['address'] || '',
-      mobileNumber: this.meData['mobile'] || 'a',
+      mobileNumber: this.meData['mobile'] || '',
       email: this.meData['email'] || '',
     });
 
@@ -73,13 +73,13 @@ export class ProfileComponent {
     this.meService.updateUserDetails(body).subscribe(
       (data) => {
         console.log('Data: ', data);
-        this.dialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Profile Updated' },
-        });
         this.meData['address'] = this.profileForm.value.address || '';
         this.meData['first_name'] = this.profileForm.value.firstName;
         this.meUtility.setMeData(this.meData);
-        this.router.navigate(['home']);
+        this.dialog.open(SuccessMsgDialogComponent, {
+          data: { msg: 'Profile Updated' },
+        });
+        this.router.navigate(['home/']);
       },
       (error) => {
         console.log('error', error);
@@ -89,6 +89,7 @@ export class ProfileComponent {
   }
 
   showFieldifNot(val: string) {
+    console.log(this.profileForm.getRawValue()[val], this.profileForm.getRawValue())
     return !Boolean(this.profileForm.getRawValue()[val]);
   }
 }
