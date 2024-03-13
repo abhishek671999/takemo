@@ -139,13 +139,14 @@ export class HeaderComponent {
   addRestaurantOwnerNavOptions(restaurant){
     let restaurantOwnerNavOptions
     this.location = restaurant.restaurant_name
-    if (restaurant.type.toLowerCase() == 'restaurant') {
-      restaurantOwnerNavOptions.push('POS')
-    }
+
     if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
       restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu',  ,'orders']
     }else{
       restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
+    }
+    if (restaurant.type.toLowerCase() == 'restaurant') { 
+      restaurantOwnerNavOptions.push('POS')
     }
 
     for(let option of restaurantOwnerNavOptions){
