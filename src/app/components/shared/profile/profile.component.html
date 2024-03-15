@@ -22,7 +22,7 @@
                 <mat-label>Email Address</mat-label>
                 <input type="text" matInput formControlName="email">
             </mat-form-field >
-            <button mat-raised-button color="primary" [disabled]="profileForm.valid" type="submit">Submit</button>
+            <button mat-raised-button color="primary" [disabled]="!profileForm.valid" type="submit">Submit</button>
           </form>
     </div>
 </div>

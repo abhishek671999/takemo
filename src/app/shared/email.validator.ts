@@ -3,6 +3,7 @@ import {
   ValidatorFn,
   ValidationErrors,
   AsyncValidatorFn,
+  FormGroup,
 } from '@angular/forms';
 import { SignupService } from './services/register/signup.service';
 import { Observable, map } from 'rxjs';
@@ -37,4 +38,16 @@ export function userNameValidator(
       })
     );
   };
+}
+
+export const atLeastOne = (validator: ValidatorFn, controls: string[] = null) => (group: FormGroup): ValidationErrors | null => {
+  if (!controls) {
+    controls = Object.keys(group.controls)
+  }
+  const hasAtLeaseOne = group && group.controls && controls
+    .some(k => !validator(group.controls[k]))
+  
+  return hasAtLeaseOne ? null : {
+    atLeastOne: true
+  }
 }

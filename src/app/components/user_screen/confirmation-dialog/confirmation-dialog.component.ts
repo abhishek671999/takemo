@@ -12,6 +12,7 @@ import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { config } from 'rxjs';
 import { MeService } from 'src/app/shared/services/register/me.service';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -26,7 +27,8 @@ export class ConfirmationDialogComponent {
     private dialog: MatDialog,
     private _router: Router,
     private _snackBar: MatSnackBar,
-    private meService: MeService
+    private meService: MeService,
+    private _fb: FormBuilder
   ) {}
 
   public isPayment;
@@ -47,10 +49,19 @@ export class ConfirmationDialogComponent {
   public deliveryAddress = '';
   public parcelCharges = 5; // hardcode
 
+  public transactionForm = this._fb.group({
+    transactionId: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
+    addresss: ['', [Validators.required, Validators.minLength(4)]]
+  })
+
   ngOnInit() {
     this.dialogRef.updateSize('100%')
     this.meService.getMyInfo().subscribe((data) => {
       this.deliveryAddress = data['address'];
+      this.transactionForm.setValue({
+        'transactionId': '',
+        'addresss': data['address']
+      })
     });
     this.totalAmount = this.summary.amount;
     this.restaurantParcel = this.summary.restaurant_parcel;
