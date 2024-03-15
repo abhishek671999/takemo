@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
+import { atLeastOne } from 'src/app/shared/email.validator';
 
 @Component({
   selector: 'app-profile',
@@ -21,14 +22,15 @@ export class ProfileComponent {
   ) {}
   public profileForm = this.fb.group({
     firstName: ['', [Validators.required]],
-    lastName: ['', [Validators.required]],
-    address: ['', [Validators.minLength(4), Validators.maxLength(25)]],
+    // lastName: ['', [Validators.required]],
+    address: ['', [Validators.minLength(4)]],
     mobileNumber: [
       '',
-      [Validators.max(10000000000), Validators.max(999999999999)],
+      [Validators.maxLength(13)],
     ],
-    email: ['', [Validators.required]],
-  });
+    email: ['', ],
+  },
+    { Validators: atLeastOne(Validators.required, ['email', 'mobileNumber']) });
   meData;
 
   ngOnInit() {
@@ -37,7 +39,7 @@ export class ProfileComponent {
         this.meData = data;
         console.log('In profile', this.meData);
         this.updateForm();
-        this.meUtility.setMeData(this.meData)
+        this.meUtility.setMeData(this.meData);
       },
       (error) => {
         console.log('Error in fetching me data');
@@ -48,15 +50,15 @@ export class ProfileComponent {
   updateForm() {
     this.profileForm.setValue({
       firstName: this.meData['first_name'] || '',
-      lastName: this.meData['last_name'] || '',
+      // lastName: this.meData['last_name'] || '',
       address: this.meData['address'] || '',
       mobileNumber: this.meData['mobile'] || '',
       email: this.meData['email'] || '',
     });
 
     this.meData['email']
-      ? this.profileForm.controls.email.disable()
-      : this.profileForm.controls.mobileNumber.disable();
+      ? this.profileForm.controls['email'].disable()
+      : this.profileForm.controls['mobileNumber'].disable();
   }
 
   submitForm() {
@@ -89,7 +91,10 @@ export class ProfileComponent {
   }
 
   showFieldifNot(val: string) {
-    console.log(this.profileForm.getRawValue()[val], this.profileForm.getRawValue())
+    console.log(
+      this.profileForm.getRawValue()[val],
+      this.profileForm.getRawValue()
+    );
     return !Boolean(this.profileForm.getRawValue()[val]);
   }
 }
