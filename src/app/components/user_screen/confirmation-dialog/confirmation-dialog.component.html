@@ -97,16 +97,21 @@
             
           </div>
           <img class="qr-img" src="/assets/images/payment_QR_code.jpg" *ngIf="showQRcode">
-          <div class="upi-transaction-form">
+          <form [formGroup]="transactionForm" class="upi-transaction-form">
             <mat-form-field>
-              <mat-label>Enter transaction ID after payment</mat-label>
-              <input matInput placeholder="" [(ngModel)]="transactionId" />
+              <mat-label><small>Enter last 6 digits of tnx ID after payment</small></mat-label>
+              <input matInput placeholder="" formControlName="transactionId"/>
             </mat-form-field>
+            <div *ngIf="transactionForm.controls.transactionId.invalid && transactionForm.controls.transactionId.touched">
+              <small class="text-danger" *ngIf="transactionForm.controls.transactionId.errors?.['required']">Last 6 digits of transaction ID required</small>
+              <small class="text-danger" *ngIf="transactionForm.controls.transactionId.errors?.['maxlength']">Please enter <b>only</b> last 6 digits</small>
+              <small class="text-danger" *ngIf="transactionForm.controls.transactionId.errors?.['minlength']">Please enter last 6 digits</small>
+            </div>
             <mat-form-field>
               <mat-label>Delivery Address</mat-label>
-              <input matInput placeholder="" [(ngModel)]="deliveryAddress" />
+              <input matInput placeholder="" formControlName="addresss" />
             </mat-form-field>
-          </div>
+          </form>
         </div>
         
         <!-- <a href="{{
@@ -170,7 +175,7 @@
           mat-raised-button
           (click)="onProceedPayViaVPAClick()"
           color="primary"
-          [disabled]="transactionId == '' || deliveryAddress == ''"
+          [disabled]="!transactionForm.valid"
         >
           Place Order
         </button>
