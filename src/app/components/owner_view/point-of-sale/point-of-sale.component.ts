@@ -515,7 +515,7 @@ export class PointOfSaleComponent {
 
   navigateToOrders() {
     let navigationURL =
-    sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
+    sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
     this.router.navigate([navigationURL]);
   }
 

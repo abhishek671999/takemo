@@ -25,18 +25,18 @@ import { EditMenuComponent } from '../owner_view/restaurant_management/edit-menu
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { EditFormDialogComponent } from '../owner_view/edit-form-dialog/edit-form-dialog.component';
-import { DeleteConfirmationDialogComponent } from '../owner_view/delete-confirmation-dialog/delete-confirmation-dialog.component';
-import { AddCategoryDialogComponent } from '../owner_view/add-category-dialog/add-category-dialog.component';
-import { AddItemDialogComponent } from '../owner_view/add-item-dialog/add-item-dialog.component';
+import { EditFormDialogComponent } from '../owner_view/dialogbox/edit-form-dialog/edit-form-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../owner_view/dialogbox/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { AddCategoryDialogComponent } from '../owner_view/dialogbox/add-category-dialog/add-category-dialog.component';
+import { AddItemDialogComponent } from '../owner_view/dialogbox/add-item-dialog/add-item-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   MAT_RADIO_DEFAULT_OPTIONS,
   MatRadioModule,
 } from '@angular/material/radio';
-import { SuccessfulDialogComponent } from '../owner_view/successful-dialog/successful-dialog.component';
-import { ErrorDialogComponent } from '../owner_view/error-dialog/error-dialog.component';
-import { DeleteCategoryConfirmationDialogComponent } from '../owner_view/delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
+import { SuccessfulDialogComponent } from '../owner_view/dialogbox/successful-dialog/successful-dialog.component';
+import { ErrorDialogComponent } from '../owner_view/dialogbox/error-dialog/error-dialog.component';
+import { DeleteCategoryConfirmationDialogComponent } from '../owner_view/dialogbox/delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import { PostPaymentComponent } from './post-payment/post-payment.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';

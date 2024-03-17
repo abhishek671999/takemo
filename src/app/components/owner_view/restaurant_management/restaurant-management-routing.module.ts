@@ -5,9 +5,12 @@ import { EditMenuComponent } from './edit-menu/edit-menu.component';
 import { FoodCounterManagementComponent } from './food-counter-management/food-counter-management.component';
 
 const routes: Routes = [
-  { path: '', component: ManagmentHomeComponent, children: [
-    { path: 'edit-menu/:id', component: EditMenuComponent},
-    { path: 'food-counter-management', component: FoodCounterManagementComponent}
+  {
+    path: '',
+    component: ManagmentHomeComponent,
+    children: [
+      { path: 'edit-menu/:id', component: EditMenuComponent },
+      { path: 'food-counter-management', component: FoodCounterManagementComponent }
   ]}
   
 ];

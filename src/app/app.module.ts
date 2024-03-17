@@ -18,7 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { AdminLandingComponent } from './components/admin/admin-landing/admin-landing.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
-import { CurrentOrdersComponent } from './components/owner_view/current-orders/current-orders.component';
+import { CurrentOrdersComponent } from './components/owner_view/orders/current-orders/current-orders.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { PostLoginComponent } from './components/post-login/post-login.component';
 import { Utility, meAPIUtility } from './shared/site-variable';

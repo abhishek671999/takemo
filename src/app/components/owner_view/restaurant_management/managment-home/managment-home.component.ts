@@ -10,9 +10,7 @@ export class ManagmentHomeComponent {
 
   managementPages = [
     {name: 'Edit Menu' , href: `edit-menu/${sessionStorage.getItem('restaurant_id')}` },
-    {name: 'Counter', href: "food-counter-management"}
-    
-    
+    {name: 'Counter', href: "food-counter-management"}    
   ]
 
   constructor(private _router: Router){}

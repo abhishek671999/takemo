@@ -3,41 +3,43 @@ import { CommonModule } from '@angular/common';
 
 import { OwnerRoutingModule } from './owner-routing.module';
 import { HomeComponent } from './home/home.component';
-import { CurrentOrdersComponent } from './current-orders/current-orders.component';
-import { PendingOrdersComponent } from './pending-orders/pending-orders.component';
-import { OrdersHistoryComponent } from './orders-history/orders-history.component';
+import { CurrentOrdersComponent } from './orders/current-orders/current-orders.component';
+import { PendingOrdersComponent } from './orders/pending-orders/pending-orders.component';
+import { OrdersHistoryComponent } from './orders/orders-history/orders-history.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { DeliveryOrderDialogComponent } from './delivery-order-dialog/delivery-order-dialog.component';
+import { DeliveryOrderDialogComponent } from './dialogbox/delivery-order-dialog/delivery-order-dialog.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { OrdersHomeComponent } from './orders-home/orders-home.component';
+import { OrdersHomeComponent } from './orders/orders-home/orders-home.component';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
-import { ConfirmOrderCancelComponent } from './confirm-order-cancel/confirm-order-cancel.component';
-import { CancelledOrdersComponent } from './cancelled-orders/cancelled-orders.component';
+import { ConfirmOrderCancelComponent } from './dialogbox/confirm-order-cancel/confirm-order-cancel.component';
+import { CancelledOrdersComponent } from './orders/cancelled-orders/cancelled-orders.component';
 import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {JsonPipe} from '@angular/common';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatNativeDateModule} from '@angular/material/core';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { JsonPipe } from '@angular/common';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FoodCounterManagementComponent } from './restaurant_management/food-counter-management/food-counter-management.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { DeliverAllOrdersDialogComponent } from './deliver-all-orders-dialog/deliver-all-orders-dialog.component';
-import { UnconfirmedOrdersComponent } from './unconfirmed-orders/unconfirmed-orders.component';
-import { ConfirmedOrdersComponent } from './confirmed-orders/confirmed-orders.component';
-import { DeliveredOrdersComponent } from './delivered-orders/delivered-orders.component';
-import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.component';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle'
+import { DeliverAllOrdersDialogComponent } from './dialogbox/deliver-all-orders-dialog/deliver-all-orders-dialog.component';
+import { UnconfirmedOrdersComponent } from './orders/unconfirmed-orders/unconfirmed-orders.component';
+import { ConfirmedOrdersComponent } from './orders/confirmed-orders/confirmed-orders.component';
+import { DeliveredOrdersComponent } from './orders/delivered-orders/delivered-orders.component';
+import { RejectedOrdersComponent } from './orders/rejected-orders/rejected-orders.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { ExpensesComponent } from './expense-management/expenses/expenses.component';
+import { VendorSettingsComponent } from './expense-management/vendor-settings/vendor-settings.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     ConfirmedOrdersComponent,
     DeliveredOrdersComponent,
     RejectedOrdersComponent,
+    ExpensesComponent,
+    VendorSettingsComponent,
   ],
   imports: [
     CommonModule,
@@ -76,7 +80,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatCheckboxModule, 
+    MatCheckboxModule,
     MatRadioModule,
     MatPaginatorModule,
     MatExpansionModule,
@@ -85,7 +89,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     MatInputModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
-    PdfViewerModule
+    PdfViewerModule,
   ],
   exports: [],
 })

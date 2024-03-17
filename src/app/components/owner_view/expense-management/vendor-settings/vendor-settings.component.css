@@ -1,0 +1,39 @@
+.main-container{
+    height: 85vh;
+}
+
+.viewport {
+    height: 60vh;
+}
+
+.col1{
+    width: 5%;
+}
+
+.col2{
+    width: 20%;
+}
+
+.col3{
+    width: 15%;
+}
+
+.col4{
+    width: 15%;
+}
+
+.col5{
+    width: 25%;
+}
+
+.col1{
+    width: 10%;
+}
+
+.col1{
+    width: 10%;
+}
+
+.new-vendor-form mat-form-field{
+    margin: 0 1em;
+}

@@ -1,0 +1,43 @@
+.main-container{
+    height: 83vh;
+}
+
+.new-expense-form{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.new-expense-form mat-form-field{
+    margin: 0 1em;
+}
+
+.filter-section{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-section mat-form-field{
+    margin: 0 1em;
+}
+
+
+.table-wrapper{
+    width: 100%;
+    overflow: auto;
+    height: 80%;
+}
+.table-wrapper thead {
+    position: sticky;
+    top: 0;
+}
+.view-section{
+    display: flex;
+    height: 60vh;
+    flex-direction: column;
+    justify-content: space-between;
+
+}

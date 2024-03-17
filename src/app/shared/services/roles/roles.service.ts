@@ -11,7 +11,7 @@ export class RolesService {
   constructor(private _httpClient: HttpClient, public utility: Utility) { }
 
   getRole(){
-    return this._httpClient.get(host+this.roleEndpoint, {headers: this.utility.getHeaders()})
+    return this._httpClient.get(host+this.roleEndpoint)
   }
 
 }

@@ -19,7 +19,6 @@ export class HeaderComponent {
     AvailableDropdownList = {
       'profile': {
         name: 'Profile',
-        href: '',
         action: () => {
           console.log('My Profile');
           this.router.navigate(['./admin/myprofile']);
@@ -27,7 +26,6 @@ export class HeaderComponent {
       },
       'analytics': {
         name: 'Analytics',
-        href: '',
         action: () => {
           console.log('analytics');
           this.router.navigate(['./admin/analytics/sales-analytics']);
@@ -35,7 +33,6 @@ export class HeaderComponent {
       },
       'shift': {
         name: 'Shift',
-        href: '',
         action: () => {
           console.log('User management');
           this.router.navigate(['./admin/user-management']);
@@ -43,7 +40,6 @@ export class HeaderComponent {
       },
       'billing': {
         name: 'Billing',
-        href: '',
         action : () => {
           console.log('Billing')
           this.router.navigate(['./admin/billing'])
@@ -51,70 +47,66 @@ export class HeaderComponent {
       },
       'settings': {
         name: 'Settings',
-        href: '',
         action: () => console.log('My settings'),
       },
       'edit_menu': {
         name: 'Menu',
-        href: '',
         action: () => {
           this.router.navigate(['./owner/settings/edit-menu/' + sessionStorage.getItem('restaurant_id')])
         }
       },
       'orders': {
           name: 'Orders',
-          href: '',
           action: () => {
             let navigationURL =
-          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
+            sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
             this.router.navigate([navigationURL]);
           }
       },
       'logout': {
         name: 'Logout',
-        href: '',
         action: () => this._loginService.logOut(),
       },
       'menu':{
         name: 'Outlets',
-        href: '',
         action: () => {
           this.router.navigate(['./user'])
         }
       },
       'userOrders': {
         name: 'My Orders',
-        href: '',
         action: () => {
           this.router.navigate(['./user/myorders/current-orders'])
         }
       },
       'support': {
         name: 'Support',
-        href: '',
         action: () => {
           this.router.navigate(['./user/support'])
         }
       },
       'admin_current_orders': {
         name: 'Orders',
-        href: '',
         action: () => {
           this.router.navigate(['./admin/orders'])
         }
       },
       'wallet': {
         name: 'Wallet',
-        href: '',
         action: () => {
           this.router.navigate(['./user/wallet'])
         }
       },
       'POS': {
         name: 'POS',
-        href: '',
         action: () => {
           this.router.navigate(['./owner/point-of-sale'])
+        }
+      },
+      'expense': {
+        name: 'Expense',
+        action: () => {
+          this.router.navigate(['./owner/expense/expense'])
         }
       }
     }
@@ -145,8 +137,10 @@ export class HeaderComponent {
     }else{
       restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
     }
+    restaurantOwnerNavOptions.push('expense')
     if (restaurant.type.toLowerCase() == 'restaurant') { 
       restaurantOwnerNavOptions.push('POS')
+      
     }
 
     for(let option of restaurantOwnerNavOptions){
