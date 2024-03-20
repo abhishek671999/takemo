@@ -36,8 +36,8 @@
 }
 .view-section{
     display: flex;
-    height: 60vh;
+    height: 65vh;
     flex-direction: column;
     justify-content: space-between;
-
+    gap: 2em;
 }

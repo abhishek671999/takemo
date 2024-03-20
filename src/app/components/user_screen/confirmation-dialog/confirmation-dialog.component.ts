@@ -45,8 +45,6 @@ export class ConfirmationDialogComponent {
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
-  public transactionId = '';
-  public deliveryAddress = '';
   public parcelCharges = 5; // hardcode
 
   public transactionForm = this._fb.group({
@@ -57,7 +55,6 @@ export class ConfirmationDialogComponent {
   ngOnInit() {
     this.dialogRef.updateSize('100%')
     this.meService.getMyInfo().subscribe((data) => {
-      this.deliveryAddress = data['address'];
       this.transactionForm.setValue({
         'transactionId': '',
         'addresss': data['address']
@@ -129,9 +126,9 @@ export class ConfirmationDialogComponent {
     if (wallet != null) {
       body['wallet'] = wallet;
     }
-    if (this.transactionId != '' || this.deliveryAddress != '') {
-      body['transaction_id'] = this.transactionId;
-      body['address'] = this.deliveryAddress;
+    if (this.transactionForm.value.transactionId != '' || this.transactionForm.value.addresss != '') {
+      body['transaction_id'] = this.transactionForm.value.transactionId;
+      body['address'] = this.transactionForm.value.addresss;
     }
     return body;
   }

@@ -20,7 +20,7 @@ export class ExpensesComponent {
   ) {}
   public vendorList = [];
   public expenses = [];
-
+  restaurantId = sessionStorage.getItem('restaurant_id');
   expensesForm = this.__fb.group({
     vendor_id: ['', [Validators.required]],
     amount: ['', [Validators.required]],
@@ -28,16 +28,16 @@ export class ExpensesComponent {
   });
 
   isPaidOptions = [
-    { actualValue: 'True', displayValue: 'Done' },
-    { actualValue: 'False', displayValue: 'Pending' },
+    { actualValue: 'True', displayValue: 'Paid' },
+    { actualValue: 'False', displayValue: 'Unpaid' },
   ];
-  public defaultVendor = {id: null, name: 'All'}
+  public defaultVendor = { id: null, name: 'All' };
   public selectedVendor = this.defaultVendor;
 
-  public defaultPaidOption = {actualValue: null, displayValue: 'All'}
-  public selectedPaidOption = this.defaultPaidOption
+  public defaultPaidOption = { actualValue: null, displayValue: 'All' };
+  public selectedPaidOption = this.defaultPaidOption;
 
-  public totalAmount = 0
+  public totalAmount = 0;
 
   ngOnInit() {
     this.fetchVendorList().then((resolve) => {
@@ -47,10 +47,7 @@ export class ExpensesComponent {
 
   fetchVendorList() {
     let httpParams = new HttpParams();
-    httpParams = httpParams.append(
-      'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
-    );
+    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     return new Promise((resolve, reject) => {
       this.__vendorService.getVendor(httpParams).subscribe(
         (data) => {
@@ -67,14 +64,14 @@ export class ExpensesComponent {
 
   fetchExpenses() {
     let httpParams = new HttpParams();
-    httpParams = httpParams.append(
-      'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
-    );
+    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     if (this.selectedPaidOption.actualValue) {
-      httpParams = httpParams.append('paid', this.selectedPaidOption.actualValue);
+      httpParams = httpParams.append(
+        'paid',
+        this.selectedPaidOption.actualValue
+      );
     }
-    
+
     if (this.selectedVendor.id) {
       httpParams = httpParams.append('vendor_id', this.selectedVendor.id);
     }
@@ -82,10 +79,12 @@ export class ExpensesComponent {
       (data) => {
         console.log('Fetched expense: ', data);
         this.expenses = data['expenses'];
-        this.expenses.forEach(exp => {
-          exp['created_at'] = new Date(exp.created_at).toLocaleString().toLocaleString()  
-        })
-        this.totalAmount = data['total_amount']
+        this.expenses.forEach((exp) => {
+          exp['created_at'] = new Date(exp.created_at)
+            .toLocaleString()
+            .toLocaleString();
+        });
+        this.totalAmount = data['total_amount'];
       },
       (error) => {
         console.log('Error: ', error);
@@ -98,19 +97,60 @@ export class ExpensesComponent {
       vendor_id: this.expensesForm.value.vendor_id,
       amount: this.expensesForm.value.amount,
       paid: this.expensesForm.value.paid,
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
     };
     this.__expenseService.addExpense(body).subscribe(
       (data) => {
         console.log('Added expense: ', data);
         this.ngOnInit();
-        this.expensesForm.reset()
-        this.expensesForm.markAsUntouched()
-        this.expensesForm.markAsPristine()
-        this.__snackbar.open('Expense added', 'Dismiss', {duration: 2000})
+        this.expensesForm.reset();
+        this.expensesForm.markAsUntouched();
+        this.expensesForm.markAsPristine();
+        this.__snackbar.open('Expense added', 'Dismiss', { duration: 2000 });
       },
       (error) => {
         console.log('Error while adding expense: ', error);
+      }
+    );
+  }
+
+  markAllExpensePaid() {
+    let body = {
+      vendor_id: this.selectedVendor.id,
+    };
+    this.__expenseService.payAllExpensesOfVendor(body).subscribe(
+      (data) => {
+        this.__snackbar.open(
+          `Marked paid for vendor ${this.selectedVendor.name}`,
+          'dismiss',
+          { duration: 2000 }
+        );
+        this.ngOnInit();
+      },
+      (error) => {
+        this.__snackbar.open(
+          `Failed to mark. Error ${error.error.description}`,
+          'dismiss',
+          { duration: 2000 }
+        );
+      }
+    );
+  }
+
+  markExpensePaid(expense) {
+    let body = {
+      expense_id: expense.expense_id,
+      vendor_id: expense.vendor_id,
+      amount: expense.amount,
+      paid: !expense.paid,
+      restaurant_id: this.restaurantId,
+    };
+    this.__expenseService.editExpense(body).subscribe(
+      (data) => {
+        expense.paid = !expense.paid;
+      },
+      (error) => {
+        this.__snackbar.open('Failed to update', 'dismiss', { duration: 2000 });
       }
     );
   }

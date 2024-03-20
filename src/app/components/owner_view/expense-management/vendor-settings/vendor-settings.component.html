@@ -17,28 +17,16 @@
                 <tr class="table-row"*ngFor="let vendor of vendorList; let mainIndex = index">
                     <td class="col1" >{{mainIndex+1}}</td>
                     <td class="col2" >
-                        <mat-form-field class="example-full-width">
-                            <mat-label>Vendor name</mat-label>
-                            <input type="text" matInput [(ngModel)]="vendor.name" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
-                        </mat-form-field>
+                            <input type="text" [(ngModel)]="vendor.name" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
                     </td>
                     <td class="col3" >
-                        <mat-form-field class="example-full-width">
-                            <mat-label>Email</mat-label>
-                            <input type="email" matInput [(ngModel)]="vendor.email" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
-                        </mat-form-field>
+                            <input type="email" [(ngModel)]="vendor.email" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
                     </td>
                     <td class="col4" >
-                        <mat-form-field class="example-full-width">
-                            <mat-label>Mobile</mat-label>
-                            <input type="tel" pattern="^\d{10}$" matInput [(ngModel)]="vendor.mobile" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
-                        </mat-form-field>
+                            <input type="tel" pattern="^\d{10}$" [(ngModel)]="vendor.mobile" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
                     </td>
                     <td class="col5" >
-                        <mat-form-field class="example-full-width">
-                            <mat-label>Description</mat-label>
-                            <input type="text" matInput [(ngModel)]="vendor.description" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
-                        </mat-form-field>
+                            <input type="text" [(ngModel)]="vendor.description" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
                     </td>
                     <td class="col6">
                         <mat-icon  title="Edit this item" (click)="enableEdit(vendor)">edit</mat-icon>

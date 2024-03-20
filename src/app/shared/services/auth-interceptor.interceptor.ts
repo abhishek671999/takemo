@@ -29,10 +29,10 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
       },
       error => {
         if(error instanceof HttpErrorResponse){
-          console.log('intercepted event', error, request.url, error.status, host + 'rest-auth/logout/')
+          console.log('intercepted event', error, request.url, error.status)
           if(error.status == 0){
             alert('Device not connected to Internet. Please check')
-          } else if (error.error.detail.toLowerCase().startsWith('invalid token')) {
+          } else if (error.status != 400 && error.error.detail.toLowerCase().startsWith('invalid token')) {
             if (this.loggedInFlag) {
               this.loggedInFlag = false
               sessionStorage.clear();

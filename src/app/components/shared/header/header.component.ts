@@ -137,10 +137,11 @@ export class HeaderComponent {
     }else{
       restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
     }
-    restaurantOwnerNavOptions.push('expense')
+    if (restaurant.expense_management) {
+      restaurantOwnerNavOptions.push('expense')
+    }
     if (restaurant.type.toLowerCase() == 'restaurant') { 
-      restaurantOwnerNavOptions.push('POS')
-      
+      restaurantOwnerNavOptions.push('POS') 
     }
 
     for(let option of restaurantOwnerNavOptions){

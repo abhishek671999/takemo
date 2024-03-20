@@ -58,8 +58,9 @@ export class meAPIUtility {
     this.cookieService.set(
       'me',
       JSON.stringify(meData),
-      new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000)
-    );
+      new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000),
+      '/'
+    )
   }
 
   getMeData() {

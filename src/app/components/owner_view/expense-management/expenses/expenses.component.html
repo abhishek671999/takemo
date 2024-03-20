@@ -7,13 +7,15 @@
                 <mat-option *ngFor="let vendor of vendorList" [value]="vendor">{{vendor.name}}</mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field>
-            <mat-label>Payment done</mat-label>
-            <mat-select  [(value)]="selectedPaidOption" (selectionChange)="fetchExpenses()">
+            <mat-radio-group [(ngModel)]="selectedPaidOption" (change)="fetchExpenses()">
+                <mat-radio-button [value]="defaultPaidOption" >{{defaultPaidOption.displayValue}}</mat-radio-button>
+                <mat-radio-button *ngFor="let paidOption of isPaidOptions" [value]="paidOption">{{paidOption.displayValue}}</mat-radio-button>
+              </mat-radio-group>
+            
+            <!-- <mat-select  [(value)]="selectedPaidOption" (selectionChange)="fetchExpenses()">
                 <mat-option [value]="defaultPaidOption" >{{defaultPaidOption.displayValue}}</mat-option>
                 <mat-option *ngFor="let paidOption of isPaidOptions" [value]="paidOption">{{paidOption.displayValue}}</mat-option>
-            </mat-select>
-        </mat-form-field>
+            </mat-select> -->
     </div>
 
     <div class="view-section">
@@ -33,21 +35,26 @@
                             <td class="col1" >{{expense.expense_id}}</td>
                             <td class="col3" >{{expense.vendor_name}}</td>
                             <td class="col3" >{{expense.amount}}</td>
-                            <td class="col4" >{{expense.paid? 'Done': 'Pending'}}</td>
+                            <td class="col4" >
+                                <mat-icon *ngIf="expense.paid">done</mat-icon>
+                                <mat-icon *ngIf="!expense.paid" (click)="markExpensePaid(expense)">close</mat-icon></td>
                             <td class="col5" >{{expense.created_at}}</td>
                         </tr>
                         <tr style="position: sticky; bottom: 0; font-weight: bold;">
                             <td class="col1" >-</td>
                             <td class="col3" >Total Amount</td>
                             <td class="col3" >{{totalAmount}}</td>
-                            <td class="col4" >-</td>
+                            <td class="col4" ><button  mat-raised-button color="primary" (click)="markAllExpensePaid()" [disabled]="!selectedVendor.id || selectedPaidOption.displayValue.toLowerCase() == 'paid'"> Mark all paid</button></td>
                             <td class="col5" >-</td> 
                         </tr>
                 </tbody>
-            </table>
+            </table>           
         </div>
-    
+        
+        <div>
+            <h2 style="text-align: center">Add new expense</h2>
         <form [formGroup]="expensesForm" class="new-expense-form">
+            
             <mat-form-field >
                 <mat-label>Vendor name</mat-label>
                 <mat-select  formControlName="vendor_id">
@@ -67,6 +74,8 @@
             </mat-form-field>
             <button mat-raised-button class="col6" color='primary' type="submit" (click)="addExpense()" [disabled]="!expensesForm.valid" class="add-category-button" title="Add a vendor" >Add Expense</button>
         </form>
+        </div>
+        
     </div>
     
 </div>

@@ -86,6 +86,7 @@ export class VendorSettingsComponent {
     let body = {
       vendor_id: vendor.id
     }
+    console.log('Deleting vendor: ', body);
     this.__vendorService.deleteVendor(body).subscribe(
       data => {
         console.log('Deleted vendor')

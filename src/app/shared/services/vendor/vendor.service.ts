@@ -11,6 +11,7 @@ export class VendorService {
   private __addVendorEndpoint = 'expense/add_vendor/'
   private __editVendorEndpoint = 'expense/edit_vendor/'
   private __deleteVendorEndpoint = 'expense/delete_vendor/'
+
   
   constructor(private __httpClient: HttpClient) { }
 
@@ -27,7 +28,9 @@ export class VendorService {
   }
 
   deleteVendor(body) {
-    return this.__httpClient.delete(host + this.__deleteVendorEndpoint, body)
+    return this.__httpClient.delete(host + this.__deleteVendorEndpoint, {body: body})
   }
+
+
   
 }
