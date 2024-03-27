@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-managment-home',
@@ -8,12 +9,19 @@ import { Router } from '@angular/router';
 })
 export class ManagmentHomeComponent {
 
+
+  constructor(private __meUtility: meAPIUtility, private _router: Router) { }
   managementPages = [
     {name: 'Edit Menu' , href: `edit-menu/${sessionStorage.getItem('restaurant_id')}` },
-    {name: 'Counter', href: "food-counter-management"}    
   ]
 
-  constructor(private _router: Router){}
+  counterPage = { name: 'Counter', href: "food-counter-management" }    
 
-  ngOnInit(){}
+  counterManagement = this.__meUtility.isCounterManagementEnabled()
+
+  ngOnInit() {
+    if(this.counterManagement) {
+      this.managementPages.push(this.counterPage)
+    } 
+  }
 }

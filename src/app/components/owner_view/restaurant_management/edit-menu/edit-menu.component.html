@@ -36,9 +36,9 @@
                                     <th class="col2" scope="col">Item</th>
                                     <th class="col3" scope="col">Price</th>
                                     <th class="col4" scope="col">Availabe</th>
-                                    <th *ngIf="isRestaurantType('e-commerce')">Inventory</th>
-                                    <th *ngIf="isRestaurantType('restaurant')" class="col4" scope="col">Favorite</th>
-                                    <th *ngIf="isRestaurantType('restaurant')">Counter</th>
+                                    <th *ngIf="inventoryManagement">Inventory</th>
+                                    <th *ngIf="isType('restaurant')" class="col4" scope="col">Favorite</th>
+                                    <th *ngIf="counterMangement">Counter</th>
                                     <th class="col5" scope="col">Edit</th>
                                     <th class="col6" scope="col">Delete</th>
                                 </tr>
@@ -57,15 +57,15 @@
                                     <td class="col4">
                                         <mat-slide-toggle color="primary" [ngModel]='item.is_available' (change)="toggleAvailability(item)"></mat-slide-toggle>
                                     </td>
-                                    <td *ngIf="isRestaurantType('e-commerce')">  <mat-form-field class="example-full-width">
+                                    <td *ngIf="inventoryManagement">  <mat-form-field class="example-full-width">
                                         <mat-label>Inventory</mat-label>
                                         <input type="number" matInput [value]="item.inventory_stock" (blur)="editInventory(item, $event)">
                                       </mat-form-field>
                                     </td>
-                                    <td class="col4" *ngIf="isRestaurantType('restaurant')">
+                                    <td class="col4" *ngIf="isType('restaurant')">
                                         <mat-slide-toggle color="primary" [ngModel]='item.is_favourite' (change)="toggleFavorite(item)"></mat-slide-toggle>
                                     </td>
-                                    <td *ngIf="isRestaurantType('restaurant')">
+                                    <td *ngIf="counterMangement">
                                         <mat-form-field>
                                             <mat-label>Counter Name</mat-label>
                                             <mat-select (selectionChange)="updateCounter(item)" [(value)]="item.counter.counter_id">

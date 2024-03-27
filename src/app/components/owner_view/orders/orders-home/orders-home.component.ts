@@ -62,7 +62,9 @@ export class OrdersHomeComponent {
 
   addComponents() {
     let restaurantType = sessionStorage.getItem('restaurantType').toLowerCase()
-    let componentsNeeded = restaurantType == "e-commerce"? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : ['pending', 'current', 'history' ]
+    let EcommerceComponents = restaurantType == "e-commerce" ? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : []
+    let restaurantComponents = sessionStorage.getItem('restaurant_kds') == 'true' ? ['pending', 'current', 'history'] : restaurantType == "e-commerce" ? [] : ['history']
+    let componentsNeeded = EcommerceComponents.concat(restaurantComponents)
     componentsNeeded.forEach((ele) => {
       this.navLinks.push(this.availableNavlinks[ele]);
     });

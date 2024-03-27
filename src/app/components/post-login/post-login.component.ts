@@ -31,28 +31,39 @@ export class PostLoginComponent {
       this.myInfo = data;
       this.showSpinner = false;
       if (this.myInfo['restaurants'].length > 0) {
-        console.log('navigating to owner');
+        sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
         sessionStorage.setItem(
-          'restaurant_id',
-          this.myInfo['restaurants'][0]['restaurant_id']
-        ); // hardcode
+          'restaurant_name',
+          data['restaurants'][0]['restaurant_name']
+        );
         sessionStorage.setItem(
-          'required_components',
-          this.myInfo['restaurants'][0]['order_status']
+          'restaurant_address',
+          data['restaurants'][0]['restaurant_address']
+        );
+        sessionStorage.setItem(
+          'restaurant_gst',
+          data['restaurants'][0]['restaurant_gst']
+        );
+        sessionStorage.setItem(
+          'restaurant_kds',
+          data['restaurants'][0]['restaurant_kds']
         );
         sessionStorage.setItem(
           'restaurantType',
-          (this.myInfo['restaurants'][0]['type'] as string).toLowerCase()
+          (data['restaurants'][0]['type'] as string).toLowerCase()
         );
+        sessionStorage.setItem(
+          'counter_management',
+          data['restaurants'][0]['counter_management']
+        );
+        sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
+        sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
         let navigationURL =
           sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
         this._router.navigate([navigationURL]);
       } else if (this.myInfo['companies'].length > 0) {
         console.log('Navigationto admin');
-        sessionStorage.setItem(
-          'company_id',
-          this.myInfo['companies'][0]['company_id']
-        );
+        sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
         this._router.navigate(['admin/user-management']);
       } else {
         if (Boolean(this.myInfo['first_name'])) {

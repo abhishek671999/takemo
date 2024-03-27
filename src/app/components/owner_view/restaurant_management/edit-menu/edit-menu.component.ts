@@ -22,6 +22,7 @@ import {
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-edit-menu',
@@ -39,7 +40,8 @@ export class EditMenuComponent {
     private _menuEditService: EditMenuService,
     private _restaurantService: RestuarantService,
     private _counterService: CounterService,
-    private _editMenuService: EditMenuService
+    private _editMenuService: EditMenuService,
+    private _meUtitlity: meAPIUtility
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -74,23 +76,20 @@ export class EditMenuComponent {
   countersAvailable;
 
   public restaurantType = sessionStorage.getItem('restaurantType');
+  public counterMangement = this._meUtitlity.isCounterManagementEnabled()
+  public inventoryManagement = this._meUtitlity.isInventoryManagementEnabled()
 
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
-      setTimeout(() => {
-        this._menuService.getMenu(this.restaurantId).subscribe(
-          (data) => {
-            (this.menu_response = data), console.log(this.menu_response);
-          },
-          (error) => console.log(error)
-        );
-      }, 1000);
+      this._menuService.getMenu(this.restaurantId).subscribe(
+        (data) => {
+          this.restaurantStatus = data['is_open']
+          this.menu_response = data
+        },
+        (error) => console.log(error)
+      );
     });
-    this._menuService.getMenu(this.restaurantId).subscribe(
-      (data) => (this.restaurantStatus = data['is_open']),
-      (error) => console.log(error)
-    );
     this._counterService
       .getRestaurantCounter(this.restaurantId)
       .subscribe((data) => {
@@ -270,7 +269,7 @@ export class EditMenuComponent {
     this._router.navigate([navigationURL]);
   }
 
-  isRestaurantType(val: string) {
+  isType(val: string) {
     return this.restaurantType == val;
   }
 
@@ -279,7 +278,7 @@ export class EditMenuComponent {
       item_id: item.id,
       name: item.name,
       price: item.price,
-      inventory_stock: event.target.value,
+      inventory_stock: event.target.value == ''? null: event.target.value,
       veg: item.veg,
       non_veg: item.non_veg,
       egg: item.egg,

@@ -18,8 +18,11 @@ export class VendorSettingsComponent {
   vendorForm = this.__fb.group({
     name: ['', [Validators.required, Validators.maxLength(25)]],
     email: ['', [Validators.required, Validators.email]],
-    mobile: ['', [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]],
-    description: ['', [Validators.required, Validators.maxLength(50)]],
+    mobile: [
+      '',
+      [Validators.required, Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$')],
+    ],
+    description: ['', [Validators.maxLength(50)]],
   });
 
   ngOnInit() {
@@ -31,9 +34,9 @@ export class VendorSettingsComponent {
     this.__vendorService.getVendor(httpParams).subscribe(
       (data) => {
         this.vendorList = data['vendors'];
-        this.vendorList.forEach(vendor => {
-          vendor['is_edit'] = false
-        })
+        this.vendorList.forEach((vendor) => {
+          vendor['is_edit'] = false;
+        });
       },
       (error) => {
         console.log('Failed to get Vendor list');
@@ -52,7 +55,10 @@ export class VendorSettingsComponent {
     this.__vendorService.addVendor(body).subscribe(
       (data) => {
         console.log('Vendor added: ', data);
-        this.ngOnInit()
+        this.vendorForm.reset();
+        this.vendorForm.markAsPristine();
+        this.vendorForm.markAsUntouched();
+        this.ngOnInit();
       },
       (error) => {
         console.log('Error while adding vendor: ', error);
@@ -72,30 +78,34 @@ export class VendorSettingsComponent {
     this.__vendorService.editVendor(body).subscribe(
       (data) => {
         console.log('Vendor added: ', data);
-        vendor.is_edit = !vendor.is_edit
+        vendor.is_edit = !vendor.is_edit;
       },
       (error) => {
         console.log('Error while adding vendor: ', error);
-        alert('Coulnt update')
-        this.ngOnInit()
+        alert('Coulnt update');
+        this.ngOnInit();
       }
     );
   }
 
   deleteVendor(vendor) {
     let body = {
-      vendor_id: vendor.id
-    }
+      vendor_id: vendor.id,
+    };
     console.log('Deleting vendor: ', body);
     this.__vendorService.deleteVendor(body).subscribe(
-      data => {
-        console.log('Deleted vendor')
-        this.ngOnInit()
+      (data) => {
+        console.log('Deleted vendor');
+        this.ngOnInit();
       },
-      error => console.log('Error while deleting vendor')
-    )
+      (error) => console.log('Error while deleting vendor')
+    );
   }
   enableEdit(vendor) {
-    vendor.is_edit = !vendor.is_edit
+    vendor.is_edit = !vendor.is_edit;
+  }
+
+  console1() {
+    console.log(this.vendorForm.hasError, this.vendorForm.errors);
   }
 }

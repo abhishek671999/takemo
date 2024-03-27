@@ -37,14 +37,14 @@
                             <td class="col3" >{{expense.amount}}</td>
                             <td class="col4" >
                                 <mat-icon *ngIf="expense.paid">done</mat-icon>
-                                <mat-icon *ngIf="!expense.paid" (click)="markExpensePaid(expense)">close</mat-icon></td>
+                                <button mat-raised-button color="primary" *ngIf="!expense.paid" (click)="markExpensePaid(expense)">Paid</button></td>
                             <td class="col5" >{{expense.created_at}}</td>
                         </tr>
                         <tr style="position: sticky; bottom: 0; font-weight: bold;">
                             <td class="col1" >-</td>
                             <td class="col3" >Total Amount</td>
                             <td class="col3" >{{totalAmount}}</td>
-                            <td class="col4" ><button  mat-raised-button color="primary" (click)="markAllExpensePaid()" [disabled]="!selectedVendor.id || selectedPaidOption.displayValue.toLowerCase() == 'paid'"> Mark all paid</button></td>
+                            <td class="col4" ><button  mat-raised-button color="primary" (click)="markAllExpensePaid()" [disabled]="!selectedVendor.id || selectedPaidOption.displayValue.toLowerCase() == 'paid' || totalAmount == 0"> Mark all paid</button></td>
                             <td class="col5" >-</td> 
                         </tr>
                 </tbody>

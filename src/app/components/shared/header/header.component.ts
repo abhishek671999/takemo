@@ -182,7 +182,7 @@ export class HeaderComponent {
     this.username = data['username'] ? data['username'] : data['email']
         for(let company of data['companies']){
           if(company.role_name == 'corporate_admin'){
-            sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+            
             console.log('company_id', sessionStorage.getItem('company_id'))
             this.addAdminNavOptions(company)
             break
@@ -190,21 +190,9 @@ export class HeaderComponent {
         }
         for(let restaurant of data['restaurants']){
           if(restaurant.role_name == 'restaurant_admin'){
-            sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
-            sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
-            sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
-            sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
-            sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
-            sessionStorage.setItem('restaurantType', (data['restaurants'][0]['type'] as string).toLowerCase());
             this.addRestaurantOwnerNavOptions(restaurant)
             break
           }else if(restaurant.role_name == 'restaurant_staff'){
-            sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
-            sessionStorage.setItem('restaurant_name', data['restaurants'][0]['restaurant_name'])
-            sessionStorage.setItem('restaurant_address', data['restaurants'][0]['restaurant_address'])
-            sessionStorage.setItem('restaurant_gst', data['restaurants'][0]['restaurant_gst'])
-            sessionStorage.setItem('restaurant_kds', data['restaurants'][0]['restaurant_kds'])
-            sessionStorage.setItem('restaurantType', (data['restaurants'][0]['type'] as string).toLowerCase());
             this.addRestaurantStaffNavOptions()
             break
           }
