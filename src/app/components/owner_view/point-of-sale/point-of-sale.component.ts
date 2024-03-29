@@ -13,6 +13,7 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { EcomPosOrdersComponent } from '../ecom-pos-orders/ecom-pos-orders.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -43,6 +44,7 @@ export class PointOfSaleComponent {
   public restaurantGST = null;
   public parcelCharges = 5; // hardcode
   counters = [];
+  public outletType = sessionStorage.getItem('restaurantType').toLowerCase();
 
   ngOnInit() {
     this.summary = {
@@ -55,7 +57,7 @@ export class PointOfSaleComponent {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
         this.restaurantParcel = data['restaurant_parcel'];
-        this.restaurantParcel = true
+        this.restaurantParcel = true;
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
@@ -194,7 +196,7 @@ export class PointOfSaleComponent {
   subParcelItem(item) {
     if (item.parcelQuantity > 0) {
       item.parcelQuantity -= 1;
-      this.summary.amount -= (item.price + this.parcelCharges);
+      this.summary.amount -= item.price + this.parcelCharges;
     }
     if (item.quantity == 0 && item.parcelQuantity == 0) {
       this.summary.itemList = this.summary.itemList.filter(
@@ -214,12 +216,14 @@ export class PointOfSaleComponent {
   incrementParcelQuantity(item) {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
-    this.summary.amount += (this.parcelCharges * item.parcelQuantity)
+    this.summary.amount += this.parcelCharges * item.parcelQuantity;
   }
 
   preparePlaceOrderBody() {
     let itemList = [];
+    let actualTotalAmount = 0;
     this.summary.itemList.forEach((ele) => {
+      actualTotalAmount += ele.price * (ele.quantity + ele.parcelQuantity);
       itemList.push({
         item_id: ele.id,
         quantity: ele.quantity + ele.parcelQuantity,
@@ -232,6 +236,8 @@ export class PointOfSaleComponent {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
+      total_amount: this.summary.amount,
+      actual_total_amount: actualTotalAmount,
     };
     return body;
   }
@@ -264,14 +270,31 @@ export class PointOfSaleComponent {
     let formattedTable = '';
     this.summary.itemList.forEach((element: any, index) => {
       if (element.quantity > 0) {
-        let trimmedName = this.getFixedLengthString(element.name.substring(0, 24),24,false,' ');
-        let remainingName = trimmedName.trim() == element.name? '': ' ' + this.getFixedLengthString(element.name.substring(24, 48),24,
+        let trimmedName = this.getFixedLengthString(
+          element.name.substring(0, 24),
+          24,
+          false,
+          ' '
+        );
+        let remainingName =
+          trimmedName.trim() == element.name
+            ? ''
+            : ' ' +
+              this.getFixedLengthString(
+                element.name.substring(24, 48),
+                24,
                 false,
                 ' '
-              ) + '\n';
-        let itemQty = this.getFixedLengthString(element.quantity,3,true,' ')
-        let itemPrice = this.getFixedLengthString(element.price,4, true, ' ' )
-        let itemAmount = this.getFixedLengthString(element.quantity * element.price, 4, true, ' ')
+              ) +
+              '\n';
+        let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
+        let itemPrice = this.getFixedLengthString(element.price, 4, true, ' ');
+        let itemAmount = this.getFixedLengthString(
+          element.quantity * element.price,
+          4,
+          true,
+          ' '
+        );
         formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
       }
     });
@@ -279,25 +302,62 @@ export class PointOfSaleComponent {
   }
 
   getFormattedParcelItemDetails() {
-    let inititalString = '------------------Parcel------------------\n'
+    let inititalString = '------------------Parcel------------------\n';
     let formattedTable = inititalString;
-    let totalParcelItem = 0; 
+    let totalParcelItem = 0;
     this.summary.itemList.forEach((element: any) => {
       if (element.parcelQuantity > 0) {
-        let trimmedName = this.getFixedLengthString(element.name.substring(0, 24),24,false,' ');
-        let remainingName = trimmedName.trim() == element.name? '': ' ' + this.getFixedLengthString(element.name.substring(24, 48),24,
+        let trimmedName = this.getFixedLengthString(
+          element.name.substring(0, 24),
+          24,
+          false,
+          ' '
+        );
+        let remainingName =
+          trimmedName.trim() == element.name
+            ? ''
+            : ' ' +
+              this.getFixedLengthString(
+                element.name.substring(24, 48),
+                24,
                 false,
                 ' '
-              ) + '\n';
-        let itemQty = this.getFixedLengthString(element.parcelQuantity,3,true,' ')
-        let itemPrice = this.getFixedLengthString(element.price,4, true, ' ' )
-        let itemAmount = this.getFixedLengthString(element.parcelQuantity * element.price, 4, true, ' ')
-        totalParcelItem += element.parcelQuantity 
+              ) +
+              '\n';
+        let itemQty = this.getFixedLengthString(
+          element.parcelQuantity,
+          3,
+          true,
+          ' '
+        );
+        let itemPrice = this.getFixedLengthString(element.price, 4, true, ' ');
+        let itemAmount = this.getFixedLengthString(
+          element.parcelQuantity * element.price,
+          4,
+          true,
+          ' '
+        );
+        totalParcelItem += element.parcelQuantity;
 
         formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
       }
     });
-    let parcelInfo = `${this.getFixedLengthString('Parcel Charges Rs5/item', 24, false, ' ')}   ${this.getFixedLengthString(totalParcelItem, 3, true, ' ')}  ${this.getFixedLengthString('5', 4, true, ' ')}  ${this.getFixedLengthString(totalParcelItem * 5, 4, true, ' ')}`
+    let parcelInfo = `${this.getFixedLengthString(
+      'Parcel Charges Rs5/item',
+      24,
+      false,
+      ' '
+    )}   ${this.getFixedLengthString(
+      totalParcelItem,
+      3,
+      true,
+      ' '
+    )}  ${this.getFixedLengthString(
+      '5',
+      4,
+      true,
+      ' '
+    )}  ${this.getFixedLengthString(totalParcelItem * 5, 4, true, ' ')}`;
     return formattedTable == inititalString ? '' : formattedTable + parcelInfo;
   }
 
@@ -307,7 +367,7 @@ export class PointOfSaleComponent {
   }
 
   getTotalAmount() {
-    return `Total Amount: Rs.${this.summary.amount}`;
+    return `Total Amount: Rs.${this.calculateTotalAmount()}`;
   }
   getFormattedCurrentDate() {
     return this.dateUtils.getDateForRecipePrint();
@@ -351,7 +411,7 @@ export class PointOfSaleComponent {
       },
       {
         text: this.getFormattedParcelItemDetails(),
-        justification: 'left'
+        justification: 'left',
       },
       {
         text: sectionSeperatorCharacters,
@@ -472,9 +532,8 @@ export class PointOfSaleComponent {
     printConnect.feed(5).cut().flush();
   }
 
-  placeOrder() {
+  placePOSOrder() {
     this.disablePlace = true;
-    this.getCounterPrintableText();
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought
       ? this.printerConn.seekUSB()
@@ -507,6 +566,17 @@ export class PointOfSaleComponent {
     );
   }
 
+  placeEcomOrder() {
+    this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
+  }
+  placeOrder() {
+    if (this.outletType == 'e-commerce') {
+      this.placeEcomOrder();
+    } else {
+      this.placePOSOrder();
+    }
+  }
+
   navigateToEditMenu() {
     this.router.navigate([
       `/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`,
@@ -515,7 +585,11 @@ export class PointOfSaleComponent {
 
   navigateToOrders() {
     let navigationURL =
-    sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
+      sessionStorage.getItem('restaurant_kds') == 'true'
+        ? '/owner/pending-orders'
+        : sessionStorage.getItem('restaurantType') == 'e-commerce'
+        ? '/owner/unconfirmed-orders'
+        : '/owner/orders-history';
     this.router.navigate([navigationURL]);
   }
 
@@ -542,5 +616,12 @@ export class PointOfSaleComponent {
     this.summary.itemList = this.summary.itemList.filter(
       (ele) => ele.quantity != 0
     );
+  }
+  calculateTotalAmount() {
+    let total = 0;
+    this.summary.itemList.forEach((ele) => {
+      total += ele.price * (ele.quantity + ele.parcelQuantity);
+    });
+    return total;
   }
 }
