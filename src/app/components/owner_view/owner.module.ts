@@ -38,6 +38,7 @@ import { DeliveredOrdersComponent } from './delivered-orders/delivered-orders.co
 import { RejectedOrdersComponent } from './rejected-orders/rejected-orders.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle'
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { EcomPosOrdersComponent } from './ecom-pos-orders/ecom-pos-orders.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     ConfirmedOrdersComponent,
     DeliveredOrdersComponent,
     RejectedOrdersComponent,
+    EcomPosOrdersComponent,
   ],
   imports: [
     CommonModule,

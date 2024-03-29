@@ -129,9 +129,9 @@ export class ConfirmationDialogComponent {
     if (wallet != null) {
       body['wallet'] = wallet;
     }
-    if (this.transactionId != '' || this.deliveryAddress != '') {
-      body['transaction_id'] = this.transactionId;
-      body['address'] = this.deliveryAddress;
+    if (this.transactionForm.value.transactionId != '' || this.transactionForm.value.addresss != '') {
+      body['transaction_id'] = this.transactionForm.value.transactionId;
+      body['address'] = this.transactionForm.value.addresss;
     }
     return body;
   }
