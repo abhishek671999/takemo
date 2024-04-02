@@ -15,13 +15,18 @@ export class ManagmentHomeComponent {
     {name: 'Edit Menu' , href: `edit-menu/${sessionStorage.getItem('restaurant_id')}` },
   ]
 
-  counterPage = { name: 'Counter', href: "food-counter-management" }    
+  counterPage = { name: 'Counter', href: "food-counter-management" }  
+  activityPage = { name: 'Activity', href: 'activity-log'}
 
   counterManagement = this.__meUtility.isCounterManagementEnabled()
+  inventoryManagement = this.__meUtility.isInventoryManagementEnabled()
 
   ngOnInit() {
     if(this.counterManagement) {
       this.managementPages.push(this.counterPage)
-    } 
+    }
+    if (this.inventoryManagement) {
+      this.managementPages.push(this.activityPage)
+    }
   }
 }

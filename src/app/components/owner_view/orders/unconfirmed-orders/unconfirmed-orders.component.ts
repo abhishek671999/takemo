@@ -7,6 +7,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { ConfirmOrderCancelComponent } from '../../dialogbox/confirm-order-cancel/confirm-order-cancel.component';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-unconfirmed-orders',
@@ -38,6 +39,16 @@ export class UnconfirmedOrdersComponent {
     { displayValue: 'Delivered', actualValue: 'delivered' },
     { displayValue: 'Rejected', actualValue: 'rejected' },
   ];
+
+  length = 50;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions = [5, 10, 25];
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  restaurantId = sessionStorage.getItem('restaurant_id');
+
   ngOnInit() {
     this.getEcomOrders();
   }
@@ -48,10 +59,18 @@ export class UnconfirmedOrdersComponent {
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       order_status: 'unconfirmed',
     };
-    this._ordersService.getEcomOrders(body).subscribe(
+    let httpParams = new HttpParams();
+    httpParams = httpParams.append('restaurant_id', this.restaurantId);
+    httpParams = httpParams.append('offset', this.pageIndex * this.pageSize);
+    httpParams = httpParams.append(
+      'limit',
+      this.pageIndex * this.pageSize + this.pageSize
+    );
+    this._ordersService.getEcomOrders(body, httpParams).subscribe(
       (data) => {
         console.log('Current orders: ', data);
         this.unparseResponse(data);
+        this.length = data['no_of_orders'];
         this.showSpinner = false;
       },
       (error) => {
@@ -164,5 +183,12 @@ export class UnconfirmedOrdersComponent {
       },
       (error) => alert(error)
     );
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.getEcomOrders();
   }
 }

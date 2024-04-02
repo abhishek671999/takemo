@@ -1,5 +1,4 @@
 <div class="main-container">
-    <div style="white-space: pre;" class="tab-group-container">
         <div *ngIf="showSpinner; else elseBlock">
             <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
         </div>
@@ -84,5 +83,15 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>          
         </cdk-virtual-scroll-viewport>
-    </div>
+        <mat-paginator #paginator
+            class="demo-paginator"
+            (page)="handlePageEvent($event)"
+            [length]="length"
+            [pageSize]="pageSize"
+            [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+            [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex"
+            aria-label="Select page">
+        </mat-paginator>      
   </div>

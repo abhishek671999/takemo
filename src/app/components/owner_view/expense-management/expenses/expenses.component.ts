@@ -25,6 +25,7 @@ export class ExpensesComponent {
     vendor_id: ['', [Validators.required]],
     amount: ['', [Validators.required]],
     paid: ['', [Validators.required]],
+    description: ['']
   });
 
   isPaidOptions = [
@@ -82,7 +83,6 @@ export class ExpensesComponent {
         this.expenses.forEach((exp) => {
           exp['created_at'] = new Date(exp.created_at)
             .toLocaleString()
-            .toLocaleString();
         });
         this.totalAmount = data['total_amount'];
       },
@@ -98,6 +98,7 @@ export class ExpensesComponent {
       amount: this.expensesForm.value.amount,
       paid: this.expensesForm.value.paid,
       restaurant_id: this.restaurantId,
+      description: this.expensesForm.value.description
     };
     this.__expenseService.addExpense(body).subscribe(
       (data) => {

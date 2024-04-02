@@ -1,0 +1,33 @@
+<div class="main-container">
+    <table class="table table-hover">
+        <thead class="text-center">
+            <tr>
+                <th class="col1" scope="col">User</th>
+                <th class="col2" scope="col">Item</th>
+                <th class="col3" scope="col">Old Stock</th>
+                <th class="col4" scope="col">New Stock</th>
+                <th class="col5" scope="col">Creation date</th>
+            </tr>
+        </thead>
+        <tbody class="text-center" >
+            <tr class="table-row" *ngFor="let activity of activities; let mainIndex = index">
+                <td class="col1" >{{activity.user}}</td>
+                <td class="col2" >{{activity.item}}</td>
+                <td class="col3" >{{activity.old_stock}}</td>
+                <td class="col4" >{{activity.new_stock}}</td>
+                <td class="col5" >{{activity.created_at}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <mat-paginator #paginator
+        class="demo-paginator"
+        (page)="handlePageEvent($event)"
+        [length]="length"
+        [pageSize]="pageSize"
+        [showFirstLastButtons]="showFirstLastButtons"
+        [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+        [hidePageSize]="hidePageSize"
+        [pageIndex]="pageIndex"
+        aria-label="Select page">
+</mat-paginator>       
+</div>

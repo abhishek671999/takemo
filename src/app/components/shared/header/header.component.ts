@@ -133,7 +133,7 @@ export class HeaderComponent {
     this.location = restaurant.restaurant_name
 
     if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
-      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu',  ,'orders']
+      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
     }else{
       restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
     }

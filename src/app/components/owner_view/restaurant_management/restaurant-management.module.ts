@@ -3,16 +3,20 @@ import { CommonModule } from '@angular/common';
 
 import { RestaurantManagementRoutingModule } from './restaurant-management-routing.module';
 import { ManagmentHomeComponent } from './managment-home/managment-home.component';
+import { ActivityLogComponent } from './activity-log/activity-log.component';
+import {  MatPaginatorModule } from '@angular/material/paginator';
 
 
 
 @NgModule({
   declarations: [
-    ManagmentHomeComponent
+    ManagmentHomeComponent,
+    ActivityLogComponent
   ],
   imports: [
     CommonModule,
     RestaurantManagementRoutingModule,
+    MatPaginatorModule
   ]
 })
 export class RestaurantManagementModule { }

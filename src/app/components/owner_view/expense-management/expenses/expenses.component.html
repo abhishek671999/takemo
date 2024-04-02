@@ -28,6 +28,7 @@
                         <th class="col3" scope="col">Amount</th>
                         <th class="col4" scope="col">Payment</th>
                         <th class="col5" scope="col">Date</th>
+                        <th class="col6" scope="col">Description</th>
                     </tr>
                 </thead>
                 <tbody class="text-center" >
@@ -37,8 +38,9 @@
                             <td class="col3" >{{expense.amount}}</td>
                             <td class="col4" >
                                 <mat-icon *ngIf="expense.paid">done</mat-icon>
-                                <button mat-raised-button color="primary" *ngIf="!expense.paid" (click)="markExpensePaid(expense)">Paid</button></td>
+                                <button mat-raised-button color="primary" style="font-size: smaller;" *ngIf="!expense.paid" (click)="markExpensePaid(expense)">Mark Paid</button></td>
                             <td class="col5" >{{expense.created_at}}</td>
+                            <td class="col6">{{expense.description}}</td>
                         </tr>
                         <tr style="position: sticky; bottom: 0; font-weight: bold;">
                             <td class="col1" >-</td>
@@ -71,6 +73,10 @@
                 <mat-select  formControlName="paid">
                     <mat-option *ngFor="let paidOption of isPaidOptions" [value]="paidOption.actualValue">{{paidOption.displayValue}}</mat-option>
                 </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col4">
+                <mat-label>Description</mat-label>
+                <input type="text" matInput  placeholder="Add description" formControlName="description">
             </mat-form-field>
             <button mat-raised-button class="col6" color='primary' type="submit" (click)="addExpense()" [disabled]="!expensesForm.valid" class="add-category-button" title="Add a vendor" >Add Expense</button>
         </form>

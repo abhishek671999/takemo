@@ -7,16 +7,10 @@
     align-items: center;
 }
 
-.tab-group-container{
-    padding-top: 2em;
-    padding-bottom: 2em;
-    border-radius: 10px;
-    width: 80%;
-    height: 30vh
-}
 
 .viewport {
     height: 68vh;
+    width: 100%;
 }
 
 ::-webkit-scrollbar {
