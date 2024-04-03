@@ -40,6 +40,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ExpensesComponent } from './expense-management/expenses/expenses.component';
 import { VendorSettingsComponent } from './expense-management/vendor-settings/vendor-settings.component';
+import { EcomPosOrdersComponent } from './dialogbox/ecom-pos-orders/ecom-pos-orders.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -60,6 +62,7 @@ import { VendorSettingsComponent } from './expense-management/vendor-settings/ve
     RejectedOrdersComponent,
     ExpensesComponent,
     VendorSettingsComponent,
+    EcomPosOrdersComponent,
   ],
   imports: [
     CommonModule,
@@ -90,6 +93,7 @@ import { VendorSettingsComponent } from './expense-management/vendor-settings/ve
     ReactiveFormsModule,
     MatSlideToggleModule,
     PdfViewerModule,
+    MatSnackBarModule
   ],
   exports: [],
 })

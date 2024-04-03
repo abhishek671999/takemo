@@ -23,13 +23,7 @@ export class PostLoginComponent {
   ngOnInit(){
      console.log('In user component')
     this.meAPIUtility.getMeData().subscribe((data) => {
-      console.log(
-        'This is in post logingL ',
-        data,
-        Boolean(data['first_name'])
-      );
       this.myInfo = data;
-      this.showSpinner = false;
       if (this.myInfo['restaurants'].length > 0) {
         sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
         sessionStorage.setItem(
@@ -74,6 +68,7 @@ export class PostLoginComponent {
           this._router.navigate(['user/profile']);
         }
       }
+      this.showSpinner = false;
     });
       
   }

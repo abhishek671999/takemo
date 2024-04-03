@@ -13,6 +13,8 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -28,7 +30,8 @@ export class PointOfSaleComponent {
     private dialog: MatDialog,
     public printerConn: PrintConnectorService,
     private dateUtils: dateUtils,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    private __snackbar: MatSnackBar
   ) {}
   public menu;
   public summary;
@@ -43,6 +46,7 @@ export class PointOfSaleComponent {
   public restaurantGST = null;
   public parcelCharges = 5; // hardcode
   counters = [];
+  public outletType = sessionStorage.getItem('restaurantType').toLowerCase();
 
   ngOnInit() {
     this.summary = {
@@ -194,7 +198,7 @@ export class PointOfSaleComponent {
   subParcelItem(item) {
     if (item.parcelQuantity > 0) {
       item.parcelQuantity -= 1;
-      this.summary.amount -= (item.price + this.parcelCharges);
+      this.summary.amount -= item.price + this.parcelCharges;
     }
     if (item.quantity == 0 && item.parcelQuantity == 0) {
       this.summary.itemList = this.summary.itemList.filter(
@@ -373,7 +377,7 @@ export class PointOfSaleComponent {
   }
 
   getTotalAmount() {
-    return `Total Amount: Rs.${this.summary.amount}`;
+    return `Total Amount: Rs.${this.calculateTotalAmount()}`;
   }
   getFormattedCurrentDate() {
     return this.dateUtils.getDateForRecipePrint();
@@ -538,7 +542,7 @@ export class PointOfSaleComponent {
     printConnect.feed(5).cut().flush();
   }
 
-  placeOrder() {
+  placePOSOrder() {
     this.disablePlace = true;
     this.getCounterPrintableText();
     let body = this.preparePlaceOrderBody();
@@ -571,6 +575,22 @@ export class PointOfSaleComponent {
         this.disablePlace = false;
       }
     );
+  }
+
+  placeEcomOrder() {
+    this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
+  }
+
+  placeOrder() {
+    if (this.outletType == 'e-commerce') {
+      this.placeEcomOrder();
+    } else if (this.outletType == 'restaurant') {
+      this.placePOSOrder();
+    } else {
+      this.__snackbar.open(`Invalid Outlet type: ${this.outletType}`, '', {
+        duration: 3000,
+      });
+    }
   }
 
   navigateToEditMenu() {
