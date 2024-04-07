@@ -45,8 +45,6 @@ export class ConfirmationDialogComponent {
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
-  public transactionId = '';
-  public deliveryAddress = '';
   public parcelCharges = 5; // hardcode
 
   public transactionForm = this._fb.group({
@@ -57,7 +55,6 @@ export class ConfirmationDialogComponent {
   ngOnInit() {
     this.dialogRef.updateSize('100%')
     this.meService.getMyInfo().subscribe((data) => {
-      this.deliveryAddress = data['address'];
       this.transactionForm.setValue({
         'transactionId': '',
         'addresss': data['address']
