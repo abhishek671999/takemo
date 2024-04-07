@@ -58,7 +58,8 @@ export class meAPIUtility {
     this.cookieService.set(
       'me',
       JSON.stringify(meData),
-      new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000)
+      new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000),
+      '/'
     );
   }
 
@@ -121,4 +122,17 @@ export class meAPIUtility {
     });
     return validation;
   }
+
+  isCounterManagementEnabled() {
+    return sessionStorage.getItem('counter_management') == 'true' ? true: false
+  }
+
+  isExpenseManagementEnabled() {
+    return sessionStorage.getItem('expense_management') == 'true' ? true: false
+  }
+
+  isInventoryManagementEnabled() {
+    return sessionStorage.getItem('inventory_management') == 'true' ? true: false
+  }
+  
 }

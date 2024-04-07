@@ -4,14 +4,14 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
-import { EditFormDialogComponent } from '../../edit-form-dialog/edit-form-dialog.component';
-import { DeleteConfirmationDialogComponent } from '../../delete-confirmation-dialog/delete-confirmation-dialog.component';
-import { AddCategoryDialogComponent } from '../../add-category-dialog/add-category-dialog.component';
-import { AddItemDialogComponent } from '../../add-item-dialog/add-item-dialog.component';
-import { SuccessfulDialogComponent } from '../../successful-dialog/successful-dialog.component';
-import { ErrorDialogComponent } from '../../error-dialog/error-dialog.component';
+import { EditFormDialogComponent } from '../../dialogbox/edit-form-dialog/edit-form-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../../dialogbox/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { AddCategoryDialogComponent } from '../../dialogbox/add-category-dialog/add-category-dialog.component';
+import { AddItemDialogComponent } from '../../dialogbox/add-item-dialog/add-item-dialog.component';
+import { SuccessfulDialogComponent } from '../../dialogbox/successful-dialog/successful-dialog.component';
+import { ErrorDialogComponent } from '../../dialogbox/error-dialog/error-dialog.component';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
-import { DeleteCategoryConfirmationDialogComponent } from '../../delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
+import { DeleteCategoryConfirmationDialogComponent } from '../../dialogbox/delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import {
   svgAvilableIcon,
   svgDeleteIcon,
@@ -22,6 +22,7 @@ import {
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-edit-menu',
@@ -39,7 +40,8 @@ export class EditMenuComponent {
     private _menuEditService: EditMenuService,
     private _restaurantService: RestuarantService,
     private _counterService: CounterService,
-    private _editMenuService: EditMenuService
+    private _editMenuService: EditMenuService,
+    private _meUtitlity: meAPIUtility
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -73,30 +75,26 @@ export class EditMenuComponent {
 
   countersAvailable;
 
-  public restaurantType = sessionStorage.getItem('restaurantType')
-  
+  public restaurantType = sessionStorage.getItem('restaurantType');
+  public counterMangement = this._meUtitlity.isCounterManagementEnabled()
+  public inventoryManagement = this._meUtitlity.isInventoryManagementEnabled()
 
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
-      setTimeout(() => {
-        this._menuService.getMenu(this.restaurantId).subscribe(
-          (data) => {
-            (this.menu_response = data), console.log(this.menu_response);
-          },
-          (error) => console.log(error)
-        );
-      }, 1000);
+      this._menuService.getMenu(this.restaurantId).subscribe(
+        (data) => {
+          this.restaurantStatus = data['is_open']
+          this.menu_response = data
+        },
+        (error) => console.log(error)
+      );
     });
-    this._menuService.getMenu(this.restaurantId).subscribe(
-      (data) => (this.restaurantStatus = data['is_open']),
-      (error) => console.log(error)
-    );
-    this._counterService.getRestaurantCounter(this.restaurantId).subscribe(
-      data => {
-        this.countersAvailable = data['counters']
-      }
-    )
+    this._counterService
+      .getRestaurantCounter(this.restaurantId)
+      .subscribe((data) => {
+        this.countersAvailable = data['counters'];
+      });
   }
 
   toggleAvailability(item) {
@@ -114,8 +112,8 @@ export class EditMenuComponent {
     );
   }
 
-  updateCounter(item){
-    console.log(item)
+  updateCounter(item) {
+    console.log(item);
     let body = {
       item_id: item.id,
       name: item.name,
@@ -123,15 +121,15 @@ export class EditMenuComponent {
       veg: item.veg,
       non_veg: item.non_veg,
       egg: item.egg,
-      counter_id: item.counter.counter_id
+      counter_id: item.counter.counter_id,
     };
     this._menuEditService.editMenu(body).subscribe(
-      data => console.log(data),
-      error => {
-        alert("Couldn't update counter")
-        this.ngOnInit()
+      (data) => console.log(data),
+      (error) => {
+        alert("Couldn't update counter");
+        this.ngOnInit();
       }
-    )
+    );
   }
 
   toggleFavorite(item) {
@@ -160,8 +158,10 @@ export class EditMenuComponent {
         }, 2000);
         this.ngOnInit();
       } else if (result.success == 'failed') {
-        console.log(result)
-        let dialogRef = this._dialog.open(ErrorMsgDialogComponent, { data: {msg: result.errorMsg}});
+        console.log(result);
+        let dialogRef = this._dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: result.errorMsg },
+        });
         setTimeout(() => {
           dialogRef.close();
         }, 2000);
@@ -210,7 +210,10 @@ export class EditMenuComponent {
   addItem(category) {
     console.log('Add item', category);
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
-      data: Object.assign(category, { restaurant_id: this.restaurantId, counters: this.countersAvailable }),
+      data: Object.assign(category, {
+        restaurant_id: this.restaurantId,
+        counters: this.countersAvailable,
+      }),
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }
@@ -258,12 +261,16 @@ export class EditMenuComponent {
   }
   navigateToOrders() {
     let navigationURL =
-          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/unconfirmed-orders' : '/owner/orders-history';
+      sessionStorage.getItem('restaurant_kds') == 'true'
+        ? '/owner/orders/pending-orders'
+        : sessionStorage.getItem('restaurantType') == 'e-commerce'
+        ? '/owner/orders/unconfirmed-orders'
+        : '/owner/orders/orders-history';
     this._router.navigate([navigationURL]);
   }
 
-  isRestaurantType(val: string) {
-    return this.restaurantType == val
+  isType(val: string) {
+    return this.restaurantType == val;
   }
 
   editInventory(item, event) {
@@ -271,18 +278,18 @@ export class EditMenuComponent {
       item_id: item.id,
       name: item.name,
       price: item.price,
-      inventory_stock: event.target.value,
+      inventory_stock: event.target.value == ''? null: event.target.value,
       veg: item.veg,
       non_veg: item.non_veg,
       egg: item.egg,
     };
     this._editMenuService.editMenu(body).subscribe(
       (data) => {
-        console.log('Successfully updated')
-        item.inventory_stock = event.target.value
+        console.log('Successfully updated');
+        item.inventory_stock = event.target.value;
       },
       (error) => {
-        console.log('Error while updating', error)
+        console.log('Error while updating', error);
       }
     );
   }

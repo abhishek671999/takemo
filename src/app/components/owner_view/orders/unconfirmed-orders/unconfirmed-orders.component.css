@@ -1,0 +1,33 @@
+.main-container{
+    width: 100%;
+    height: 80vh;
+    border: solid 1px black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tab-group-container{
+    padding-top: 2em;
+    padding-bottom: 2em;
+    border-radius: 10px;
+    width: 80%;
+    height: 30vh
+}
+
+.viewport {
+    height: 68vh;
+    width: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    overflow-y: scroll;
+    background: grey;
+    box-shadow: inset 0 0 4px #707070;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 246);
+    border-radius: 10px;
+}

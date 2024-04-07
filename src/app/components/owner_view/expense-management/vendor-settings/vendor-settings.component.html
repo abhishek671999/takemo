@@ -1,0 +1,70 @@
+<div class="main-container">
+    <cdk-virtual-scroll-viewport itemSize="500" class="viewport">
+        <table class="table table-hover">
+            <thead class="text-center">
+                <tr>
+                    <th class="col1" scope="col">Id</th>
+                    <th class="col2" scope="col">Name</th>
+                    <th class="col3" scope="col">Email</th>
+                    <th class="col4" scope="col">Phone</th>
+                    <th class="col5" scope="col">Description</th>
+                    <th class="col6" scope="col">Edit</th>
+                    <th class="col7" scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody class="text-center" >
+                <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                <tr class="table-row"*ngFor="let vendor of vendorList; let mainIndex = index">
+                    <td class="col1" >{{mainIndex+1}}</td>
+                    <td class="col2" >
+                            <input type="text" [(ngModel)]="vendor.name" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
+                    </td>
+                    <td class="col3" >
+                            <input type="email" [(ngModel)]="vendor.email" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
+                    </td>
+                    <td class="col4" >
+                            <input type="tel" pattern="^\d{10}$" [(ngModel)]="vendor.mobile" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
+                    </td>
+                    <td class="col5" >
+                            <input type="text" [(ngModel)]="vendor.description" (blur)="editVendor(vendor)" [disabled]="!vendor.is_edit">
+                    </td>
+                    <td class="col6">
+                        <mat-icon  title="Edit this item" (click)="enableEdit(vendor)">edit</mat-icon>
+                    </td>
+                    <td>
+                        <mat-icon  title="Delete this vendor" (click)="deleteVendor(vendor)">delete</mat-icon>
+                    </td>
+                </tr>
+                
+
+            </tbody>
+        </table>
+        <form [formGroup]="vendorForm" class="new-vendor-form">
+            <p class="col1" style="display: inline-block; text-align: center;">--</p>
+            <mat-form-field class="col2">
+                <mat-label>Vendor name</mat-label>
+                <input type="text" matInput  placeholder="Vendor name" formControlName="name">
+            </mat-form-field>
+
+            <mat-form-field class="col3">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput  placeholder="Email" formControlName="email">
+            </mat-form-field>
+
+            <mat-form-field class="col4">
+                <mat-label>Mobile</mat-label>
+                <input type="text" matInput  placeholder="Mobile" formControlName="mobile">
+            </mat-form-field>
+
+        <mat-form-field class="col5">
+            <mat-label>Description</mat-label>
+            <input type="text" matInput  placeholder="Description" formControlName="description">
+        </mat-form-field>
+
+
+        <button mat-raised-button class="col6" color='primary' type="submit" (click)="addVendor()" [disabled]="!vendorForm.valid" class="add-category-button" title="Add a vendor" >Add vendor</button>
+
+    </form>
+
+    </cdk-virtual-scroll-viewport>
+</div>

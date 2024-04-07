@@ -13,7 +13,8 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
-import { EcomPosOrdersComponent } from '../ecom-pos-orders/ecom-pos-orders.component';
+import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -29,7 +30,8 @@ export class PointOfSaleComponent {
     private dialog: MatDialog,
     public printerConn: PrintConnectorService,
     private dateUtils: dateUtils,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    private __snackbar: MatSnackBar
   ) {}
   public menu;
   public summary;
@@ -217,6 +219,14 @@ export class PointOfSaleComponent {
     item.parcelQuantity += item.quantity;
     item.quantity = 0;
     this.summary.amount += this.parcelCharges * item.parcelQuantity;
+  }
+
+  calculateTotalAmount() {
+    let total = 0;
+    this.summary.itemList.forEach((ele) => {
+      total += ele.price * (ele.quantity + ele.parcelQuantity);
+    });
+    return total;
   }
 
   preparePlaceOrderBody() {
@@ -569,11 +579,16 @@ export class PointOfSaleComponent {
   placeEcomOrder() {
     this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
   }
+
   placeOrder() {
     if (this.outletType == 'e-commerce') {
       this.placeEcomOrder();
-    } else {
+    } else if (this.outletType == 'restaurant') {
       this.placePOSOrder();
+    } else {
+      this.__snackbar.open(`Invalid Outlet type: ${this.outletType}`, '', {
+        duration: 3000,
+      });
     }
   }
 
@@ -586,10 +601,10 @@ export class PointOfSaleComponent {
   navigateToOrders() {
     let navigationURL =
       sessionStorage.getItem('restaurant_kds') == 'true'
-        ? '/owner/pending-orders'
+        ? '/owner/orders/pending-orders'
         : sessionStorage.getItem('restaurantType') == 'e-commerce'
-        ? '/owner/unconfirmed-orders'
-        : '/owner/orders-history';
+        ? '/owner/orders/unconfirmed-orders'
+        : '/owner/orders/orders-history';
     this.router.navigate([navigationURL]);
   }
 
@@ -617,11 +632,5 @@ export class PointOfSaleComponent {
       (ele) => ele.quantity != 0
     );
   }
-  calculateTotalAmount() {
-    let total = 0;
-    this.summary.itemList.forEach((ele) => {
-      total += ele.price * (ele.quantity + ele.parcelQuantity);
-    });
-    return total;
-  }
+
 }

@@ -86,6 +86,7 @@ export class CurrentOrdersComponent {
       (data) => {
         console.log('Current orders: ', data);
         this.unparseResponse(data);
+        this.tableLoaded = true
       },
       (error) => {
         console.log('Error: ', error);
