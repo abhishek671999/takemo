@@ -544,7 +544,6 @@ export class PointOfSaleComponent {
 
   placePOSOrder() {
     this.disablePlace = true;
-    this.getCounterPrintableText();
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought
       ? this.printerConn.seekUSB()
@@ -632,5 +631,12 @@ export class PointOfSaleComponent {
     this.summary.itemList = this.summary.itemList.filter(
       (ele) => ele.quantity != 0
     );
+  }
+  calculateTotalAmount() {
+    let total = 0;
+    this.summary.itemList.forEach((ele) => {
+      total += ele.price * (ele.quantity + ele.parcelQuantity);
+    });
+    return total;
   }
 }
