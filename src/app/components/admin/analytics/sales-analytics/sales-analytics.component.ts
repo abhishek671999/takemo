@@ -99,6 +99,7 @@ export class SalesAnalyticsComponent {
   counters = [];
   selectedCounterId;
   tableView = true;
+  dataLoadSpinner = false;
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -179,6 +180,7 @@ export class SalesAnalyticsComponent {
   }
 
   onValueChange() {
+    this.dataLoadSpinner = true
     let field = document.getElementById('calendarInputField');
     if (this.selectedTimeFrame == 'custom') {
       field.classList.remove('hidden');
@@ -281,9 +283,11 @@ export class SalesAnalyticsComponent {
                 ? this.createCategoryWiseTotalAmountChart(data)
                 : this.createItemWiseTotalAmountChart(data);
           }
+          this.dataLoadSpinner = false
         },
         (error) => {
           console.log('Error while loading analytics');
+          this.dataLoadSpinner = false
         }
       );
     }
