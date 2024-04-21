@@ -31,7 +31,8 @@ export class PointOfSaleComponent {
     public printerConn: PrintConnectorService,
     private dateUtils: dateUtils,
     private _counterService: CounterService,
-    private __snackbar: MatSnackBar
+    private __snackbar: MatSnackBar,
+    private __meUtility: meAPIUtility
   ) {}
   public menu;
   public summary;
@@ -47,6 +48,8 @@ export class PointOfSaleComponent {
   public parcelCharges = 5; // hardcode
   counters = [];
   public outletType = sessionStorage.getItem('restaurantType').toLowerCase();
+  public isTableManagement = this.__meUtility.isTableManagementEnabled()
+  public tableName = sessionStorage.getItem('table_name')
 
   ngOnInit() {
     this.summary = {
@@ -243,6 +246,7 @@ export class PointOfSaleComponent {
     let body = {
       pos: true,
       order_list: itemList,
+      table_id: Number(sessionStorage.getItem('table_id')),
       restaurant_id: sessionStorage.getItem('restaurant_id'),
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
@@ -633,4 +637,7 @@ export class PointOfSaleComponent {
     );
   }
 
+  ngOnDestroy() {
+    sessionStorage.removeItem('table_id');
+  }
 }

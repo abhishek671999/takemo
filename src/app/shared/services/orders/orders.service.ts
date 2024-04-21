@@ -25,7 +25,7 @@ export class OrdersService {
   private cancellledRestaurantOrdersEndpoint =
     'order/get_restaurant_canceled_orders/';
   private getRestaurantShiftOrders = 'order/get_restaurant_shift_orders/';
-
+  private getTableOrdersEndpoint = 'order/get_table_orders/'
   getMyOrders(body) {
     console.log('Get current orders called');
     return this._http.post(host + this.orderHistoryEndpoint, body);
@@ -105,5 +105,9 @@ export class OrdersService {
       host + this.cancellledRestaurantOrdersEndpoint,
       body
     );
+  }
+
+  getTableOrders(body) {
+    return this._http.post(host + this.getTableOrdersEndpoint, body)
   }
 }

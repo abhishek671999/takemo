@@ -1,0 +1,32 @@
+table{
+    width: 100%;
+    text-align: center;
+}
+
+th.sl_no, td.sl_no{
+    width: 10%;
+}
+
+th.item, td.item{
+    width: 50%;
+}
+
+th.edit, td.edit{
+    width: 30%;
+}
+
+th.edit, td.edit{
+    width: 10%;
+}
+
+.action-container{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.title-container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}

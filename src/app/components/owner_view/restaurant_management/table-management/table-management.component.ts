@@ -1,0 +1,112 @@
+import { HttpParams } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { TablesService } from 'src/app/shared/services/tables.service';
+
+@Component({
+  selector: 'app-table-management',
+  templateUrl: './table-management.component.html',
+  styleUrls: ['./table-management.component.css'],
+})
+export class TableManagementComponent {
+  constructor(
+    private __tableService: TablesService,
+    private __fb: FormBuilder
+  ) {}
+  tables = [];
+
+  tableFormControl = this.__fb.group({
+    table_name: ['', [Validators.required]],
+    table_capacity: ['', [Validators.required]],
+  });
+
+  restaurantId = sessionStorage.getItem('restaurant_id');
+  ngOnInit() {
+    let httpParams = new HttpParams();
+    httpParams = httpParams.append(
+      'restaurant_id',
+      sessionStorage.getItem('restaurant_id')
+    );
+    this.__tableService.getTables(httpParams).subscribe(
+      (data) => {
+        this.tables = data['restaurants'];
+        this.tables.forEach((value) => {
+          value['is_edit'] = false;
+        });
+      },
+      (error) => {
+        console.log('Error occured: ', error);
+      }
+    );
+  }
+
+  editTable(table, event) {
+    console.log(event);
+    let body = {
+      table_id: table.table_id,
+    };
+    if (Array.from(event.target.classList).includes('table_name')) {
+      if (event.target.value == table.table_name) {
+        table.is_edit = !table.is_edit;
+        return;
+      } else {
+        body['name'] = event.target.value;
+        body['capacity'] = table.capacity;
+      }
+    } else if (Array.from(event.target.classList).includes('table_capacity')) {
+      if (event.target.value == table.capacity) {
+        table.is_edit = !table.is_edit;
+        return;
+      } else {
+        body['name'] = table.table_name;
+        body['capacity'] = event.target.value;
+      }
+    }
+    this.__tableService.editTable(body).subscribe(
+      (data) => {
+        alert('Table updated');
+        this.ngOnInit();
+      },
+      (error) => {
+        alert('Failed to update');
+      }
+    );
+  }
+
+  enableEditTable(table) {
+    table.is_edit = !table.is_edit;
+  }
+
+  deleteTable(table) {
+    let body = {
+      table_id: table.table_id,
+    };
+    this.__tableService.deleteTable(body).subscribe(
+      (data) => {
+        alert('Delete Successful');
+        this.ngOnInit();
+      },
+      (error) => {
+        alert('Delet failed');
+      }
+    );
+  }
+
+  addTable() {
+    let body = {
+      name: this.tableFormControl.value.table_name,
+      capacity: this.tableFormControl.value.table_capacity,
+      restaurant_id: this.restaurantId,
+    };
+    this.__tableService.addTable(body).subscribe(
+      (data) => {
+        alert('Table added successfully');
+        this.tableFormControl.reset();
+        this.ngOnInit();
+      },
+      (error) => {
+        alert('Error while adding table');
+      }
+    );
+  }
+}

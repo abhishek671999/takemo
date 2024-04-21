@@ -134,5 +134,9 @@ export class meAPIUtility {
   isInventoryManagementEnabled() {
     return sessionStorage.getItem('inventory_management') == 'true' ? true: false
   }
+
+  isTableManagementEnabled() {
+    return sessionStorage.getItem('table_management') == 'true' ? true : false;
+  }
   
 }

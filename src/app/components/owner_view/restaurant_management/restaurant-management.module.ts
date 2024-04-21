@@ -5,18 +5,21 @@ import { RestaurantManagementRoutingModule } from './restaurant-management-routi
 import { ManagmentHomeComponent } from './managment-home/managment-home.component';
 import { ActivityLogComponent } from './activity-log/activity-log.component';
 import {  MatPaginatorModule } from '@angular/material/paginator';
+import { TableManagementComponent } from './table-management/table-management.component';
+import { MatInputModule } from '@angular/material/input';
 
 
 
 @NgModule({
   declarations: [
     ManagmentHomeComponent,
-    ActivityLogComponent
+    ActivityLogComponent,
   ],
   imports: [
     CommonModule,
     RestaurantManagementRoutingModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatInputModule
   ]
 })
 export class RestaurantManagementModule { }

@@ -42,6 +42,9 @@ import { ExpensesComponent } from './expense-management/expenses/expenses.compon
 import { VendorSettingsComponent } from './expense-management/vendor-settings/vendor-settings.component';
 import { EcomPosOrdersComponent } from './dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TableCockpitComponent } from './dine-in-order-management/table-cockpit/table-cockpit.component';
+import { TableOrdersDialogComponent } from './dialogbox/table-orders-dialog/table-orders-dialog.component';
+import { TableManagementComponent } from './restaurant_management/table-management/table-management.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +66,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     ExpensesComponent,
     VendorSettingsComponent,
     EcomPosOrdersComponent,
+    TableCockpitComponent,
+    TableOrdersDialogComponent,
+    TableManagementComponent
   ],
   imports: [
     CommonModule,

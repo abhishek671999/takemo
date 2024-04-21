@@ -16,10 +16,12 @@ export class ManagmentHomeComponent {
   ]
 
   counterPage = { name: 'Counter', href: "food-counter-management" }  
-  activityPage = { name: 'Activity', href: 'activity-log'}
+  activityPage = { name: 'Activity', href: 'activity-log' }
+  tablePage = { name: 'Table', href: 'table-management'}
 
   counterManagement = this.__meUtility.isCounterManagementEnabled()
   inventoryManagement = this.__meUtility.isInventoryManagementEnabled()
+  tableManagement = this.__meUtility.isTableManagementEnabled()
 
   ngOnInit() {
     if(this.counterManagement) {
@@ -28,5 +30,9 @@ export class ManagmentHomeComponent {
     if (this.inventoryManagement) {
       this.managementPages.push(this.activityPage)
     }
+    if (this.tableManagement) {
+      this.managementPages.push(this.tablePage)
+    }
+
   }
 }

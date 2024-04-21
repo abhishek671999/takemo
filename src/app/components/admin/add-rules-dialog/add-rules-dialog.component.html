@@ -3,10 +3,6 @@
         <h1 mat-dialog-title>Add this shift??</h1>
         <div mat-dialog-content>
             <div>
-                <mat-form-field class="form-field">
-                    <mat-label>Shift Name</mat-label>
-                    <input matInput placeholder="Shift Name" formControlName="name">
-                </mat-form-field>
                 <mat-form-field  class="form-field">
                     <mat-label>Start time</mat-label>
                     <input matInput (keydown)="false" [ngxMatTimepicker]="picker" placeholder="Start time" formControlName="start_time">

@@ -108,6 +108,12 @@ export class HeaderComponent {
         action: () => {
           this.router.navigate(['./owner/expense/expense'])
         }
+      },
+      'table': {
+        name: 'Tables',
+        action: () => {
+          this.router.navigate(['./owner/dine-in/table-cockpit'])
+        }
       }
     }
   
@@ -143,7 +149,9 @@ export class HeaderComponent {
     if (restaurant.type.toLowerCase() == 'restaurant') { 
       restaurantOwnerNavOptions.push('POS') 
     }
-
+    if (restaurant.table_management) {
+      restaurantOwnerNavOptions.push('table')
+    }
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
