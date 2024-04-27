@@ -9,7 +9,16 @@
       <h2 class="text-center mt-2 mb-0">
         {{ menu_response.restaurant_name }}
       </h2>
-      <h2 class="text-center m-0">{{currentCategory}}</h2>
+      <div class="selection-panel">
+        <h2 class="text-center m-0"><b>{{currentCategory}}</b></h2>
+        <mat-form-field>
+          <mat-label>Table</mat-label>
+          <mat-select [(value)]="tableSelected">
+            <mat-option *ngFor="let table of tableAvailable;" [value]="table">{{table.table_name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      
       <div class="menu-container">
         <div
           class="category-bar"

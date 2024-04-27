@@ -3,8 +3,10 @@
         <ng-container *ngFor="let table of tables">
             <button class="card-box" [ngClass]="table.is_occupied? 'occupied-table': 'vacant-table'" (click)="openTableDetails(table)">
                 <h2 style="font-size: xx-large; display: inline-block;" class="text-center text-black">{{table.table_name}}  </h2>
+                <div class="capacity-block">
+                    <mat-icon class="p-0 m-0">people</mat-icon><h1 class="text-center text-black p-0 m-0" style="display: inline-block;">{{table.capacity}}</h1>
+                </div>
                 
-                <h1 class="text-center text-black">{{table.capacity}}</h1>
             </button>
         </ng-container>
     </div> 

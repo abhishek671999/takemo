@@ -9,6 +9,9 @@ import { MaterialModule } from 'src/app/material/material.module';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { TablesService } from 'src/app/shared/services/table/tables.service';
+import { HttpParams } from '@angular/common/http';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-menu',
@@ -23,13 +26,18 @@ export class MenuComponent {
     private _route: ActivatedRoute,
     private _router: Router,
     private _dialog: MatDialog,
-    private _orderService: OrdersService
+    private _orderService: OrdersService,
+    private _tableService: TablesService,
+    private _meUtilityService: meAPIUtility
   ) {}
 
   menu_response: any;
   showSpinner = true;
   restaurant_id: number;
-  restaurantParcel = false
+  restaurantParcel = false;
+  tableManagement = this._meUtilityService.isTableManagementEnabled()
+  tableSelected;
+  tableAvailable;
   menu;
   hideCategory = true;
   currentCategory = null;
@@ -43,6 +51,7 @@ export class MenuComponent {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurant_id = parseInt(params.get('id'));
+      let tableID = parseInt(params.get('table_id'))
       sessionStorage.setItem('restaurant_id', String(this.restaurant_id))
       this._menuService.getMenu(this.restaurant_id).subscribe(
         (data) => {
@@ -65,6 +74,25 @@ export class MenuComponent {
           alert('Error while loading menu');
         }
       );
+      if (this.tableManagement) {
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('restaurant_id', sessionStorage.getItem('restaurant_id'));
+        this._tableService.getTables(httpParams).subscribe(
+          data => {
+            this.tableAvailable = data['restaurants']
+            this.tableAvailable.forEach((value) => {
+              if (value.table_id == tableID) {
+                this.tableSelected = value
+              }
+            })
+          },
+          error => {
+            console.log('This is tables: ', error)
+            alert('Failed to fetch table')
+          }
+        )
+      }
+      
     });
   }
 

@@ -82,7 +82,7 @@ export class VendorSettingsComponent {
       },
       (error) => {
         console.log('Error while adding vendor: ', error);
-        alert('Coulnt update');
+
         this.ngOnInit();
       }
     );

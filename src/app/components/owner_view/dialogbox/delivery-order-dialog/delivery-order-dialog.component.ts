@@ -6,6 +6,7 @@ import {
 } from '@angular/material/dialog';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ConfirmActionDialogComponent } from '../../../shared/confirm-action-dialog/confirm-action-dialog.component';
+import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-delivery-order-dialog',
@@ -50,7 +51,9 @@ export class DeliveryOrderDialogComponent {
         this.ngOnInit();
       },
       (error) => {
-        console.log('Error while delivering orders');
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: 'Error while delivering orders' }
+        });
       }
     );
   }
@@ -67,7 +70,9 @@ export class DeliveryOrderDialogComponent {
         order.is_ready = !order.is_ready;
       },
       (error) => {
-        console.log('Error while delivering orders');
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: 'Error while delivering orders' }
+        });
       }
     );
   }
@@ -88,17 +93,13 @@ export class DeliveryOrderDialogComponent {
             this._dialogRef.close();
           },
           (error) => {
-            alert('Error while delivering orders');
+            this.dialog.open(ErrorMsgDialogComponent, {
+              data: { msg: 'Error while delivering orders' }
+            });
           }
         );
       }
     });
   }
-  //   this.data.obj.forEach(order => {
-  //     if(!order.is_delivered){
-  //       this.updateStatusToDelivered(order)
-  //     }
-  //   })
-  //   this._dialogRef.close();
-  // }
+
 }

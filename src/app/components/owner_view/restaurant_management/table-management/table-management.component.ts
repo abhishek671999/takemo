@@ -1,7 +1,10 @@
 import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { TablesService } from 'src/app/shared/services/tables.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
+import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
+import { TablesService } from 'src/app/shared/services/table/tables.service';
 
 @Component({
   selector: 'app-table-management',
@@ -11,7 +14,8 @@ import { TablesService } from 'src/app/shared/services/tables.service';
 export class TableManagementComponent {
   constructor(
     private __tableService: TablesService,
-    private __fb: FormBuilder
+    private __fb: FormBuilder,
+    private __dialog: MatDialog
   ) {}
   tables = [];
 
@@ -35,7 +39,7 @@ export class TableManagementComponent {
         });
       },
       (error) => {
-        console.log('Error occured: ', error);
+        this.__dialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to fetch tables'}})
       }
     );
   }
@@ -64,11 +68,11 @@ export class TableManagementComponent {
     }
     this.__tableService.editTable(body).subscribe(
       (data) => {
-        alert('Table updated');
+        this.__dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Successfully updated'}})
         this.ngOnInit();
       },
       (error) => {
-        alert('Failed to update');
+        this.__dialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to update'}})
       }
     );
   }
@@ -83,11 +87,11 @@ export class TableManagementComponent {
     };
     this.__tableService.deleteTable(body).subscribe(
       (data) => {
-        alert('Delete Successful');
+        this.__dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Successfully Deleted'}})
         this.ngOnInit();
       },
       (error) => {
-        alert('Delet failed');
+        this.__dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Delete Failed'}})
       }
     );
   }
@@ -100,12 +104,12 @@ export class TableManagementComponent {
     };
     this.__tableService.addTable(body).subscribe(
       (data) => {
-        alert('Table added successfully');
+        this.__dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Successfully table Added'}})
         this.tableFormControl.reset();
         this.ngOnInit();
       },
       (error) => {
-        alert('Error while adding table');
+        this.__dialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to add'}})
       }
     );
   }

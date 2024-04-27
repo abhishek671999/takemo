@@ -13,6 +13,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { config } from 'rxjs';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { FormBuilder, Validators } from '@angular/forms';
+import { TablesService } from 'src/app/shared/services/table/tables.service';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -28,7 +29,8 @@ export class ConfirmationDialogComponent {
     private _router: Router,
     private _snackBar: MatSnackBar,
     private meService: MeService,
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private _tableService: TablesService
   ) {}
 
   public isPayment;
@@ -50,6 +52,10 @@ export class ConfirmationDialogComponent {
   public transactionForm = this._fb.group({
     transactionId: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
     addresss: ['', [Validators.required, Validators.minLength(4)]]
+  })
+
+  public otpForm = this._fb.group({
+    otp: ['', [Validators.required]]
   })
 
   ngOnInit() {
@@ -342,5 +348,20 @@ export class ConfirmationDialogComponent {
   openQRcode() {
     console.log('Opening qr code');
     this.showQRcode = !this.showQRcode;
+  }
+
+  validateOTP() {
+    let body = {
+      'table_id': 1,
+      'otp': this.otpForm.value.otp
+    }
+    this._tableService.checkIfOTPValid(body).subscribe(
+      data => {
+        
+      },
+      error => {
+        alert('Incorrect OTP')
+      }
+    )
   }
 }

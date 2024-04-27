@@ -639,5 +639,6 @@ export class PointOfSaleComponent {
 
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
+    sessionStorage.removeItem('table_name');
   }
 }

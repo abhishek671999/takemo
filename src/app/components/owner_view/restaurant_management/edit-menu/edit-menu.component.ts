@@ -126,7 +126,7 @@ export class EditMenuComponent {
     this._menuEditService.editMenu(body).subscribe(
       (data) => console.log(data),
       (error) => {
-        alert("Couldn't update counter");
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: "Couldn't update counter" } });
         this.ngOnInit();
       }
     );
@@ -233,7 +233,7 @@ export class EditMenuComponent {
         console.log(data);
       },
       (error) => {
-        alert('Something went wrong');
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: 'Something went wrong' } });
         console.log('Error while toggling: ', error);
       }
     );

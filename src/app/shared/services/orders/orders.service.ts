@@ -26,6 +26,9 @@ export class OrdersService {
     'order/get_restaurant_canceled_orders/';
   private getRestaurantShiftOrders = 'order/get_restaurant_shift_orders/';
   private getTableOrdersEndpoint = 'order/get_table_orders/'
+  private updateLineItemEndpoint = 'order/update_line_item/'
+  private deleteLineItemEndpoint = 'order/delete_line_item/'
+
   getMyOrders(body) {
     console.log('Get current orders called');
     return this._http.post(host + this.orderHistoryEndpoint, body);
@@ -109,5 +112,13 @@ export class OrdersService {
 
   getTableOrders(body) {
     return this._http.post(host + this.getTableOrdersEndpoint, body)
+  }
+
+  updateLineItem(body) {
+    return this._http.post(host + this.updateLineItemEndpoint, body)
+  }
+
+  deleteLineItem(body) {
+    return this._http.post(host + this.deleteLineItemEndpoint, body)
   }
 }

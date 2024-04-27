@@ -12,12 +12,17 @@
     padding: 0.5em;
   }
 
+.capacity-block{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .vacant-table {
-    background-color: rgb(65, 104, 244, 0.8);
+    background-color: rgba(255, 255, 255, 0.8);
   } 
 
 .occupied-table {
-    background-color: rgb(249, 255, 127);
+    background-color: rgb(66, 179, 70);
 }
 
 .reserved-table {

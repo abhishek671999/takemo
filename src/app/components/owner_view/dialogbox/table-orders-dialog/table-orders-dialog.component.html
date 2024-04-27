@@ -9,7 +9,7 @@
             <button mat-raised-button color="primary" (click)="markPaymentDone()">Payment done</button>
             <button mat-raised-button color="primary" (click)="posOrder()" >POS order</button>
         </div>
-        <table>
+        <table class="table-order-container">
             <thead>
                 <tr>
                     <th class="sl_no">Sl.no</th>
@@ -17,26 +17,31 @@
                     <th class="price">Price</th>
                     <th class="quantity">Quantity</th>
                     <th class="total_price">Total price</th>
-                    <th class="edit">Edit</th>
+                    <th class="delete">Delete</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let order of orders; let main_index=index">
                     <td class="sl_no">{{main_index + 1}}</td>
                     <td class="item">{{order.item_name}}</td>
-                    <th class="price">{{order.item_price}}</th>
-                    <td class="quantity">{{order.quantity}}</td>
-                    <th class="total_price">{{order.line_item_price}}</th>
-                    <td class="edit">
-                        <mat-icon>create</mat-icon>
+                    <td class="price">{{order.item_price}}</td>
+                    <td class="quantity">
+                        <mat-icon (click)="subItem(order)">remove_circle</mat-icon>
+                        {{order.quantity}}
+                        <mat-icon (click)="addItem(order)">add_circle</mat-icon>
+                    </td>
+                    <td class="total_price">₹&nbsp;{{order.line_item_price}}</td>
+                    <td class="delete">
+                        <mat-icon (click)="deleteItem(order)">delete</mat-icon>
                     </td>
                 </tr>
                 <tr>
                     <td class="sl_no">-</td>
                     <td class="item">-</td>
-                    <th class="price">-</th>
+                    <td class="price">-</td>
                     <td class="quantity">-</td>
-                    <th class="total_price">{{totalPrice}}</th>
+                    <td class="total_price">₹&nbsp;{{totalAmount}}</td>
+                    <td class="delete">-</td>
                 </tr>
             </tbody>
         </table>

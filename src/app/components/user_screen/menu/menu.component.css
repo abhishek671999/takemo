@@ -48,6 +48,13 @@ td {
   padding-bottom: 2em;
 }
 
+.selection-panel{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .prepare-summary {
   padding-right: 2em;
 }

@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TablesService } from 'src/app/shared/services/tables.service';
+import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { TableOrdersDialogComponent } from '../../dialogbox/table-orders-dialog/table-orders-dialog.component';
 
 @Component({
@@ -28,7 +28,15 @@ export class TableCockpitComponent {
   }
   
   openTableDetails(table) {
-    this.__matDialog.open(TableOrdersDialogComponent, {data: table, width: '100vw'})
+    let dialogRef = this.__matDialog.open(TableOrdersDialogComponent, { data: table, width: '100vw' })
+    dialogRef.afterClosed().subscribe(
+      data => {
+        this.ngOnInit()
+      },
+      error => {
+        this.ngOnInit()
+      }
+    )
   }
   
 }

@@ -28,7 +28,6 @@ export class DeliverAllOrdersDialogComponent {
         this.dialogRef.close({success: 'ok'})
       },
       error => {
-        alert('Error')
         this.dialogRef.close({success: 'failed'})
       }
     )
