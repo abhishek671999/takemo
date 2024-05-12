@@ -10,22 +10,25 @@
         {{ menu_response.restaurant_name }}
       </h2>
       <div class="selection-panel">
-        <h2 class="text-center m-0"><b>{{currentCategory}}</b></h2>
-        <mat-form-field>
+        <mat-form-field *ngIf="tableManagement">
           <mat-label>Table</mat-label>
           <mat-select [(value)]="tableSelected">
             <mat-option *ngFor="let table of tableAvailable;" [value]="table">{{table.table_name}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field >
+          <mat-label>Search item</mat-label>
+          <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
+        </mat-form-field>
       </div>
-      
+      <h2 class="text-center m-0"><b>{{currentCategory}}</b></h2>
       <div class="menu-container">
         <div
           class="category-bar"
           id="collapsable-category-bar"
           *ngIf="!hideCategory"
         >
-          <div class="category-button" *ngFor="let category of menu">
+          <div class="category-button" *ngFor="let category of filteredMenu">
             <ul>
               <li
                 class="fs-6 category-bar-items {{
@@ -41,7 +44,7 @@
           </div>
         </div>
         <div class="item-bar">
-          <ng-container *ngFor="let category of menu">
+          <ng-container *ngFor="let category of filteredMenu">
             <div
               id="{{ category.category.name.replace(' ', '') }}"
               class="category-wrapper hidden"

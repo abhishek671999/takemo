@@ -20,7 +20,7 @@ import { meAPIUtility } from 'src/app/shared/site-variable';
 })
 export class MenuComponent {
   amount: number = 0;
-  orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: false};
+  orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: false, table_id: null};
   constructor(
     private _menuService: MenuService,
     private _route: ActivatedRoute,
@@ -39,6 +39,8 @@ export class MenuComponent {
   tableSelected;
   tableAvailable;
   menu;
+  filteredMenu;
+  searchText = ''
   hideCategory = true;
   currentCategory = null;
   summary = {
@@ -57,6 +59,7 @@ export class MenuComponent {
         (data) => {
           this.menu_response = data;
           this.menu = data['menu'];
+          
           console.log('Menu response', data);
           this.restaurantParcel = data['restaurant_parcel'];
           this.menu.map((category) => {
@@ -67,6 +70,8 @@ export class MenuComponent {
           this.setQuantity();
           this.showSpinner = false;
           this.showOnlyFirstCategory();
+          this.createAllCategory()
+          this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
         },
         (error) => {
           console.log('Error while getting menu: ', error);
@@ -104,6 +109,22 @@ export class MenuComponent {
         item.parcelQuantity = 0;
       });
     });
+  }
+
+  createAllCategory() {
+    let allItems = []
+    this.menu.forEach((ele) => {
+      allItems.push(ele.category.items)
+    })
+    allItems = allItems.flat()
+    this.menu.push({
+      category: {
+        "id": null,
+        "name": "All",
+        "hide_category": false,
+        "items": allItems
+      }
+    })
   }
 
   togglehideCategory() {
@@ -148,6 +169,7 @@ export class MenuComponent {
   }
 
   addItem(item, event) {
+    console.log('Clciked', item)
     event.stopPropagation();
     if ((item.quantity < 30) && (item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true)) {
       item.quantity += 1;
@@ -198,6 +220,7 @@ export class MenuComponent {
       });
     });
     this.orderList.amount = this.amount;
+    this.orderList.table_id = this.tableSelected?.table_id 
     this.orderList.restaurant_id = this.restaurant_id;
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
       data: this.orderList,
@@ -210,10 +233,10 @@ export class MenuComponent {
         if(result.mode == 'wallet'){
           this._router.navigate(['/user/myorders'])
         }
-        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel };
+        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel, table_id: null };
         this.updateSummary(result.orderList)
       } else {
-        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel };
+        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel, table_id: null };
       }
     });
   }
@@ -246,5 +269,17 @@ export class MenuComponent {
         ele.classList.remove('active');
       }
     });
+  }
+
+
+  filterItems() {
+    if (this.searchText) {
+      this.categoryClickEventHandler(this.filteredMenu[this.filteredMenu.length - 1].category.name)
+      this.filteredMenu[this.filteredMenu.length - 1].category.items = this.menu[this.menu.length - 1].category.items.filter(item => item.name.toLowerCase().includes(this.searchText.toLowerCase()))
+    } else {
+      this.filteredMenu = JSON.parse(JSON.stringify(this.menu))
+      this.showOnlyFirstCategory()
+      console.log(this.menu, this.filteredMenu)
+    }
   }
 }

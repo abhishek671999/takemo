@@ -14,6 +14,7 @@ import { config } from 'rxjs';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -44,10 +45,12 @@ export class ConfirmationDialogComponent {
   public isWalletPayment = false;
   public restaurantParcel = false;
   showQRcode = false;
+  public otpValidated = false;
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
   public parcelCharges = 5; // hardcode
+  public otpRequired
 
   public transactionForm = this._fb.group({
     transactionId: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
@@ -59,6 +62,7 @@ export class ConfirmationDialogComponent {
   })
 
   ngOnInit() {
+    console.log(this.summary)
     this.dialogRef.updateSize('100%')
     this.meService.getMyInfo().subscribe((data) => {
       this.transactionForm.setValue({
@@ -70,10 +74,18 @@ export class ConfirmationDialogComponent {
     this.restaurantParcel = this.summary.restaurant_parcel;
     this.dialogRef.disableClose = true;
     this.dialogRef.updateSize('auto', 'auto');
-    this.__ordersService.checkIfPaymentRequired().subscribe(
+    let httpParams = new HttpParams();
+    httpParams = httpParams.append(
+      'restaurant_id',
+      sessionStorage.getItem('restaurant_id')
+    );
+    httpParams = this.summary.table_id? httpParams.append('table_id', this.summary.table_id): httpParams
+    this.__ordersService.checkIfPaymentRequired(httpParams).subscribe(
       (data) => {
         console.log(data);
         this.isPayment = data['payment_required'];
+        this.otpRequired = data['otp_required']
+        this.otpValidated = !data['otp_required']
         this.paymentMethod = this.isPayment ? data['payment_mode'] : 'others';
         if (data['tax_inclusive']) {
           console.log('INcluding tax');
@@ -135,6 +147,9 @@ export class ConfirmationDialogComponent {
     if (this.transactionForm.value.transactionId != '' || this.transactionForm.value.addresss != '') {
       body['transaction_id'] = this.transactionForm.value.transactionId;
       body['address'] = this.transactionForm.value.addresss;
+    }
+    if (this.summary.table_id) {
+      body['table_id'] = this.summary.table_id
     }
     return body;
   }
@@ -352,15 +367,33 @@ export class ConfirmationDialogComponent {
 
   validateOTP() {
     let body = {
-      'table_id': 1,
+      'table_id': this.summary.table_id,
       'otp': this.otpForm.value.otp
     }
     this._tableService.checkIfOTPValid(body).subscribe(
       data => {
-        
+        this.otpValidated = true
       },
       error => {
         alert('Incorrect OTP')
+      }
+    )
+  }
+
+  placeTableOrder() {
+    let body = this.preparePlaceOrderBody(false)
+
+    this.__ordersService.createOrders(body).subscribe(
+      data => {
+        this.dialog.open(SuccessMsgDialogComponent, {
+          data: { msg: 'Your Order number is: ' + data['order_no'] },
+        });
+        this.dialogRef.close()
+      },
+      error => {
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: error.error.description },
+        });
       }
     )
   }

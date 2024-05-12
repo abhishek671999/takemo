@@ -34,12 +34,7 @@ export class OrdersService {
     return this._http.post(host + this.orderHistoryEndpoint, body);
   }
 
-  checkIfPaymentRequired() {
-    let httpParams = new HttpParams();
-    httpParams = httpParams.append(
-      'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
-    );
+  checkIfPaymentRequired(httpParams) {
     return this._http.get(host + this.checkIfPaymentRequiredEndpoint, {
       params: httpParams,
     });
