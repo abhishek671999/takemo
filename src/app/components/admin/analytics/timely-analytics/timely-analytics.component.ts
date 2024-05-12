@@ -5,7 +5,7 @@ import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.se
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class TimelyAnalyticsComponent {
     private _menuService: MenuService, 
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
-    private _meAPIutility: meAPIUtility,
+    private __sessionWrapper: sessionWrapper,
     private _counterService: CounterService
     ){}
 
@@ -43,14 +43,14 @@ export class TimelyAnalyticsComponent {
   selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0].actualValue
   selectedCategory = this.categoryList[0];
   selectedItem  = this.itemList[0];
-  selectedRestaurant: number| string = sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.restaurantList[0].restaurant_id;
-  restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
+  selectedRestaurant: number| string = this.__sessionWrapper.getItem('restaurant_id') ? this.__sessionWrapper.getItem('restaurant_id'): this.restaurantList[0].restaurant_id;
+  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id') ? true : false
   selectedRule;
   ruleList = []
   totalAmount = 0;
   totalOrders = 0;
   loadView = false
-  isITTUser = this._meAPIutility.doesUserBelongsToITT()
+  isITTUser = this.__sessionWrapper.doesUserBelongsToITT()
 
   counters = []
   selectedCounterId;
@@ -88,7 +88,7 @@ export class TimelyAnalyticsComponent {
       }
     )
 
-    this._counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
+    this._counterService.getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id')).subscribe(
       data => {
         console.log('counters available', data)
         this.counters = data['counters']
@@ -138,7 +138,7 @@ export class TimelyAnalyticsComponent {
   getRequestBodyPrepared(){
     let body = {
       "rule_id_list": Array.isArray(this.selectedRule) ? this.selectedRule: [this.selectedRule],
-      "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant,
+      "restaurant_id": this.__sessionWrapper.getItem('restaurant_id') ? this.__sessionWrapper.getItem('restaurant_id'): this.selectedRestaurant,
       "category_id": this.selectedCategory.id,
       "item_id": this.selectedCategory.id == 0? this.selectedItem.id: "",
       "pos": this.isITTUser ? false: true

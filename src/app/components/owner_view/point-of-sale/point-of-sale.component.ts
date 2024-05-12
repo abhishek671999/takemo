@@ -11,7 +11,7 @@ import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 import { MatRadioButton } from '@angular/material/radio';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -32,7 +32,7 @@ export class PointOfSaleComponent {
     private dateUtils: dateUtils,
     private _counterService: CounterService,
     private __snackbar: MatSnackBar,
-    private __meUtility: meAPIUtility
+    private __sessionWrapper: sessionWrapper
   ) {}
   public menu;
   public summary;
@@ -47,9 +47,9 @@ export class PointOfSaleComponent {
   public restaurantGST = null;
   public parcelCharges = 5; // hardcode
   counters = [];
-  public outletType = sessionStorage.getItem('restaurantType').toLowerCase();
-  public isTableManagement = this.__meUtility.isTableManagementEnabled()
-  public tableName = sessionStorage.getItem('table_name')
+  public outletType = this.__sessionWrapper.getItem('restaurantType').toLowerCase();
+  public isTableManagement = this.__sessionWrapper.isTableManagementEnabled()
+  public tableName = this.__sessionWrapper.getItem('table_name')
 
   ngOnInit() {
     this.summary = {
@@ -57,7 +57,7 @@ export class PointOfSaleComponent {
       itemList: [],
     };
     this.menuService
-      .getPOSMenu(sessionStorage.getItem('restaurant_id'))
+      .getPOSMenu(this.__sessionWrapper.getItem('restaurant_id'))
       .subscribe((data) => {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
@@ -72,7 +72,7 @@ export class PointOfSaleComponent {
         this.showOnlyFirstCategory();
       });
     this._counterService
-      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
       .subscribe(
         (data) => {
           console.log('counters available', data);
@@ -82,9 +82,9 @@ export class PointOfSaleComponent {
           console.log('Error: ', error);
         }
       );
-    this.restaurantName = sessionStorage.getItem('restaurant_name');
-    this.restaurantAddress = sessionStorage.getItem('restaurant_address');
-    this.restaurantGST = sessionStorage.getItem('restaurant_gst');
+    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
+    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
+    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
   }
 
   setQuantity() {
@@ -246,8 +246,8 @@ export class PointOfSaleComponent {
     let body = {
       pos: true,
       order_list: itemList,
-      table_id: Number(sessionStorage.getItem('table_id')),
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      table_id: Number(this.__sessionWrapper.getItem('table_id')),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
       total_amount: this.summary.amount,
@@ -598,15 +598,15 @@ export class PointOfSaleComponent {
 
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`,
+      `/owner/settings/edit-menu/${this.__sessionWrapper.getItem('restaurant_id')}`,
     ]);
   }
 
   navigateToOrders() {
     let navigationURL =
-      sessionStorage.getItem('restaurant_kds') == 'true'
+    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
         ? '/owner/orders/pending-orders'
-        : sessionStorage.getItem('restaurantType') == 'e-commerce'
+        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this.router.navigate([navigationURL]);

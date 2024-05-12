@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { timeInterval } from 'rxjs';
 import { ExpenseService } from 'src/app/shared/services/expense/expense.service';
 import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-expenses',
@@ -16,11 +17,12 @@ export class ExpensesComponent {
     private __expenseService: ExpenseService,
     private __vendorService: VendorService,
     private __fb: FormBuilder,
-    private __snackbar: MatSnackBar
+    private __snackbar: MatSnackBar,
+    private __sessionWrapper: sessionWrapper
   ) {}
   public vendorList = [];
   public expenses = [];
-  restaurantId = sessionStorage.getItem('restaurant_id');
+  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
   expensesForm = this.__fb.group({
     vendor_id: ['', [Validators.required]],
     amount: ['', [Validators.required]],

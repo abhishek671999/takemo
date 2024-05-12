@@ -6,6 +6,7 @@ import { Observable, Subscription, interval } from 'rxjs';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { HttpParams } from '@angular/common/http';
 import { DeliverAllOrdersDialogComponent } from '../../dialogbox/deliver-all-orders-dialog/deliver-all-orders-dialog.component';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-pending-orders',
@@ -16,7 +17,8 @@ export class PendingOrdersComponent {
   constructor(
     private _orderService: OrdersService,
     private _dialog: MatDialog,
-    private __counterService: CounterService
+    private __counterService: CounterService,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   orderList = [];
@@ -38,7 +40,7 @@ export class PendingOrdersComponent {
       }
     );
     this.__counterService
-      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
       .subscribe(
         (data) => {
           this.counters = data['counters'];
@@ -54,7 +56,7 @@ export class PendingOrdersComponent {
     let httpParams = new HttpParams();
     httpParams = httpParams.append(
       'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
+      this.__sessionWrapper.getItem('restaurant_id')
     );
     if (this.selectedCounterId) {
       httpParams = httpParams.append('counter_id', this.selectedCounterId);

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-vendor-settings',
@@ -11,7 +12,8 @@ import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
 export class VendorSettingsComponent {
   constructor(
     private __vendorService: VendorService,
-    private __fb: FormBuilder
+    private __fb: FormBuilder,
+    private __sessionWrapper: sessionWrapper
   ) {}
   public vendorList = [];
 
@@ -29,7 +31,7 @@ export class VendorSettingsComponent {
     let httpParams = new HttpParams();
     httpParams = httpParams.append(
       'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
+      this.__sessionWrapper.getItem('restaurant_id')
     );
     this.__vendorService.getVendor(httpParams).subscribe(
       (data) => {
@@ -50,7 +52,7 @@ export class VendorSettingsComponent {
       email: this.vendorForm.value.email,
       mobile: this.vendorForm.value.mobile,
       description: this.vendorForm.value.description,
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
     };
     this.__vendorService.addVendor(body).subscribe(
       (data) => {
@@ -72,7 +74,7 @@ export class VendorSettingsComponent {
       email: vendor.email,
       mobile: vendor.mobile,
       description: vendor.description,
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       vendor_id: vendor.id,
     };
     this.__vendorService.editVendor(body).subscribe(

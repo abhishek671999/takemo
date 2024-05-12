@@ -11,7 +11,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-menu',
@@ -20,7 +20,13 @@ import { meAPIUtility } from 'src/app/shared/site-variable';
 })
 export class MenuComponent {
   amount: number = 0;
-  orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: false, table_id: null};
+  orderList = {
+    itemList: [],
+    amount: 0,
+    restaurant_id: null,
+    restaurant_parcel: false,
+    table_id: null,
+  };
   constructor(
     private _menuService: MenuService,
     private _route: ActivatedRoute,
@@ -28,39 +34,37 @@ export class MenuComponent {
     private _dialog: MatDialog,
     private _orderService: OrdersService,
     private _tableService: TablesService,
-    private _meUtilityService: meAPIUtility
+    private _meUtilityService: meAPIUtility,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   menu_response: any;
   showSpinner = true;
   restaurant_id: number;
   restaurantParcel = false;
-  tableManagement = this._meUtilityService.isTableManagementEnabled()
+  tableManagement = this.__sessionWrapper.isTableManagementEnabled();
   tableSelected;
   tableAvailable;
   menu;
   filteredMenu;
-  searchText = ''
+  searchText = '';
   hideCategory = true;
   currentCategory = null;
   summary = {
     amount: 0,
     itemList: [],
   };
-  
 
   ngOnInit() {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurant_id = parseInt(params.get('id'));
-      let tableID = parseInt(params.get('table_id'))
-      sessionStorage.setItem('restaurant_id', String(this.restaurant_id))
+      let tableID = parseInt(params.get('table_id'));
+      sessionStorage.setItem('restaurant_id', String(this.restaurant_id));
       this._menuService.getMenu(this.restaurant_id).subscribe(
         (data) => {
           this.menu_response = data;
           this.menu = data['menu'];
-          
-          console.log('Menu response', data);
           this.restaurantParcel = data['restaurant_parcel'];
           this.menu.map((category) => {
             category.category.items.filter(
@@ -70,7 +74,7 @@ export class MenuComponent {
           this.setQuantity();
           this.showSpinner = false;
           this.showOnlyFirstCategory();
-          this.createAllCategory()
+          this.createAllCategory();
           this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
         },
         (error) => {
@@ -81,23 +85,25 @@ export class MenuComponent {
       );
       if (this.tableManagement) {
         let httpParams = new HttpParams();
-        httpParams = httpParams.append('restaurant_id', sessionStorage.getItem('restaurant_id'));
+        httpParams = httpParams.append(
+          'restaurant_id',
+          this.__sessionWrapper.getItem('restaurant_id')
+        );
         this._tableService.getTables(httpParams).subscribe(
-          data => {
-            this.tableAvailable = data['restaurants']
+          (data) => {
+            this.tableAvailable = data['restaurants'];
             this.tableAvailable.forEach((value) => {
               if (value.table_id == tableID) {
-                this.tableSelected = value
+                this.tableSelected = value;
               }
-            })
+            });
           },
-          error => {
-            console.log('This is tables: ', error)
-            alert('Failed to fetch table')
+          (error) => {
+            console.log('This is tables: ', error);
+            alert('Failed to fetch table');
           }
-        )
+        );
       }
-      
     });
   }
 
@@ -112,19 +118,19 @@ export class MenuComponent {
   }
 
   createAllCategory() {
-    let allItems = []
-    this.menu.forEach((ele) => {
-      allItems.push(ele.category.items)
-    })
-    allItems = allItems.flat()
+    let allItems = [];
+    this.menu.forEach((ele, index) => {
+      allItems.push(...ele.category.items);
+    });
+    //allItems = allItems.flat()
     this.menu.push({
       category: {
-        "id": null,
-        "name": "All",
-        "hide_category": false,
-        "items": allItems
-      }
-    })
+        id: null,
+        name: 'All',
+        hide_category: false,
+        items: allItems,
+      },
+    });
   }
 
   togglehideCategory() {
@@ -168,75 +174,104 @@ export class MenuComponent {
     }, 10);
   }
 
+  updateSummary(orderList) {
+    if (orderList.itemList.length == 0) {
+      this.setQuantity();
+    } else {
+      this.setQuantity();
+      this.amount = orderList.amount;
+      orderList.itemList.forEach((item) => {
+        this.menu_response.menu.forEach((category) => {
+          category.category.items.forEach((menuItem) => {
+            if (menuItem.id == item.id) {
+              menuItem.quantity = item.quantity;
+              menuItem.parcelQuantity = item.parcelQuantity;
+            }
+          });
+        });
+      });
+    }
+  }
+
   addItem(item, event) {
-    console.log('Clciked', item)
+    console.log('Clciked', item);
     event.stopPropagation();
-    if ((item.quantity < 30) && (item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true)) {
-      item.quantity += 1;
-      this.amount += item.price;
+
+    let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
+    if (itemAdded) {
+      console.log(itemAdded);
+      if (
+        itemAdded.quantity < 30 &&
+        (itemAdded.inventory_stock
+          ? itemAdded.quantity + itemAdded.parcelQuantity <
+            itemAdded.inventory_stock
+          : true)
+      ) {
+        itemAdded.quantity += 1;
+        if (item !== itemAdded) item.quantity += 1;
+        this.orderList.amount += itemAdded.price;
+      }
+    } else {
+      if (
+        item.quantity < 30 &&
+        (item.inventory_stock
+          ? item.quantity + item.parcelQuantity < item.inventory_stock
+          : true)
+      ) {
+        item.quantity += 1;
+        this.orderList.amount += item.price;
+        this.orderList.itemList.push(item);
+      }
     }
   }
   subItem(item, event) {
     event.stopPropagation();
-    if (item.quantity > 0) {
-      item.quantity -= 1;
-      this.amount -= item.price;
+    let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
+    if (itemAdded) {
+      if (itemAdded.quantity > 0 || item.quantity > 0) {
+        item !== itemAdded ? (item.quantity -= 1) : (itemAdded.quantity -= 1);
+        this.orderList.amount -= itemAdded.price;
+      }
     }
-  }
-
-  updateSummary(orderList) {
-    if (orderList.itemList.length == 0) {
-      this.setQuantity()
-      this.amount = 0
-    } else {
-      this.setQuantity()
-      this.amount = orderList.amount
-      orderList.itemList.forEach(item => {
-        this.menu_response.menu.forEach(category => {
-          category.category.items.forEach(menuItem => {
-            if (menuItem.id == item.id) {
-              menuItem.quantity = item.quantity
-              menuItem.parcelQuantity = item.parcelQuantity
-            }
-          })
-        })
-      })
+    if (itemAdded?.quantity == 0 || item.quantity == 0) {
+      this.orderList.itemList = this.summary.itemList.filter(
+        (x) => x.id != item.id
+      );
     }
   }
 
   prepareSummary() {
-    this.menu_response.menu.forEach((category) => {
-      category.category.items.forEach((item) => {
-        if (item.quantity || item.parcelQuantity) {
-          let itemSummary = {
-            id: item.id,
-            name: item.name,
-            quantity: item.quantity,
-            price: item.price,
-            parcelQuantity: item.parcelQuantity,
-          };
-          this.orderList.itemList.push(itemSummary);
-        }
-      });
-    });
-    this.orderList.amount = this.amount;
-    this.orderList.table_id = this.tableSelected?.table_id 
+    // this.menu_response.menu.forEach((category) => {
+    //   category.category.items.forEach((item) => {
+    //     if (item.quantity || item.parcelQuantity) {
+    //       let itemSummary = {
+    //         id: item.id,
+    //         name: item.name,
+    //         quantity: item.quantity,
+    //         price: item.price,
+    //         parcelQuantity: item.parcelQuantity,
+    //       };
+    //       this.orderList.itemList.push(itemSummary);
+    //     }
+    //   });
+    // });
+    // this.orderList.amount = this.amount;
+    this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
       data: this.orderList,
     });
     dialogRef.afterClosed().subscribe((result) => {
       console.log('Result from dialog component: ', result);
-
       if (result) {
         console.log(result);
-        if(result.mode == 'wallet'){
-          this._router.navigate(['/user/myorders'])
+        if (result.mode == 'wallet') {
+          this._router.navigate(['/user/myorders']);
+        } else {
+
+          this.orderList = result.orderlist;
         }
-        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel, table_id: null };
-        this.updateSummary(result.orderList)
-      } else {
-        this.orderList = { itemList: [], amount: 0, restaurant_id: null, restaurant_parcel: this.restaurantParcel, table_id: null };
+        //this.updateSummary(result.orderList);
       }
     });
   }
@@ -271,15 +306,19 @@ export class MenuComponent {
     });
   }
 
-
   filterItems() {
     if (this.searchText) {
-      this.categoryClickEventHandler(this.filteredMenu[this.filteredMenu.length - 1].category.name)
-      this.filteredMenu[this.filteredMenu.length - 1].category.items = this.menu[this.menu.length - 1].category.items.filter(item => item.name.toLowerCase().includes(this.searchText.toLowerCase()))
+      this.categoryClickEventHandler(
+        this.filteredMenu[this.filteredMenu.length - 1].category.name
+      );
+      this.filteredMenu[this.filteredMenu.length - 1].category.items =
+        this.menu[this.menu.length - 1].category.items.filter((item) =>
+          item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        );
     } else {
-      this.filteredMenu = JSON.parse(JSON.stringify(this.menu))
-      this.showOnlyFirstCategory()
-      console.log(this.menu, this.filteredMenu)
+      this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
+      this.showOnlyFirstCategory();
+      console.log(this.menu, this.filteredMenu);
     }
   }
 }

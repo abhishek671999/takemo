@@ -11,7 +11,7 @@ import {
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { FormControl, FormGroup } from '@angular/forms';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
@@ -37,9 +37,9 @@ export class SalesAnalyticsComponent {
     private _menuService: MenuService,
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
-    private _meAPIutility: meAPIUtility,
+    private __sessionWrapper: sessionWrapper,
     private _counterService: CounterService,
-    public printerConn: PrintConnectorService
+    public printerConn: PrintConnectorService,
   ) {}
 
   timeFrames = [
@@ -88,10 +88,10 @@ export class SalesAnalyticsComponent {
   selectedRule;
   totalAmount = 0;
   totalOrders = 0;
-  restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false;
-  hasOrderTypes = sessionStorage.getItem('restaurantType') == 'e-commerce' ? true : false;
-  isITTUser = this._meAPIutility.doesUserBelongsToITT();
-  isRaviGobiUser = this._meAPIutility.doesUserBelongsToRaviGobi()
+  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id') ? true : false;
+  hasOrderTypes = this.__sessionWrapper.getItem('restaurantType') == 'e-commerce' ? true : false;
+  isITTUser = this.__sessionWrapper.doesUserBelongsToITT();
+  isRaviGobiUser = this.__sessionWrapper.doesUserBelongsToRaviGobi()
 
   chart1: any = [];
   chart2: any = [];
@@ -123,7 +123,7 @@ export class SalesAnalyticsComponent {
       this.loadView = true;
     });
     this._counterService
-      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
       .subscribe(
         (data) => {
           this.counters = data['counters'];
@@ -144,8 +144,8 @@ export class SalesAnalyticsComponent {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: sessionStorage.getItem('restaurant_id')
-        ? sessionStorage.getItem('restaurant_id')
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id')
+        ? this.__sessionWrapper.getItem('restaurant_id')
         : this.selectedRestaurant,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
@@ -516,7 +516,7 @@ export class SalesAnalyticsComponent {
     let sectionSeperatorCharacters = '-'.repeat(40);
     let content = [
       {
-        text: sessionStorage.getItem('restaurant_name'),
+        text: this.__sessionWrapper.getItem('restaurant_name'),
         size: 'xlarge',
         bold: true,
         justification: 'center',

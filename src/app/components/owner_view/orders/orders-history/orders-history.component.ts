@@ -7,6 +7,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { HttpParams } from '@angular/common/http';
 import { PageEvent } from '@angular/material/paginator';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-orders-history',
@@ -17,7 +18,8 @@ export class OrdersHistoryComponent {
   constructor(
     private _orderService: OrdersService,
     private _dialog: MatDialog,
-    private dateUtils: dateUtils
+    private dateUtils: dateUtils,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   length = 50;
@@ -63,7 +65,7 @@ export class OrdersHistoryComponent {
 
   getRestaurantOrdersAPIBody() {
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
     };
     if (this.selectedTimeFrame.actualValue == 'custom') {
       if (this.range.value.start && this.range.value.end) {

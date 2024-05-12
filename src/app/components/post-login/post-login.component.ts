@@ -11,17 +11,14 @@ import { LoginService } from 'src/app/shared/services/register/login.service';
   styleUrls: ['./post-login.component.css']
 })
 export class PostLoginComponent {
-  constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService, 
-    private _utility: Utility, private _meAPIUtility: meAPIUtility,
+  constructor(private _router: Router, private _cc: ConnectComponentsService, 
     public meAPIUtility: meAPIUtility, public loginService: LoginService ){
-    // this.myInfo = this.meAPIUtility.getMeData()
   }
 
   showSpinner = true
   errorOccured = false
   myInfo;
   ngOnInit(){
-     console.log('In user component')
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
       if (this.myInfo['restaurants'].length > 0) {
@@ -57,7 +54,6 @@ export class PostLoginComponent {
           sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
         this._router.navigate([navigationURL]);
       } else if (this.myInfo['companies'].length > 0) {
-        console.log('Navigationto admin');
         sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
         this._router.navigate(['admin/user-management']);
       } else {
@@ -70,6 +66,9 @@ export class PostLoginComponent {
         }
       }
       this.showSpinner = false;
+    },
+      error => {
+      alert('Me api load failed')
     });
       
   }

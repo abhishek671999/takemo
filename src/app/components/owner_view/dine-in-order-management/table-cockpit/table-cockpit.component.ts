@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { TableOrdersDialogComponent } from '../../dialogbox/table-orders-dialog/table-orders-dialog.component';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-table-cockpit',
@@ -11,11 +12,11 @@ import { TableOrdersDialogComponent } from '../../dialogbox/table-orders-dialog/
 })
 export class TableCockpitComponent {
 
-  constructor(private __tableService: TablesService, private __matDialog: MatDialog) { }
+  constructor(private __tableService: TablesService, private __matDialog: MatDialog, private __sessionWrapper: sessionWrapper) { }
   public tables;
   ngOnInit() {
     let httpParams = new HttpParams()
-    httpParams = httpParams.append('restaurant_id', sessionStorage.getItem('restaurant_id'));
+    httpParams = httpParams.append('restaurant_id', this.__sessionWrapper.getItem('restaurant_id'));
     this.__tableService.getTables(httpParams).subscribe(
       data => {
         console.log('This is data: ', data)

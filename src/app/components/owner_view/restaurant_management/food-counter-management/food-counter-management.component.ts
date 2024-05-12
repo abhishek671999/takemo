@@ -8,6 +8,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { svgDeleteIcon, svgEditIcon } from 'src/app/shared/icons/svg-icons';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-food-counter-management',
@@ -18,9 +19,9 @@ export class FoodCounterManagementComponent {
 
   constructor(
     private counterService: CounterService,
-    private dialog: MatDialog,
     private iconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
+    private __sessionWrapper: sessionWrapper
     ){
       iconRegistry.addSvgIconLiteral(
         'delete',
@@ -37,7 +38,7 @@ export class FoodCounterManagementComponent {
 
   ngOnInit(){
 
-    this.counterService.getRestaurantCounter(sessionStorage.getItem('restaurant_id')).subscribe(
+    this.counterService.getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id')).subscribe(
       data => {
         this.counterResponse = data['counters']
         this.counterResponse.forEach(element => {
@@ -59,7 +60,7 @@ export class FoodCounterManagementComponent {
       counter.is_edit = !counter.is_edit
     }else{
       let body = {
-        "restaurant_id": sessionStorage.getItem('restaurant_id'),
+        "restaurant_id": this.__sessionWrapper.getItem('restaurant_id'),
         "counter_id": counter.counter_id,
         "counter_name": event.target.value
       }
@@ -80,7 +81,7 @@ export class FoodCounterManagementComponent {
 
   addCounter(){
     let body = {
-      "restaurant_id": sessionStorage.getItem('restaurant_id'),
+      "restaurant_id": this.__sessionWrapper.getItem('restaurant_id'),
       "counter_name": this.counterFormControl.value
     }
     this.counterService.addRestaurantCounter(body).subscribe(

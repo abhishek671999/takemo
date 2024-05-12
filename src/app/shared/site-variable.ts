@@ -91,9 +91,71 @@ export class meAPIUtility {
     console.log('after deleting', this.cookieService.getAll());
   }
 
+  
+}
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class sessionWrapper{
+
+  constructor(public meAPIUtility: meAPIUtility){}
+
+  async setSessionVariables() {
+    return new Promise((resolve, reject) => {
+      this.meAPIUtility.getMeData().subscribe((data) => {
+        if (data['restaurants'].length > 0) {
+          sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
+          sessionStorage.setItem(
+            'restaurant_name',
+            data['restaurants'][0]['restaurant_name']
+          );
+          sessionStorage.setItem(
+            'restaurant_address',
+            data['restaurants'][0]['restaurant_address']
+          );
+          sessionStorage.setItem(
+            'restaurant_gst',
+            data['restaurants'][0]['restaurant_gst']
+          );
+          sessionStorage.setItem(
+            'restaurant_kds',
+            data['restaurants'][0]['restaurant_kds']
+          );
+          sessionStorage.setItem(
+            'restaurantType',
+            (data['restaurants'][0]['type'] as string).toLowerCase()
+          );
+          sessionStorage.setItem(
+            'counter_management',
+            data['restaurants'][0]['counter_management']
+          );
+          sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
+          sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
+          sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
+        } else if (data['companies'].length > 0) {
+          sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+        } 
+        resolve(true)
+      }),
+        error => reject(false)
+    })
+    
+  }
+
+  getItem(key: string) {
+      let item = sessionStorage.getItem(key);
+      if (item) return(item);
+      else {
+        this.setSessionVariables()
+      return sessionStorage.getItem(key) 
+    }
+  }
+
   doesUserBelongsToITT() {
     let validation = false;
-    this.getMeData().subscribe((data) => {
+    this.meAPIUtility.getMeData().subscribe((data) => {
       for (let company of data['companies']) {
         if (company.role_name == 'corporate_admin' && company.company_id == 1) {
           validation = true;
@@ -113,7 +175,7 @@ export class meAPIUtility {
 
   doesUserBelongsToRaviGobi() {
     let validation = false;
-    this.getMeData().subscribe((data) => {
+    this.meAPIUtility.getMeData().subscribe((data) => {
       for (let restaurant of data['restaurants']) {
         if ([7].includes(restaurant.restaurant_id)) {
           validation = true;
@@ -124,19 +186,19 @@ export class meAPIUtility {
   }
 
   isCounterManagementEnabled() {
-    return sessionStorage.getItem('counter_management') == 'true' ? true: false
+    return this.getItem('counter_management') == 'true' ? true: false
   }
 
   isExpenseManagementEnabled() {
-    return sessionStorage.getItem('expense_management') == 'true' ? true: false
+    return this.getItem('expense_management') == 'true' ? true: false
   }
 
   isInventoryManagementEnabled() {
-    return sessionStorage.getItem('inventory_management') == 'true' ? true: false
+    return this.getItem('inventory_management') == 'true' ? true: false
   }
 
   isTableManagementEnabled() {
-    return sessionStorage.getItem('table_management') == 'true' ? true : false;
+    return this.getItem('table_management') == 'true' ? true : false;
   }
   
 }

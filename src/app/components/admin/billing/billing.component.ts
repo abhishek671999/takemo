@@ -17,6 +17,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { BillingService } from 'src/app/shared/services/billing/billing.service';
 
 import moment from 'moment';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 // const moment = _rollupMoment || _moment;
 
 // See the Moment.js docs for the meaning of these formats:
@@ -58,15 +59,15 @@ export class BillingComponent {
     { displayValue: 'Tikkad kitchen', restaurant_id: 2}
   ]
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
+  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id') ? true : false
 
-  constructor(private _billingService: BillingService){}
+  constructor(private _billingService: BillingService, private __sessionWrapper: sessionWrapper){}
   base64: string
 
   ngOnInit(){
     var date = new Date()
     let body = {
-        "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
+        "restaurant_id": this.__sessionWrapper.getItem('restaurant_id') ? this.__sessionWrapper.getItem('restaurant_id'): this.selectedRestaurant ,
         "month_and_year": `${date.toLocaleString("default", { month: "2-digit" })}/${date.getFullYear()}`
     }
     this._billingService.getRestaurantBilling(body).subscribe(

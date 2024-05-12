@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-table-management',
@@ -15,7 +16,8 @@ export class TableManagementComponent {
   constructor(
     private __tableService: TablesService,
     private __fb: FormBuilder,
-    private __dialog: MatDialog
+    private __dialog: MatDialog,
+    private __sessionWrapper: sessionWrapper
   ) {}
   tables = [];
 
@@ -24,12 +26,12 @@ export class TableManagementComponent {
     table_capacity: ['', [Validators.required]],
   });
 
-  restaurantId = sessionStorage.getItem('restaurant_id');
+  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
   ngOnInit() {
     let httpParams = new HttpParams();
     httpParams = httpParams.append(
       'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
+      this.__sessionWrapper.getItem('restaurant_id')
     );
     this.__tableService.getTables(httpParams).subscribe(
       (data) => {

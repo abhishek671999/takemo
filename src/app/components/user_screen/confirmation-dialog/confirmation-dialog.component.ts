@@ -15,6 +15,7 @@ import { MeService } from 'src/app/shared/services/register/me.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -31,7 +32,8 @@ export class ConfirmationDialogComponent {
     private _snackBar: MatSnackBar,
     private meService: MeService,
     private _fb: FormBuilder,
-    private _tableService: TablesService
+    private _tableService: TablesService,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   public isPayment;
@@ -77,7 +79,7 @@ export class ConfirmationDialogComponent {
     let httpParams = new HttpParams();
     httpParams = httpParams.append(
       'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
+      this.__sessionWrapper.getItem('restaurant_id')
     );
     httpParams = this.summary.table_id? httpParams.append('table_id', this.summary.table_id): httpParams
     this.__ordersService.checkIfPaymentRequired(httpParams).subscribe(
@@ -162,6 +164,7 @@ export class ConfirmationDialogComponent {
         console.log('Payment done', data);
         sessionStorage.setItem('transaction_id', data['transaction_id']);
         sessionStorage.setItem('order_no', data['order_no']);
+        this.clearCart()
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Your Order number is: ' + data['order_no'] },
         });
@@ -184,6 +187,7 @@ export class ConfirmationDialogComponent {
         sessionStorage.setItem('transaction_id', data['transaction_id']);
         sessionStorage.setItem('order_no', data['order_no']);
         sessionStorage.setItem('redirectURL', '/user/myorders');
+        this.clearCart()
         window.location.href = data['payment_url'];
       },
       (error) => {
@@ -224,6 +228,7 @@ export class ConfirmationDialogComponent {
         console.log('Payment done', data);
         sessionStorage.setItem('transaction_id', data['transaction_id']);
         sessionStorage.setItem('order_no', data['order_no']);
+        this.clearCart()
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Your Order number is: ' + data['order_no'] },
         });
@@ -380,15 +385,21 @@ export class ConfirmationDialogComponent {
     )
   }
 
+  clearCart() {
+    this.summary.itemList.splice(0, this.summary.itemList.length+ 1)
+    this.summary.amount = 0
+  }
+
   placeTableOrder() {
     let body = this.preparePlaceOrderBody(false)
 
     this.__ordersService.createOrders(body).subscribe(
       data => {
+        this.clearCart();
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Your Order number is: ' + data['order_no'] },
         });
-        this.dialogRef.close()
+        this.dialogRef.close({orderlist: this.summary})
       },
       error => {
         this.dialog.open(ErrorMsgDialogComponent, {

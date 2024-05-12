@@ -229,7 +229,7 @@
                  -->
       <div class="order-summary fixed">
         <div class="text-center amount">
-          Total Amount:&nbsp; &nbsp;₹ {{ amount }}
+          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
         </div>
         <div class="text-center prepare-summary">
           <button
@@ -237,7 +237,7 @@
             color="primary"
             class="btn btn-primary"
             (click)="prepareSummary()"
-            [disabled]="!amount"
+            [disabled]="!orderList.amount"
           >
             Checkout
           </button>

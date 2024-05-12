@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-table-orders-dialog',
@@ -23,11 +24,12 @@ export class TableOrdersDialogComponent {
     private __orderService: OrdersService,
     private __matDialog: MatDialog,
     private __router: Router,
-    private __tableService: TablesService
+    private __tableService: TablesService,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   tableOccupied = false;
-  restaurantId = Number(sessionStorage.getItem('restaurant_id'));
+  restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'));
 
   orders;
   totalAmount;

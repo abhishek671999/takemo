@@ -22,7 +22,7 @@ import {
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-edit-menu',
@@ -41,7 +41,7 @@ export class EditMenuComponent {
     private _restaurantService: RestuarantService,
     private _counterService: CounterService,
     private _editMenuService: EditMenuService,
-    private _meUtitlity: meAPIUtility
+    private __sessionWrapper: sessionWrapper
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -75,9 +75,9 @@ export class EditMenuComponent {
 
   countersAvailable;
 
-  public restaurantType = sessionStorage.getItem('restaurantType');
-  public counterMangement = this._meUtitlity.isCounterManagementEnabled()
-  public inventoryManagement = this._meUtitlity.isInventoryManagementEnabled()
+  public restaurantType = this.__sessionWrapper.getItem('restaurantType');
+  public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
+  public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
 
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -221,7 +221,7 @@ export class EditMenuComponent {
   toggleRestOpen() {
     console.log('Restaurant toggled');
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       is_open: !this.restaurantStatus,
     };
     this._restaurantService.editIsRestaurantOpen(body).subscribe(
@@ -261,9 +261,9 @@ export class EditMenuComponent {
   }
   navigateToOrders() {
     let navigationURL =
-      sessionStorage.getItem('restaurant_kds') == 'true'
+    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
         ? '/owner/orders/pending-orders'
-        : sessionStorage.getItem('restaurantType') == 'e-commerce'
+        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this._router.navigate([navigationURL]);

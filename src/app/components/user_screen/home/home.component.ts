@@ -7,28 +7,31 @@ import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
-  constructor(private _router: Router,private _restuarantService: RestuarantService, private activatedRoute: ActivatedRoute) {}
+  constructor(
+    private _router: Router,
+    private _restuarantService: RestuarantService,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
-  showSpinner = true
-  public restaurantInfo
-  ngOnInit(){
-    setTimeout( () => {
-    this._restuarantService.getResturantInfo().subscribe(
-        data => this.restaurantInfo=data,
-        error => console.log(error)
-      )
-      this.showSpinner = false
-    }, 10)
+  showSpinner = true;
+  public restaurantInfo;
+  ngOnInit() {
+    setTimeout(() => {
+      this._restuarantService.getResturantInfo().subscribe(
+        (data) => (this.restaurantInfo = data),
+        (error) => console.log(error)
+      );
+      this.showSpinner = false;
+    }, 10);
   }
-  
-  onSelect(info){
-    console.log(info.restaurant_id)
-    sessionStorage.setItem('restaurant_id', info.restaurant_id)
-    sessionStorage.setItem('table_management', info.table_management)
-    this._router.navigate(['./user/menu', info.restaurant_id])
+
+  onSelect(info) {
+    sessionStorage.setItem('restaurant_id', info.restaurant_id);
+    sessionStorage.setItem('table_management', info.table_management);
+    this._router.navigate(['./user/menu', info.restaurant_id]);
   }
 
   printpath(parent: string, config: Route[]) {
@@ -37,10 +40,9 @@ export class HomeComponent {
       console.log(parent + '/' + route.path);
       if (route.children) {
         const currentPath = route.path ? `${parent}/${route.path}` : parent;
-        console.log('children')
+        console.log('children');
         this.printpath(currentPath, route.children);
       }
     }
   }
-
 }
