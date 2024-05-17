@@ -52,6 +52,7 @@ import { PostRechargePaymentComponent } from './post-recharge-payment/post-recha
 import { ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ProfileComponent } from '../shared/profile/profile.component';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -102,7 +103,7 @@ import { ProfileComponent } from '../shared/profile/profile.component';
     SharedModuleModule,
     MatSelectModule,
     MatSnackBarModule,
-
+    MatBadgeModule
   ],
   exports: [],
 })

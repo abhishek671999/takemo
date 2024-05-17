@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   MatDialog,
@@ -12,6 +12,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
 
 @Component({
   selector: 'app-menu',
@@ -35,7 +36,8 @@ export class MenuComponent {
     private _orderService: OrdersService,
     private _tableService: TablesService,
     private _meUtilityService: meAPIUtility,
-    private __sessionWrapper: sessionWrapper
+    private __sessionWrapper: sessionWrapper,
+    private __cartService: cartConnectService
   ) {}
 
   menu_response: any;
@@ -49,6 +51,7 @@ export class MenuComponent {
   filteredMenu;
   searchText = '';
   hideCategory = true;
+  hideCart = false;
   currentCategory = null;
   summary = {
     amount: 0,
@@ -99,7 +102,6 @@ export class MenuComponent {
             });
           },
           (error) => {
-            console.log('This is tables: ', error);
             alert('Failed to fetch table');
           }
         );
@@ -108,13 +110,24 @@ export class MenuComponent {
   }
 
   setQuantity() {
-    console.log('Setting quantity:', this.menu_response);
+    let cartItems = this.__cartService.getCartItems()
+    this.orderList.itemList = cartItems? cartItems.itemList: []
+    this.orderList.amount = cartItems? cartItems.amount: 0
+    console.log('Setting quantity:', this.menu_response, cartItems);
     this.menu.forEach((category) => {
       category.category.items.forEach((item) => {
-        item.quantity = 0;
+        let matchedItem = cartItems?.itemList.filter((ele) => ele.id == item.id)
+        if (cartItems && matchedItem?.length) {
+          item.quantity = matchedItem[0].quantity
+          item.parcelQuantity = matchedItem[0].parcelQuantity
+        } else {
+          item.quantity = 0;
         item.parcelQuantity = 0;
+        }
+        
       });
     });
+    
   }
 
   createAllCategory() {
@@ -139,6 +152,10 @@ export class MenuComponent {
       'collapsable-category-bar'
     ) as HTMLElement;
     categoryBar.style.zIndex = this.hideCategory ? '5' : '0';
+  }
+
+  togglehideCart() {
+    this.hideCart = !this.hideCart;
   }
 
   showOnlyFirstCategory() {
@@ -223,6 +240,7 @@ export class MenuComponent {
         this.orderList.itemList.push(item);
       }
     }
+    this.__cartService.setCartItems(this.orderList)
   }
   subItem(item, event) {
     event.stopPropagation();
@@ -238,6 +256,7 @@ export class MenuComponent {
         (x) => x.id != item.id
       );
     }
+    this.__cartService.setCartItems(this.orderList)
   }
 
   prepareSummary() {
@@ -268,8 +287,8 @@ export class MenuComponent {
         if (result.mode == 'wallet') {
           this._router.navigate(['/user/myorders']);
         } else {
-
           this.orderList = result.orderlist;
+          this.__cartService.setCartItems(this.orderList)
         }
         //this.updateSummary(result.orderList);
       }

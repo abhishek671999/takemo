@@ -16,6 +16,13 @@ td {
   border-radius: 10px;
 }
 
+.sub-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content:space-between;
+}
+
 /* .flex-container {
   padding-top: 2%;
   display: flex;

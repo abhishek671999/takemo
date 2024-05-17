@@ -168,7 +168,7 @@ export class ConfirmationDialogComponent {
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Your Order number is: ' + data['order_no'] },
         });
-        this.dialogRef.close({ mode: 'wallet' });
+        this.dialogRef.close({ mode: 'wallet', orderlist: this.summary});
       },
       (error) => {
         this.dialog.open(ErrorMsgDialogComponent, {
@@ -188,6 +188,7 @@ export class ConfirmationDialogComponent {
         sessionStorage.setItem('order_no', data['order_no']);
         sessionStorage.setItem('redirectURL', '/user/myorders');
         this.clearCart()
+        this.dialogRef.close({ mode: 'wallet', orderlist: this.summary});
         window.location.href = data['payment_url'];
       },
       (error) => {
@@ -232,7 +233,7 @@ export class ConfirmationDialogComponent {
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Your Order number is: ' + data['order_no'] },
         });
-        this.dialogRef.close({ mode: 'wallet' });
+        this.dialogRef.close({ mode: 'wallet', orderlist: this.summary });
       },
       (error) => {
         this.dialog.open(ErrorMsgDialogComponent, {
@@ -386,7 +387,10 @@ export class ConfirmationDialogComponent {
   }
 
   clearCart() {
-    this.summary.itemList.splice(0, this.summary.itemList.length+ 1)
+    this.summary.itemList.forEach(element => {
+      element.quantity = 0
+      element.parcelQuantity = 0
+    });
     this.summary.amount = 0
   }
 

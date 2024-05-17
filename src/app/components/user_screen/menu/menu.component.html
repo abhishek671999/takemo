@@ -6,9 +6,15 @@
   </div>
   <ng-template #elseBlock>
     <div *ngIf="menu_response.is_open; else resturantClosed">
-      <h2 class="text-center mt-2 mb-0">
-        {{ menu_response.restaurant_name }}
-      </h2>
+      <div class="sub-header">
+        <h2 class="text-center mt-2 mb-0">
+          {{ menu_response.restaurant_name }}
+        </h2>
+        <mat-icon [matBadge]="orderList.itemList.length" matBadgePosition="before"  matBadgeColor="accent"
+        (click)="togglehideCart()" (clickOutside)="hideCategory = true"
+        >add_shopping_cart</mat-icon>
+      </div>
+
       <div class="selection-panel">
         <mat-form-field *ngIf="tableManagement">
           <mat-label>Table</mat-label>

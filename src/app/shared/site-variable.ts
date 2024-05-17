@@ -38,7 +38,6 @@ export class Utility {
     let newDate = new Date(
       new Date().getTime() + totalExpiryDate * 24 * 60 * 60 * 1000
     );
-    console.log('NEw date: ', newDate);
     this.cookieService.set('token', key, newDate, '/');
   }
 }
@@ -79,16 +78,13 @@ export class meAPIUtility {
   }
 
   removeMeData() {
-    console.log('Before removeMe data: ', this.cookieService.getAll());
     this.cookieService.deleteAll('/');
     this.cookieService.delete('token');
     this.cookieService.delete('me');
     if (this.cookieService.getAll()) {
-      console.log('Deleting cookies again');
       this.cookieService.delete('token');
       this.cookieService.deleteAll('/');
     }
-    console.log('after deleting', this.cookieService.getAll());
   }
 
   
