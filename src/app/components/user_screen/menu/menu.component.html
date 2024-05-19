@@ -11,9 +11,64 @@
           {{ menu_response.restaurant_name }}
         </h2>
         <mat-icon [matBadge]="orderList.itemList.length" matBadgePosition="before"  matBadgeColor="accent"
-        (click)="togglehideCart()" (clickOutside)="hideCategory = true"
+        (click)="togglehideCart()" (clickOutside)="hideCart = true"
         >add_shopping_cart</mat-icon>
       </div>
+      <div
+      class="cart-bar"
+      id="collapsable-cart-bar"
+      *ngIf="!hideCart"
+      >
+      <div class="cart-description-wrapper">
+        <table class="table table-hover">
+          <thead class="text-center">
+              <tr>
+                  <th class="col1" scope="col">Id</th>
+                  <th class="col2" scope="col">Name</th>
+                  <th class="col3" scope="col">Edit</th>
+                  <th class="col4">Amount</th>
+                  <th class="col5" scope="col">Delete</th>
+              </tr>
+          </thead>
+          <tbody class="text-center" >
+              <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+              <tr class="table-row" *ngFor="let item of orderList.itemList; let mainIndex = index">
+                  <td class="col1" >{{mainIndex+1}}</td>
+                  <td class="col2" >{{item.name}}</td>
+                  <td class="col3" >
+                    <div class="item-quantity">
+                      <mat-icon (click)="subItem(item, $event)">remove_circle</mat-icon>
+                      <div style="padding: 2px">
+                        {{ item.quantity }}
+                      </div>
+                      <mat-icon (click)="addItem(item, $event)">add_circle</mat-icon>
+                    </div>
+                  </td>
+                  <td class="col4" >{{item.quantity * item.price}}</td>
+                  <td class="col5">
+                    <mat-icon (click)="clearItem(item, $event)">delete</mat-icon>
+                  </td>
+              </tr>
+            </tbody>
+        </table>
+        <div class="cart-action">
+          <div class="text-center amount">
+            Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+          </div>
+          <div class="text-center prepare-summary">
+            <button
+              mat-raised-button
+              color="primary"
+              class="btn btn-primary"
+              (click)="prepareSummary()"
+              [disabled]="!orderList.amount"
+            >
+              Checkout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
       <div class="selection-panel">
         <mat-form-field *ngIf="tableManagement">
@@ -191,48 +246,6 @@
                       </div>
                     </div> -->
       </div>
-
-      <!-- <cdk-virtual-scroll-viewport itemSize="1" class="viewport" >
-                <mat-expansion-panel [expanded]="mainIndex === 0" *ngFor="let category of menu_response.menu; let mainIndex = index">
-                    <mat-expansion-panel-header >
-                        <mat-panel-title>
-                            <b style="font-size: x-large;">{{category.category.name}}</b>
-                          </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <table class="table table-hover">
-                        <thead class="text-center">
-                            <tr>
-                                <th class="col1" scope="col">Id</th>
-                                <th class="col2" scope="col">Item</th>
-                                <th class="col3" scope="col">Price</th>
-                                <th class="col4" scope="col">Add</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-center" >
-                            <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p> 
-                            <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
-                                <td class="col1" >{{subIndex+1}}</td>
-                                <td class="col2 item-name" >
-                                    <img class="indicator-image" *ngIf="item.veg" src="../../../../assets/images/veg_icon.png">
-                                    <img class="indicator-image" *ngIf="item.non_veg" src="../../../../assets/images/non_veg_icon.png">
-                                    <img class="indicator-image" *ngIf="item.egg" src="../../../../assets/images/egg_icon.jpg">
-                                    <p class="item-text">{{item.name}}</p>
-                                </td>
-                                <td class="col3" >{{item.price}}</td>
-                                <td class="col4" >
-                                    <div *ngIf="item.is_available; then thenTDblock else tdelseblock"></div>
-                                    <ng-template #thenTDblock>
-                                        <i class="fa-solid fa-minus" (click)="subItem(item)"></i>
-                                        <span class="m-2">{{item.quantity}}</span>
-                                        <i class="fa-solid fa-plus" (click)="addItem(item)"></i>
-                                    </ng-template>
-                                    <ng-template #tdelseblock><span>Unavailable</span></ng-template>
-                            </tr>
-                        </tbody>
-                    </table>
-                </mat-expansion-panel>
-            </cdk-virtual-scroll-viewport>
-                 -->
       <div class="order-summary fixed">
         <div class="text-center amount">
           Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}

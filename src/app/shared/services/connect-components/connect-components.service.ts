@@ -37,7 +37,7 @@ export class cartConnectService{
     cartItems.itemList = cartItems.itemList.filter((ele) => ele.quantity + ele.parcelQuantity != 0)
     let existingCart = this.__cookieService.get('cart');
     let cartCookie = existingCart
-      ? { [restaurantId]: cartItems, ...JSON.parse(existingCart) }
+      ? { ...JSON.parse(existingCart), [restaurantId]: cartItems }
       : { [restaurantId]: cartItems };
     console.log('This is cartcokkie', cartCookie);
     this.__cookieService.set(

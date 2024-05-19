@@ -51,12 +51,8 @@ export class MenuComponent {
   filteredMenu;
   searchText = '';
   hideCategory = true;
-  hideCart = false;
+  hideCart = true;
   currentCategory = null;
-  summary = {
-    amount: 0,
-    itemList: [],
-  };
 
   ngOnInit() {
     this.showSpinner = true;
@@ -155,7 +151,12 @@ export class MenuComponent {
   }
 
   togglehideCart() {
+    console.log('hide cart called')
     this.hideCart = !this.hideCart;
+    let cartBar = document.getElementById(
+      'collapsable-cart-bar'
+    ) as HTMLElement;
+    cartBar.style.zIndex = this.hideCart ? '5' : '0';
   }
 
   showOnlyFirstCategory() {
@@ -211,7 +212,6 @@ export class MenuComponent {
   }
 
   addItem(item, event) {
-    console.log('Clciked', item);
     event.stopPropagation();
 
     let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
@@ -252,29 +252,23 @@ export class MenuComponent {
       }
     }
     if (itemAdded?.quantity == 0 || item.quantity == 0) {
-      this.orderList.itemList = this.summary.itemList.filter(
+      this.orderList.itemList = this.orderList.itemList.filter(
         (x) => x.id != item.id
       );
     }
     this.__cartService.setCartItems(this.orderList)
   }
 
+  clearItem(item, event) {
+    event.stopPropagation()
+    this.orderList.amount -= ((item.quantity * item.price) + (item.parcelQuantity * item.price))
+    item.quantity = 0
+    item.parcelQuantity = 0
+    this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.id != item.id)
+    this.__cartService.setCartItems(this.orderList)
+  }
+
   prepareSummary() {
-    // this.menu_response.menu.forEach((category) => {
-    //   category.category.items.forEach((item) => {
-    //     if (item.quantity || item.parcelQuantity) {
-    //       let itemSummary = {
-    //         id: item.id,
-    //         name: item.name,
-    //         quantity: item.quantity,
-    //         price: item.price,
-    //         parcelQuantity: item.parcelQuantity,
-    //       };
-    //       this.orderList.itemList.push(itemSummary);
-    //     }
-    //   });
-    // });
-    // this.orderList.amount = this.amount;
     this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
@@ -290,7 +284,6 @@ export class MenuComponent {
           this.orderList = result.orderlist;
           this.__cartService.setCartItems(this.orderList)
         }
-        //this.updateSummary(result.orderList);
       }
     });
   }
