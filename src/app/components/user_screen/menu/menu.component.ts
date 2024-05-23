@@ -129,7 +129,10 @@ export class MenuComponent {
   createAllCategory() {
     let allItems = [];
     this.menu.forEach((ele, index) => {
-      allItems.push(...ele.category.items);
+      ele.category.items.forEach(item => {
+        allItems.push(item);
+      });
+      
     });
     //allItems = allItems.flat()
     this.menu.push({
@@ -225,7 +228,7 @@ export class MenuComponent {
           : true)
       ) {
         itemAdded.quantity += 1;
-        if (item !== itemAdded) item.quantity += 1;
+        this.updateSelectedItem(itemAdded)
         this.orderList.amount += itemAdded.price;
       }
     } else {
@@ -236,6 +239,7 @@ export class MenuComponent {
           : true)
       ) {
         item.quantity += 1;
+        this.updateSelectedItem(item)
         this.orderList.amount += item.price;
         this.orderList.itemList.push(item);
       }
@@ -247,7 +251,8 @@ export class MenuComponent {
     let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
     if (itemAdded) {
       if (itemAdded.quantity > 0 || item.quantity > 0) {
-        item !== itemAdded ? (item.quantity -= 1) : (itemAdded.quantity -= 1);
+        itemAdded -= 1
+        this.updateSelectedItem(itemAdded)
         this.orderList.amount -= itemAdded.price;
       }
     }
@@ -259,12 +264,22 @@ export class MenuComponent {
     this.__cartService.setCartItems(this.orderList)
   }
 
+  updateSelectedItem(item) {
+    this.filteredMenu.forEach(category => {
+      category.category.items.forEach(existingItem => {
+        if (existingItem.id == item.id) {
+          existingItem.quantity = item.quantity
+        }
+      } )
+    });     
+  }
   clearItem(item, event) {
     event.stopPropagation()
     this.orderList.amount -= ((item.quantity * item.price) + (item.parcelQuantity * item.price))
     item.quantity = 0
     item.parcelQuantity = 0
     this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.id != item.id)
+    this.updateSelectedItem(item)
     this.__cartService.setCartItems(this.orderList)
   }
 
@@ -330,7 +345,6 @@ export class MenuComponent {
     } else {
       this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
       this.showOnlyFirstCategory();
-      console.log(this.menu, this.filteredMenu);
     }
   }
 }

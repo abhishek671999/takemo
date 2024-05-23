@@ -45,6 +45,8 @@ import { OrdersHomeComponent } from './orders-home/orders-home.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DummyUploadImagesComponent } from './dummy-upload-images/dummy-upload-images.component';
+import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,8 @@ import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
     DeleteRuleConfirmationComponent,
     Time24to12Format,
     CurrentOrdersComponent,
-    OrdersHomeComponent
+    OrdersHomeComponent,
+    DummyUploadImagesComponent
   ],
   imports: [
     CommonModule,
@@ -92,7 +95,8 @@ import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
     SharedModuleModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    UploadFormComponent
   ],
   providers: [
     {
