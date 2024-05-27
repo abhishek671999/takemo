@@ -109,7 +109,6 @@ export class MenuComponent {
     let cartItems = this.__cartService.getCartItems()
     this.orderList.itemList = cartItems? cartItems.itemList: []
     this.orderList.amount = cartItems? cartItems.amount: 0
-    console.log('Setting quantity:', this.menu_response, cartItems);
     this.menu.forEach((category) => {
       category.category.items.forEach((item) => {
         let matchedItem = cartItems?.itemList.filter((ele) => ele.id == item.id)
@@ -147,19 +146,26 @@ export class MenuComponent {
 
   togglehideCategory() {
     this.hideCategory = !this.hideCategory;
-    let categoryBar = document.getElementById(
-      'collapsable-category-bar'
-    ) as HTMLElement;
-    categoryBar.style.zIndex = this.hideCategory ? '5' : '0';
+    setTimeout(() => {
+      let categoryBar = document.getElementById(
+        'collapsable-category-bar'
+      ) as HTMLElement;
+      categoryBar.style.zIndex = this.hideCategory ? '0' : '5';
+    }, 5);
+    
   }
 
   togglehideCart() {
-    console.log('hide cart called')
+
     this.hideCart = !this.hideCart;
-    let cartBar = document.getElementById(
-      'collapsable-cart-bar'
-    ) as HTMLElement;
-    cartBar.style.zIndex = this.hideCart ? '5' : '0';
+    setTimeout(() => {
+      let cartBar = document.getElementById(
+        "collapsable-cart-bar"
+      ) as HTMLElement;
+      console.log(cartBar)
+      cartBar.style.zIndex = this.hideCart ? '0' : '5';
+    }, 5);
+    
   }
 
   showOnlyFirstCategory() {
@@ -216,10 +222,8 @@ export class MenuComponent {
 
   addItem(item, event) {
     event.stopPropagation();
-
     let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
     if (itemAdded) {
-      console.log(itemAdded);
       if (
         itemAdded.quantity < 30 &&
         (itemAdded.inventory_stock
@@ -251,7 +255,7 @@ export class MenuComponent {
     let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
     if (itemAdded) {
       if (itemAdded.quantity > 0 || item.quantity > 0) {
-        itemAdded -= 1
+        itemAdded.quantity -= 1
         this.updateSelectedItem(itemAdded)
         this.orderList.amount -= itemAdded.price;
       }
@@ -271,8 +275,16 @@ export class MenuComponent {
           existingItem.quantity = item.quantity
         }
       } )
+    });
+    this.menu.forEach(category => {
+      category.category.items.forEach(existingItem => {
+        if (existingItem.id == item.id) {
+          existingItem.quantity = item.quantity
+        }
+      } )
     });     
   }
+
   clearItem(item, event) {
     event.stopPropagation()
     this.orderList.amount -= ((item.quantity * item.price) + (item.parcelQuantity * item.price))
@@ -290,7 +302,6 @@ export class MenuComponent {
       data: this.orderList,
     });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('Result from dialog component: ', result);
       if (result) {
         console.log(result);
         if (result.mode == 'wallet') {

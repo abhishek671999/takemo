@@ -205,9 +205,14 @@ p {
   width: 30%;
 }
 
+.card-lower-section{
+  display: flex;
+  justify-content: space-between;
+}
+
 .item-quantity{
   display: flex;
-  justify-content: flex-end;  
+  justify-content: space-between;  
 }
 
 .item-type{
@@ -234,6 +239,9 @@ p {
   display: none;
 }
 
+#collapsable-category-bar{
+  transition: 2s linear all;
+}
 .show > div{
   display: block;
 }

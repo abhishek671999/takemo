@@ -82,10 +82,10 @@ export class EditMenuComponent {
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
-      this._menuService.getMenu(this.restaurantId).subscribe(
+      this._menuService.getAdminMenu(this.restaurantId).subscribe(
         (data) => {
           this.restaurantStatus = data['is_open']
-          this.menu_response = data
+          this.menu_response = data['menu']
         },
         (error) => console.log(error)
       );
@@ -98,17 +98,17 @@ export class EditMenuComponent {
   }
 
   toggleAvailability(item) {
-    console.log('Toggled', item);
     let body = {
       item_id: item.id,
       is_available: !item.is_available,
     };
     this._menuEditService.editItemAvailability(body).subscribe(
       (data) => {
-        console.log('Toggle successfule: ', data);
         item.is_available = !item.is_available;
       },
-      (error) => console.log('Toggle failed: ', error)
+      (error) => {
+        alert('Failed to change availability')
+      }
     );
   }
 
@@ -140,10 +140,11 @@ export class EditMenuComponent {
     };
     this._menuEditService.editItemAvailability(body).subscribe(
       (data) => {
-        console.log('Toggle successfule: ', data);
         item.is_favourite = !item.is_favourite;
       },
-      (error) => console.log('Toggle failed: ', error)
+      (error) => {
+        alert('Toggle failed')
+      }
     );
   }
 
@@ -200,7 +201,6 @@ export class EditMenuComponent {
   }
 
   addCategory() {
-    console.log('Add category');
     let dialogRef = this._dialog.open(AddCategoryDialogComponent, {
       data: { restaurant_id: this.restaurantId },
     });
@@ -208,7 +208,6 @@ export class EditMenuComponent {
   }
 
   addItem(category) {
-    console.log('Add item', category);
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
       data: Object.assign(category, {
         restaurant_id: this.restaurantId,

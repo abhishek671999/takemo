@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { ImagesService } from 'src/app/shared/services/images/images.service';
 
 @Component({
   standalone: true,
   imports: [CommonModule],
   selector: 'app-upload-form',
   templateUrl: './upload-form.component.html',
-  styleUrls: ['./upload-form.component.css']
+  styleUrls: ['./upload-form.component.css'],
 })
 export class UploadFormComponent {
-
   outputBoxVisible = false;
   progress = `0%`;
   uploadResult = '';
@@ -17,7 +17,7 @@ export class UploadFormComponent {
   fileSize = '';
   uploadStatus: number | undefined;
 
-  constructor() {}
+  constructor(private __imageService: ImagesService) {}
 
   onFileSelected(event: any) {
     this.outputBoxVisible = false;
@@ -27,7 +27,6 @@ export class UploadFormComponent {
     this.fileSize = '';
     this.uploadStatus = undefined;
     const file: File = event.dataTransfer?.files[0] || event.target?.files[0];
-    debugger
     if (file) {
       this.fileName = file.name;
       this.fileSize = `${(file.size / 1024).toFixed(2)} KB`;
@@ -35,24 +34,16 @@ export class UploadFormComponent {
 
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('item_id', '218');
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://webhook.site/e3a4aea5-29cb-4612-a227-8b7ff4e84074', true);
-
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            this.uploadResult = 'Uploaded';
-          } else if (xhr.status === 400) {
-            this.uploadResult = JSON.parse(xhr.response)!.message;
-          } else {
-            this.uploadResult = 'File upload failed!';
-          }
-          this.uploadStatus = xhr.status;
+      this.__imageService.uploadImage(formData).subscribe(
+        (data) => {
+          console.log(data);
+        },
+        (error) => {
+          console.log(error);
         }
-      };
-
-      xhr.send(formData);
+      );
     }
   }
 

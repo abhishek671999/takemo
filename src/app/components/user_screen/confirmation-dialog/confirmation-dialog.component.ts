@@ -127,7 +127,8 @@ export class ConfirmationDialogComponent {
   }
 
   onEditButtonClick() {
-    this.dialogRef.close({ orderList: this.summary });
+    debugger
+    this.dialogRef.close({ orderlist: this.summary });
   }
 
   preparePlaceOrderBody(wallet = null) {
