@@ -36,7 +36,6 @@ export class AddItemDialogComponent {
   });
 
   addItem() {
-    console.log('Adding this item: ', this.addItemForm.value);
     let body = {
       restaurant_id: this.data.restaurant_id,
       name: this.addItemForm.value.name,

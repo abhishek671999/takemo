@@ -176,7 +176,7 @@ export class EditMenuComponent {
   editItem(item) {
     console.log('Edit item: ', item);
     let dialogRef = this._dialog.open(EditFormDialogComponent, {
-      data: Object.assign(item, { restaurant_id: this.restaurantId }),
+      data: Object.assign(item, { restaurant_id: this.restaurantId, countersAvailable: this.countersAvailable}),
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }
