@@ -2,7 +2,6 @@
     <form [formGroup]="editMenuForm" (ngSubmit)="editSubmit()">
         <h1 mat-dialog-title> Edit this item</h1>
         <div mat-dialog-content>
-                <div>
                     <div>
                         <mat-form-field>
                             <mat-label>Item Name</mat-label>
@@ -10,43 +9,144 @@
                         </mat-form-field>
                     </div>
                     <div>
-                        <mat-form-field>
-                            <mat-label>Price</mat-label>
-                        <input matInput placeholder="Price" value="{{data.price}}" formControlName="price">
-                        </mat-form-field>
-                    </div>
-                    <div>
-                        <mat-form-field>
-                            <mat-label>MRP Price</mat-label>
-                        <input matInput placeholder="MRP price" value="{{data.mrp_price}}" formControlName="mrp_price">
-                        </mat-form-field>
-                    </div>
-                    <div>
-                        <mat-radio-group formControlName="isVeg">
-                            <mat-radio-button value='veg' [checked]="data.veg">Veg</mat-radio-button>
-                            <mat-radio-button value='non_veg' [checked]="data.non_veg">Non Veg</mat-radio-button>
-                            <mat-radio-button value='egg' [checked]="data.egg">Egg</mat-radio-button>
-                        </mat-radio-group>
-                    </div>
-                    <div>
-                        <mat-select formControlName="counter_id">
-                            <mat-option>None</mat-option>
-                            <mat-option *ngFor="let option of data.countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
-                        </mat-select>
-                    </div>
-                    <div>
-                        <mat-form-field  [style.fontSize]="16">
-                        <mat-label>Description</mat-label>
-                        <textarea matInput
-                                  cdkTextareaAutosize
-                                  #autosize="cdkTextareaAutosize"
-                                  cdkAutosizeMinRows="1"
-                                  cdkAutosizeMaxRows="5"
-                                  formControlName="item_description"></textarea>
+                      <mat-radio-group formControlName="isVeg">
+                          <mat-radio-button value='veg' [checked]="data.veg">Veg</mat-radio-button>
+                          <mat-radio-button value='non_veg' [checked]="data.non_veg">Non Veg</mat-radio-button>
+                          <mat-radio-button value='egg' [checked]="data.egg">Egg</mat-radio-button>
+                      </mat-radio-group>
+                  </div>
+                  <div>
+                    <mat-radio-group formControlName="itemUnit">
+                      <mat-radio-button value='1' [checked]="data.item_unit.toLowerCase() == 'piece'">Piece</mat-radio-button>
+                      <mat-radio-button value="2" [checked]="data.item_unit.toLowerCase() == 'grams'">Grams</mat-radio-button>
+                      <mat-radio-button value="3" [checked]="data.item_unit.toLowerCase() == 'litre'">Litres</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                  <div *ngIf="showSubUnitSection()">
+                    <mat-form-field>
+                      <mat-label>Unit</mat-label>
+                      <mat-select formControlName="subItemUnit">
+                          <mat-option *ngFor="let unit of getSubUnits()" [value]="unit">{{unit}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div *ngIf="!showSubUnitSection()">
+                    <mat-form-field>
+                        <mat-label>Price</mat-label>
+                    <input matInput placeholder="Price" value="{{data.price}}" formControlName="price">
+                    </mat-form-field>
+                  </div>
+                  <div *ngIf="!showSubUnitSection()">
+                      <mat-form-field>
+                          <mat-label>MRP Price</mat-label>
+                      <input matInput placeholder="MRP price" value="{{data.mrp_price}}" formControlName="mrpPrice">
                       </mat-form-field>
-                    </div>
+                  </div>
+                  <div>
+                      <mat-form-field  [style.fontSize]="16">
+                      <mat-label>Description</mat-label>
+                      <textarea matInput
+                                cdkTextareaAutosize
+                                #autosize="cdkTextareaAutosize"
+                                cdkAutosizeMinRows="1"
+                                cdkAutosizeMaxRows="5"
+                                formControlName="itemDescription"></textarea>
+                    </mat-form-field>
+                  </div>
+                  <div class="unit-section" *ngIf="showSubUnitSection()">
+                    <table class="print-unit-table">
+                      <thead>
+                        <tr>
+                          <th>Quantity</th>
+                          <th>Price</th>
+                          <th>MRP Price</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      
+                      <tbody>
+                        <tr>
+                          <td>
+                            <mat-form-field>
+                              <mat-label>Quantity</mat-label>
+                              <input matInput placeholder="Quantity" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.quantity">
+                            </mat-form-field>
+                          </td>
+                          <td>
+                            <mat-form-field>
+                              <mat-label>Price</mat-label>
+                              <input matInput placeholder="Price" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.price">
+                            </mat-form-field>
+                          </td>
+                          <td>
+                            <mat-form-field>
+                              <mat-label>MRP rice</mat-label>
+                              <input matInput placeholder="Price" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.mrp_price">
+                            </mat-form-field>
+                          </td>
+                          <td>
+                            <mat-icon style="height: 32px; width: 30px;" (click)="addUnitPriceDetails()" svgIcon="plus"></mat-icon>
+                          </td>
+                          
+                        </tr>
+                        <tr *ngFor="let subItem of unitPriceDetails">
+                          <td>{{subItem.quantity}}</td>
+                          <td>{{subItem.price}}</td>
+                          <td>{{subItem.mrp_price}}</td>
+                          <td><mat-icon (click)="deleteSubItem(subItem)" svgIcon="delete"></mat-icon></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <mat-form-field>
+                      <mat-select formControlName="counterId">
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let option of data.countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <form class="upload-form">  
+                        <label
+                          for="file"
+                          (dragover)="handleDragOver($event)"
+                          (drop)="handleDrop($event)"
+                        >
+                          <i class="ph ph-upload"></i>
+                          <span>
+                            Click here to upload item image
+                          </span>
+                        </label>
+                      
+                        <input
+                          id="file"
+                          type="file"
+                          name="file"
+                          (change)="onFileSelected($event)"
+                        />
+                      
+                        <div class="result" [style.display]="outputBoxVisible ? 'flex' : 'none'">
+                          <i class="ph ph-file"></i>
+                          <div class="file-details">
+                            <span class="file-name">{{ fileName }}</span>
+                            <ng-container *ngIf="uploadStatus === 200 || uploadStatus === undefined">
+                              <span class="file-size">{{ fileSize }}</span>
+                            </ng-container>
+                          </div>
+                      
+                          <div class="upload-result" [style.display]="uploadStatus ? 'flex' : 'none'">
+                            <span>{{ uploadResult }}</span>
+                            <ng-container *ngIf="uploadStatus === 200; else error">
+                              <i class="ph ph-check-circle"></i>
+                            </ng-container>
+                            <ng-template #error>
+                              <i class="ph ph-x-circle"></i>
+                            </ng-template>
+                          </div>
+                        </div>
+                  </form>
 
-                </div>
+
         </div>
         <div mat-dialog-actions>
             <button mat-button type="button" (click)="close()">Cancel</button>

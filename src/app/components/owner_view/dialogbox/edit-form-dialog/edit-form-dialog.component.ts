@@ -27,24 +27,42 @@ export class EditFormDialogComponent {
   fileSize = '';
   uploadStatus: number | undefined;
   file: File;
+
+  acceptedUnits = ['Piece', 'Grams', 'Litre']
+  unitsSubUnitsMapping = {
+    '1': [],
+    '2': ['g', 'kg'],
+    '3': ['ml', 'l']
+  }
+  unitQuantityPriceObj = {
+    unit: null,
+    quantity: null,
+    price: null,
+    mrp_price: null
+  }
+  unitPriceDetails = []
   
   ngOnInit() {
     console.log(this.data)
+    this.unitPriceDetails = this.data.unit_price_details
+    console.log('unitprice details array', this.unitPriceDetails)
   }
 
   editMenuForm = this._fb.group({
     id: [this.data.id, Validators.required],
     name: [this.data.name, Validators.required],
-    price: [this.data.price, Validators.required],
+    price: [this.data.price],
+    mrpPrice: [this.data.mrp_price],
     isVeg: [this.data.veg ? 'veg' : this.data.non_veg ? 'non_veg' : 'egg', Validators.required],
-    mrp_price: [this.data.mrp_price, Validators.required],
-    item_description: [this.data.item_description],
-    counter_id: [this.data.counter.counter_id],
-    
+    counterId: [this.data.counter.counter_id],
+    itemUnit: [this.data.item_unit, Validators.required],
+    itemDescription: [this.data.item_description],
+    subItemUnit: ['']
   });
 
   editSubmit() {
     console.log('Form submitted', this.editMenuForm.value);
+    debugger
     let body = {
       item_id: this.editMenuForm.value.id,
       name: this.editMenuForm.value.name,
@@ -52,26 +70,27 @@ export class EditFormDialogComponent {
       veg: this.editMenuForm.value.isVeg == 'veg' ? true : false,
       non_veg: this.editMenuForm.value.isVeg == 'non_veg' ? true : false,
       egg: this.editMenuForm.value.isVeg == 'egg' ? true : false,
-      mrp_price: this.editMenuForm.value.mrp_price,
-      item_description: this.editMenuForm.value.item_description,
-      counter_id: this.editMenuForm.value.counter_id
+      mrp_price: this.editMenuForm.value.mrpPrice,
+      item_description: this.editMenuForm.value.itemDescription,
+      counter_id: this.editMenuForm.value.counterId,
+      item_unit: this.editMenuForm.value.itemUnit,
+      item_unit_price_list: this.unitPriceDetails
     };
     this._editMenuService.editMenu(body).pipe(
       switchMap(response => {
         console.log('this is response', response)
-        if (this.file && response['created']) {
+        if (this.file && response['updated']) {
           this.fileName = this.file.name;
           this.fileSize = `${(this.file.size / 1024).toFixed(2)} KB`;
           this.outputBoxVisible = true;
     
           const formData = new FormData();
           formData.append('file', this.file);
-          formData.append('item_id', response['item_id']);
+          formData.append('item_id', this.editMenuForm.value.id);
     
           return this.__imageService.uploadImage(formData)
-        } else if (response['created']){
-          this.dialogRef.close({ sucess: 'ok' })
-          return of(null)
+        } else if (response['updated']){
+          return of(response)
         } else {
           return of(null)
         }
@@ -88,7 +107,73 @@ export class EditFormDialogComponent {
     );
   }
 
+  handleDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  handleDrop(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      const file: File = event.dataTransfer.files[0];
+      this.onFileSelected(event);
+    }
+  }
+
+  onFileSelected(event: any) {
+    this.outputBoxVisible = false;
+    this.progress = `0%`;
+    this.uploadResult = '';
+    this.fileName = '';
+    this.fileSize = '';
+    this.uploadStatus = undefined;
+    this.file = event.dataTransfer?.files[0] || event.target?.files[0];
+  }
+
   close() {
     this.dialogRef.close({ success: null });
+  }
+
+  showSubUnitSection() {
+    return !(this.editMenuForm.value.itemUnit == '1' || this.editMenuForm.value.itemUnit.toLowerCase() == 'piece')
+  }
+
+  getSubUnits() {
+    return this.unitsSubUnitsMapping[this.editMenuForm.value.itemUnit]
+  }
+
+  addUnitPriceDetails() {
+    this.unitPriceDetails.push()
+    let body = {
+      "item_id": this.data.id,
+      'quantity': this.unitQuantityPriceObj.quantity,
+      'price': this.unitQuantityPriceObj.price,
+      'unit': this.editMenuForm.value.subItemUnit,
+      "mrp_price": this.unitQuantityPriceObj.mrp_price,
+      "is_available": true
+    }
+    this._editMenuService.addItemUnitPrice(body).subscribe(
+      data => {
+        this.unitPriceDetails.push(body)
+      },
+      error => {
+        alert('Add failed')
+      }
+    )
+  }
+
+  deleteSubItem(subItem) {
+    let body = {
+      "item_unit_price_id": subItem.item_unit_price_id
+    }
+    console.log(body)
+    this._editMenuService.deleteSubItem(body).subscribe(
+      data => {
+        this.unitPriceDetails = this.unitPriceDetails.filter(ele => ele.item_unit_price_id != subItem.item_unit_price_id)
+      },
+      error => {
+        alert('Failed to delete')
+      }
+    )
   }
 }

@@ -78,6 +78,9 @@ export class EditMenuComponent {
   public restaurantType = this.__sessionWrapper.getItem('restaurantType');
   public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
   public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
+  public selectedCategoryId = ''
+  public visibleCategory = []
+  public allCategories = []
 
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -86,6 +89,9 @@ export class EditMenuComponent {
         (data) => {
           this.restaurantStatus = data['is_open']
           this.menu_response = data['menu']
+          this.allCategories = this.parseCategories()
+          this.selectedCategoryId = this.allCategories[0].categoryId
+          this.showCategory()
         },
         (error) => console.log(error)
       );
@@ -95,6 +101,23 @@ export class EditMenuComponent {
       .subscribe((data) => {
         this.countersAvailable = data['counters'];
       });
+  }
+
+  showCategory() {
+    this.visibleCategory = this.menu_response.filter((category) => category.category.id == this.selectedCategoryId)
+    console.log(this.visibleCategory, this.selectedCategoryId)
+  }
+
+  parseCategories() {
+    let categories = []
+    this.menu_response.forEach((category) => {
+      categories.push({
+        "categoryId": category.category.id,
+        "categoryName": category.category.name
+      }
+      )
+    })
+    return categories
   }
 
   toggleAvailability(item) {

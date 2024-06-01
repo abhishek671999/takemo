@@ -45,6 +45,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TableCockpitComponent } from './dine-in-order-management/table-cockpit/table-cockpit.component';
 import { TableOrdersDialogComponent } from './dialogbox/table-orders-dialog/table-orders-dialog.component';
 import { TableManagementComponent } from './restaurant_management/table-management/table-management.component';
+import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
+import { AddItemDialogComponent } from './dialogbox/add-item-dialog/add-item-dialog.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,8 @@ import { TableManagementComponent } from './restaurant_management/table-manageme
     EcomPosOrdersComponent,
     TableCockpitComponent,
     TableOrdersDialogComponent,
-    TableManagementComponent
+    TableManagementComponent,
+    AddItemDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -99,7 +102,8 @@ import { TableManagementComponent } from './restaurant_management/table-manageme
     ReactiveFormsModule,
     MatSlideToggleModule,
     PdfViewerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    UploadFormComponent
   ],
   exports: [],
 })

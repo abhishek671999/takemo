@@ -15,8 +15,14 @@
         <h2 class="text-center">Edit menu</h2>
         <div class="text-center">
             <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">Add new category</button>
+            <mat-form-field>
+                <mat-label>Choose an option</mat-label>
+                <mat-select (selectionChange)="showCategory()" [(value)]="selectedCategoryId">
+                  <mat-option  *ngFor="let category of allCategories" [value]="category.categoryId">{{category.categoryName}}</mat-option>
+                </mat-select>
+              </mat-form-field>
             <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
-                    <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of menu_response; let mainIndex = index">
+                    <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of visibleCategory; let mainIndex = index">
                         <mat-expansion-panel-header >
                             <mat-panel-title>
                                 <b style="font-size: x-large;">{{category.category.name}}</b>
@@ -37,7 +43,7 @@
                                     <!-- <th class="col3" scope="col">Price</th> -->
                                     <th class="col4" scope="col">Availabe</th>
                                     <!-- <th *ngIf="inventoryManagement">Inventory</th> -->
-                                    <!-- <th *ngIf="isType('restaurant')" class="col4" scope="col">Favorite</th> -->
+                                    <th *ngIf="isType('restaurant')" class="col4" scope="col">Favorite</th>
                                     <!-- <th *ngIf="counterMangement">Counter</th> -->
                                     <th class="col5" scope="col">Edit</th>
                                     <th class="col6" scope="col">Delete</th>
@@ -62,10 +68,10 @@
                                         <input type="number" matInput [value]="item.inventory_stock" (blur)="editInventory(item, $event)">
                                       </mat-form-field>
                                     </td> -->
-                                    <!-- <td class="col4" *ngIf="isType('restaurant')"> -->
-                                        <!-- <mat-slide-toggle color="primary" [ngModel]='item.is_favourite' (change)="toggleFavorite(item)"></mat-slide-toggle>
+                                    <td class="col4" *ngIf="isType('restaurant')">
+                                        <mat-slide-toggle color="primary" [ngModel]='item.is_favourite' (change)="toggleFavorite(item)"></mat-slide-toggle>
                                     </td>
-                                    <td *ngIf="counterMangement">
+                                    <!--<td *ngIf="counterMangement">
                                         <mat-form-field>
                                             <mat-label>Counter Name</mat-label>
                                             <mat-select (selectionChange)="updateCounter(item)" [(value)]="item.counter.counter_id">
