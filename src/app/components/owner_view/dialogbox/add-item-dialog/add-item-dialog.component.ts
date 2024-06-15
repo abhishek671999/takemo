@@ -68,8 +68,8 @@ export class AddItemDialogComponent {
 
   addItemForm = this._fb.group({
     name: ['', Validators.required],
-    price: [''],
-    mrpPrice: [''],
+    price: [0],
+    mrpPrice: [0],
     isVeg: ['veg', Validators.required],
     counterId: [''],
     itemUnit: ['1', Validators.required],
@@ -123,6 +123,7 @@ export class AddItemDialogComponent {
     return this.unitsSubUnitsMapping[this.addItemForm.value.itemUnit]
   }
   addUnitPriceDetails() {
+
     this.unitPriceDetails.push({
       'quantity': this.unitQuantityPriceObj.quantity,
       'price': this.unitQuantityPriceObj.price,

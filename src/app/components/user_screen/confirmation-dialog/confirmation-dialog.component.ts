@@ -86,8 +86,8 @@ export class ConfirmationDialogComponent {
       (data) => {
         console.log(data);
         this.isPayment = data['payment_required'];
-        this.otpRequired = data['otp_required']
-        this.otpValidated = !data['otp_required']
+        this.otpRequired = data['otp_required'] ? data['otp_required'] : false
+        this.otpValidated = data['otp_required'] ? !data['otp_required'] : false
         this.paymentMethod = this.isPayment ? data['payment_mode'] : 'others';
         if (data['tax_inclusive']) {
           console.log('INcluding tax');
@@ -127,7 +127,6 @@ export class ConfirmationDialogComponent {
   }
 
   onEditButtonClick() {
-    debugger
     this.dialogRef.close({ orderlist: this.summary });
   }
 
@@ -138,6 +137,7 @@ export class ConfirmationDialogComponent {
         item_id: ele.id,
         quantity: ele.quantity + ele.parcelQuantity,
         parcel_quantity: ele.parcelQuantity,
+        item_unit_price_list: ele.item_unit_price_list
       });
     });
     let body = {
@@ -368,7 +368,6 @@ export class ConfirmationDialogComponent {
   }
 
   openQRcode() {
-    console.log('Opening qr code');
     this.showQRcode = !this.showQRcode;
   }
 

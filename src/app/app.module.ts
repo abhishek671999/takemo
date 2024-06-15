@@ -29,6 +29,8 @@ import { AuthInterceptorInterceptor } from './shared/services/auth-interceptor.i
 import { ConfirmActionDialogComponent } from './components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UploadFormComponent } from './components/shared/upload-form/upload-form.component';
+import { SelectSubitemDialogComponent } from './components/shared/select-subitem-dialog/select-subitem-dialog.component';
+
 
 
 @NgModule({
@@ -47,6 +49,7 @@ import { UploadFormComponent } from './components/shared/upload-form/upload-form
     PostLoginComponent,
     Login2Component,
     ConfirmActionDialogComponent,
+    SelectSubitemDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -44,7 +44,7 @@ export class EditFormDialogComponent {
   
   ngOnInit() {
     console.log(this.data)
-    this.unitPriceDetails = this.data.unit_price_details
+    this.unitPriceDetails = this.data.item_unit_price_list
     console.log('unitprice details array', this.unitPriceDetails)
   }
 
@@ -55,14 +55,13 @@ export class EditFormDialogComponent {
     mrpPrice: [this.data.mrp_price],
     isVeg: [this.data.veg ? 'veg' : this.data.non_veg ? 'non_veg' : 'egg', Validators.required],
     counterId: [this.data.counter.counter_id],
-    itemUnit: [this.data.item_unit, Validators.required],
+    itemUnit: [{'Piece': '1', 'Grams': '2', 'Litre': '3'}[this.data.item_unit], Validators.required],
     itemDescription: [this.data.item_description],
     subItemUnit: ['']
   });
 
   editSubmit() {
     console.log('Form submitted', this.editMenuForm.value);
-    debugger
     let body = {
       item_id: this.editMenuForm.value.id,
       name: this.editMenuForm.value.name,
@@ -74,7 +73,7 @@ export class EditFormDialogComponent {
       item_description: this.editMenuForm.value.itemDescription,
       counter_id: this.editMenuForm.value.counterId,
       item_unit: this.editMenuForm.value.itemUnit,
-      item_unit_price_list: this.unitPriceDetails
+      // item_unit_price_list: this.unitPriceDetails
     };
     this._editMenuService.editMenu(body).pipe(
       switchMap(response => {
@@ -139,11 +138,11 @@ export class EditFormDialogComponent {
   }
 
   getSubUnits() {
+    console.log(this.editMenuForm.value.itemUnit)
     return this.unitsSubUnitsMapping[this.editMenuForm.value.itemUnit]
   }
 
   addUnitPriceDetails() {
-    this.unitPriceDetails.push()
     let body = {
       "item_id": this.data.id,
       'quantity': this.unitQuantityPriceObj.quantity,

@@ -4,6 +4,7 @@ import {
   MatDialog,
   MAT_DIALOG_DATA,
   MatDialogModule,
+  MatDialogConfig,
 } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material/material.module';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
@@ -13,6 +14,7 @@ import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
+import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
 
 @Component({
   selector: 'app-menu',
@@ -224,29 +226,60 @@ export class MenuComponent {
     event.stopPropagation();
     let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
     if (itemAdded) {
-      if (
-        itemAdded.quantity < 30 &&
-        (itemAdded.inventory_stock
-          ? itemAdded.quantity + itemAdded.parcelQuantity <
-            itemAdded.inventory_stock
-          : true)
-      ) {
-        itemAdded.quantity += 1;
-        this.updateSelectedItem(itemAdded)
-        this.orderList.amount += itemAdded.price;
+      if (itemAdded.item_unit_price_list.length > 0) {
+        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, { data: { item: item, restaurantParcel: this.restaurantParcel }, disableClose: true })
+        dialogRef.afterClosed().subscribe(
+          data => {
+            console.log('This is return data: ', data)
+            this.orderList.amount += data['amount']
+            this.updateSelectedItem(item)
+            this.orderList.itemList.push(item);
+          },
+          error => {
+            console.log('error occurred: ', error)
+          }
+        )
+      } else {
+        if (
+          itemAdded.quantity < 30 &&
+          (itemAdded.inventory_stock
+            ? itemAdded.quantity + itemAdded.parcelQuantity <
+              itemAdded.inventory_stock
+            : true)
+        ) {
+          itemAdded.quantity += 1;
+          this.updateSelectedItem(itemAdded)
+          this.orderList.amount += itemAdded.price;
+        }
       }
     } else {
-      if (
-        item.quantity < 30 &&
-        (item.inventory_stock
-          ? item.quantity + item.parcelQuantity < item.inventory_stock
-          : true)
-      ) {
-        item.quantity += 1;
-        this.updateSelectedItem(item)
-        this.orderList.amount += item.price;
-        this.orderList.itemList.push(item);
+      if (item.item_unit_price_list.length > 0) {
+        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, { data: {item: item, restaurantParcel: this.restaurantParcel} })
+        dialogRef.afterClosed().subscribe(
+          data => {
+            console.log('This is return data: ', data)
+            this.orderList.amount += data['amount']
+            this.updateSelectedItem(item)
+            this.orderList.itemList.push(item);
+          },
+          error => {
+            console.log('error occurred: ', error)
+          }
+        )
+      } else {
+        if (
+          item.quantity < 30 &&
+          (item.inventory_stock
+            ? item.quantity + item.parcelQuantity < item.inventory_stock
+            : true)
+        ) {
+          item.quantity += 1;
+          this.updateSelectedItem(item)
+          this.orderList.amount += item.price;
+          this.orderList.itemList.push(item);
+        }
       }
+      
     }
     this.__cartService.setCartItems(this.orderList)
   }
@@ -294,13 +327,17 @@ export class MenuComponent {
     this.updateSelectedItem(item)
     this.__cartService.setCartItems(this.orderList)
   }
+  
 
   prepareSummary() {
+    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+    matDialogConfig.position = { bottom: `0px` };
     this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
-      data: this.orderList,
+      data: this.orderList, panelClass: ['animate__animated','animate__slideInUp']
     });
+    dialogRef.updatePosition(matDialogConfig.position)
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log(result);
@@ -358,4 +395,16 @@ export class MenuComponent {
       this.showOnlyFirstCategory();
     }
   }
+
+  getMRPriceForItem(item) {
+    let item_mrp_price = item.item_unit_price_list.length > 0 ? item.item_unit_price_list[0].mrp_price : item.mrp_price 
+    return item_mrp_price
+  }
+
+  getPriceForItem(item) {
+    let item_price = item.item_unit_price_list.length > 0 ? item.item_unit_price_list[0].price : item.price 
+    return item_price
+  }
+
+  
 }

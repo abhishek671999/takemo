@@ -1,0 +1,65 @@
+<div class="main-container">
+    <div mat-dialog-title>
+        <h2>Options</h2>
+        <button mat-icon-button aria-label="close dialog" (click)="closeWindow()">
+            <mat-icon >close</mat-icon>
+        </button>
+    </div>
+    <div mat-dialog-content>
+        <table class="table" style="width: 100%">
+            <thead class="text-center">
+              <tr>
+                <th class="col1">Item</th>
+                <th class="col2">Quantity</th>
+                <th class="col3">Rate</th>
+                <th class="col4">Amt</th>
+                <th class="col5">Del</th>
+              </tr>
+            </thead>
+            <tbody class="text-center">
+              <tr *ngFor="let subItem of data.item.item_unit_price_list">
+                <td class="col1">{{ subItem.item_unit_name }}</td>
+                <td class="col2">
+                  <div class="item-quantity">
+                    <mat-icon (click)="subSubItem(subItem)">remove_circle</mat-icon>
+                    <div style="padding: 2px">
+                      {{ subItem.quantity }}
+                    </div>
+                    <mat-icon (click)="addSubItem(subItem)">add_circle</mat-icon>
+                  </div>
+                  <p
+                    *ngIf="restaurantParcel && subItem.parcel_available"
+                    (click)="incrementParcelQuantity(subItem)"
+                    style="text-decoration: underline; margin: 0; cursor: pointer"
+                  >
+                    Create Parcel
+                  </p>
+                  <div class="item-quantity" *ngIf="subItem.parcelQuantity">
+                    <mat-icon (click)="subParcelSubItem(subItem)">remove_circle</mat-icon>
+                    <div style="padding: 2px">
+                      {{ subItem.parcelQuantity }}
+                    </div>
+                    <mat-icon (click)="addParcelSubItem(subItem)">add_circle</mat-icon>
+                  </div>
+                  <p *ngIf="subItem.parcelQuantity">
+                    <b>{{ subItem.parcelQuantity }}</b> Parcel |
+                    <b>{{ subItem.quantity }}</b> Dine-in
+                  </p>
+                </td>
+                <td class="col3">
+                  <p class="fs-8 m-0"><del *ngIf="subItem.price != subItem.mrp_price">₹&nbsp;{{ subItem.mrp_price }}</del>&nbsp;<b>₹&nbsp;{{ subItem.price }}</b></p>
+                </td>
+                <td class="col4">{{ calculateItemAmount(subItem) }}</td>
+                <td class="col5">
+                  <mat-icon (click)="clearItem(subItem)">delete</mat-icon>
+                </td>
+                <br />
+                <br />
+              </tr>
+            </tbody>
+          </table>
+    </div>
+    <div mat-dialog-actions>
+        
+    </div>
+</div>

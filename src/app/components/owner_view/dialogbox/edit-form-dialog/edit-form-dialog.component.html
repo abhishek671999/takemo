@@ -22,14 +22,6 @@
                       <mat-radio-button value="3" [checked]="data.item_unit.toLowerCase() == 'litre'">Litres</mat-radio-button>
                     </mat-radio-group>
                   </div>
-                  <div *ngIf="showSubUnitSection()">
-                    <mat-form-field>
-                      <mat-label>Unit</mat-label>
-                      <mat-select formControlName="subItemUnit">
-                          <mat-option *ngFor="let unit of getSubUnits()" [value]="unit">{{unit}}</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
                   <div *ngIf="!showSubUnitSection()">
                     <mat-form-field>
                         <mat-label>Price</mat-label>
@@ -71,6 +63,14 @@
                               <mat-label>Quantity</mat-label>
                               <input matInput placeholder="Quantity" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.quantity">
                             </mat-form-field>
+                            <div *ngIf="showSubUnitSection()">
+                              <mat-form-field>
+                                <mat-label>Unit</mat-label>
+                                <mat-select formControlName="subItemUnit">
+                                    <mat-option *ngFor="let unit of getSubUnits()" [value]="unit">{{unit}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                            </div>
                           </td>
                           <td>
                             <mat-form-field>
