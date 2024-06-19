@@ -27,15 +27,11 @@ export class SelectSubitemDialogComponent {
   }
 
   addSubItem(subItem) {
-    subItem.quantity += 1
-    this.amountAdded += subItem.price
+    this.data.addfn(subItem, this.data.item)
   }
 
   subSubItem(subItem) {
-    if (subItem.quantity < 0) {
-      subItem.quantity -= 1
-      this.amountAdded -= subItem.price
-    }
+    this.data.subfn(subItem, this.data.item)
   }
 
   subParcelSubItem(subItem) {

@@ -72,7 +72,7 @@ export class EditFormDialogComponent {
       mrp_price: this.editMenuForm.value.mrpPrice,
       item_description: this.editMenuForm.value.itemDescription,
       counter_id: this.editMenuForm.value.counterId,
-      item_unit: this.editMenuForm.value.itemUnit,
+      item_unit: Number(this.editMenuForm.value.itemUnit),
       // item_unit_price_list: this.unitPriceDetails
     };
     this._editMenuService.editMenu(body).pipe(

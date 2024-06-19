@@ -131,17 +131,8 @@ export class ConfirmationDialogComponent {
   }
 
   preparePlaceOrderBody(wallet = null) {
-    let itemList = [];
-    this.summary.itemList.forEach((ele) => {
-      itemList.push({
-        item_id: ele.id,
-        quantity: ele.quantity + ele.parcelQuantity,
-        parcel_quantity: ele.parcelQuantity,
-        item_unit_price_list: ele.item_unit_price_list
-      });
-    });
     let body = {
-      order_list: itemList,
+      order_list: this.summary.itemList,
       restaurant_id: this.summary.restaurant_id,
     };
     if (wallet != null) {
@@ -317,7 +308,7 @@ export class ConfirmationDialogComponent {
   }
 
   calculateItemAmount(item) {
-    return item.price * (item.quantity + item.parcelQuantity);
+    return item.price * (item.quantity + item.parcel_quantity);
   }
 
   clearItem(item) {

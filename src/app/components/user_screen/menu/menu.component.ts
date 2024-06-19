@@ -222,83 +222,249 @@ export class MenuComponent {
     }
   }
 
+  addSubItem(subItem, item) {
+    let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+    if (subItemAdded) {
+      subItem.quantity += 1
+      item.quantity += 1
+    } else {
+      let additionalSubItem = {
+        item_id: item.id,
+        sub_item_id: subItem.item_unit_price_id,
+        quantity: 1,
+        parcelQuantity: 0
+      }
+      subItem.quantity = 1
+      item.quantity += 1
+      this.orderList.itemList.push(additionalSubItem)
+    }
+  }
+
   addItem(item, event) {
+    // todo: update cart and handle parcel quantity
     event.stopPropagation();
-    let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
+    let itemAdded = this.orderList.itemList.find((x) => x.item_id == item.id)
     if (itemAdded) {
-      if (itemAdded.item_unit_price_list.length > 0) {
-        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, { data: { item: item, restaurantParcel: this.restaurantParcel }, disableClose: true })
-        dialogRef.afterClosed().subscribe(
-          data => {
-            console.log('This is return data: ', data)
-            this.orderList.amount += data['amount']
-            this.updateSelectedItem(item)
-            this.orderList.itemList.push(item);
-          },
-          error => {
-            console.log('error occurred: ', error)
-          }
-        )
+      if (item.item_unit_price_list.length > 0) {
+        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, {
+          data: {
+            item: item, restaurantParcel: this.restaurantParcel,
+            addfn: (subItem, item) => {
+              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+              if (subItemAdded) {
+                subItemAdded.quantity += 1
+                subItem.quantity += 1
+                item.quantity += 1
+              } else {
+                let additionalSubItem = {
+                  name: item.name,
+                  item_id: item.id,
+                  sub_item_id: subItem.item_unit_price_id,
+                  quantity: 1,
+                  parcel_quantity: 0, //hardcode
+                  price: item.price
+                }
+                subItem.quantity = 1
+                item.quantity += 1
+                this.orderList.itemList.push(additionalSubItem)
+              }
+              this.orderList.amount += subItem.price
+            },
+            subfn: (subItem, item) => {
+              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+              if (subItemAdded && subItem.quantity > 0) {
+                subItem.quantity -= 1
+                item.quantity -= 1
+              } 
+              this.orderList.amount -= subItem.price
+              this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
+            }
+          }, disableClose: true
+        })
       } else {
-        if (
-          itemAdded.quantity < 30 &&
-          (itemAdded.inventory_stock
-            ? itemAdded.quantity + itemAdded.parcelQuantity <
-              itemAdded.inventory_stock
-            : true)
-        ) {
-          itemAdded.quantity += 1;
-          this.updateSelectedItem(itemAdded)
-          this.orderList.amount += itemAdded.price;
-        }
+        itemAdded.quantity += 1
+        item.quantity += 1
+        this.orderList.amount += item.price
       }
     } else {
       if (item.item_unit_price_list.length > 0) {
-        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, { data: {item: item, restaurantParcel: this.restaurantParcel} })
-        dialogRef.afterClosed().subscribe(
-          data => {
-            console.log('This is return data: ', data)
-            this.orderList.amount += data['amount']
-            this.updateSelectedItem(item)
-            this.orderList.itemList.push(item);
-          },
-          error => {
-            console.log('error occurred: ', error)
-          }
-        )
+        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, {
+          data: {
+            item: item, restaurantParcel: this.restaurantParcel,
+            addfn: (subItem, item) => {
+              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+              if (subItemAdded) {
+                subItemAdded.quantity += 1
+                subItem.quantity += 1
+                item.quantity += 1
+              } else {
+                let additionalSubItem = {
+                  name: item.name,
+                  item_id: item.id,
+                  sub_item_id: subItem.item_unit_price_id,
+                  quantity: 1,
+                  parcel_quantity: 0, // hardcode
+                  price: item.price
+                }
+                subItem.quantity = 1
+                item.quantity += 1
+                this.orderList.itemList.push(additionalSubItem)
+              }
+              this.orderList.amount += subItem.price
+            },
+            subfn: (subItem, item) => {
+              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+              if (subItemAdded && subItemAdded.quantity > 0) {
+                subItem.quantity -= 1
+                item.quantity -= 1
+                subItemAdded -= 1
+              } 
+              this.orderList.amount -= subItem.price
+              this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
+            }
+          }, disableClose: true
+        })
       } else {
-        if (
-          item.quantity < 30 &&
-          (item.inventory_stock
-            ? item.quantity + item.parcelQuantity < item.inventory_stock
-            : true)
-        ) {
-          item.quantity += 1;
-          this.updateSelectedItem(item)
-          this.orderList.amount += item.price;
-          this.orderList.itemList.push(item);
+        let additionalItem = {
+          "item_id": item.id,
+          "quantity": 1,
+          "parcel_quantity": 0,
+          "name": item.name,
+          "price": item.price
         }
+        item.quantity = 1
+        this.orderList.amount += item.price
+        this.orderList.itemList.push(additionalItem)
       }
-      
     }
-    this.__cartService.setCartItems(this.orderList)
+
+
+
+  //   let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
+  //   if (itemAdded) {
+  //     if (itemAdded.item_unit_price_list.length > 0) {
+  //       let dialogRef = this._dialog.open(SelectSubitemDialogComponent, { data: { item: item, restaurantParcel: this.restaurantParcel }, disableClose: true })
+  //       dialogRef.afterClosed().subscribe(
+  //         data => {
+  //           this.orderList.amount += data['amount']
+  //           this.updateSelectedItem(item)
+  //           this.orderList.itemList.push(item);
+  //         },
+  //         error => {
+  //           console.log('error occurred: ', error)
+  //         }
+  //       )
+  //     } else {
+  //       if (
+  //         itemAdded.quantity < 30 &&
+  //         (itemAdded.inventory_stock
+  //           ? itemAdded.quantity + itemAdded.parcelQuantity <
+  //             itemAdded.inventory_stock
+  //           : true)
+  //       ) {
+  //         itemAdded.quantity += 1;
+  //         this.updateSelectedItem(itemAdded)
+  //         this.orderList.amount += itemAdded.price;
+  //       }
+  //     }
+  //   } else {
+  //     if (item.item_unit_price_list.length > 0) {
+  //       let dialogRef = this._dialog.open(SelectSubitemDialogComponent, { data: {item: item, restaurantParcel: this.restaurantParcel} })
+  //       dialogRef.afterClosed().subscribe(
+  //         data => {
+  //           console.log('This is return data: ', data)
+  //           this.orderList.amount += data['amount']
+  //           this.updateSelectedItem(item)
+  //           this.orderList.itemList.push(item);
+  //         },
+  //         error => {
+  //           console.log('error occurred: ', error)
+  //         }
+  //       )
+  //     } else {
+  //       if (
+  //         item.quantity < 30 &&
+  //         (item.inventory_stock
+  //           ? item.quantity + item.parcelQuantity < item.inventory_stock
+  //           : true)
+  //       ) {
+  //         item.quantity += 1;
+  //         this.updateSelectedItem(item)
+  //         this.orderList.amount += item.price;
+  //         this.orderList.itemList.push(item);
+  //       }
+  //     }
+      
+  //   }
+  //   this.__cartService.setCartItems(this.orderList)
   }
+
+
   subItem(item, event) {
     event.stopPropagation();
-    let itemAdded = this.orderList.itemList.find((x) => x.id == item.id);
+
+    let itemAdded = this.orderList.itemList.find((x) => x.item_id == item.id)
     if (itemAdded) {
-      if (itemAdded.quantity > 0 || item.quantity > 0) {
-        itemAdded.quantity -= 1
-        this.updateSelectedItem(itemAdded)
-        this.orderList.amount -= itemAdded.price;
+      if (item.item_unit_price_list.length > 0) {
+        let dialogRef = this._dialog.open(SelectSubitemDialogComponent, {
+          data: {
+            item: item, restaurantParcel: this.restaurantParcel,
+            addfn: (subItem, item) => {
+              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+              if (subItemAdded) {
+                subItem.quantity += 1
+                subItemAdded.quantity += 1
+                item.quantity += 1
+              } else {
+                let additionalSubItem = {
+                  name: item.name,
+                  item_id: item.id,
+                  sub_item_id: subItem.item_unit_price_id,
+                  quantity: 1,
+                  parcel_quantity: 0, // hardcode
+                  price: item.price
+                }
+                subItem.quantity = 1
+                item.quantity += 1
+                this.orderList.itemList.push(additionalSubItem)
+              }
+              this.orderList.amount += subItem.price
+            },
+            subfn: (subItem, item) => {
+              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+              if (subItemAdded && subItemAdded.quantity > 0) {
+                subItem.quantity -= 1
+                item.quantity -= 1
+                subItemAdded -= 1
+              }
+              this.orderList.amount -= subItem.price
+              this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
+            }
+          }, disableClose: true
+        })
+      } else {
+        if (itemAdded.quantity > 0) {
+          itemAdded.quantity -= 1
+          item.quantity -= 1
+          this.orderList.amount -= item.price
+        }
+        this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
       }
-    }
-    if (itemAdded?.quantity == 0 || item.quantity == 0) {
-      this.orderList.itemList = this.orderList.itemList.filter(
-        (x) => x.id != item.id
-      );
-    }
-    this.__cartService.setCartItems(this.orderList)
+    } 
+
+    // if (itemAdded) {
+    //   if (itemAdded.quantity > 0 || item.quantity > 0) {
+    //     itemAdded.quantity -= 1
+    //     this.updateSelectedItem(itemAdded)
+    //     this.orderList.amount -= itemAdded.price;
+    //   }
+    // }
+    // if (itemAdded?.quantity == 0 || item.quantity == 0) {
+    //   this.orderList.itemList = this.orderList.itemList.filter(
+    //     (x) => x.id != item.id
+    //   );
+    // }
+    // this.__cartService.setCartItems(this.orderList)
   }
 
   updateSelectedItem(item) {

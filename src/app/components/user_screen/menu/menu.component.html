@@ -127,7 +127,7 @@
                       <p class="pr-1 pl-1 pt-1 fs-6 m-0">
                         {{ item.name }}
                       </p>
-                      <p class="fs-8 m-0"><del *ngIf="getMRPriceForItem(item) != getPriceForItem(item)">₹&nbsp;{{ getMRPriceForItem(item) }}</del>&nbsp;<b>₹&nbsp;{{ getPriceForItem(item) }}</b></p>
+                      <p class="fs-8 m-0"><del *ngIf="getMRPriceForItem(item) != getPriceForItem(item) && getMRPriceForItem(item) != 0">₹&nbsp;{{ getMRPriceForItem(item) }}</del>&nbsp;<b>₹&nbsp;{{ getPriceForItem(item) }}</b></p>
                       <p class="fs-8 m-0">{{item.item_unit}}</p>
                     </div>
                   </div>
