@@ -223,14 +223,14 @@ export class MenuComponent {
   }
 
   addSubItem(subItem, item) {
-    let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
+    let subItemAdded = this.orderList.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
     if (subItemAdded) {
       subItem.quantity += 1
       item.quantity += 1
     } else {
       let additionalSubItem = {
         item_id: item.id,
-        sub_item_id: subItem.item_unit_price_id,
+        item_unit_price_id: subItem.item_unit_price_id,
         quantity: 1,
         parcelQuantity: 0
       }
@@ -240,8 +240,60 @@ export class MenuComponent {
     }
   }
 
+  incrementSubItemfunction = (subItem, item) => {
+    let subItemAdded = this.orderList.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
+    if (subItemAdded) {
+      subItemAdded.quantity += 1
+      subItem.quantity += 1
+      item.quantity += 1
+    } else {
+      let additionalSubItem = {
+        name: item.name,
+        item_id: item.id,
+        item_unit_price_id: subItem.item_unit_price_id,
+        quantity: 1,
+        parcel_quantity: 0, //hardcode
+        price: subItem.price
+      }
+      subItem.quantity = 1
+      item.quantity += 1
+      this.orderList.itemList.push(additionalSubItem)
+    }
+    this.orderList.amount += subItem.price
+  }
+
+  decrementSubItemfunction =  (subItem, item) => {
+      let subItemAdded = this.orderList.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
+      if (subItemAdded && subItem.quantity > 0) {
+        subItem.quantity -= 1
+        item.quantity -= 1
+        subItemAdded.quantity -= 1
+        this.orderList.amount -= subItem.price
+      } 
+      this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
+  }
+  
+  clearSubItemfunction = (subItem, mainItem) => {
+    let subItemAdded = this.orderList.itemList.filter((x) => x.item_unit_price_id == subItem.item_unit_price_id)
+    if (subItemAdded) {
+      this.orderList.amount -= subItemAdded[0].quantity * subItemAdded[0].price
+      this.filteredMenu.forEach(category => {
+        if (category.category.name.toLowerCase() != 'all') {
+          let item = category.category.items.filter(item => mainItem.id == item.id && item.item_unit_price_list.filter(subEle => subEle.item_unit_price_id == subItem.item_unit_price_id).length > 0)
+          if (item.length > 0) {
+            item[0].quantity -= subItemAdded[0].quantity
+          }
+        }
+      })
+      subItemAdded[0].quantity = 0
+    }
+    
+    subItem.quantity = 0
+    this.orderList.itemList = this.orderList.itemList.filter(item => item.quantity > 0)
+  }
+
   addItem(item, event) {
-    // todo: update cart and handle parcel quantity
+    // todo: update cart and handle parcel quantity and stock/inventory
     event.stopPropagation();
     let itemAdded = this.orderList.itemList.find((x) => x.item_id == item.id)
     if (itemAdded) {
@@ -249,36 +301,9 @@ export class MenuComponent {
         let dialogRef = this._dialog.open(SelectSubitemDialogComponent, {
           data: {
             item: item, restaurantParcel: this.restaurantParcel,
-            addfn: (subItem, item) => {
-              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
-              if (subItemAdded) {
-                subItemAdded.quantity += 1
-                subItem.quantity += 1
-                item.quantity += 1
-              } else {
-                let additionalSubItem = {
-                  name: item.name,
-                  item_id: item.id,
-                  sub_item_id: subItem.item_unit_price_id,
-                  quantity: 1,
-                  parcel_quantity: 0, //hardcode
-                  price: item.price
-                }
-                subItem.quantity = 1
-                item.quantity += 1
-                this.orderList.itemList.push(additionalSubItem)
-              }
-              this.orderList.amount += subItem.price
-            },
-            subfn: (subItem, item) => {
-              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
-              if (subItemAdded && subItem.quantity > 0) {
-                subItem.quantity -= 1
-                item.quantity -= 1
-              } 
-              this.orderList.amount -= subItem.price
-              this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
-            }
+            addfn: this.incrementSubItemfunction,
+            subfn: this.decrementSubItemfunction,
+            clearfn: this.clearSubItemfunction
           }, disableClose: true
         })
       } else {
@@ -291,37 +316,9 @@ export class MenuComponent {
         let dialogRef = this._dialog.open(SelectSubitemDialogComponent, {
           data: {
             item: item, restaurantParcel: this.restaurantParcel,
-            addfn: (subItem, item) => {
-              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
-              if (subItemAdded) {
-                subItemAdded.quantity += 1
-                subItem.quantity += 1
-                item.quantity += 1
-              } else {
-                let additionalSubItem = {
-                  name: item.name,
-                  item_id: item.id,
-                  sub_item_id: subItem.item_unit_price_id,
-                  quantity: 1,
-                  parcel_quantity: 0, // hardcode
-                  price: item.price
-                }
-                subItem.quantity = 1
-                item.quantity += 1
-                this.orderList.itemList.push(additionalSubItem)
-              }
-              this.orderList.amount += subItem.price
-            },
-            subfn: (subItem, item) => {
-              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
-              if (subItemAdded && subItemAdded.quantity > 0) {
-                subItem.quantity -= 1
-                item.quantity -= 1
-                subItemAdded -= 1
-              } 
-              this.orderList.amount -= subItem.price
-              this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
-            }
+            addfn: this.incrementSubItemfunction,
+            subfn: this.decrementSubItemfunction,
+            clearfn: this.clearSubItemfunction
           }, disableClose: true
         })
       } else {
@@ -409,37 +406,9 @@ export class MenuComponent {
         let dialogRef = this._dialog.open(SelectSubitemDialogComponent, {
           data: {
             item: item, restaurantParcel: this.restaurantParcel,
-            addfn: (subItem, item) => {
-              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
-              if (subItemAdded) {
-                subItem.quantity += 1
-                subItemAdded.quantity += 1
-                item.quantity += 1
-              } else {
-                let additionalSubItem = {
-                  name: item.name,
-                  item_id: item.id,
-                  sub_item_id: subItem.item_unit_price_id,
-                  quantity: 1,
-                  parcel_quantity: 0, // hardcode
-                  price: item.price
-                }
-                subItem.quantity = 1
-                item.quantity += 1
-                this.orderList.itemList.push(additionalSubItem)
-              }
-              this.orderList.amount += subItem.price
-            },
-            subfn: (subItem, item) => {
-              let subItemAdded = this.orderList.itemList.find((x) => x.sub_item_id == subItem.item_unit_price_id)
-              if (subItemAdded && subItemAdded.quantity > 0) {
-                subItem.quantity -= 1
-                item.quantity -= 1
-                subItemAdded -= 1
-              }
-              this.orderList.amount -= subItem.price
-              this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
-            }
+            addfn: this.incrementSubItemfunction,
+            subfn: this.decrementSubItemfunction,
+            clearfn: this.clearSubItemfunction
           }, disableClose: true
         })
       } else {
@@ -484,7 +453,7 @@ export class MenuComponent {
     });     
   }
 
-  clearItem(item, event) {
+  clearCartItem(item, event) {
     event.stopPropagation()
     this.orderList.amount -= ((item.quantity * item.price) + (item.parcelQuantity * item.price))
     item.quantity = 0
@@ -494,6 +463,78 @@ export class MenuComponent {
     this.__cartService.setCartItems(this.orderList)
   }
   
+  incrementItemFunction = (lineItem) => {
+    this.filteredMenu.forEach(element => {
+      if (element.category.name.toLowerCase() != 'all') {
+        element.category.items.forEach(item => {
+          let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
+    
+          if (item.id == lineItem.item_id && subItem.length > 0) {
+            lineItem.quantity += 1
+            subItem[0].quantity += 1
+            item.quantity += 1
+            this.orderList.amount += subItem[0].price
+          } else if (item.id == lineItem.item_id) {
+            item.quantity += 1
+            lineItem.quantity += 1
+            this.orderList.amount += item.price
+            return
+          } 
+        }) 
+      }
+    });
+  }
+
+  decrementItemFunction = (lineItem) => {
+    this.filteredMenu.forEach(element => {
+      if (element.category.name.toLowerCase() != 'all') {
+        element.category.items.forEach(item => {
+          let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
+          
+          if (item.id == lineItem.item_id && subItem.length > 0 && (subItem[0].quantity > 0)) {
+            lineItem.quantity -= 1
+            subItem[0].quantity -= 1
+            item.quantity -= 1
+            this.orderList.amount -= subItem[0].price
+            return
+          } else if (item.id == lineItem.item_id && lineItem.quantity > 0) {
+            item.quantity -= 1
+            lineItem.quantity -= 1
+            this.orderList.amount -= item.price
+            return
+          } 
+        }) 
+      }
+    });
+  }
+
+  clearItemFunction = (clearItem) => {
+    this.orderList.itemList.forEach(cartItem => {
+      if (cartItem.item_id == clearItem.item_id || cartItem.item_unit_price_id == clearItem.item_unit_price_id) {
+        this.filteredMenu.forEach(category => {
+          if (category.category.name.toLowerCase() != 'all') {
+            category.category.items.forEach((item) =>
+            {
+              if (item.id == clearItem.item_id && item.item_unit_price_list.filter(subItem => subItem.item_unit_price_id == clearItem.item_unit_price_id).length > 0) {
+                item.quantity -= clearItem.quantity
+                item.item_unit_price_list.forEach(subItem => {
+                  if (subItem.item_unit_price_id == clearItem.item_unit_price_id) {
+                    subItem.quantity = 0
+                  }
+                })
+              }
+              else if (item.id == clearItem.item_id) {
+                item.quantity -= clearItem.quantity
+              }                
+            }
+          )
+        this.orderList.amount -= (clearItem.quantity * clearItem.price)
+        cartItem.quantity -= clearItem.quantity
+          }
+        })
+      }
+    })
+  }
 
   prepareSummary() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
@@ -501,12 +542,20 @@ export class MenuComponent {
     this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
     let dialogRef = this._dialog.open(ConfirmationDialogComponent, {
-      data: this.orderList, panelClass: ['animate__animated','animate__slideInUp']
+      data: {
+        summary: this.orderList,
+        addfn: this.incrementItemFunction,
+        subfn: this.decrementItemFunction,
+        clearfn: this.clearItemFunction
+      },
+      panelClass: ['animate__animated', 'animate__slideInUp']
     });
     dialogRef.updatePosition(matDialogConfig.position)
     dialogRef.afterClosed().subscribe((result) => {
+      this.orderList.itemList = this.orderList.itemList.filter((item) => item.quantity > 0)
       if (result) {
         console.log(result);
+        
         if (result.mode == 'wallet') {
           this._router.navigate(['/user/myorders']);
         } else {

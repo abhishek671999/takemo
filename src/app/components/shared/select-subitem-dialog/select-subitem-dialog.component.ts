@@ -47,14 +47,15 @@ export class SelectSubitemDialogComponent {
   }
 
   calculateItemAmount(subItem) {
-    
+    console.log(subItem)
+    return subItem.price * (subItem.quantity)
   }
+
   clearItem(subItem) {
-    
+    this.data.clearfn(subItem, this.data.item)
   }
 
   closeWindow() {
-    console.log('called')
     this.dialogRef.close({amount: this.amountAdded})
   }
 }
