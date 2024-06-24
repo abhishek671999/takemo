@@ -36,16 +36,19 @@ export class EditFormDialogComponent {
   }
   unitQuantityPriceObj = {
     unit: null,
-    quantity: null,
+    option: null,
     price: null,
     mrp_price: null
   }
   unitPriceDetails = []
-  
+  itemUnitPreviousValue = null
   ngOnInit() {
     console.log(this.data)
     this.unitPriceDetails = this.data.item_unit_price_list
     console.log('unitprice details array', this.unitPriceDetails)
+    this.editMenuForm.get('itemUnit').valueChanges.subscribe(newValue => { // todo: maintain previous state
+      this.itemUnitPreviousValue = this.editMenuForm.get('itemUnit').value;
+    });
   }
 
   editMenuForm = this._fb.group({
@@ -60,8 +63,7 @@ export class EditFormDialogComponent {
     subItemUnit: ['']
   });
 
-  editSubmit() {
-    console.log('Form submitted', this.editMenuForm.value);
+  editMenu() {
     let body = {
       item_id: this.editMenuForm.value.id,
       name: this.editMenuForm.value.name,
@@ -75,7 +77,25 @@ export class EditFormDialogComponent {
       item_unit: Number(this.editMenuForm.value.itemUnit),
       // item_unit_price_list: this.unitPriceDetails
     };
-    this._editMenuService.editMenu(body).pipe(
+    return this._editMenuService.editMenu(body)
+  }
+
+  updateUnit() {
+    console.log(this.editMenuForm)
+    this.editMenu().subscribe(
+      data => {
+        this.editMenuForm.value.itemUnit = this.itemUnitPreviousValue
+      },
+      error => { 
+        alert('Failed to update unit')
+        console.log(this.editMenuForm)
+        this.editMenuForm.value.itemUnit = this.itemUnitPreviousValue
+      }
+    )
+  }
+
+  editSubmit() {
+    this.editMenu().pipe(
       switchMap(response => {
         console.log('this is response', response)
         if (this.file && response['updated']) {
@@ -145,9 +165,8 @@ export class EditFormDialogComponent {
   addUnitPriceDetails() {
     let body = {
       "item_id": this.data.id,
-      'quantity': this.unitQuantityPriceObj.quantity,
       'price': this.unitQuantityPriceObj.price,
-      'unit': this.editMenuForm.value.subItemUnit,
+      'unit': this.unitQuantityPriceObj.option + ' ' +  this.unitQuantityPriceObj.unit,
       "mrp_price": this.unitQuantityPriceObj.mrp_price,
       "is_available": true
     }

@@ -55,6 +55,7 @@ export class MenuComponent {
   hideCategory = true;
   hideCart = true;
   currentCategory = null;
+  selectedCategory = null;
 
   ngOnInit() {
     this.showSpinner = true;
@@ -110,21 +111,25 @@ export class MenuComponent {
   setQuantity() {
     let cartItems = this.__cartService.getCartItems()
     this.orderList.itemList = cartItems? cartItems.itemList: []
-    this.orderList.amount = cartItems? cartItems.amount: 0
-    this.menu.forEach((category) => {
-      category.category.items.forEach((item) => {
-        let matchedItem = cartItems?.itemList.filter((ele) => ele.id == item.id)
-        if (cartItems && matchedItem?.length) {
-          item.quantity = matchedItem[0].quantity
-          item.parcelQuantity = matchedItem[0].parcelQuantity
-        } else {
-          item.quantity = 0;
-        item.parcelQuantity = 0;
-        }
-        
-      });
-    });
+  this.orderList.amount = cartItems ? cartItems.amount : 0
     
+    this.menu.forEach(category => {
+      category.category.items.forEach(item => {
+        item.quantity = 0
+        item.parcelQuantity = 0
+        if (cartItems) {
+          let matchedCartSubItems = cartItems?.itemList.filter(ele => item.item_unit_price_list.some(subItem => subItem.item_unit_price_id == ele.item_unit_price_id) )
+          let matchedCartItems = cartItems?.itemList.filter(ele => ele.item_id == item.id)
+          if (matchedCartSubItems.length > 0) {
+            let matchedSubItem = item.item_unit_price_list.filter(subItem => subItem.item_unit_price_id == matchedCartSubItems[0].item_unit_price_id)
+            matchedSubItem[0].quantity = matchedCartSubItems[0].quantity
+            item.quantity += matchedCartSubItems[0].quantity
+          } else if (matchedCartItems.length > 0) {
+            item.quantity = matchedCartItems[0].quantity
+          }
+        }
+      });
+  });
   }
 
   createAllCategory() {
@@ -133,9 +138,7 @@ export class MenuComponent {
       ele.category.items.forEach(item => {
         allItems.push(item);
       });
-      
     });
-    //allItems = allItems.flat()
     this.menu.push({
       category: {
         id: null,
@@ -260,6 +263,7 @@ export class MenuComponent {
       this.orderList.itemList.push(additionalSubItem)
     }
     this.orderList.amount += subItem.price
+    this.__cartService.setCartItems(this.orderList)
   }
 
   decrementSubItemfunction =  (subItem, item) => {
@@ -270,7 +274,8 @@ export class MenuComponent {
         subItemAdded.quantity -= 1
         this.orderList.amount -= subItem.price
       } 
-      this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0 )
+    this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
+    this.__cartService.setCartItems(this.orderList)
   }
   
   clearSubItemfunction = (subItem, mainItem) => {
@@ -290,6 +295,7 @@ export class MenuComponent {
     
     subItem.quantity = 0
     this.orderList.itemList = this.orderList.itemList.filter(item => item.quantity > 0)
+    this.__cartService.setCartItems(this.orderList)
   }
 
   addItem(item, event) {
@@ -310,6 +316,7 @@ export class MenuComponent {
         itemAdded.quantity += 1
         item.quantity += 1
         this.orderList.amount += item.price
+        this.__cartService.setCartItems(this.orderList)
       }
     } else {
       if (item.item_unit_price_list.length > 0) {
@@ -332,6 +339,7 @@ export class MenuComponent {
         item.quantity = 1
         this.orderList.amount += item.price
         this.orderList.itemList.push(additionalItem)
+        this.__cartService.setCartItems(this.orderList)
       }
     }
 
@@ -419,6 +427,7 @@ export class MenuComponent {
         }
         this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
       }
+
     } 
 
     // if (itemAdded) {
@@ -453,88 +462,173 @@ export class MenuComponent {
     });     
   }
 
+  addCartItem(item, event) {
+    event.stopPropagation()
+    const initialState = JSON.parse(JSON.stringify(item))
+    item.quantity += 1
+    if (this.updateFilteredMenu(item)) {
+      this.orderList.amount += item.price
+      this.__cartService.setCartItems(this.orderList)
+    } else {
+      this.updateFilteredMenu(item)
+      item.quantity = initialState.quantity
+    }
+  }
+
+  
+  subCartItem(item, event) {
+    event.stopPropagation()
+    const initialState = JSON.parse(JSON.stringify(item))
+    item.quantity -= 1
+    if (this.updateFilteredMenu(item)) {
+      this.orderList.amount -= item.price
+      this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
+      this.__cartService.setCartItems(this.orderList)
+    } else {
+      this.updateFilteredMenu(item)
+      item.quantity = initialState.quantity
+    }
+  }
+
+
   clearCartItem(item, event) {
     event.stopPropagation()
-    this.orderList.amount -= ((item.quantity * item.price) + (item.parcelQuantity * item.price))
+    this.orderList.amount -= ((item.quantity * item.price) + (item.parcel_quantity? item.parcel_quantity: 0 * item.price))
     item.quantity = 0
     item.parcelQuantity = 0
-    this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.id != item.id)
-    this.updateSelectedItem(item)
+    this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
+    this.updateFilteredMenu(item)
     this.__cartService.setCartItems(this.orderList)
   }
   
   incrementItemFunction = (lineItem) => {
-    this.filteredMenu.forEach(element => {
-      if (element.category.name.toLowerCase() != 'all') {
-        element.category.items.forEach(item => {
-          let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
+
+    const initialState = JSON.parse(JSON.stringify(lineItem))
+    lineItem.quantity += 1
+    if (this.updateFilteredMenu(lineItem)) {
+      this.orderList.amount += initialState.price
+    } else {
+      lineItem.quantity = initialState.quantity
+      this.updateFilteredMenu(lineItem)
+    }
     
-          if (item.id == lineItem.item_id && subItem.length > 0) {
-            lineItem.quantity += 1
-            subItem[0].quantity += 1
-            item.quantity += 1
-            this.orderList.amount += subItem[0].price
-          } else if (item.id == lineItem.item_id) {
-            item.quantity += 1
-            lineItem.quantity += 1
-            this.orderList.amount += item.price
-            return
-          } 
-        }) 
-      }
-    });
+
+    // this.filteredMenu.forEach(element => {
+    //   if (element.category.name.toLowerCase() != 'all') {
+    //     element.category.items.forEach(item => {
+    //       let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
+    
+    //       if (item.id == lineItem.item_id && subItem.length > 0) {
+    //         lineItem.quantity += 1
+    //         subItem[0].quantity += 1
+    //         item.quantity += 1
+    //         this.orderList.amount += subItem[0].price
+    //       } else if (item.id == lineItem.item_id) {
+    //         item.quantity += 1
+    //         lineItem.quantity += 1
+    //         this.orderList.amount += item.price
+    //         return
+    //       } 
+    //     }) 
+    //   }
+    // });
   }
 
   decrementItemFunction = (lineItem) => {
-    this.filteredMenu.forEach(element => {
-      if (element.category.name.toLowerCase() != 'all') {
-        element.category.items.forEach(item => {
-          let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
-          
-          if (item.id == lineItem.item_id && subItem.length > 0 && (subItem[0].quantity > 0)) {
-            lineItem.quantity -= 1
-            subItem[0].quantity -= 1
-            item.quantity -= 1
-            this.orderList.amount -= subItem[0].price
-            return
-          } else if (item.id == lineItem.item_id && lineItem.quantity > 0) {
-            item.quantity -= 1
-            lineItem.quantity -= 1
-            this.orderList.amount -= item.price
-            return
-          } 
-        }) 
+    const initialState = JSON.parse(JSON.stringify(lineItem))
+    if (lineItem.quantity > 0) {
+      lineItem.quantity -= 1
+      if (this.updateFilteredMenu(lineItem)) {
+        this.orderList.amount -= initialState.price
+      } else {
+        lineItem.quantity = initialState.quantity
+        this.updateFilteredMenu(lineItem)
       }
-    });
-  }
+      }
+      }
+
+    // this.filteredMenu.forEach(element => {
+    //   if (element.category.name.toLowerCase() != 'all') {
+    //     element.category.items.forEach(item => {
+    //       let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
+          
+    //       if (item.id == lineItem.item_id && subItem.length > 0 && (subItem[0].quantity > 0)) {
+    //         lineItem.quantity -= 1
+    //         subItem[0].quantity -= 1
+    //         item.quantity -= 1
+    //         this.orderList.amount -= subItem[0].price
+    //         return
+    //       } else if (item.id == lineItem.item_id && lineItem.quantity > 0) {
+    //         item.quantity -= 1
+    //         lineItem.quantity -= 1
+    //         this.orderList.amount -= item.price
+    //         return
+    //       } 
+    //     }) 
+    //   }
+    // });
+  // }
 
   clearItemFunction = (clearItem) => {
-    this.orderList.itemList.forEach(cartItem => {
-      if (cartItem.item_id == clearItem.item_id || cartItem.item_unit_price_id == clearItem.item_unit_price_id) {
-        this.filteredMenu.forEach(category => {
-          if (category.category.name.toLowerCase() != 'all') {
-            category.category.items.forEach((item) =>
-            {
-              if (item.id == clearItem.item_id && item.item_unit_price_list.filter(subItem => subItem.item_unit_price_id == clearItem.item_unit_price_id).length > 0) {
-                item.quantity -= clearItem.quantity
-                item.item_unit_price_list.forEach(subItem => {
-                  if (subItem.item_unit_price_id == clearItem.item_unit_price_id) {
-                    subItem.quantity = 0
-                  }
-                })
-              }
-              else if (item.id == clearItem.item_id) {
-                item.quantity -= clearItem.quantity
-              }                
-            }
-          )
-        this.orderList.amount -= (clearItem.quantity * clearItem.price)
-        cartItem.quantity -= clearItem.quantity
-          }
-        })
-      }
-    })
+    const initialState = JSON.parse(JSON.stringify(clearItem))
+    clearItem.quantity = 0
+    if (this.updateFilteredMenu(clearItem)) {
+      this.orderList.amount -= (initialState.quantity * initialState.price)
+    } else {
+      clearItem.quantity = initialState.quantity
+      this.updateFilteredMenu(clearItem)
+    }
   }
+
+  updateFilteredMenu = (lineItem) => {
+    for (const category of this.filteredMenu) {
+      if (category.category.name.toLowerCase() != 'all') {
+        for (const item of category.category.items) {
+          let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
+          if (item.id == lineItem.item_id && subItem.length > 0) {
+            item.quantity = subItem[0].quantity > lineItem.quantity ? item.quantity - (subItem[0].quantity - lineItem.quantity): item.quantity + (lineItem.quantity - subItem[0].quantity)
+            subItem[0].quantity = lineItem.quantity
+            return true
+          } else if (item.id == lineItem.item_id) {
+            item.quantity = lineItem.quantity
+            return true
+          } 
+        }
+      } 
+    }
+    return false
+  }
+
+
+
+
+    
+    // this.orderList.itemList.forEach(cartItem => {
+    //   if (cartItem.item_id == clearItem.item_id || cartItem.item_unit_price_id == clearItem.item_unit_price_id) {
+    //     this.filteredMenu.forEach(category => {
+    //       if (category.category.name.toLowerCase() != 'all') {
+    //         category.category.items.forEach((item) =>
+    //         {
+    //           if (item.id == clearItem.item_id && item.item_unit_price_list.filter(subItem => subItem.item_unit_price_id == clearItem.item_unit_price_id).length > 0) {
+    //             item.quantity -= clearItem.quantity
+    //             item.item_unit_price_list.forEach(subItem => {
+    //               if (subItem.item_unit_price_id == clearItem.item_unit_price_id) {
+    //                 subItem.quantity = 0
+    //               }
+    //             })
+    //           }
+    //           else if (item.id == clearItem.item_id) {
+    //             item.quantity -= clearItem.quantity
+    //           }                
+    //         }
+    //       )
+    //     this.orderList.amount -= (clearItem.quantity * clearItem.price)
+    //     cartItem.quantity -= clearItem.quantity
+    //       }
+    //     })
+    //   }
+    // })
+  // }
 
   prepareSummary() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();

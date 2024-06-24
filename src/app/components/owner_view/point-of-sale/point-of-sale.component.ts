@@ -581,7 +581,10 @@ export class PointOfSaleComponent {
   }
 
   placeEcomOrder() {
-    this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
+    let dialogRef = this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
+    dialogRef.afterClosed().subscribe((data) => {
+      this.ngOnInit();
+    });
   }
 
   placeOrder() {
