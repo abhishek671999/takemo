@@ -22,7 +22,7 @@ export class PostLoginComponent {
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
       if (this.myInfo['restaurants'].length > 0) {
-        sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
+        sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])  //hardcode
         sessionStorage.setItem(
           'restaurant_name',
           data['restaurants'][0]['restaurant_name']
@@ -47,6 +47,7 @@ export class PostLoginComponent {
           'counter_management',
           data['restaurants'][0]['counter_management']
         );
+        sessionStorage.setItem('pay_on_delivery', data['restaurants'][0]['pay_on_delivery'])
         sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
         sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
         sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])

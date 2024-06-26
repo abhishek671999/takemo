@@ -48,6 +48,7 @@ export class ConfirmationDialogComponent {
   public restaurantParcel = false;
   showQRcode = false;
   public otpValidated = false;
+  public payOnDelivery = false;
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
@@ -88,6 +89,7 @@ export class ConfirmationDialogComponent {
         this.isPayment = data['payment_required'];
         this.otpRequired = data['otp_required'] ? data['otp_required'] : false
         this.otpValidated = data['otp_required'] ? !data['otp_required'] : false
+        this.payOnDelivery = this.__sessionWrapper.getItem('pay_on_delivery') ? this.__sessionWrapper.getItem('pay_on_delivery').toLowerCase() == 'true': false //data['pay_on_delivery']? data['pay_on_delivery'] : false
         this.paymentMethod = this.isPayment ? data['payment_mode'] : 'others';
         if (data['tax_inclusive']) {
           console.log('INcluding tax');
@@ -144,6 +146,9 @@ export class ConfirmationDialogComponent {
     }
     if (this.data.summary.table_id) {
       body['table_id'] = this.data.summary.table_id
+    }
+    if (this.payOnDelivery) {
+      body['payment_mode'] = "pay_on_delivery"
     }
     return body;
   }

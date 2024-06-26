@@ -3,7 +3,7 @@
         <button mat-raised-button (click)="navigateToOrders()" color="primary">Orders</button>
         <button mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
     </div>
-    <div *ngIf="!menu_response; else elseBlock">
+    <div *ngIf="!menu; else elseBlock">
         <div class="center-spin">
             <mat-spinner diameter="100" style="margin: 0 auto"></mat-spinner>
           </div>
@@ -16,10 +16,14 @@
         <div class="text-center">
             <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">Add new category</button>
             <mat-form-field>
-                <mat-label>Choose an option</mat-label>
-                <mat-select (selectionChange)="showCategory()" [(value)]="selectedCategoryId">
+                <mat-label>Select category</mat-label>
+                <mat-select (selectionChange)="showCategory(selectedCategoryId)" [(value)]="selectedCategoryId">
                   <mat-option  *ngFor="let category of allCategories" [value]="category.categoryId">{{category.categoryName}}</mat-option>
                 </mat-select>
+              </mat-form-field>
+              <mat-form-field >
+                <mat-label>Search item</mat-label>
+                <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
               </mat-form-field>
             <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
                     <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of visibleCategory; let mainIndex = index">
@@ -33,7 +37,7 @@
                             </div>
                         </mat-expansion-panel-header>
                         <div class="text-center">
-                            <button mat-raised-button color="primary" class="add-item-button" svgIcon="plus" (click)="addItem(category)">Add new Item to {{category.category.name}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!category.category.id" class="add-item-button" svgIcon="plus" (click)="addItem(category)">Add new Item to {{category.category.name}}</button>
                         </div>
                         <table class="table table-hover">
                             <thead class="text-center">

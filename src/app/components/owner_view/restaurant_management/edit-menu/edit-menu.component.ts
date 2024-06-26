@@ -65,7 +65,7 @@ export class EditMenuComponent {
     );
   }
 
-  menu_response: any;
+  menu: any;
   fontStyle?: string;
   restaurantId: number;
   restaurantStatus = false;
@@ -79,8 +79,11 @@ export class EditMenuComponent {
   public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
   public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
   public selectedCategoryId = ''
-  public visibleCategory = []
+  public searchText = '';
+  public currentCategory;
+  public visibleCategory
   public allCategories = []
+  public filteredMenu = []
 
   ngOnInit() {
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -88,10 +91,11 @@ export class EditMenuComponent {
       this._menuService.getAdminMenu(this.restaurantId).subscribe(
         (data) => {
           this.restaurantStatus = data['is_open']
-          this.menu_response = data['menu']
+          this.menu = data['menu']
           this.allCategories = this.parseCategories()
-          this.selectedCategoryId = this.allCategories[0].categoryId
-          this.showCategory()
+          this.createAllCategory();
+          this.showCategory(this.allCategories[0].categoryId)
+          this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
         },
         (error) => console.log(error)
       );
@@ -103,14 +107,34 @@ export class EditMenuComponent {
       });
   }
 
-  showCategory() {
-    this.visibleCategory = this.menu_response.filter((category) => category.category.id == this.selectedCategoryId)
-    console.log(this.visibleCategory, this.selectedCategoryId)
+  showCategory(categoryId) {
+    if (categoryId) {
+      this.visibleCategory = this.menu.filter((category) => category.category.id == categoryId)
+    } else {
+      this.visibleCategory = this.menu
+    }
+  }
+
+  createAllCategory() {
+    let allItems = [];
+    this.menu.forEach((ele, index) => {
+      ele.category.items.forEach(item => {
+        allItems.push(item);
+      });
+    });
+    this.menu.push({
+      category: {
+        id: null,
+        name: 'All',
+        hide_category: false,
+        items: allItems,
+      },
+    });
   }
 
   parseCategories() {
     let categories = []
-    this.menu_response.forEach((category) => {
+    this.menu.forEach((category) => {
       categories.push({
         "categoryId": category.category.id,
         "categoryName": category.category.name
@@ -231,6 +255,7 @@ export class EditMenuComponent {
   }
 
   addItem(category) {
+    debugger
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
       data: Object.assign(category, {
         restaurant_id: this.restaurantId,
@@ -281,6 +306,7 @@ export class EditMenuComponent {
   navigateToPOS() {
     this._router.navigate(['/owner/point-of-sale']);
   }
+
   navigateToOrders() {
     let navigationURL =
     this.__sessionWrapper.getItem('restaurant_kds') == 'true'
@@ -314,5 +340,17 @@ export class EditMenuComponent {
         console.log('Error while updating', error);
       }
     );
+  }
+
+  filterItems() {
+    
+    if (this.searchText) {
+      this.visibleCategory = [JSON.parse(JSON.stringify(this.menu[this.menu.length - 1]))]
+      this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>
+          item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        );
+    } else {
+      this.visibleCategory = [JSON.parse(JSON.stringify(this.menu))[0]];
+    }
   }
 }

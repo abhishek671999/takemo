@@ -47,8 +47,8 @@ export class EcomPosOrdersComponent {
     let itemList = [];
     this.summary.itemList.forEach((ele) => {
       itemList.push({
-        item_id: ele.id,
-        quantity: ele.quantity + ele.parcelQuantity,
+        item_id: ele.item_id,
+        quantity: ele.quantity +  (ele.parcelQuantity? ele.parcelQuantity: 0),
         parcel_quantity: ele.parcelQuantity,
       });
     });
@@ -70,7 +70,7 @@ export class EcomPosOrdersComponent {
           this.ngOnInit();
         });
         this.disablePlace = false;
-        this.dialogRef.close();
+        this.dialogRef.close({result: true});
       },
       (error) => {
         console.log('Place order response', error);
@@ -87,6 +87,6 @@ export class EcomPosOrdersComponent {
   }
 
   closeDialog() {
-    this.dialogRef.close();
+    this.dialogRef.close({result: false});
   }
 }

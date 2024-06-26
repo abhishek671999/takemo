@@ -161,7 +161,6 @@ export class MenuComponent {
   }
 
   togglehideCart() {
-
     this.hideCart = !this.hideCart;
     setTimeout(() => {
       let cartBar = document.getElementById(
@@ -184,7 +183,7 @@ export class MenuComponent {
         if (index == 0) {
           this.currentCategory = ele.id;
           ele.classList.add('show');
-          ele.classList.remove('hidden');
+          ele.classList.remove('hidde                       n');
         } else {
           ele.classList.remove('show');
           ele.classList.add('hidden');
@@ -225,23 +224,6 @@ export class MenuComponent {
     }
   }
 
-  addSubItem(subItem, item) {
-    let subItemAdded = this.orderList.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
-    if (subItemAdded) {
-      subItem.quantity += 1
-      item.quantity += 1
-    } else {
-      let additionalSubItem = {
-        item_id: item.id,
-        item_unit_price_id: subItem.item_unit_price_id,
-        quantity: 1,
-        parcelQuantity: 0
-      }
-      subItem.quantity = 1
-      item.quantity += 1
-      this.orderList.itemList.push(additionalSubItem)
-    }
-  }
 
   incrementSubItemfunction = (subItem, item) => {
     let subItemAdded = this.orderList.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)

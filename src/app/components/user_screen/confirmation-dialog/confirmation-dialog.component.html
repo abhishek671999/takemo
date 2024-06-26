@@ -123,7 +123,7 @@
       </ng-template>
     </div>
     <ng-template #tableBlock>
-      <ng-container *ngIf="otpRequired">
+      <ng-container *ngIf="otpRequired"; else payOnDelivery>
         <form [formGroup]="otpForm" class="otp-form">
           <mat-form-field style="width: 100%;">
             <mat-label><small>Enter OTP recieved from waiter</small></mat-label>
@@ -131,7 +131,6 @@
           </mat-form-field>
         </form>
       </ng-container>
-      
     </ng-template>
   </div>
   <div mat-dialog-actions class="button-container">
