@@ -71,17 +71,62 @@
       </mat-select>
     </mat-form-field>
   </div>
+  <div class="text-center">
+    <p style="display: inline-block">Graph &nbsp;</p>
+    <mat-slide-toggle
+      class="example-margin"
+      [checked]="tableView"
+      (toggleChange)="onToggle($event)"
+    >
+      Table
+    </mat-slide-toggle>
+  </div>
   <div class="total-view">
     <b>Total Amount:&nbsp;₹ {{totalAmount}}</b>
     <b>Total Orders: &nbsp;{{totalOrders}}</b>
   </div>
-  <div class="graph-container">
-    <div class="graph">
-        <canvas id="canvas4"></canvas>
-    </div>
-    <div class="graph">
-        <canvas id="canvas3"></canvas>
+  <div *ngIf="tableView; else graphView">
+    <div class="graph-container">
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="Date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.date }}</td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantity</th>
+            <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="total_amount">
+            <th mat-header-cell *matHeaderCellDef>Total amount</th>
+            <td mat-cell *matCellDef="let element">{{ element.total_amount }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+        Print Report
+      </button>
     </div>
   </div>
-
+  <ng-template #graphView>
+    <div class="graph-container">
+      <div class="graph">
+          <canvas id="canvas4"></canvas>
+      </div>
+      <div class="graph">
+          <canvas id="canvas3"></canvas>
+      </div>
+    </div>
+  </ng-template>
 </div>

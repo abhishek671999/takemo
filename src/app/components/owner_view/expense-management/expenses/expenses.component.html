@@ -10,8 +10,15 @@
             <mat-radio-group [(ngModel)]="selectedPaidOption" (change)="fetchExpenses()">
                 <mat-radio-button [value]="defaultPaidOption" >{{defaultPaidOption.displayValue}}</mat-radio-button>
                 <mat-radio-button *ngFor="let paidOption of isPaidOptions" [value]="paidOption">{{paidOption.displayValue}}</mat-radio-button>
-              </mat-radio-group>
-            
+            </mat-radio-group>
+            <mat-form-field class="form-field">
+                <mat-label>Select time frame</mat-label>
+                <mat-select [(value)]="selectedTimeFrameForTimelyAnalytics" (selectionChange)="fetchExpenses()" >
+                  <mat-option *ngFor="let time of timeFramesForTimelyAnalytics" [value]="time.actualValue">
+                    {{time.displayValue}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             <!-- <mat-select  [(value)]="selectedPaidOption" (selectionChange)="fetchExpenses()">
                 <mat-option [value]="defaultPaidOption" >{{defaultPaidOption.displayValue}}</mat-option>
                 <mat-option *ngFor="let paidOption of isPaidOptions" [value]="paidOption">{{paidOption.displayValue}}</mat-option>
@@ -25,8 +32,8 @@
                     <tr>
                         <th class="col1" scope="col">Id</th>
                         <th class="col2" scope="col">Name</th>
-                        <th class="col3" scope="col">Amount</th>
-                        <th class="col4" scope="col">Payment</th>
+                        <th class="col3" scope="col">Total Amount</th>
+                        <th class="col4" scope="col">Paid Amount</th>
                         <th class="col5" scope="col">Date</th>
                         <th class="col6" scope="col">Description</th>
                     </tr>
@@ -35,10 +42,8 @@
                         <tr class="table-row" *ngFor="let expense of expenses; let mainIndex = index">
                             <td class="col1" >{{expense.expense_id}}</td>
                             <td class="col3" >{{expense.vendor_name}}</td>
-                            <td class="col3" >{{expense.amount}}</td>
-                            <td class="col4" >
-                                <mat-icon *ngIf="expense.paid">done</mat-icon>
-                                <button mat-raised-button color="primary" style="font-size: smaller;" *ngIf="!expense.paid" (click)="markExpensePaid(expense)">Mark Paid</button></td>
+                            <td class="col3" >{{expense.total_amount}}</td>
+                            <td class="col4" >{{expense.paid_amount}}</td>
                             <td class="col5" >{{expense.created_at}}</td>
                             <td class="col6">{{expense.description}}</td>
                         </tr>
@@ -64,16 +69,15 @@
                 </mat-select>
               </mat-form-field>
             <mat-form-field class="col2">
-                <mat-label>Amount</mat-label>
-                <input type="number" matInput  placeholder="Vendor name" formControlName="amount">
+                <mat-label>Total Amount</mat-label>
+                <input type="number" matInput  placeholder="Total amount" formControlName="total_amount">
             </mat-form-field>
-    
-            <mat-form-field class="col3">
-                <mat-label>Paid</mat-label>
-                <mat-select  formControlName="paid">
-                    <mat-option *ngFor="let paidOption of isPaidOptions" [value]="paidOption.actualValue">{{paidOption.displayValue}}</mat-option>
-                </mat-select>
+            
+            <mat-form-field class="col2">
+                <mat-label>Paid Amount</mat-label>
+                <input type="number" matInput  placeholder="Paid amount" formControlName="paid_amount">
             </mat-form-field>
+
             <mat-form-field class="col4">
                 <mat-label>Description</mat-label>
                 <input type="text" matInput  placeholder="Add description" formControlName="description">

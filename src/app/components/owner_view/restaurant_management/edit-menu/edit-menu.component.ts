@@ -78,6 +78,8 @@ export class EditMenuComponent {
   public restaurantType = this.__sessionWrapper.getItem('restaurantType');
   public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
   public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
+  public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
+
   public selectedCategoryId = ''
   public searchText = '';
   public currentCategory;

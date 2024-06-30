@@ -197,4 +197,7 @@ export class sessionWrapper{
     return this.getItem('table_management') == 'true' ? true : false;
   }
   
+  isMobileOrderingEnabled() {
+    return this.getItem('mobile_ordering') == 'true' ? true : false;
+  }
 }

@@ -25,8 +25,8 @@ export class ExpensesComponent {
   restaurantId = this.__sessionWrapper.getItem('restaurant_id');
   expensesForm = this.__fb.group({
     vendor_id: ['', [Validators.required]],
-    amount: ['', [Validators.required]],
-    paid: ['', [Validators.required]],
+    total_amount: ['', [Validators.required]],
+    paid_amount: ['', Validators.required],
     description: ['']
   });
 
@@ -36,6 +36,15 @@ export class ExpensesComponent {
   ];
   public defaultVendor = { id: null, name: 'All' };
   public selectedVendor = this.defaultVendor;
+
+  timeFramesForTimelyAnalytics = [
+    {displayValue: 'Last 30 days', actualValue: 'last_30_days' },
+    {displayValue: 'Last month', actualValue: 'last_month' },
+    // { displayValue: 'Last week', actualValue: 'last_week'}, //future
+    { displayValue: 'Last 12 months', actualValue: 'last_12_months' },
+    // { displayValue: 'Calendar', actualValue: 'custom'}
+  ]
+  selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0].actualValue
 
   public defaultPaidOption = { actualValue: null, displayValue: 'All' };
   public selectedPaidOption = this.defaultPaidOption;
@@ -97,8 +106,9 @@ export class ExpensesComponent {
   addExpense() {
     let body = {
       vendor_id: this.expensesForm.value.vendor_id,
-      amount: this.expensesForm.value.amount,
-      paid: this.expensesForm.value.paid,
+      total_amount: this.expensesForm.value.total_amount,
+      paid_amount: this.expensesForm.value.paid_amount,
+      // paid: this.expensesForm.value.paid,
       restaurant_id: this.restaurantId,
       description: this.expensesForm.value.description
     };

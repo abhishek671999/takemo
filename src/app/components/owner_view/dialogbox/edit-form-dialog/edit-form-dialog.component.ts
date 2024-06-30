@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { of, switchMap } from 'rxjs';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-edit-form-dialog',
@@ -16,10 +17,14 @@ export class EditFormDialogComponent {
     public dialogRef: MatDialogRef<EditFormDialogComponent>,
     public _fb: FormBuilder,
     private _editMenuService: EditMenuService,
-    private __imageService: ImagesService
+    private __imageService: ImagesService,
+    private __sessionWrapper: sessionWrapper
   ) { }
 
-  
+  public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
+  public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
+  private restaurantType = this.__sessionWrapper.getItem('restaurantType')?.toLowerCase()
+
   outputBoxVisible = false;
   progress = `0%`;
   uploadResult = '';
@@ -43,7 +48,7 @@ export class EditFormDialogComponent {
   unitPriceDetails = []
   itemUnitPreviousValue = null
   ngOnInit() {
-    console.log(this.data)
+    console.log(this.restaurantType, 'this is restaurant type')
     this.unitPriceDetails = this.data.item_unit_price_list
     console.log('unitprice details array', this.unitPriceDetails)
     this.editMenuForm.get('itemUnit').valueChanges.subscribe(newValue => { // todo: maintain previous state
@@ -60,7 +65,8 @@ export class EditFormDialogComponent {
     counterId: [this.data.counter.counter_id],
     itemUnit: [{'Piece': '1', 'Grams': '2', 'Litre': '3'}[this.data.item_unit], Validators.required],
     itemDescription: [this.data.item_description],
-    subItemUnit: ['']
+    subItemUnit: [''],
+    inventory_stock: [this.data.inventory_stock]
   });
 
   editMenu() {
@@ -154,7 +160,7 @@ export class EditFormDialogComponent {
   }
 
   showSubUnitSection() {
-    return !(this.editMenuForm.value.itemUnit == '1' || this.editMenuForm.value.itemUnit.toLowerCase() == 'piece')
+    return !(this.editMenuForm.value.itemUnit == '1' || this.editMenuForm.value.itemUnit.toLowerCase() == 'piece' || this.restaurantType == 'restaurant')
   }
 
   getSubUnits() {

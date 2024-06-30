@@ -7,6 +7,8 @@ import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 
 @Component({
   selector: 'app-timely-analytics',
@@ -20,7 +22,8 @@ export class TimelyAnalyticsComponent {
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
     private __sessionWrapper: sessionWrapper,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    public printerConn: PrintConnectorService,
     ){}
 
   timeFramesForTimelyAnalytics = [
@@ -32,7 +35,10 @@ export class TimelyAnalyticsComponent {
     
   ]
   categoryList = [{'name': 'select', 'id': 0}]
-  itemList = [{'name': 'select', 'id': 0}]
+  itemList = [{ 'name': 'select', 'id': 0 }]
+  
+  public dataSource = new MatTableDataSource();
+  displayedColumns: string[] = ['Date', 'quantity', 'total_amount'];
 
   restaurantList = [
     // { displayValue: 'All', restaurant_id: 0},
@@ -51,7 +57,7 @@ export class TimelyAnalyticsComponent {
   totalOrders = 0;
   loadView = false
   isITTUser = this.__sessionWrapper.doesUserBelongsToITT()
-
+  tableView = true;
   counters = []
   selectedCounterId;
 
@@ -100,7 +106,10 @@ export class TimelyAnalyticsComponent {
     
   }
 
-  
+  onToggle(event) {
+    this.tableView = !this.tableView;
+    this.onValueChange('none');
+  }
 
   onValueChange(value: string){
     let field = document.getElementById('calendarInputField')
@@ -113,15 +122,23 @@ export class TimelyAnalyticsComponent {
     console.log('IN value change', this.selectedTimeFrameForTimelyAnalytics)
     if(this.selectedTimeFrameForTimelyAnalytics == 'custom'){
       field.classList.remove('hidden')
-      if(this.range.value.start && this.range.value.end){
-        this.chart2.destroy()
-        this.chart4.destroy()
+      if (this.range.value.start && this.range.value.end) {
+        try {
+          this.chart2.destroy()
+          this.chart4.destroy()
+        } catch (error) {
+          console.log(error)
+        }
         this.createTimelyAnalytics(this.getRequestBodyPrepared())
       }
     }else{
       field.classList.add('hidden')
-      this.chart2.destroy()
-      this.chart4.destroy()
+      try {
+        this.chart2.destroy()
+        this.chart4.destroy()
+      } catch (error) {
+        console.log(error)
+      }
       this.createTimelyAnalytics(this.getRequestBodyPrepared())
     }
     
@@ -170,15 +187,34 @@ export class TimelyAnalyticsComponent {
           console.log("Timely analytics", data[this.selectedTimeFrameForTimelyAnalytics], this.selectedTimeFrameForTimelyAnalytics)
           this.totalOrders = data['quantity']
           this.totalAmount = data['total_amount']
-          this.chart2  = this.createTimelyOrderAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
+          if (this.tableView) {
+            this.dataSource.data = this.parseResponse(data)
+          } else {
+            this.chart2  = this.createTimelyOrderAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
           this.chart4 = this.createTimelyAmountAnalyticsChart(data, this.selectedTimeFrameForTimelyAnalytics)
-            },
+          }
+          },
         error => {
           console.log('Error in create timely anlaytics')
         }
       )
     }
-    
+  }
+
+  parseResponse(data) {
+    let tabulatedResponse = []
+    Object.entries(data[this.selectedTimeFrameForTimelyAnalytics]).forEach(([key, value], index) => {
+      tabulatedResponse.push(
+        {
+          date: key,
+          quantity: value['quantity'],
+          total_amount: value['total_amount']
+
+        }
+      )
+    })
+    console.log(tabulatedResponse)
+    return tabulatedResponse
   }
 
   createTimelyOrderAnalyticsChart(data, time_frame){
@@ -235,5 +271,70 @@ export class TimelyAnalyticsComponent {
     })
   }
 
-  
+  async printSalesAnalytics() {
+    let a = (await this.printerConn.usbSought)
+      ? null
+      : this.printerConn.seekUSB();
+    console.log(a);
+    if (this.printerConn.usbSought) {
+      let printConnect = this.printerConn.printService.init();
+      this.getPrintableText().forEach((ele) => {
+        printConnect.writeCustomLine(ele);
+      });
+      printConnect.feed(4).cut().flush();
+    } else {
+      console.log('No printer connected');
+    }
+  }
+ 
+  getPrintableText() {
+    let sectionSeperatorCharacters = '-'.repeat(40);
+    let content = [
+      {
+        text: this.__sessionWrapper.getItem('restaurant_name'),
+        size: 'xlarge',
+        bold: true,
+        justification: 'center',
+      },
+      {
+        text: sectionSeperatorCharacters,
+      },
+      {
+        text: this.getFormattedTableToPrint(),
+        justification: 'center',
+      },
+    ];
+    console.log('Content: ', content);
+    return content;
+  }
+
+  getFormattedTableToPrint() {
+    let tableHeader = 'No  Title               Orders  Amount  \n';
+    let formattedText = '';
+    this.dataSource.data.forEach((ele) => {
+      let slNo = this.getFixedLengthString(ele['position'], 2, true, '0');
+      let title = this.getFixedLengthString(ele['name'], 18, false, ' ');
+      let orders = this.getFixedLengthString(ele['quantity'], 6, true, ' ');
+      let amount = this.getFixedLengthString(
+        'Rs' + ele['total_amount'],
+        7,
+        false,
+        ' '
+      );
+
+      formattedText += `${slNo}  ${title}  ${orders}  ${amount}\n`;
+    });
+    return formattedText == '' ? '' : tableHeader + formattedText;
+  }
+  getFixedLengthString(string, length, prefix = true, fixValue = '0') {
+    string = String(string);
+    console.log('string length', string.toLocaleString().length);
+    return string.length > length
+      ? string.substring(0, length)
+      : prefix
+      ? fixValue.repeat(length - string.length) + string
+      : string + fixValue.repeat(length - string.length);
+  }
+
+
 }

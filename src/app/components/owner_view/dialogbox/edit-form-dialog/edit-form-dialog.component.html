@@ -15,7 +15,7 @@
                           <mat-radio-button value='egg' [checked]="data.egg">Egg</mat-radio-button>
                       </mat-radio-group>
                   </div>
-                  <div>
+                  <div *ngIf="showSubUnitSection()">
                     <mat-radio-group (change)="updateUnit()" formControlName="itemUnit">
                       <mat-radio-button value='1' [checked]="data.item_unit.toLowerCase() == 'piece'">Piece</mat-radio-button>
                       <mat-radio-button value="2" [checked]="data.item_unit.toLowerCase() == 'grams'">Grams</mat-radio-button>
@@ -33,6 +33,12 @@
                           <mat-label>MRP Price</mat-label>
                       <input matInput placeholder="MRP price" value="{{data.mrp_price}}" formControlName="mrpPrice">
                       </mat-form-field>
+                  </div>
+                  <div *ngIf="inventoryManagement && !showSubUnitSection()"> 
+                    <mat-form-field >
+                      <mat-label>Inventory</mat-label>
+                      <input type="number" matInput formControlName="inventory_stock">
+                    </mat-form-field>
                   </div>
                   <div>
                       <mat-form-field  [style.fontSize]="16">
@@ -102,12 +108,13 @@
                       </tbody>
                     </table>
                   </div>
-                  <div>
+                  <div *ngIf="counterMangement">
                     <mat-form-field>
-                      <mat-select formControlName="counterId">
-                        <mat-option>None</mat-option>
-                        <mat-option *ngFor="let option of data.countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
-                      </mat-select>
+                      <mat-label>Counter</mat-label>
+                        <mat-select  formControlName="counterId">
+                          <mat-option>None</mat-option>
+                          <mat-option *ngFor="let option of data.countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
+                        </mat-select>
                     </mat-form-field>
                   </div>
                   <form class="upload-form">  
