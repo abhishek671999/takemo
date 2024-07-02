@@ -227,7 +227,8 @@ export class PointOfSaleComponent {
           "quantity": 1,
           "parcel_quantity": 0,
           "name": item.name,
-          "price": item.price
+          "price": item.price,
+          "counter": item.counter
         }
         item.quantity = 1
         this.summary.amount += item.price
@@ -252,7 +253,8 @@ export class PointOfSaleComponent {
         item_unit_price_id: subItem.item_unit_price_id,
         quantity: 1,
         parcel_quantity: 0, //hardcode
-        price: subItem.price
+        price: subItem.price,
+        counter: subItem.counter
       }
       subItem.quantity = 1
       item.quantity += 1
@@ -647,6 +649,17 @@ export class PointOfSaleComponent {
     return content;
   }
 
+  getFormattedCounterItemDetails(counterItemList) {
+    let formattedText = '';
+    counterItemList.forEach((element) => {
+      let trimmedName = this.getFixedLengthString(element.name.substring(0, 28), 28, false, ' ')
+      let remainingName = trimmedName.trim() == element.name ? '' : ' ' + this.getFixedLengthString(element.name.substring(28, 48), 20, false, ' ') + '\n';
+      let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
+      formattedText += `${trimmedName}  ${itemQty}\n${remainingName}`
+    })
+    return formattedText
+  }
+
   getCounterPrintableText() {
     let countersWithOrders = [];
     this.counters.forEach((counterEle) => {
@@ -654,14 +667,17 @@ export class PointOfSaleComponent {
         (itemEle) => itemEle.counter.counter_id == counterEle.counter_id
       );
       if (counterItemList.length) {
-        let formattedText = '';
-        counterItemList.forEach((element) => {
-          let itemAmount = element.quantity * element.price;
-          formattedText += `${this.trimString(element.name)}\t${
-            element.quantity
-          }\t${element.price}\tRs.${itemAmount}\n`;
-        });
         let printObj = [
+          {
+            text: this.restaurantName,
+            justification: 'center',
+            size: 'xlarge',
+            bold: true,
+          },
+          {
+            text: this.dateUtils.getDateForRecipePrint(),
+            justification: 'right',
+          },
           {
             text: counterEle.counter_name,
             justification: 'center',
@@ -669,8 +685,9 @@ export class PointOfSaleComponent {
             bold: true,
           },
           {
-            text: formattedText,
+            text: this.getFormattedCounterItemDetails(counterItemList),
             size: 'large',
+            justification: 'center'
           },
         ];
         countersWithOrders.push(printObj);
@@ -684,6 +701,23 @@ export class PointOfSaleComponent {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
+
+      this.getCounterPrintableText().forEach((counterPrint) => {
+        counterPrint.forEach((ele) => {
+          if (ele.text != '') {
+            printConnect.writeCustomLine(ele)
+          }
+        })
+        printConnect
+        .writeCustomLine({
+          text: `Order No: ${orderNum}`,
+          size: 'large',
+          bold: true,
+          justification: 'center',
+        })
+          .feed(4).cut().flush()
+      })
+
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
@@ -699,7 +733,6 @@ export class PointOfSaleComponent {
         .feed(4)
         .cut()
         .flush();
-
       // this.getCounterPrintableText().forEach(ele =>{
       //   ele.forEach(element => {
       //     printConnect.writeCustomLine(element)
@@ -732,7 +765,6 @@ export class PointOfSaleComponent {
   }
 
   placePOSOrder() {
-    debugger
     this.disablePlace = true;
     let body = this.preparePlaceOrderBody();
     this.printerRequired && !this.printerConn.usbSought

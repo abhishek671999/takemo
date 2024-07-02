@@ -257,7 +257,6 @@ export class EditMenuComponent {
   }
 
   addItem(category) {
-    debugger
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
       data: Object.assign(category, {
         restaurant_id: this.restaurantId,
