@@ -386,8 +386,8 @@ export class PointOfSaleComponent {
   getFormattedCounterItemDetails(counterItemList) {
     let formattedText = '';
     counterItemList.forEach((element) => {
-      let trimmedName = this.getFixedLengthString(element.name.substring(0, 28), 28, false, ' ')
-      let remainingName = trimmedName.trim() == element.name ? '' : ' ' + this.getFixedLengthString(element.name.substring(28, 48), 20, false, ' ') + '\n';
+      let trimmedName = this.getFixedLengthString(element.name.substring(0, 16), 16, false, ' ')
+      let remainingName = trimmedName.trim() == element.name ? '' : ' ' + this.getFixedLengthString(element.name.substring(16, 36), 20, false, ' ') + '\n';
       let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
       formattedText += `${trimmedName}  ${itemQty}\n${remainingName}`
     })
@@ -470,6 +470,7 @@ export class PointOfSaleComponent {
   }
 
   getCounterPrintableText() {
+    let sectionSeperatorCharacters = '-'.repeat(42);
     let countersWithOrders = [];
     this.counters.forEach((counterEle) => {
       let counterItemList = this.summary.itemList.filter(
@@ -490,13 +491,19 @@ export class PointOfSaleComponent {
           {
             text: counterEle.counter_name,
             justification: 'center',
-            size: 'xxlarge',
-            bold: true,
+            size: 'xlarge',
+          },
+          {
+            text: sectionSeperatorCharacters,
+            justification: 'center',
           },
           {
             text: this.getFormattedCounterItemDetails(counterItemList),
-            size: 'large',
-            justification: 'center'
+            size: 'xlarge', 
+          },
+          {
+            text: sectionSeperatorCharacters,
+            justification: 'center',
           },
         ];
         countersWithOrders.push(printObj);
@@ -531,21 +538,21 @@ export class PointOfSaleComponent {
 
 
       
-      this.getCustomerPrintableText().forEach((ele) => {
-        if (ele.text != '') {
-          printConnect.writeCustomLine(ele);
-        }
-      });
-      printConnect
-        .writeCustomLine({
-          text: `Order No: ${orderNum}`,
-          size: 'large',
-          bold: true,
-          justification: 'center',
-        })
-        .feed(4)
-        .cut()
-        .flush();
+      // this.getCustomerPrintableText().forEach((ele) => {
+      //   if (ele.text != '') {
+      //     printConnect.writeCustomLine(ele);
+      //   }
+      // });
+      // printConnect
+      //   .writeCustomLine({
+      //     text: `Order No: ${orderNum}`,
+      //     size: 'large',
+      //     bold: true,
+      //     justification: 'center',
+      //   })
+      //   .feed(4)
+      //   .cut()
+      //   .flush();
 
       // this.getCounterPrintableText().forEach(ele =>{
       //   ele.forEach(element => {
