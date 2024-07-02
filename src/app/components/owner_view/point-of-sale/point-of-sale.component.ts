@@ -511,7 +511,7 @@ export class PointOfSaleComponent {
       //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
 
-      if (this.restaurantAddress == 12) {
+      if (this.restaurantId == 12) {
         this.getCounterPrintableText().forEach((counterPrint) => {
           counterPrint.forEach((ele) => {
             if (ele.text != '') {
