@@ -47,14 +47,14 @@ export class PointOfSaleComponent {
   public parcelCharges = 5; // hardcode
   counters = [];
   public outletType = sessionStorage.getItem('restaurantType').toLowerCase();
-
+  public restaurantId = Number(sessionStorage.getItem('restaurant_id'))
   ngOnInit() {
     this.summary = {
       amount: 0,
       itemList: [],
     };
     this.menuService
-      .getPOSMenu(sessionStorage.getItem('restaurant_id'))
+      .getPOSMenu(this.restaurantId)
       .subscribe((data) => {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
@@ -69,7 +69,7 @@ export class PointOfSaleComponent {
         this.showOnlyFirstCategory();
       });
     this._counterService
-      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .getRestaurantCounter(this.restaurantId)
       .subscribe(
         (data) => {
           console.log('counters available', data);
@@ -243,7 +243,7 @@ export class PointOfSaleComponent {
     let body = {
       pos: true,
       order_list: itemList,
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
       total_amount: this.summary.amount,
@@ -383,6 +383,17 @@ export class PointOfSaleComponent {
     return this.dateUtils.getDateForRecipePrint();
   }
 
+  getFormattedCounterItemDetails(counterItemList) {
+    let formattedText = '';
+    counterItemList.forEach((element) => {
+      let trimmedName = this.getFixedLengthString(element.name.substring(0, 28), 28, false, ' ')
+      let remainingName = trimmedName.trim() == element.name ? '' : ' ' + this.getFixedLengthString(element.name.substring(28, 48), 20, false, ' ') + '\n';
+      let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
+      formattedText += `${trimmedName}  ${itemQty}\n${remainingName}`
+    })
+    return formattedText
+  }
+
   getCustomerPrintableText() {
     let sectionHeader1 =
       '-'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '-'.repeat(16);
@@ -465,14 +476,17 @@ export class PointOfSaleComponent {
         (itemEle) => itemEle.counter.counter_id == counterEle.counter_id
       );
       if (counterItemList.length) {
-        let formattedText = '';
-        counterItemList.forEach((element) => {
-          let itemAmount = element.quantity * element.price;
-          formattedText += `${this.trimString(element.name)}\t${
-            element.quantity
-          }\t${element.price}\tRs.${itemAmount}\n`;
-        });
         let printObj = [
+          {
+            text: this.restaurantName,
+            justification: 'center',
+            size: 'xlarge',
+            bold: true,
+          },
+          {
+            text: this.dateUtils.getDateForRecipePrint(),
+            justification: 'right',
+          },
           {
             text: counterEle.counter_name,
             justification: 'center',
@@ -480,8 +494,9 @@ export class PointOfSaleComponent {
             bold: true,
           },
           {
-            text: formattedText,
+            text: this.getFormattedCounterItemDetails(counterItemList),
             size: 'large',
+            justification: 'center'
           },
         ];
         countersWithOrders.push(printObj);
@@ -495,6 +510,27 @@ export class PointOfSaleComponent {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
+
+      if (this.restaurantAddress == 12) {
+        this.getCounterPrintableText().forEach((counterPrint) => {
+          counterPrint.forEach((ele) => {
+            if (ele.text != '') {
+              printConnect.writeCustomLine(ele)
+            }
+          })
+          printConnect
+          .writeCustomLine({
+            text: `Order No: ${orderNum}`,
+            size: 'large',
+            bold: true,
+            justification: 'center',
+          })
+            .feed(4).cut().flush()
+        })
+      }
+
+
+      
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
