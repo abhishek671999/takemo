@@ -9,17 +9,22 @@ import { host } from '../../site-variable';
 export class ExpenseService {
   private __getExpenseEndpoint = 'expense/get_expenses/'
   private __addExpenseEndpoint = 'expense/add_expense/'
+  private __addPartialPaymentEndpoint = 'expense/partial_pay_expenses_of_vendor/'
   private __payAllExpensesOfVendorEndpoint = 'expense/pay_all_expenses_of_vendor/'
   private __EditExpenseEndpoint = 'expense/edit_expense/'
 
   constructor(private __httpClient: HttpClient) { }
   
-  getExpenses(httpParams: HttpParams) {
-    return this.__httpClient.get(host + this.__getExpenseEndpoint, {params: httpParams})
+  getExpenses(body) {
+    return this.__httpClient.post(host + this.__getExpenseEndpoint, body)
   }
 
   addExpense(body) {
     return this.__httpClient.post(host + this.__addExpenseEndpoint , body)
+  }
+
+  addPartitalPayment(body) {
+    return this.__httpClient.post(host + this.__addPartialPaymentEndpoint, body)
   }
 
   payAllExpensesOfVendor(body) {

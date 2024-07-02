@@ -1,11 +1,12 @@
 import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { timeInterval } from 'rxjs';
 import { ExpenseService } from 'src/app/shared/services/expense/expense.service';
 import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-expenses',
@@ -18,11 +19,18 @@ export class ExpensesComponent {
     private __vendorService: VendorService,
     private __fb: FormBuilder,
     private __snackbar: MatSnackBar,
-    private __sessionWrapper: sessionWrapper
+    private __sessionWrapper: sessionWrapper,
+    private dateUtils: dateUtils,
   ) {}
   public vendorList = [];
   public expenses = [];
   restaurantId = this.__sessionWrapper.getItem('restaurant_id');
+
+  partialExpenseForm = this.__fb.group({
+    vendor_id: ["", Validators.required],
+    amount: ["", Validators.required]
+  })
+
   expensesForm = this.__fb.group({
     vendor_id: ['', [Validators.required]],
     total_amount: ['', [Validators.required]],
@@ -37,14 +45,24 @@ export class ExpensesComponent {
   public defaultVendor = { id: null, name: 'All' };
   public selectedVendor = this.defaultVendor;
 
-  timeFramesForTimelyAnalytics = [
-    {displayValue: 'Last 30 days', actualValue: 'last_30_days' },
-    {displayValue: 'Last month', actualValue: 'last_month' },
-    // { displayValue: 'Last week', actualValue: 'last_week'}, //future
-    { displayValue: 'Last 12 months', actualValue: 'last_12_months' },
-    // { displayValue: 'Calendar', actualValue: 'custom'}
-  ]
-  selectedTimeFrameForTimelyAnalytics: string = this.timeFramesForTimelyAnalytics[0].actualValue
+  timeFramesForExpenses = [
+    { displayValue: 'Today', actualValue: 'today' },
+    { displayValue: 'Yesterday', actualValue: 'yesterday' },
+    { displayValue: 'This week', actualValue: 'this_week' },
+    { displayValue: 'This month', actualValue: 'this_month' },
+    { displayValue: 'Last month', actualValue: 'last_month' },
+    { displayValue: 'Last 3 months', actualValue: 'last_3_months' },
+    { displayValue: 'Last 6 months', actualValue: 'last_6_months' },
+    { displayValue: 'This year', actualValue: 'this_year' },
+    { displayValue: 'Calendar', actualValue: 'custom' },
+  ];
+
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+
+  selectedTimeFrameForExpenses: string = this.timeFramesForExpenses[0].actualValue
 
   public defaultPaidOption = { actualValue: null, displayValue: 'All' };
   public selectedPaidOption = this.defaultPaidOption;
@@ -55,6 +73,24 @@ export class ExpensesComponent {
     this.fetchVendorList().then((resolve) => {
       this.fetchExpenses();
     });
+  }
+
+
+  addPartialPayment() {
+    let body = {
+       "vendor_id": this.partialExpenseForm.value.vendor_id,
+        "amount": this.partialExpenseForm.value.amount
+    }
+    this.__expenseService.addPartitalPayment(body).subscribe(
+      data => {
+        this.partialExpenseForm.reset();
+        this.ngOnInit()
+      },
+      error => {
+        alert('Failed to add payment')
+      }
+    )
+    
   }
 
   fetchVendorList() {
@@ -75,39 +111,53 @@ export class ExpensesComponent {
   }
 
   fetchExpenses() {
-    let httpParams = new HttpParams();
-    httpParams = httpParams.append('restaurant_id', this.restaurantId);
+    let body = {
+      "restaurant_id": Number(this.restaurantId),
+    };
     if (this.selectedPaidOption.actualValue) {
-      httpParams = httpParams.append(
-        'paid',
-        this.selectedPaidOption.actualValue
+        body['paid'] = this.selectedPaidOption.actualValue
+    }
+    if (this.selectedVendor.id) {
+      body['vendor_id'] = this.selectedVendor.id;
+    }
+    if (this.selectedTimeFrameForExpenses == 'custom') {
+      if (this.range.value.start && this.range.value.end) {
+        body['time_frame'] = this.selectedTimeFrameForExpenses;
+        body['start_date'] = this.dateUtils.getStandardizedDateFormate(
+          this.range.value.start
+        );
+        body['end_date'] = this.dateUtils.getStandardizedDateFormate(
+          this.range.value.end
+        );
+      } else {
+        body = null;
+      }
+    } else {
+      body['time_frame'] = this.selectedTimeFrameForExpenses;
+    }
+    if (body) {
+      this.__expenseService.getExpenses(body).subscribe(
+        (data) => {
+          console.log('Fetched expense: ', data);
+          this.expenses = data['expenses'];
+          this.expenses.forEach((exp) => {
+            exp['created_at'] = new Date(exp.created_at)
+              .toLocaleString()
+          });
+          this.totalAmount = data['total_amount'];
+        },
+        (error) => {
+          console.log('Error: ', error);
+        }
       );
     }
-
-    if (this.selectedVendor.id) {
-      httpParams = httpParams.append('vendor_id', this.selectedVendor.id);
-    }
-    this.__expenseService.getExpenses(httpParams).subscribe(
-      (data) => {
-        console.log('Fetched expense: ', data);
-        this.expenses = data['expenses'];
-        this.expenses.forEach((exp) => {
-          exp['created_at'] = new Date(exp.created_at)
-            .toLocaleString()
-        });
-        this.totalAmount = data['total_amount'];
-      },
-      (error) => {
-        console.log('Error: ', error);
-      }
-    );
   }
 
   addExpense() {
     let body = {
       vendor_id: this.expensesForm.value.vendor_id,
-      total_amount: this.expensesForm.value.total_amount,
-      paid_amount: this.expensesForm.value.paid_amount,
+      amount: this.expensesForm.value.total_amount,
+      amount_paid: this.expensesForm.value.paid_amount,
       // paid: this.expensesForm.value.paid,
       restaurant_id: this.restaurantId,
       description: this.expensesForm.value.description

@@ -195,7 +195,7 @@ export class PointOfSaleComponent {
 
   addItem(item) {
     // todo: update cart and handle parcel quantity and stock/inventory
-    let itemAdded = this.summary.itemList.find((x) => (x.item_id == item.id) || (item.item_unit_price_id ? x.item_unit_price_id == item.item_unit_price_id: false))
+    let itemAdded = this.summary.itemList.find((x) => (x.item_id == item.item_id) || (x.item_id == item.id) || (item.item_unit_price_id ? x.item_unit_price_id == item.item_unit_price_id: false))
     if (itemAdded) {
       if (item.item_unit_price_list?.length > 0) {
         let dialogRef = this.dialog.open(SelectSubitemDialogComponent, {
