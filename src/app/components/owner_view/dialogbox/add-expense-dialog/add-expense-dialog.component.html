@@ -1,0 +1,27 @@
+<div>
+    <h2 style="text-align: center">Add new expense</h2>
+<form [formGroup]="expensesForm" class="new-expense-form">
+    
+    <mat-form-field >
+        <mat-label>Vendor name</mat-label>
+        <mat-select  formControlName="vendor_id">
+          <mat-option *ngFor="let vendor of vendorList" [value]="vendor.id">{{vendor.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    <mat-form-field class="col2">
+        <mat-label>Total Amount</mat-label>
+        <input type="number" matInput  placeholder="Total amount" formControlName="total_amount">
+    </mat-form-field>
+    
+    <mat-form-field class="col2">
+        <mat-label>Paid Amount</mat-label>
+        <input type="number" matInput  placeholder="Paid amount" formControlName="paid_amount">
+    </mat-form-field>
+
+    <mat-form-field class="col4">
+        <mat-label>Description</mat-label>
+        <input type="text" matInput  placeholder="Add description" formControlName="description">
+    </mat-form-field>
+    <button mat-raised-button class="col6" color='primary' type="submit" (click)="addExpense()" [disabled]="!expensesForm.valid">Add Expense</button>
+</form>
+</div>

@@ -15,6 +15,8 @@ import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
+import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -40,6 +42,7 @@ export class SalesAnalyticsComponent {
     private __sessionWrapper: sessionWrapper,
     private _counterService: CounterService,
     public printerConn: PrintConnectorService,
+    private __matDialog: MatDialog
   ) {}
 
   timeFrames = [
@@ -63,35 +66,41 @@ export class SalesAnalyticsComponent {
     { displayValue: 'New orders', actualValue: 'unconfirmed' },
     { displayValue: 'Confirmed', actualValue: 'confirmed' },
     { displayValue: 'Delivered', actualValue: 'delivered' },
-    { displayValue: 'Rejected', actualValue: 'rejected'}
-  ]
+    { displayValue: 'Rejected', actualValue: 'rejected' },
+  ];
 
   restaurantList = [
     // { displayValue: 'All', restaurant_id: 0},
     { displayValue: 'Amulya Kitchen', restaurant_id: 1 },
-    { displayValue: 'Tikkad kitchen', restaurant_id: 2 },
+    { displayValue: 'Amrit Kitchenen', restaurant_id: 2 },
   ];
 
-  paymentMethods = [   // hardcode
-    { displayValue: 'All', codedList: [2,5,6,7,8] },
+  paymentMethods = [
+    // hardcode
+    { displayValue: 'All', codedList: [2, 5, 6, 7, 8] },
     { displayValue: 'Mobile', codedList: [2] },
-    { displayValue: 'POS', codedList: [5,6,7,8] }
-  ]
+    { displayValue: 'POS', codedList: [5, 6, 7, 8] },
+  ];
 
   ruleList = [];
   loadView = false;
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  selectPaymentMethod: number[] = this.paymentMethods[0].codedList
-  selectedOrderStatus: string = this.orderTypes[0].actualValue
+  selectPaymentMethod: number[] = this.paymentMethods[0].codedList;
+  selectedOrderStatus: string = this.orderTypes[0].actualValue;
   selectedRule;
   totalAmount = 0;
   totalOrders = 0;
-  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id') ? true : false;
-  hasOrderTypes = this.__sessionWrapper.getItem('restaurantType') == 'e-commerce' ? true : false;
+  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id')
+    ? true
+    : false;
+  hasOrderTypes =
+    this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
+      ? true
+      : false;
   isITTUser = this.__sessionWrapper.doesUserBelongsToITT();
-  isRaviGobiUser = this.__sessionWrapper.doesUserBelongsToRaviGobi()
+  isRaviGobiUser = this.__sessionWrapper.doesUserBelongsToRaviGobi();
 
   chart1: any = [];
   chart2: any = [];
@@ -154,12 +163,12 @@ export class SalesAnalyticsComponent {
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
     }
-    if(this.isRaviGobiUser){
-      body['payment_mode_list'] = this.selectPaymentMethod
+    if (this.isRaviGobiUser) {
+      body['payment_mode_list'] = this.selectPaymentMethod;
     }
     if (this.hasOrderTypes) {
-      body['order_status'] = this.selectedOrderStatus
-      body['ecom'] = this.hasOrderTypes
+      body['order_status'] = this.selectedOrderStatus;
+      body['ecom'] = this.hasOrderTypes;
     }
     if (this.selectedTimeFrame == 'custom') {
       if (this.range.value.start && this.range.value.end) {
@@ -180,7 +189,7 @@ export class SalesAnalyticsComponent {
   }
 
   onValueChange() {
-    this.dataLoadSpinner = true
+    this.dataLoadSpinner = true;
     let field = document.getElementById('calendarInputField');
     if (this.selectedTimeFrame == 'custom') {
       field.classList.remove('hidden');
@@ -283,11 +292,11 @@ export class SalesAnalyticsComponent {
                 ? this.createCategoryWiseTotalAmountChart(data)
                 : this.createItemWiseTotalAmountChart(data);
           }
-          this.dataLoadSpinner = false
+          this.dataLoadSpinner = false;
         },
         (error) => {
           console.log('Error while loading analytics');
-          this.dataLoadSpinner = false
+          this.dataLoadSpinner = false;
         }
       );
     }
@@ -574,5 +583,9 @@ export class SalesAnalyticsComponent {
       : prefix
       ? fixValue.repeat(length - string.length) + string
       : string + fixValue.repeat(length - string.length);
+  }
+
+  openSendEmailDialogBox() {
+    let dialogRef = this.__matDialog.open(SendEmailReportDialogComponent, {data: {requestBody: this.getRequestBodyPrepared()}});
   }
 }

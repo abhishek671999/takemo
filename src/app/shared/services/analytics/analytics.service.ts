@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Utility, host } from '../../site-variable';
 
@@ -6,10 +6,11 @@ import { Utility, host } from '../../site-variable';
   providedIn: 'root',
 })
 export class AnalyticsService {
-  _salesAnalyticEndpoint = 'analytics/get_sales_analytics_data/';
-  _salesAnalyticsRGEndpoint = 'analytics/get_sales_analytics_data_rg/'; //hardcode
-  _timelyAnalyticsEndpoint = 'analytics/get_timely_analytics_data/';
-  _salesAnalyticsEcomEndpoint = 'analytics/get_sales_analytics_data_ecom/';
+  private _salesAnalyticEndpoint = 'analytics/get_sales_analytics_data/';
+  private _salesAnalyticsRGEndpoint = 'analytics/get_sales_analytics_data_rg/'; //hardcode
+  private _timelyAnalyticsEndpoint = 'analytics/get_timely_analytics_data/';
+  private _salesAnalyticsEcomEndpoint = 'analytics/get_sales_analytics_data_ecom/';
+  private __sendDailyReportEndpoint = 'analytics/send_daily_report/'
 
   constructor(private _httpClient: HttpClient, public utility: Utility) {}
 
@@ -26,4 +27,9 @@ export class AnalyticsService {
   getTimelyAnalyticsData(body) {
     return this._httpClient.post(host + this._timelyAnalyticsEndpoint, body);
   }
+
+  sendDailyReport(body) {
+    return this._httpClient.post(host + this.__sendDailyReportEndpoint, body)
+  }
+
 }

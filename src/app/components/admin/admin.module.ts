@@ -47,6 +47,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DummyUploadImagesComponent } from './dummy-upload-images/dummy-upload-images.component';
 import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
+import { SendEmailReportDialogComponent } from './dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { UploadFormComponent } from '../shared/upload-form/upload-form.component
     Time24to12Format,
     CurrentOrdersComponent,
     OrdersHomeComponent,
-    DummyUploadImagesComponent
+    DummyUploadImagesComponent,
+    SendEmailReportDialogComponent
   ],
   imports: [
     CommonModule,

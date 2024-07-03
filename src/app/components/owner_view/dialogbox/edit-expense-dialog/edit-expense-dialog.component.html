@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Edit Expense: {{expense.vendor_name}}</h2>
+<mat-dialog-content>
+    <p>Amount:&emsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{expense.amount}}</p>
+    <p>Paid Amount:&nbsp; {{expense.amount_paid}}</p>
+    <p>Balance:&emsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{expense.amount - expense.amount_paid}}</p>
+    <p>Description: {{expense.description}}</p>
+    <mat-label>Pay amount: </mat-label>
+    <input matInput [(ngModel)]="updatedPaidAmount">
+    <div *ngIf="isAmountPaidInvalid()">
+        <small class="text-danger">New amount should be less or equal to balance</small>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button (click)="close()">Close</button>
+    <button mat-raised-button [disabled]="isAmountPaidInvalid()" color="primary" (click)="editExpense()">Update</button>
+    <button mat-raised-button color="warn" (click)="deleteExpense()">Delete</button>
+</mat-dialog-actions>

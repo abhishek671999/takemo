@@ -47,6 +47,9 @@ import { TableOrdersDialogComponent } from './dialogbox/table-orders-dialog/tabl
 import { TableManagementComponent } from './restaurant_management/table-management/table-management.component';
 import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
 import { AddItemDialogComponent } from './dialogbox/add-item-dialog/add-item-dialog.component';
+import { AddPaymentDialogComponent } from './dialogbox/add-payment-dialog/add-payment-dialog.component';
+import { AddExpenseDialogComponent } from './dialogbox/add-expense-dialog/add-expense-dialog.component';
+import { EditExpenseDialogComponent } from './dialogbox/edit-expense-dialog/edit-expense-dialog.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +75,9 @@ import { AddItemDialogComponent } from './dialogbox/add-item-dialog/add-item-dia
     TableOrdersDialogComponent,
     TableManagementComponent,
     AddItemDialogComponent,
+    AddPaymentDialogComponent,
+    AddExpenseDialogComponent,
+    EditExpenseDialogComponent,
   ],
   imports: [
     CommonModule,

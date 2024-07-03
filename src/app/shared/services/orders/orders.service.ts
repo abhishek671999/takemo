@@ -86,8 +86,8 @@ export class OrdersService {
     });
   }
 
-  getRestaurantOrdersForAdmins(body) {
-    return this._http.post(host + this.getRestaurantShiftOrders, body);
+  getRestaurantOrdersForAdmins(body, httpParams?) {
+    return this._http.post(host + this.getRestaurantShiftOrders, body, {params: httpParams});
   }
 
   cancelOrder(body) {
