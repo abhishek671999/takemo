@@ -11,7 +11,12 @@ export class dateUtils{
         var month = date.toLocaleString("default", { month: "2-digit" });
         var day = date.toLocaleString("default", { day: "2-digit" });
         return `${year}-${month}-${day}`
-      }
+    }
+    
+    getStandardizedDateTimeFormate(date: Date) {
+        // Standard format: DD-MM-YYYY HH:MM
+        return date.toLocaleString('en-US')
+    }
 
     getDateForRecipePrint(date: Date = new Date(), time=true){
         var year = date.toLocaleString("default", { year: "numeric" });

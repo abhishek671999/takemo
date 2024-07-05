@@ -77,7 +77,7 @@ export class LoginService {
     if (this.isLoggedIn()) {
       return true;
     } else {
-      this.redirectURL = window.location.pathname;
+      this.redirectURL = window.location.pathname == '/' || window.location.pathname == '/home'? null: window.location.pathname;
       this._router.navigate(['login']);
       return false;
     }

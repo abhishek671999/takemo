@@ -6,19 +6,16 @@
   </div>
   <ng-template #elseBlock>
     <div *ngIf="menu_response.is_open; else resturantClosed">
-      <div class="sub-header">
         <h2 class="text-center mt-2 mb-0">
           {{ menu_response.restaurant_name }}
         </h2>
-        <mat-icon [matBadge]="orderList.itemList.length" matBadgePosition="before"  matBadgeColor="accent"
-        (click)="togglehideCart()" (clickOutside)="hideCart = true"
-        >add_shopping_cart</mat-icon>
-      </div>
-      <div
-      class="cart-bar"
-      id="collapsable-cart-bar"
-      *ngIf="!hideCart"
-      >
+        <div class="cart-icon">
+          <mat-icon  [matBadge]="orderList.itemList.length" matBadgePosition="before"  matBadgeColor="accent"
+          (click)="togglehideCart()" (clickOutside)="hideCart = true"
+          >add_shopping_cart</mat-icon>
+        </div>
+
+      <div *ngIf="!hideCart" class="cart-bar" id="collapsable-cart-bar">
       <div class="cart-description-wrapper">
         <table class="table table-hover">
           <thead class="text-center">
@@ -51,22 +48,7 @@
               </tr>
             </tbody>
         </table>
-        <div class="cart-action">
-          <div class="text-center amount">
-            Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
-          </div>
-          <div class="text-center prepare-summary">
-            <button
-              mat-raised-button
-              color="primary"
-              class="btn btn-primary"
-              (click)="prepareSummary()"
-              [disabled]="!orderList.amount"
-            >
-              Checkout
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -77,17 +59,33 @@
             <mat-option *ngFor="let table of tableAvailable;" [value]="table">{{table.table_name}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field>
+          <mat-label>Select category</mat-label>
+          <mat-select [(value)]="currentCategory" (selectionChange)="categoryClickEventHandler(currentCategory)">
+            <mat-option *ngFor="let category of filteredMenu;" [value]="category.category.name">{{category.category.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-form-field >
           <mat-label>Search item</mat-label>
           <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
         </mat-form-field>
       </div>
-      <mat-form-field>
-        <mat-label>Select category</mat-label>
-        <mat-select [(value)]="currentCategory" (selectionChange)="categoryClickEventHandler(currentCategory)">
-          <mat-option *ngFor="let category of filteredMenu;" [value]="category.category.name">{{category.category.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="cart-action">
+        <div class="text-center amount">
+          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+        </div>
+        <div class="text-center prepare-summary">
+          <button
+            mat-raised-button
+            color="primary"
+            class="btn btn-primary"
+            (click)="prepareSummary()"
+            [disabled]="!orderList.amount"
+          >
+            Checkout
+          </button>
+        </div>
+      </div>
       <div class="menu-container">
         <div class="item-bar">
           <ng-container *ngFor="let category of filteredMenu">
@@ -113,11 +111,11 @@
                         {{ item.name }}
                       </p>
                       <p class="fs-8 m-0"><del *ngIf="getMRPriceForItem(item) != getPriceForItem(item) && getMRPriceForItem(item) != 0">₹&nbsp;{{ getMRPriceForItem(item) }}</del>&nbsp;<b>₹&nbsp;{{ getPriceForItem(item) }}</b></p>
-                      <p class="fs-8 m-0">{{item.item_unit}}</p>
+                      <p class="fs-8 m-0" *ngIf="item.item_unit != 'Piece'">{{item.item_unit}}</p>
                     </div>
                   </div>
                   <div class="image">
-                    <img src="{{item.item_image_url}}" onerror="src='assets/images/veg_icon.png'" width="60" height="60" alt="">
+                    <img src="{{item.item_image_url}}" onerror="src='assets/images/dish_image.jpg'" width="60" height="60" alt="">
                   </div>
 
                   </div>
@@ -137,22 +135,6 @@
               </div>
             </div>
           </ng-container>
-        </div>
-      </div>
-      <div class="order-summary fixed">
-        <div class="text-center amount">
-          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
-        </div>
-        <div class="text-center prepare-summary">
-          <button
-            mat-raised-button
-            color="primary"
-            class="btn btn-primary"
-            (click)="prepareSummary()"
-            [disabled]="!orderList.amount"
-          >
-            Checkout
-          </button>
         </div>
       </div>
     </div>

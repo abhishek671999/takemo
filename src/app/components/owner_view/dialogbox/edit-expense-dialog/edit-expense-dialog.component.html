@@ -9,6 +9,30 @@
     <div *ngIf="isAmountPaidInvalid()">
         <small class="text-danger">New amount should be less or equal to balance</small>
     </div>
+    <div (click)="showMoreInfo = !showMoreInfo">
+        <a style="text-decoration: underline;">Show more</a>
+    </div>
+    <div *ngIf="showMoreInfo">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col1">Sl.no</th>
+                    <th class="col2">Date</th>
+                    <th class="col3">Paid by</th>
+                    <th class="col4">Amount paid</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let expense of expenseData; let i = index">
+                    <td class="col1">{{i + 1}}</td>
+                    <td class="col2">{{expense.datetime}}</td>
+                    <td class="col3">{{expense.user}}</td>
+                    <td class="col4">{{expense.amount_paid}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-raised-button (click)="close()">Close</button>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
@@ -23,6 +23,7 @@ import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-edit-menu',
@@ -41,7 +42,8 @@ export class EditMenuComponent {
     private _restaurantService: RestuarantService,
     private _counterService: CounterService,
     private _editMenuService: EditMenuService,
-    private __sessionWrapper: sessionWrapper
+    private __sessionWrapper: sessionWrapper,
+    private __cd: ChangeDetectorRef
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -74,29 +76,41 @@ export class EditMenuComponent {
     : 'Open restaurant';
 
   countersAvailable;
-
   public restaurantType = this.__sessionWrapper.getItem('restaurantType');
   public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
   public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
   public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
 
+  displayedColumns: string[] = ['id', 'item', 'available', 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
+  dataSource = new MatTableDataSource([])
+
+
+
   public selectedCategoryId = ''
   public searchText = '';
   public currentCategory;
   public visibleCategory
+  
+  selectedCategory = [{
+    "categoryId": null,
+    "categoryName": 'None'
+  }]
   public allCategories = []
   public filteredMenu = []
 
   ngOnInit() {
+    this.searchText = ''
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
       this._menuService.getAdminMenu(this.restaurantId).subscribe(
         (data) => {
           this.restaurantStatus = data['is_open']
           this.menu = data['menu']
-          this.allCategories = this.parseCategories()
           this.createAllCategory();
-          this.showCategory(this.allCategories[0].categoryId)
+          this.allCategories = this.parseCategories()
+          this.selectedCategory = [this.allCategories[0]]
+          console.log(this.allCategories, 'all categories')
+          this.showCategory()
           this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
         },
         (error) => console.log(error)
@@ -109,11 +123,13 @@ export class EditMenuComponent {
       });
   }
 
-  showCategory(categoryId) {
-    if (categoryId) {
-      this.visibleCategory = this.menu.filter((category) => category.category.id == categoryId)
+  showCategory() {
+    if (this.selectedCategory.length > 0) {
+      this.visibleCategory = this.menu.filter(category => category.category.id == this.selectedCategory[0].categoryId)
+      this.dataSource.data = this.visibleCategory[0].category.items
     } else {
       this.visibleCategory = this.menu
+      this.dataSource.data = this.visibleCategory[0].category.items
     }
   }
 
@@ -198,6 +214,7 @@ export class EditMenuComponent {
   }
 
   _handleDialogComponentAfterClose(dialogRef) {
+    console.log('returned: ', dialogRef)
     dialogRef.afterClosed().subscribe((result) => {
       if (result == undefined) {
         console.log('Nothing');
@@ -256,9 +273,9 @@ export class EditMenuComponent {
     this._handleDialogComponentAfterClose(dialogRef);
   }
 
-  addItem(category) {
+  addItem() {
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
-      data: Object.assign(category, {
+      data: Object.assign(this.selectedCategory[0], {
         restaurant_id: this.restaurantId,
         counters: this.countersAvailable,
       }),
@@ -343,15 +360,32 @@ export class EditMenuComponent {
     );
   }
 
+  getMenu() {
+    return this.visibleCategory.length > 0? this.visibleCategory[0].category.items: []
+  }
+
   filterItems() {
-    
     if (this.searchText) {
-      this.visibleCategory = [JSON.parse(JSON.stringify(this.menu[this.menu.length - 1]))]
-      this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>
-          item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        this.selectedCategory = this.allCategories.filter((ele, index) => index == this.allCategories.length - 1)
+        this.visibleCategory = [JSON.parse(JSON.stringify(this.menu[this.menu.length - 1]))]
+        this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>
+            item.name.toLowerCase().includes(this.searchText.toLowerCase())
         );
+        this.dataSource.data = this.visibleCategory[0].category.items
     } else {
+      this.selectedCategory = this.allCategories.filter((ele, index) => index == 0)
       this.visibleCategory = [JSON.parse(JSON.stringify(this.menu))[0]];
+      this.dataSource.data = this.visibleCategory[0].category.items
     }
+  }
+
+  onCategorySelection(category) {
+    this.selectedCategory = this.allCategories.filter(ele => ele == category)
+    this.showCategory()
+  }
+
+  disableAddButton() {
+    let disableAddButton = this.selectedCategory.length > 0 && !this.selectedCategory[0].categoryId
+    return disableAddButton
   }
 }

@@ -59,9 +59,11 @@ export class PostLoginComponent {
         this._router.navigate(['admin/user-management']);
       } else {
         if (Boolean(this.myInfo['first_name'])) {
-          this.loginService.redirectURL
-            ? this._router.navigate([this.loginService.redirectURL])
-            : this._router.navigate(['user/']);
+          if (this.loginService.redirectURL) {
+            this._router.navigate([this.loginService.redirectURL])
+          }else{
+            this._router.navigate(['user/']);
+          }
         } else {
           this._router.navigate(['user/profile']);
         }

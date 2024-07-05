@@ -5,6 +5,7 @@ import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
 import { ExpenseService } from 'src/app/shared/services/expense/expense.service';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-edit-expense-dialog',
@@ -18,17 +19,26 @@ export class EditExpenseDialogComponent {
     private __expenseService: ExpenseService,
     private __sessionWrapper: sessionWrapper,
     private __matDialog: MatDialog,
-    private dialogRef: MatDialogRef<EditExpenseDialogComponent>
+    private dialogRef: MatDialogRef<EditExpenseDialogComponent>,
+    private __datetimeUtils: dateUtils
   ) {}
 
   updatedPaidAmount = 0
   private restaurantId = this.__sessionWrapper.getItem('restaurant_id')
-
+  public expenseData = []
+  public showMoreInfo = false;
+  
   ngOnInit() {
     let httpParams = new HttpParams()
     httpParams = httpParams.append('expense_id', this.expense.expense_id)
     this.__expenseService.getExpenseLogs(httpParams).subscribe(
-      data => console.log('expense log: ', data),
+      data => {
+        this.expenseData = data['expense_logs']
+        this.expenseData.forEach(expense => {
+        expense['datetime'] = this.__datetimeUtils.getStandardizedDateTimeFormate(new Date(expense['datetime']))
+          console.log(expense['datetime'])
+        })
+      },
       error => console.log(error)
     )
   }
@@ -72,6 +82,10 @@ export class EditExpenseDialogComponent {
       }
     }
     )
+  }
+
+  showMoreExpenseInfo() {
+    
   }
 
   close() {

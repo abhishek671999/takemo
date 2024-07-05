@@ -62,8 +62,6 @@ import { UploadFormComponent } from "../shared/upload-form/upload-form.component
         MenuComponent,
         MyOrdersComponent,
         ConfirmationDialogComponent,
-        EditMenuComponent,
-        EditFormDialogComponent,
         DeleteConfirmationDialogComponent,
         AddCategoryDialogComponent,
         SuccessfulDialogComponent,
@@ -105,7 +103,8 @@ import { UploadFormComponent } from "../shared/upload-form/upload-form.component
         MatSelectModule,
         MatSnackBarModule,
         MatBadgeModule,
-        UploadFormComponent
+      UploadFormComponent,
+      MatProgressSpinnerModule
     ]
 })
 export class UserModule {}

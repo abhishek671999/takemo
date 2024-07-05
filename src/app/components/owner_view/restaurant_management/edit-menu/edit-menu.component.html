@@ -1,30 +1,118 @@
 <div class="main-container">
     <div class="navigation">
         <button mat-raised-button (click)="navigateToOrders()" color="primary">Orders</button>
+        <div *ngIf="!menu; else elseBlock">
+            <div class="center-spin">
+                <mat-spinner diameter="100" style="margin: 0 auto"></mat-spinner>
+              </div>
+        </div>
+        <ng-template #elseBlock>
+            <div class="nav-center-section">
+                <mat-slide-toggle [ngModel]='restaurantStatus' color="primary" (change)="toggleRestOpen()"></mat-slide-toggle>
+                <h4 class="text-center m-0">Outlet is {{ restaurantStatus? 'open': 'closed'}}</h4>
+            </div>
+        </ng-template>
         <button mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
     </div>
-    <div *ngIf="!menu; else elseBlock">
-        <div class="center-spin">
-            <mat-spinner diameter="100" style="margin: 0 auto"></mat-spinner>
-          </div>
-    </div>
-    <ng-template #elseBlock>
-        <mat-slide-toggle [ngModel]='restaurantStatus' color="primary" (change)="toggleRestOpen()"></mat-slide-toggle>
-    <div class="menu-container">
-        <h4 class="text-center">Outlet is {{ restaurantStatus? 'open': 'closed'}}</h4>
-        <h2 class="text-center">Edit menu</h2>
+    <div class="menu-action-bar">
+        <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">
+            Add category
+        </button>
         <div class="text-center">
-            <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">Add new category</button>
+            <button mat-raised-button color="primary" [disabled]="searchText != ''" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item {{selectedCategory[0].categoryName}}</button>
+        </div>
+        <mat-form-field >
+            <mat-label>Search item</mat-label>
+            <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
+        </mat-form-field>
+    </div>
+
+    <div *ngIf="menu" class="menu-container">
+        <div class="category-bar">
+            <mat-selection-list  [multiple]="false" [hideSingleSelectionIndicator]="true">
+                <ng-container *ngFor="let category of allCategories;">
+                    <mat-checkbox [checked]="selectedCategory.includes(category)" (change)="onCategorySelection(category);"> 
+                        <mat-label [ngClass]="{'bold': selectedCategory.includes(category)}" >{{category.categoryName}}</mat-label> 
+                    </mat-checkbox>
+                    <!-- <mat-list-option [selected]="selectedCategory.includes(category)" (selectedChange)="onCategorySelection(category)"><span [ngClass]="{'bold': selectedCategory.includes(category)}" >{{category.categoryName}}</span></mat-list-option> -->
+                </ng-container>
+            </mat-selection-list>
+        </div>
+        <div class="items-section">
+            <table mat-table [dataSource]="dataSource" class="table table-hover">
+
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let index=index"> {{index + 1}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="item">
+                    <th mat-header-cell *matHeaderCellDef> Item </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <img class="indicator-image" *ngIf="element.veg" src="../../../../assets/images/veg_icon.png">
+                        <img class="indicator-image" *ngIf="element.non_veg" src="../../../../assets/images/non_veg_icon.png">
+                        <img class="indicator-image" *ngIf="element.egg" src="../../../../assets/images/egg_icon.jpg">
+                        <p class="item-text">{{element.name}}</p>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="available">
+                    <th mat-header-cell *matHeaderCellDef> Available </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <mat-slide-toggle color="primary" [ngModel]='element.is_available' (change)="toggleAvailability(element)"></mat-slide-toggle>
+                    </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="favorite">
+                    <th mat-header-cell *matHeaderCellDef> Favorite </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <mat-slide-toggle color="primary" [ngModel]='element.is_favourite' (change)="toggleFavorite(element)"></mat-slide-toggle>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="inventory">
+                    <th mat-header-cell *matHeaderCellDef> Inventory </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        {{element.inventory_stock? element.inventory_stock: '-'}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="counter">
+                    <th mat-header-cell *matHeaderCellDef> Counter </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        {{element.counter.counter_name}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="edit">
+                    <th mat-header-cell *matHeaderCellDef> Edit </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <mat-icon svgIcon="edit" title="Edit this item" (click)="editItem(element)"></mat-icon>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="delete">
+                    <th mat-header-cell *matHeaderCellDef> Delete </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <mat-icon svgIcon="delete" title="Delete this item" (click)="deleteItem(element)"></mat-icon>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- <div *ngIf="menu" class="menu-container">
+        <div class="text-center">
+
             <mat-form-field>
                 <mat-label>Select category</mat-label>
-                <mat-select (selectionChange)="showCategory(selectedCategoryId)" [(value)]="selectedCategoryId">
+                <mat-select (selectionChange)="showCategory()" [(value)]="selectedCategoryId">
                   <mat-option  *ngFor="let category of allCategories" [value]="category.categoryId">{{category.categoryName}}</mat-option>
                 </mat-select>
               </mat-form-field>
-              <mat-form-field >
-                <mat-label>Search item</mat-label>
-                <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
-              </mat-form-field>
+              
             <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
                     <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of visibleCategory; let mainIndex = index">
                         <mat-expansion-panel-header >
@@ -37,65 +125,11 @@
                             </div>
                         </mat-expansion-panel-header>
                         <div class="text-center">
-                            <button mat-raised-button color="primary" [disabled]="!category.category.id" class="add-item-button" svgIcon="plus" (click)="addItem(category)">Add new Item to {{category.category.name}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!category.category.id" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item to {{category.category.name}}</button>
                         </div>
-                        <table class="table table-hover">
-                            <thead class="text-center">
-                                <tr>
-                                    <th class="col1" scope="col">Id</th>
-                                    <th class="col2" scope="col">Item</th>
-                                    <!-- <th class="col3" scope="col">Price</th> -->
-                                    <th class="col4" *ngIf="mobileOrderingEnabled" scope="col">Availabe</th>
-                                    <!-- <th *ngIf="inventoryManagement">Inventory</th> -->
-                                    <th *ngIf="isType('restaurant')" class="col4" scope="col">Favorite</th>
-                                    <!-- <th *ngIf="counterMangement">Counter</th> -->
-                                    <th class="col5" scope="col">Edit</th>
-                                    <th class="col6" scope="col">Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center" >
-                                <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
-                                <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
-                                    <td class="col1" >{{subIndex+1}}</td>
-                                    <td class="col2" >
-                                        <img class="indicator-image" *ngIf="item.veg" src="../../../../assets/images/veg_icon.png">
-                                        <img class="indicator-image" *ngIf="item.non_veg" src="../../../../assets/images/non_veg_icon.png">
-                                        <img class="indicator-image" *ngIf="item.egg" src="../../../../assets/images/egg_icon.jpg">
-                                        <p class="item-text">{{item.name}}</p>
-                                    </td>
-                                    <!-- <td class="col3" >₹ {{item.price}}</td> -->
-                                    <td *ngIf="mobileOrderingEnabled" class="col4">
-                                        <mat-slide-toggle color="primary" [ngModel]='item.is_available' (change)="toggleAvailability(item)"></mat-slide-toggle>
-                                    </td>
-                                    <!-- <td *ngIf="inventoryManagement">  <mat-form-field class="example-full-width"> -->
-                                        <!-- <mat-label>Inventory</mat-label>
-                                        <input type="number" matInput [value]="item.inventory_stock" (blur)="editInventory(item, $event)">
-                                      </mat-form-field>
-                                    </td> -->
-                                    <td class="col4" *ngIf="isType('restaurant')">
-                                        <mat-slide-toggle color="primary" [ngModel]='item.is_favourite' (change)="toggleFavorite(item)"></mat-slide-toggle>
-                                    </td>
-                                    <!--<td *ngIf="counterMangement">
-                                        <mat-form-field>
-                                            <mat-label>Counter Name</mat-label>
-                                            <mat-select (selectionChange)="updateCounter(item)" [(value)]="item.counter.counter_id">
-                                                <mat-option>None</mat-option>
-                                                <mat-option *ngFor="let option of countersAvailable" [value]="option.counter_id">{{option.counter_name}}</mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </td> -->
-                                    <td class="col5" [class.disabled]="item.is_available">
-                                            <mat-icon svgIcon="edit" title="Edit this item" (click)="editItem(item)"></mat-icon>
-                                    </td>
-                                    <td class="col6">
-                                        <mat-icon svgIcon="delete" title="Delete this item" (click)="deleteItem(item)"></mat-icon>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+
                     </mat-expansion-panel>
             </cdk-virtual-scroll-viewport>
         </div> 
-    </div>  
-    </ng-template>
+    </div>   -->
 </div>

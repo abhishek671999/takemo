@@ -78,6 +78,8 @@ export class ExpensesComponent {
   public selectedPaidOption = this.defaultPaidOption;
 
   public totalAmount = 0;
+  public totalPaidAmount = 0;
+  public totalBalanceAmount = 0;
 
   ngOnInit() {
     this.fetchVendorList().then((resolve) => {
@@ -152,6 +154,8 @@ export class ExpensesComponent {
               .toLocaleString()
           });
           this.totalAmount = data['total_amount'];
+          this.totalBalanceAmount = data['total_balance_amount']
+          this.totalPaidAmount = data['total_paid_amount']
         },
         (error) => {
           console.log('Error: ', error);

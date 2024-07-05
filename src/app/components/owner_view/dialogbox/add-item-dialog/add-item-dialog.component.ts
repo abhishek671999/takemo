@@ -83,7 +83,7 @@ export class AddItemDialogComponent {
       name: this.addItemForm.value.name,
       price: this.addItemForm.value.price,
       mrp_price: this.addItemForm.value.mrpPrice,
-      category_id: this.data.category.id,
+      category_id: this.data.categoryId,
       veg: this.addItemForm.value.isVeg == 'veg' ? true : false,
       non_veg: this.addItemForm.value.isVeg == 'non_veg' ? true : false,
       egg: this.addItemForm.value.isVeg == 'egg' ? true : false,
@@ -103,7 +103,7 @@ export class AddItemDialogComponent {
             formData.append('item_id', response['item_id']);
             return this.__imageService.uploadImage(formData)
         } else if (response['created']){
-          this.dialogRef.close({ sucess: 'ok' })
+          this.dialogRef.close({ success: 'ok' })
           return of(null)
         } else {
           return of(null)
@@ -111,7 +111,7 @@ export class AddItemDialogComponent {
       })
     ).subscribe(
       (data) => {
-        this.dialogRef.close({ sucess: 'ok' })
+        this.dialogRef.close({ success: 'ok' })
       },
       error => {
         console.log('error', error)

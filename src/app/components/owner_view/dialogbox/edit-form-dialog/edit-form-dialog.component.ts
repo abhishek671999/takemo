@@ -81,6 +81,7 @@ export class EditFormDialogComponent {
       item_description: this.editMenuForm.value.itemDescription,
       counter_id: this.editMenuForm.value.counterId,
       item_unit: Number(this.editMenuForm.value.itemUnit),
+      inventory_stock: this.editMenuForm.value.inventory_stock
       // item_unit_price_list: this.unitPriceDetails
     };
     return this._editMenuService.editMenu(body)

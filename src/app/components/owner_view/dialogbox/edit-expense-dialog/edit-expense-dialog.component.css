@@ -1,0 +1,19 @@
+.col1{
+    width: 10%;
+}
+
+.col2{
+    width: 35%;
+}
+
+.col3{
+    width: 55%
+}
+
+.col4{
+    width: 10%
+}
+
+tr{
+    text-align: center;
+}

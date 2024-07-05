@@ -83,8 +83,10 @@
                             <td class="col1" >-</td>
                             <td class="col3" >Total Amount</td>
                             <td class="col3" >{{totalAmount}}</td>
-                            <td class="col4" ><button  mat-raised-button color="primary" (click)="markAllExpensePaid()" [disabled]="!selectedVendor.id || selectedPaidOption.displayValue.toLowerCase() == 'paid' || totalAmount == 0"> Mark all paid</button></td>
-                            <td class="col5" >-</td> 
+                            <td class="col4" >{{totalPaidAmount}}</td>
+                            <td class="col5" >{{totalBalanceAmount}}</td> 
+                            <td class="col6">-</td>
+                            <td class="col7">-</td>
                         </tr>
                 </tbody>
             </table>           
