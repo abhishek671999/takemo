@@ -56,6 +56,7 @@ export class PointOfSaleComponent {
   public outletType = this.__sessionWrapper.getItem('restaurantType').toLowerCase();
   public isTableManagement = this.__sessionWrapper.isTableManagementEnabled()
   public tableName = this.__sessionWrapper.getItem('table_name')
+  public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
 
   ngOnInit() {
     this.summary = {
@@ -63,7 +64,7 @@ export class PointOfSaleComponent {
       itemList: [],
     };
     this.menuService
-      .getPOSMenu(this.__sessionWrapper.getItem('restaurant_id'))
+      .getPOSMenu(this.restaurantId)
       .subscribe((data) => {
         this.menu = data['menu'];
         this.printerRequired = data['printer_required'];
@@ -80,7 +81,7 @@ export class PointOfSaleComponent {
         this.showOnlyFirstCategory();
       });
     this._counterService
-      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
+      .getRestaurantCounter(this.restaurantId)
       .subscribe(
         (data) => {
           console.log('counters available', data);
@@ -434,7 +435,7 @@ export class PointOfSaleComponent {
       pos: true,
       order_list: itemList,
       table_id: Number(this.__sessionWrapper.getItem('table_id')),
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
       total_amount: this.summary.amount,
@@ -701,22 +702,25 @@ export class PointOfSaleComponent {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
+      
+      if (this.restaurantId == 12) {
+        this.getCounterPrintableText().forEach((counterPrint) => {
+          counterPrint.forEach((ele) => {
+            if (ele.text != '') {
+              printConnect.writeCustomLine(ele)
+            }
+          })
+          printConnect
+          .writeCustomLine({
+            text: `Order No: ${orderNum}`,
+            size: 'large',
+            bold: true,
+            justification: 'center',
+          })
+            .feed(4).cut().flush()
+        })
+      }
 
-      this.getCounterPrintableText().forEach((counterPrint) => {
-        counterPrint.forEach((ele) => {
-          if (ele.text != '') {
-            printConnect.writeCustomLine(ele)
-          }
-        })
-        printConnect
-        .writeCustomLine({
-          text: `Order No: ${orderNum}`,
-          size: 'large',
-          bold: true,
-          justification: 'center',
-        })
-          .feed(4).cut().flush()
-      })
 
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
@@ -821,7 +825,7 @@ export class PointOfSaleComponent {
 
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/settings/edit-menu/${this.__sessionWrapper.getItem('restaurant_id')}`,
+      `/owner/settings/edit-menu/${this.restaurantId}`,
     ]);
   }
 

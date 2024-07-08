@@ -72,7 +72,7 @@ export class SalesAnalyticsComponent {
   restaurantList = [
     // { displayValue: 'All', restaurant_id: 0},
     { displayValue: 'Amulya Kitchen', restaurant_id: 1 },
-    { displayValue: 'Amrit Kitchenen', restaurant_id: 2 },
+    { displayValue: 'Amrit Kitchen', restaurant_id: 2 },
   ];
 
   paymentMethods = [

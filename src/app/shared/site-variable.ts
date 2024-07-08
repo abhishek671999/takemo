@@ -130,6 +130,7 @@ export class sessionWrapper{
           sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
           sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
           sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
+          sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
         } else if (data['companies'].length > 0) {
           sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
         } 

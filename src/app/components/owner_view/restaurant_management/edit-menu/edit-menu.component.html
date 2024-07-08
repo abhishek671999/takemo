@@ -7,7 +7,7 @@
               </div>
         </div>
         <ng-template #elseBlock>
-            <div class="nav-center-section">
+            <div *ngIf="mobileOrderingEnabled" class="nav-center-section">
                 <mat-slide-toggle [ngModel]='restaurantStatus' color="primary" (change)="toggleRestOpen()"></mat-slide-toggle>
                 <h4 class="text-center m-0">Outlet is {{ restaurantStatus? 'open': 'closed'}}</h4>
             </div>
@@ -42,12 +42,12 @@
             <table mat-table [dataSource]="dataSource" class="table table-hover">
 
                 <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> ID </th>
                     <td mat-cell *matCellDef="let index=index"> {{index + 1}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="item">
-                    <th mat-header-cell *matHeaderCellDef> Item </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Item </th>
                     <td mat-cell *matCellDef="let element"> 
                         <img class="indicator-image" *ngIf="element.veg" src="../../../../assets/images/veg_icon.png">
                         <img class="indicator-image" *ngIf="element.non_veg" src="../../../../assets/images/non_veg_icon.png">
@@ -57,47 +57,47 @@
                 </ng-container>
 
                 <ng-container matColumnDef="available">
-                    <th mat-header-cell *matHeaderCellDef> Available </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Available </th>
                     <td mat-cell *matCellDef="let element"> 
                         <mat-slide-toggle color="primary" [ngModel]='element.is_available' (change)="toggleAvailability(element)"></mat-slide-toggle>
                     </td>
                 </ng-container>
                 
                 <ng-container matColumnDef="favorite">
-                    <th mat-header-cell *matHeaderCellDef> Favorite </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Favorite </th>
                     <td mat-cell *matCellDef="let element"> 
                         <mat-slide-toggle color="primary" [ngModel]='element.is_favourite' (change)="toggleFavorite(element)"></mat-slide-toggle>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="inventory">
-                    <th mat-header-cell *matHeaderCellDef> Inventory </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Inventory </th>
                     <td mat-cell *matCellDef="let element"> 
                         {{element.inventory_stock? element.inventory_stock: '-'}}
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="counter">
-                    <th mat-header-cell *matHeaderCellDef> Counter </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Counter </th>
                     <td mat-cell *matCellDef="let element"> 
                         {{element.counter.counter_name}}
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="edit">
-                    <th mat-header-cell *matHeaderCellDef> Edit </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Edit </th>
                     <td mat-cell *matCellDef="let element"> 
                         <mat-icon svgIcon="edit" title="Edit this item" (click)="editItem(element)"></mat-icon>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="delete">
-                    <th mat-header-cell *matHeaderCellDef> Delete </th>
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Delete </th>
                     <td mat-cell *matCellDef="let element"> 
                         <mat-icon svgIcon="delete" title="Delete this item" (click)="deleteItem(element)"></mat-icon>
                     </td>
                 </ng-container>
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-header-row class="sticky-header" *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
         </div>

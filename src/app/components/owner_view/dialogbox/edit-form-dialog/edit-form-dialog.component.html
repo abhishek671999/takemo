@@ -15,7 +15,7 @@
                           <mat-radio-button value='egg' [checked]="data.egg">Egg</mat-radio-button>
                       </mat-radio-group>
                   </div>
-                  <div *ngIf="showSubUnitSection()">
+                  <div *ngIf="isTypeEcom()">
                     <mat-radio-group (change)="updateUnit()" formControlName="itemUnit">
                       <mat-radio-button value='1' [checked]="data.item_unit.toLowerCase() == 'piece'">Piece</mat-radio-button>
                       <mat-radio-button value="2" [checked]="data.item_unit.toLowerCase() == 'grams'">Grams</mat-radio-button>
@@ -28,7 +28,7 @@
                     <input matInput placeholder="Price" value="{{data.price}}" formControlName="price">
                     </mat-form-field>
                   </div>
-                  <div *ngIf="!showSubUnitSection()">
+                  <div *ngIf="!showSubUnitSection() && isTypeEcom()">
                       <mat-form-field>
                           <mat-label>MRP Price</mat-label>
                       <input matInput placeholder="MRP price" value="{{data.mrp_price}}" formControlName="mrpPrice">
@@ -90,7 +90,7 @@
                           <td>
                             <mat-form-field>
                               <mat-label>MRP rice</mat-label>
-                              <input matInput placeholder="Price" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.mrp_price">
+                              <input matInput placeholder="MRP Price" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.mrp_price">
                             </mat-form-field>
                           </td>
                           <td>

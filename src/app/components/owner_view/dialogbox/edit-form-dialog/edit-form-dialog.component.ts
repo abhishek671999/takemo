@@ -48,7 +48,6 @@ export class EditFormDialogComponent {
   unitPriceDetails = []
   itemUnitPreviousValue = null
   ngOnInit() {
-    console.log(this.restaurantType, 'this is restaurant type')
     this.unitPriceDetails = this.data.item_unit_price_list
     console.log('unitprice details array', this.unitPriceDetails)
     this.editMenuForm.get('itemUnit').valueChanges.subscribe(newValue => { // todo: maintain previous state
@@ -164,6 +163,10 @@ export class EditFormDialogComponent {
     return !(this.editMenuForm.value.itemUnit == '1' || this.editMenuForm.value.itemUnit.toLowerCase() == 'piece' || this.restaurantType == 'restaurant')
   }
 
+  isTypeEcom() {
+    return this.restaurantType == 'e-commerce'
+  }
+
   getSubUnits() {
     console.log(this.editMenuForm.value.itemUnit)
     return this.unitsSubUnitsMapping[this.editMenuForm.value.itemUnit]
@@ -201,4 +204,6 @@ export class EditFormDialogComponent {
       }
     )
   }
+
+
 }

@@ -8,6 +8,7 @@ import { of, switchMap } from 'rxjs';
 import { svgDeleteIcon } from 'src/app/shared/icons/svg-icons';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-add-item-dialog',
@@ -22,7 +23,8 @@ export class AddItemDialogComponent {
     private _editMenuService: EditMenuService,
     private __imageService: ImagesService,
     private matIconRegistry: MatIconRegistry,
-  private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private __sessionWrapper: sessionWrapper
   ) {
 
     this.matIconRegistry.addSvgIconLiteral(
@@ -39,7 +41,7 @@ export class AddItemDialogComponent {
       this.domSanitizer.bypassSecurityTrustHtml(svgDeleteIcon)
     );
    }
-  
+   private restaurantType = this.__sessionWrapper.getItem('restaurantType')?.toLowerCase()
 
 
   outputBoxVisible = false;
@@ -148,6 +150,10 @@ export class AddItemDialogComponent {
 
   showSubUnitSection() {
     return this.addItemForm.value.itemUnit != '1'
+  }
+
+  isTypeEcom() {
+    return this.restaurantType == 'e-commerce'
   }
 
   onFileSelected(event: any) {

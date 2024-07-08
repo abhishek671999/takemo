@@ -270,6 +270,10 @@ p {
     border-radius: 10px;
     width: 60vw;
   }
+
+  .cart-bar{
+    width: 80vw;
+  }
 }
 
 @media screen and (max-width: 768px) {

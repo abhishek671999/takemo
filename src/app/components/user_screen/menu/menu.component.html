@@ -48,8 +48,27 @@
               </tr>
             </tbody>
         </table>
-
+        <div class="cart-action">
+          <div class="text-center amount">
+            Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+          </div>
+          <div class="text-center prepare-summary">
+            <button
+              mat-raised-button
+              color="primary"
+              class="btn btn-primary"
+              (click)="prepareSummary()"
+              [disabled]="!orderList.amount"
+            >
+              Checkout
+            </button>
+          </div>
+          <div>
+            <button mat-raised-button color="warn" (click)="clearCart()">Clear</button>
+          </div>
+        </div>
       </div>
+
     </div>
 
       <div class="selection-panel">
@@ -62,7 +81,7 @@
         <mat-form-field>
           <mat-label>Select category</mat-label>
           <mat-select [(value)]="currentCategory" (selectionChange)="categoryClickEventHandler(currentCategory)">
-            <mat-option *ngFor="let category of filteredMenu;" [value]="category.category.name">{{category.category.name}}</mat-option>
+            <mat-option *ngFor="let category of menu;" [value]="category.category.name">{{category.category.name}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field >
@@ -91,7 +110,7 @@
           <ng-container *ngFor="let category of filteredMenu">
             <div
               id="{{ category.category.name.replace(' ', '') }}"
-              class="category-wrapper hidden"
+              class="category-wrapper"
             >
               <div class="item" *ngFor="let item of category.category.items">
                 <div class="item-card" (click)="addItem(item, $event)">

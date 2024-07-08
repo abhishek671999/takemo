@@ -77,12 +77,6 @@
         <div class="text-center amount">
           Total Amount:&nbsp; &nbsp;₹ {{ getGrandTotalAmount() }}
         </div>
-        <small
-          *ngIf="isPayment && paymentMethod == 'payment_gateway'"
-          class="font-weight-bold text-warning"
-          >*Please use VPA/UPI id to pay if redirection to app doesn't
-          work</small
-        >
         <div *ngIf="paymentMethod == 'pay_to_VPA_and_verify'">
           <div style="width: 100%; display: flex; justify-content: space-between; gap: 1em">
             <div>

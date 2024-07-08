@@ -51,12 +51,14 @@ export class MenuComponent {
   tableAvailable;
   menu;
   filteredMenu;
+  menuOriginalCopy;
   searchText = '';
   hideCategory = true;
   hideCart = true;
   currentCategory = null;
-  selectedCategory = null;
-
+  previousCategory = null;
+  filterAllCategory
+  filterer
   ngOnInit() {
     this.showSpinner = true;
     this._route.paramMap.subscribe((params: ParamMap) => {
@@ -73,11 +75,23 @@ export class MenuComponent {
               (element) => element.is_available == true
             );
           });
-          this.setQuantity();
-          this.showSpinner = false;
-          this.showOnlyFirstCategory();
+          this.setQuantityToZero()
           this.createAllCategory();
-          this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
+          this.menuOriginalCopy = JSON.parse(JSON.stringify(this.menu))
+          this.setQuantity();
+          this.filterAllCategory = () => { 
+            let itemInAllCategory = this.menu.filter(category => category.category.name.toLowerCase() == 'all')[0].category.items
+            return (searchString) => {
+              
+              return itemInAllCategory.filter(item => item.name.toLowerCase().includes(searchString.toLowerCase()))
+            }
+          }
+          this.filterer = this.filterAllCategory()
+          this.showSpinner = false;
+          
+          this.filteredMenu = [this.menu[0]]; // show first category by default. Hence index 0
+          this.currentCategory = this.filteredMenu[0].category.name
+          this.previousCategory = this.currentCategory
         },
         (error) => {
           console.log('Error while getting menu: ', error);
@@ -106,6 +120,20 @@ export class MenuComponent {
         );
       }
     });
+  }
+
+  setQuantityToZero() {
+    this.menu.forEach(category => {
+      category.category.items.forEach(item => {
+        item.quantity = 0
+        item.parcelQuantity = 0
+          if (item.item_unit_price_list.length > 0) {
+            item.item_unit_price_list.forEach(sub_item => {
+              sub_item.quantity = 0
+            })
+        }
+      });
+  });
   }
 
   setQuantity() {
@@ -144,9 +172,10 @@ export class MenuComponent {
         id: null,
         name: 'All',
         hide_category: false,
-        items: allItems,
+        items: [],
       },
     });
+    this.menu.filter(category => category.category.name.toLowerCase() == 'all')[0].category.items = allItems
   }
 
   togglehideCategory() {
@@ -170,58 +199,6 @@ export class MenuComponent {
       cartBar.style.zIndex = this.hideCart ? '0' : '5';
     }, 5);
     
-  }
-
-  showOnlyFirstCategory() {
-    setTimeout(() => {
-      let allCategoryBlock = Array.from(
-        document.getElementsByClassName(
-          'category-wrapper'
-        ) as HTMLCollectionOf<HTMLElement>
-      );
-      allCategoryBlock.forEach((ele, index) => {
-        if (index == 0) {
-          this.currentCategory = ele.id;
-          ele.classList.add('show');
-          ele.classList.remove('hidde                       n');
-        } else {
-          ele.classList.remove('show');
-          ele.classList.add('hidden');
-        }
-      });
-
-      let allCategoryBar = Array.from(
-        document.getElementsByClassName(
-          'category-bar-items'
-        ) as HTMLCollectionOf<HTMLElement>
-      );
-      allCategoryBar.forEach((ele, index) => {
-        if (index == 0) {
-          ele.classList.add('active');
-        } else {
-          ele.classList.remove('active');
-        }
-      });
-    }, 10);
-  }
-
-  updateSummary(orderList) {
-    if (orderList.itemList.length == 0) {
-      this.setQuantity();
-    } else {
-      this.setQuantity();
-      this.amount = orderList.amount;
-      orderList.itemList.forEach((item) => {
-        this.menu_response.menu.forEach((category) => {
-          category.category.items.forEach((menuItem) => {
-            if (menuItem.id == item.id) {
-              menuItem.quantity = item.quantity;
-              menuItem.parcelQuantity = item.parcelQuantity;
-            }
-          });
-        });
-      });
-    }
   }
 
 
@@ -408,6 +385,7 @@ export class MenuComponent {
           this.orderList.amount -= item.price
         }
         this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
+        this.__cartService.setCartItems(this.orderList)
       }
 
     } 
@@ -427,23 +405,6 @@ export class MenuComponent {
     // this.__cartService.setCartItems(this.orderList)
   }
 
-  updateSelectedItem(item) {
-    this.filteredMenu.forEach(category => {
-      category.category.items.forEach(existingItem => {
-        if (existingItem.id == item.id) {
-          existingItem.quantity = item.quantity
-        }
-      } )
-    });
-    this.menu.forEach(category => {
-      category.category.items.forEach(existingItem => {
-        if (existingItem.id == item.id) {
-          existingItem.quantity = item.quantity
-        }
-      } )
-    });     
-  }
-
   addCartItem(item, event) {
     event.stopPropagation()
     const initialState = JSON.parse(JSON.stringify(item))
@@ -455,6 +416,7 @@ export class MenuComponent {
       this.updateFilteredMenu(item)
       item.quantity = initialState.quantity
     }
+    this.__cartService.setCartItems(this.orderList)
   }
 
   
@@ -470,6 +432,7 @@ export class MenuComponent {
       this.updateFilteredMenu(item)
       item.quantity = initialState.quantity
     }
+    this.__cartService.setCartItems(this.orderList)
   }
 
 
@@ -527,7 +490,7 @@ export class MenuComponent {
         this.updateFilteredMenu(lineItem)
       }
       }
-      }
+    }
 
     // this.filteredMenu.forEach(element => {
     //   if (element.category.name.toLowerCase() != 'all') {
@@ -563,7 +526,7 @@ export class MenuComponent {
   }
 
   updateFilteredMenu = (lineItem) => {
-    for (const category of this.filteredMenu) {
+    for (const category of this.menu) {
       if (category.category.name.toLowerCase() != 'all') {
         for (const item of category.category.items) {
           let subItem = item.item_unit_price_list.filter(x => (x.item_unit_price_id == lineItem.item_unit_price_id))
@@ -630,8 +593,6 @@ export class MenuComponent {
     dialogRef.afterClosed().subscribe((result) => {
       this.orderList.itemList = this.orderList.itemList.filter((item) => item.quantity > 0)
       if (result) {
-        console.log(result);
-        
         if (result.mode == 'wallet') {
           this._router.navigate(['/user/myorders']);
         } else {
@@ -643,47 +604,22 @@ export class MenuComponent {
   }
 
   categoryClickEventHandler(category) {
-    this.currentCategory = category;
-    category = category.replace(' ', '');
-    let allCategoryBlock = Array.from(
-      document.getElementsByClassName(
-        'category-wrapper'
-      ) as HTMLCollectionOf<HTMLElement>
-    );
-    allCategoryBlock.forEach((element) => {
-      element.classList.remove('show');
-      element.classList.add('hidden');
-    });
-    let categoryBlock = document.getElementById(category);
-    categoryBlock.classList.add('show');
-    categoryBlock.classList.remove('hidden');
-
-    let allCategoryBar = Array.from(
-      document.getElementsByClassName(
-        'category-bar-items'
-      ) as HTMLCollectionOf<HTMLElement>
-    );
-    allCategoryBar.forEach((ele) => {
-      if (ele.classList.contains(category)) {
-        ele.classList.add('active');
-      } else {
-        ele.classList.remove('active');
-      }
-    });
+    this.previousCategory = category.toLowerCase() == 'all' ? this.previousCategory : category;
+    this.currentCategory = category
+    this.filteredMenu = this.menu.filter(menucategory => menucategory.category.name == category)
   }
 
+
+  
   filterItems() {
     if (this.searchText) {
       this.categoryClickEventHandler(
-        this.filteredMenu[this.filteredMenu.length - 1].category.name
+        this.menu[this.menu.length - 1].category.name
       );
-      this.filteredMenu[this.filteredMenu.length - 1].category.items =
-        this.menu[this.menu.length - 1].category.items.filter((item) =>
-          item.name.toLowerCase().includes(this.searchText.toLowerCase())
-        );
+      this.filteredMenu[this.filteredMenu.length - 1].category.items = this.filterer(this.searchText)
     } else {
-      this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
-      this.showOnlyFirstCategory();
+      this.currentCategory = this.previousCategory
+      this.filteredMenu = this.menu.filter(category => category.category.name == this.currentCategory);
     }
   }
 
@@ -697,5 +633,12 @@ export class MenuComponent {
     return item_price
   }
 
+  clearCart() {
+    this.menu = JSON.parse(JSON.stringify(this.menuOriginalCopy))
+    this.filteredMenu = JSON.parse(JSON.stringify(this.menuOriginalCopy.filter(category => category.category.name == this.currentCategory)))
+    this.orderList.amount = 0
+    this.orderList.itemList = []
+    this.__cartService.setCartItems(this.orderList)
+  }
   
 }

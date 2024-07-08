@@ -15,7 +15,7 @@
               <mat-radio-button value="egg">Egg</mat-radio-button>
             </mat-radio-group>
           </div>
-          <div>
+          <div *ngIf="isTypeEcom()">
             <mat-radio-group formControlName="itemUnit">
               <mat-radio-button value='1'>Piece</mat-radio-button>
               <mat-radio-button value="2">Grams</mat-radio-button>
@@ -28,7 +28,7 @@
             <input matInput type="number" placeholder="price" formControlName="price">
             </mat-form-field>
           </div>
-          <div  *ngIf="!showSubUnitSection()">
+          <div  *ngIf="!showSubUnitSection() && isTypeEcom()">
             <mat-form-field  class="form-field">
               <mat-label >MRP Price</mat-label>
               <input matInput type="number" placeholder="MRP price" formControlName="mrpPrice">
@@ -49,9 +49,11 @@
             <table class="print-unit-table">
               <thead>
                 <tr>
-                  <th>Quantity</th>
+                  <th>Option</th>
+                  <th>sub unit</th>
                   <th>Price</th>
-                  <th>Delete</th>
+                  <th>MRP Price</th>
+                  <th>Add</th>
                 </tr>
               </thead>
               
@@ -59,9 +61,11 @@
                 <tr>
                   <td>
                     <mat-form-field>
-                      <mat-label>Quantity</mat-label>
-                      <input matInput placeholder="Quantity" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.quantity">
+                      <mat-label>Option</mat-label>
+                      <input matInput placeholder="Option" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.quantity">
                     </mat-form-field>
+                  </td>
+                  <td>
                     <div *ngIf="showSubUnitSection()">
                       <mat-form-field>
                         <mat-label>Unit</mat-label>
@@ -80,7 +84,7 @@
                   <td>
                     <mat-form-field>
                       <mat-label>MRP rice</mat-label>
-                      <input matInput placeholder="Price" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.mrp_price">
+                      <input matInput placeholder="MRP Price" [ngModelOptions]="{standalone: true}" [(ngModel)]="unitQuantityPriceObj.mrp_price">
                     </mat-form-field>
                   </td>
                   <td>
