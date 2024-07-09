@@ -25,18 +25,16 @@ export class OrdersService {
   private cancellledRestaurantOrdersEndpoint =
     'order/get_restaurant_canceled_orders/';
   private getRestaurantShiftOrders = 'order/get_restaurant_shift_orders/';
+  private getTableOrdersEndpoint = 'order/get_table_orders/'
+  private updateLineItemEndpoint = 'order/update_line_item/'
+  private deleteLineItemEndpoint = 'order/delete_line_item/'
 
   getMyOrders(body) {
     console.log('Get current orders called');
     return this._http.post(host + this.orderHistoryEndpoint, body);
   }
 
-  checkIfPaymentRequired() {
-    let httpParams = new HttpParams();
-    httpParams = httpParams.append(
-      'restaurant_id',
-      sessionStorage.getItem('restaurant_id')
-    );
+  checkIfPaymentRequired(httpParams) {
     return this._http.get(host + this.checkIfPaymentRequiredEndpoint, {
       params: httpParams,
     });
@@ -88,8 +86,8 @@ export class OrdersService {
     });
   }
 
-  getRestaurantOrdersForAdmins(body) {
-    return this._http.post(host + this.getRestaurantShiftOrders, body);
+  getRestaurantOrdersForAdmins(body, httpParams?) {
+    return this._http.post(host + this.getRestaurantShiftOrders, body, {params: httpParams});
   }
 
   cancelOrder(body) {
@@ -105,5 +103,17 @@ export class OrdersService {
       host + this.cancellledRestaurantOrdersEndpoint,
       body
     );
+  }
+
+  getTableOrders(body) {
+    return this._http.post(host + this.getTableOrdersEndpoint, body)
+  }
+
+  updateLineItem(body) {
+    return this._http.post(host + this.updateLineItemEndpoint, body)
+  }
+
+  deleteLineItem(body) {
+    return this._http.post(host + this.deleteLineItemEndpoint, body)
   }
 }

@@ -6,36 +6,111 @@
   </div>
   <ng-template #elseBlock>
     <div *ngIf="menu_response.is_open; else resturantClosed">
-      <h2 class="text-center mt-2 mb-0">
-        {{ menu_response.restaurant_name }}
-      </h2>
-      <h2 class="text-center m-0">{{currentCategory}}</h2>
-      <div class="menu-container">
-        <div
-          class="category-bar"
-          id="collapsable-category-bar"
-          *ngIf="!hideCategory"
-        >
-          <div class="category-button" *ngFor="let category of menu">
-            <ul>
-              <li
-                class="fs-6 category-bar-items {{
-                  category['category']['name'].replace(' ', '')
-                }}"
-                (click)="
-                  categoryClickEventHandler(category['category']['name'])
-                "
-              >
-                {{ category.category.name }}
-              </li>
-            </ul>
+        <h2 class="text-center mt-2 mb-0">
+          {{ menu_response.restaurant_name }}
+        </h2>
+        <div class="cart-icon">
+          <mat-icon  [matBadge]="orderList.itemList.length" matBadgePosition="before"  matBadgeColor="accent"
+          (click)="togglehideCart()" (clickOutside)="hideCart = true"
+          >add_shopping_cart</mat-icon>
+        </div>
+
+      <div *ngIf="!hideCart" class="cart-bar" id="collapsable-cart-bar">
+      <div class="cart-description-wrapper">
+        <table class="table table-hover">
+          <thead class="text-center">
+              <tr>
+                  <th class="col1" scope="col">Id</th>
+                  <th class="col2" scope="col">Name</th>
+                  <th class="col3" scope="col">Edit</th>
+                  <th class="col4">Amount</th>
+                  <th class="col5" scope="col">Delete</th>
+              </tr>
+          </thead>
+          <tbody class="text-center" >
+              <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+              <tr class="table-row" *ngFor="let item of orderList.itemList; let mainIndex = index">
+                  <td class="col1" >{{mainIndex+1}}</td>
+                  <td class="col2" >{{item.name}}</td>
+                  <td class="col3" >
+                    <div class="item-quantity">
+                      <mat-icon (click)="subCartItem(item, $event)">remove_circle</mat-icon>
+                      <div style="padding: 2px">
+                        {{ item.quantity }}
+                      </div>
+                      <mat-icon (click)="addCartItem(item, $event)">add_circle</mat-icon>
+                    </div>
+                  </td>
+                  <td class="col4" >{{item.quantity * item.price}}</td>
+                  <td class="col5">
+                    <mat-icon (click)="clearCartItem(item, $event)">delete</mat-icon>
+                  </td>
+              </tr>
+            </tbody>
+        </table>
+        <div class="cart-action">
+          <div class="text-center amount">
+            Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+          </div>
+          <div class="text-center prepare-summary">
+            <button
+              mat-raised-button
+              color="primary"
+              class="btn btn-primary"
+              (click)="prepareSummary()"
+              [disabled]="!orderList.amount"
+            >
+              Checkout
+            </button>
+          </div>
+          <div>
+            <button mat-raised-button color="warn" (click)="clearCart()">Clear</button>
           </div>
         </div>
+      </div>
+
+    </div>
+
+      <div class="selection-panel">
+        <mat-form-field *ngIf="tableManagement">
+          <mat-label>Table</mat-label>
+          <mat-select [(value)]="tableSelected">
+            <mat-option *ngFor="let table of tableAvailable;" [value]="table">{{table.table_name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Select category</mat-label>
+          <mat-select [(value)]="currentCategory" (selectionChange)="categoryClickEventHandler(currentCategory)">
+            <mat-option *ngFor="let category of menu;" [value]="category.category.name">{{category.category.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field >
+          <mat-label>Search item</mat-label>
+          <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
+        </mat-form-field>
+      </div>
+      <div class="cart-action">
+        <div class="text-center amount">
+          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+        </div>
+        <div class="text-center prepare-summary">
+          <button
+            mat-raised-button
+            color="primary"
+            class="btn btn-primary"
+            (click)="prepareSummary()"
+            [disabled]="!orderList.amount"
+          >
+            Checkout
+          </button>
+        </div>
+      </div>
+      <div class="menu-container">
         <div class="item-bar">
-          <ng-container *ngFor="let category of menu">
+          <ng-container *ngFor="let category of filteredMenu">
             <div
               id="{{ category.category.name.replace(' ', '') }}"
-              class="category-wrapper hidden"
+              class="category-wrapper"
             >
               <div class="item" *ngFor="let item of category.category.items">
                 <div class="item-card" (click)="addItem(item, $event)">
@@ -48,187 +123,37 @@
                       'bg-warning': item.egg
                     }"
                   ></div>
-                  <div class="item-name">
-                    <p class="pr-1 pl-1 pt-1 fs-6 m-0">
-                      {{ item.name }}
-                    </p>
-                    <p class="fs-8 m-0">₹&nbsp;{{ item.price }}</p>
-                  </div>
-                  </div>
-                  <div class="item-quantity">
-                    <mat-icon (click)="subItem(item, $event)">remove_circle</mat-icon>
-                    <div style="padding: 2px">
-                      {{ item.quantity }}
+          
+                  <div class="item-details">
+                    <div class="item-name">
+                      <p class="pr-1 pl-1 pt-1 fs-6 m-0">
+                        {{ item.name }}
+                      </p>
+                      <p class="fs-8 m-0"><del *ngIf="getMRPriceForItem(item) != getPriceForItem(item) && getMRPriceForItem(item) != 0">₹&nbsp;{{ getMRPriceForItem(item) }}</del>&nbsp;<b>₹&nbsp;{{ getPriceForItem(item) }}</b></p>
+                      <p class="fs-8 m-0" *ngIf="item.item_unit != 'Piece'">{{item.item_unit}}</p>
                     </div>
-                    <mat-icon (click)="addItem(item, $event)">add_circle</mat-icon>
+                  </div>
+                  <div class="image">
+                    <img src="{{item.item_image_url}}" onerror="src='assets/images/dish_image.jpg'" width="60" height="60" alt="">
+                  </div>
+
+                  </div>
+                  <div class="card-lower-section">
+                    <div class="item-description">
+                      <p class="fs-8 m-0">{{ item.item_description }}</p>
+                    </div>
+                    <div class="item-quantity">
+                      <mat-icon class="m-1" (click)="subItem(item, $event)">remove_circle</mat-icon>
+                      <div style="padding: 2px" class="m-1">
+                        {{ item.quantity }}
+                      </div>
+                      <mat-icon class="m-1" (click)="addItem(item, $event)">add_circle</mat-icon>
+                    </div>     
                   </div>
                 </div>
               </div>
             </div>
           </ng-container>
-        </div>
-        <button class="toggle-category-button" color="primary" mat-fab (click)="togglehideCategory()" (clickOutside)="hideCategory = true">
-          Menu
-        </button>
-        <!-- <div class="summary-bar">
-                      <div class="table-section">
-                        <table class="table" style="width: 100%">
-                          <thead class="text-center">
-                            <tr>
-                              <th class="col1">Item</th>
-                              <th class="col2">Quantity</th>
-                              <th class="col3">Price</th>
-                              <th class="col4">Amount</th>
-                              <th class="col5">Clear</th>
-                            </tr>
-                          </thead>
-                          <tbody class="text-center">
-                            <tr *ngFor="let item of summary.itemList">
-                              <td class="col1">{{ item.name }}</td>
-                              <td class="col2">
-                                <div class="item-quantity">
-                                  <mat-icon (click)="subItem(item)">remove_circle</mat-icon>
-                                  <div style="padding: 2px">
-                                    {{ item.quantity }}
-                                  </div>
-                                  <mat-icon (click)="addItem(item)">add_circle</mat-icon>
-                                </div>
-                                <p
-                                  *ngIf="!restaurantParcel && !item.parcel_available"
-                                  (click)="incrementParcelQuantity(item)"
-                                  style="text-decoration: underline; margin: 0; cursor: pointer"
-                                >
-                                  Create Parcel
-                                </p>
-                                <div class="item-quantity" *ngIf="item.parcelQuantity">
-                                  <mat-icon (click)="subParcelItem(item)">remove_circle</mat-icon>
-                                  <div style="padding: 2px">
-                                    {{ item.parcelQuantity }}
-                                  </div>
-                                  <mat-icon (click)="addParcelItem(item)">add_circle</mat-icon>
-                                </div>
-                                <p *ngIf="item.parcelQuantity">
-                                  <b>{{ item.parcelQuantity }}</b> Parcel |
-                                  <b>{{ item.quantity }}</b> Dine-in
-                                </p>
-                              </td>
-                              <td class="col3">&nbsp;₹&nbsp;{{ item.price }}</td>
-                              <td class="col4">&nbsp;₹&nbsp;{{ calculateItemAmount(item) }}</td>
-                              <td class="col5">
-                                <mat-icon (click)="clearItem(item)">delete</mat-icon>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div class="summary-end">
-                        <div class="amount-summary">
-                          <h4 style="font-weight: bold">
-                            Total Amount:&nbsp;₹&nbsp;{{ summary.amount }}
-                          </h4>
-                          <section class="mop-section">
-                            <mat-radio-group class="radio-group" [(ngModel)]="modeOfPayment">
-                              <div class="radio-button-container">
-                                <mat-radio-button class="ml-2 mr-2 p-1" value="cash"
-                                  ><p>Cash</p></mat-radio-button
-                                >
-                                <mat-radio-button class="ml-2 mr-2 p-1" value="upi"
-                                  ><p>UPI</p></mat-radio-button
-                                >
-                                <mat-radio-button class="ml-2 mr-2 p-1" value="credit"
-                                  ><p>Credit</p></mat-radio-button
-                                >
-                                <mat-radio-button class="ml-2 mr-2 p-1 bg-danger" value="card"
-                                  ><p>Card</p></mat-radio-button
-                                >
-                              </div>
-                            </mat-radio-group>
-                          </section>
-                        </div>
-                        <br />
-                        <div class="action-section">
-                          <button mat-raised-button (click)="clearSummary()">Clear</button>
-                          <div>
-                            <button
-                              mat-raised-button
-                              (click)="placeOrder()"
-                              [disabled]="
-                                summary.amount == 0 ||
-                                (!printerConn.usbSought && printerRequired) ||
-                                disablePlace
-                              "
-                              color="primary"
-                            >
-                              Place
-                            </button>
-                            <small
-                              class="text-danger"
-                              style="display: block"
-                              *ngIf="!printerConn.usbSought && printerRequired"
-                            >
-                              Please connect Printer</small
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div> -->
-      </div>
-
-      <!-- <cdk-virtual-scroll-viewport itemSize="1" class="viewport" >
-                <mat-expansion-panel [expanded]="mainIndex === 0" *ngFor="let category of menu_response.menu; let mainIndex = index">
-                    <mat-expansion-panel-header >
-                        <mat-panel-title>
-                            <b style="font-size: x-large;">{{category.category.name}}</b>
-                          </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <table class="table table-hover">
-                        <thead class="text-center">
-                            <tr>
-                                <th class="col1" scope="col">Id</th>
-                                <th class="col2" scope="col">Item</th>
-                                <th class="col3" scope="col">Price</th>
-                                <th class="col4" scope="col">Add</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-center" >
-                            <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p> 
-                            <tr class="table-row" *ngFor="let item of category.category.items; let subIndex = index">
-                                <td class="col1" >{{subIndex+1}}</td>
-                                <td class="col2 item-name" >
-                                    <img class="indicator-image" *ngIf="item.veg" src="../../../../assets/images/veg_icon.png">
-                                    <img class="indicator-image" *ngIf="item.non_veg" src="../../../../assets/images/non_veg_icon.png">
-                                    <img class="indicator-image" *ngIf="item.egg" src="../../../../assets/images/egg_icon.jpg">
-                                    <p class="item-text">{{item.name}}</p>
-                                </td>
-                                <td class="col3" >{{item.price}}</td>
-                                <td class="col4" >
-                                    <div *ngIf="item.is_available; then thenTDblock else tdelseblock"></div>
-                                    <ng-template #thenTDblock>
-                                        <i class="fa-solid fa-minus" (click)="subItem(item)"></i>
-                                        <span class="m-2">{{item.quantity}}</span>
-                                        <i class="fa-solid fa-plus" (click)="addItem(item)"></i>
-                                    </ng-template>
-                                    <ng-template #tdelseblock><span>Unavailable</span></ng-template>
-                            </tr>
-                        </tbody>
-                    </table>
-                </mat-expansion-panel>
-            </cdk-virtual-scroll-viewport>
-                 -->
-      <div class="order-summary fixed">
-        <div class="text-center amount">
-          Total Amount:&nbsp; &nbsp;₹ {{ amount }}
-        </div>
-        <div class="text-center prepare-summary">
-          <button
-            mat-raised-button
-            color="primary"
-            class="btn btn-primary"
-            (click)="prepareSummary()"
-            [disabled]="!amount"
-          >
-            Checkout
-          </button>
         </div>
       </div>
     </div>

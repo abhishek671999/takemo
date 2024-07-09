@@ -25,9 +25,9 @@ export class DeleteConfirmationDialogComponent {
     };
     console.log('This is body: ', body);
     this._editMenuService.deleteItem(body).subscribe(
-      (data) => console.log(data),
+      (data) => this.dialogRef.close({ success: 'ok' }),
       (error) => console.log(error)
     );
-    this.dialogRef.close({ success: 'ok' });
+
   }
 }

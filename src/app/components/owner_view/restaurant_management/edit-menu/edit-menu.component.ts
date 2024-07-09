@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,8 @@ import {
 import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-edit-menu',
@@ -41,7 +42,8 @@ export class EditMenuComponent {
     private _restaurantService: RestuarantService,
     private _counterService: CounterService,
     private _editMenuService: EditMenuService,
-    private _meUtitlity: meAPIUtility
+    private __sessionWrapper: sessionWrapper,
+    private __cd: ChangeDetectorRef
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -65,7 +67,7 @@ export class EditMenuComponent {
     );
   }
 
-  menu_response: any;
+  menu: any;
   fontStyle?: string;
   restaurantId: number;
   restaurantStatus = false;
@@ -74,18 +76,42 @@ export class EditMenuComponent {
     : 'Open restaurant';
 
   countersAvailable;
+  public restaurantType = this.__sessionWrapper.getItem('restaurantType');
+  public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
+  public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
+  public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
 
-  public restaurantType = sessionStorage.getItem('restaurantType');
-  public counterMangement = this._meUtitlity.isCounterManagementEnabled()
-  public inventoryManagement = this._meUtitlity.isInventoryManagementEnabled()
+  displayedColumns: string[] = ['id', 'item', ...(this.mobileOrderingEnabled? ['available']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
+  dataSource = new MatTableDataSource([])
+
+
+
+  public selectedCategoryId = ''
+  public searchText = '';
+  public currentCategory;
+  public visibleCategory
+  
+  selectedCategory = [{
+    "categoryId": null,
+    "categoryName": 'None'
+  }]
+  public allCategories = []
+  public filteredMenu = []
 
   ngOnInit() {
+    this.searchText = ''
     this._route.paramMap.subscribe((params: ParamMap) => {
       this.restaurantId = parseInt(params.get('id'));
-      this._menuService.getMenu(this.restaurantId).subscribe(
+      this._menuService.getAdminMenu(this.restaurantId).subscribe(
         (data) => {
           this.restaurantStatus = data['is_open']
-          this.menu_response = data
+          this.menu = data['menu']
+          this.createAllCategory();
+          this.allCategories = this.parseCategories()
+          this.selectedCategory = [this.allCategories[0]]
+          console.log(this.allCategories, 'all categories')
+          this.showCategory()
+          this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
         },
         (error) => console.log(error)
       );
@@ -97,18 +123,57 @@ export class EditMenuComponent {
       });
   }
 
+  showCategory() {
+    if (this.selectedCategory.length > 0) {
+      this.visibleCategory = this.menu.filter(category => category.category.id == this.selectedCategory[0].categoryId)
+      this.dataSource.data = this.visibleCategory[0].category.items
+    } else {
+      this.visibleCategory = this.menu
+      this.dataSource.data = this.visibleCategory[0].category.items
+    }
+  }
+
+  createAllCategory() {
+    let allItems = [];
+    this.menu.forEach((ele, index) => {
+      ele.category.items.forEach(item => {
+        allItems.push(item);
+      });
+    });
+    this.menu.push({
+      category: {
+        id: null,
+        name: 'All',
+        hide_category: false,
+        items: allItems,
+      },
+    });
+  }
+
+  parseCategories() {
+    let categories = []
+    this.menu.forEach((category) => {
+      categories.push({
+        "categoryId": category.category.id,
+        "categoryName": category.category.name
+      }
+      )
+    })
+    return categories
+  }
+
   toggleAvailability(item) {
-    console.log('Toggled', item);
     let body = {
       item_id: item.id,
       is_available: !item.is_available,
     };
     this._menuEditService.editItemAvailability(body).subscribe(
       (data) => {
-        console.log('Toggle successfule: ', data);
         item.is_available = !item.is_available;
       },
-      (error) => console.log('Toggle failed: ', error)
+      (error) => {
+        alert('Failed to change availability')
+      }
     );
   }
 
@@ -127,7 +192,7 @@ export class EditMenuComponent {
     this._menuEditService.editMenu(body).subscribe(
       (data) => console.log(data),
       (error) => {
-        alert("Couldn't update counter");
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: "Couldn't update counter" } });
         this.ngOnInit();
       }
     );
@@ -141,14 +206,16 @@ export class EditMenuComponent {
     };
     this._menuEditService.editItemAvailability(body).subscribe(
       (data) => {
-        console.log('Toggle successfule: ', data);
         item.is_favourite = !item.is_favourite;
       },
-      (error) => console.log('Toggle failed: ', error)
+      (error) => {
+        alert('Toggle failed')
+      }
     );
   }
 
   _handleDialogComponentAfterClose(dialogRef) {
+    console.log('returned: ', dialogRef)
     dialogRef.afterClosed().subscribe((result) => {
       if (result == undefined) {
         console.log('Nothing');
@@ -176,7 +243,7 @@ export class EditMenuComponent {
   editItem(item) {
     console.log('Edit item: ', item);
     let dialogRef = this._dialog.open(EditFormDialogComponent, {
-      data: Object.assign(item, { restaurant_id: this.restaurantId }),
+      data: Object.assign(item, { restaurant_id: this.restaurantId, countersAvailable: this.countersAvailable}),
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }
@@ -201,17 +268,15 @@ export class EditMenuComponent {
   }
 
   addCategory() {
-    console.log('Add category');
     let dialogRef = this._dialog.open(AddCategoryDialogComponent, {
       data: { restaurant_id: this.restaurantId },
     });
     this._handleDialogComponentAfterClose(dialogRef);
   }
 
-  addItem(category) {
-    console.log('Add item', category);
+  addItem() {
     let dialogRef = this._dialog.open(AddItemDialogComponent, {
-      data: Object.assign(category, {
+      data: Object.assign(this.selectedCategory[0], {
         restaurant_id: this.restaurantId,
         counters: this.countersAvailable,
       }),
@@ -222,7 +287,7 @@ export class EditMenuComponent {
   toggleRestOpen() {
     console.log('Restaurant toggled');
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       is_open: !this.restaurantStatus,
     };
     this._restaurantService.editIsRestaurantOpen(body).subscribe(
@@ -234,7 +299,7 @@ export class EditMenuComponent {
         console.log(data);
       },
       (error) => {
-        alert('Something went wrong');
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: 'Something went wrong' } });
         console.log('Error while toggling: ', error);
       }
     );
@@ -260,11 +325,12 @@ export class EditMenuComponent {
   navigateToPOS() {
     this._router.navigate(['/owner/point-of-sale']);
   }
+
   navigateToOrders() {
     let navigationURL =
-      sessionStorage.getItem('restaurant_kds') == 'true'
+    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
         ? '/owner/orders/pending-orders'
-        : sessionStorage.getItem('restaurantType') == 'e-commerce'
+        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this._router.navigate([navigationURL]);
@@ -294,5 +360,34 @@ export class EditMenuComponent {
         console.log('Error while updating', error);
       }
     );
+  }
+
+  getMenu() {
+    return this.visibleCategory.length > 0? this.visibleCategory[0].category.items: []
+  }
+
+  filterItems() {
+    if (this.searchText) {
+        this.selectedCategory = this.allCategories.filter((ele, index) => index == this.allCategories.length - 1)
+        this.visibleCategory = [JSON.parse(JSON.stringify(this.menu[this.menu.length - 1]))]
+        this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>
+            item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        );
+        this.dataSource.data = this.visibleCategory[0].category.items
+    } else {
+      this.selectedCategory = this.allCategories.filter((ele, index) => index == 0)
+      this.visibleCategory = [JSON.parse(JSON.stringify(this.menu))[0]];
+      this.dataSource.data = this.visibleCategory[0].category.items
+    }
+  }
+
+  onCategorySelection(category) {
+    this.selectedCategory = this.allCategories.filter(ele => ele == category)
+    this.showCategory()
+  }
+
+  disableAddButton() {
+    let disableAddButton = this.selectedCategory.length > 0 && !this.selectedCategory[0].categoryId
+    return disableAddButton
   }
 }

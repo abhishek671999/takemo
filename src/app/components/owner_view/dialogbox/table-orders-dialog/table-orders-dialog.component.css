@@ -1,0 +1,63 @@
+table{
+    width: 100%;
+    text-align: center;
+}
+
+th.sl_no, td.sl_no{
+    width: 10%;
+}
+
+th.item, td.item{
+    width: 50%;
+}
+
+th.edit, td.edit{
+    width: 30%;
+}
+
+th.edit, td.edit{
+    width: 10%;
+}
+
+.quantity{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+
+}
+
+.action-container{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.title-container{
+    width: 100%;
+    height: max-content;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-container h1{
+    margin: 0;
+}
+
+.table-order-container th{
+    border: 1px solid;
+}
+.table-order-container td {
+    border-left: 1px solid;
+    border-right: 1px solid;
+}
+
+ table tr:hover{
+    background-color: rgb(231, 231, 231);
+}
+
+.table-order-container  tr:last-child{
+    border-bottom: 1px solid;
+}
+

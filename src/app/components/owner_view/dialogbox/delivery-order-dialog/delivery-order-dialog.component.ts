@@ -6,6 +6,8 @@ import {
 } from '@angular/material/dialog';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ConfirmActionDialogComponent } from '../../../shared/confirm-action-dialog/confirm-action-dialog.component';
+import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-delivery-order-dialog',
@@ -17,7 +19,8 @@ export class DeliveryOrderDialogComponent {
     private _orderService: OrdersService,
     @Inject(MAT_DIALOG_DATA) public data,
     private _dialogRef: MatDialogRef<DeliveryOrderDialogComponent>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private __sessionWrapper: sessionWrapper
   ) {
     console.log('Data received: ', data);
     data.obj.forEach((ele) => {
@@ -38,7 +41,7 @@ export class DeliveryOrderDialogComponent {
 
   updateStatusToDelivered(order) {
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       line_item_id_list: [order.line_item_id],
       status: !order.is_ready ? 'delivered' : 'ready_and_delivered',
     };
@@ -50,14 +53,16 @@ export class DeliveryOrderDialogComponent {
         this.ngOnInit();
       },
       (error) => {
-        console.log('Error while delivering orders');
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: 'Error while delivering orders' }
+        });
       }
     );
   }
 
   updateStatusToReady(order) {
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       line_item_id_list: [order.line_item_id],
       status: 'ready',
     };
@@ -67,14 +72,16 @@ export class DeliveryOrderDialogComponent {
         order.is_ready = !order.is_ready;
       },
       (error) => {
-        console.log('Error while delivering orders');
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: 'Error while delivering orders' }
+        });
       }
     );
   }
 
   deliverAllOrders() {
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       line_item_id_list: this.data.obj.map((ele) => ele.line_item_id),
       status: 'delivered',
     };
@@ -88,17 +95,13 @@ export class DeliveryOrderDialogComponent {
             this._dialogRef.close();
           },
           (error) => {
-            alert('Error while delivering orders');
+            this.dialog.open(ErrorMsgDialogComponent, {
+              data: { msg: 'Error while delivering orders' }
+            });
           }
         );
       }
     });
   }
-  //   this.data.obj.forEach(order => {
-  //     if(!order.is_delivered){
-  //       this.updateStatusToDelivered(order)
-  //     }
-  //   })
-  //   this._dialogRef.close();
-  // }
+
 }

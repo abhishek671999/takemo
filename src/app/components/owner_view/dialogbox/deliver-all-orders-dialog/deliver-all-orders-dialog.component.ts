@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-deliver-all-orders-dialog',
@@ -12,13 +13,14 @@ export class DeliverAllOrdersDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private __orderService: OrdersService,
-    private dialogRef: MatDialogRef<DeliverAllOrdersDialogComponent>
+    private dialogRef: MatDialogRef<DeliverAllOrdersDialogComponent>,
+    private __sessionWrapper: sessionWrapper
   ){
     console.log('selected ', data)
   }
 
   deliverAll(){
-    let body = {"restaurant_id": sessionStorage.getItem('restaurant_id')}
+    let body = {"restaurant_id": this.__sessionWrapper.getItem('restaurant_id')}
     if(this.data){
       body['counter_id'] = this.data['counter']['counter_id']
     }
@@ -28,7 +30,6 @@ export class DeliverAllOrdersDialogComponent {
         this.dialogRef.close({success: 'ok'})
       },
       error => {
-        alert('Error')
         this.dialogRef.close({success: 'failed'})
       }
     )

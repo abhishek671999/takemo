@@ -1,4 +1,3 @@
-
 .viewport {
     height: 480px;
 }
@@ -21,12 +20,23 @@
     justify-content: center;
 }
 
+.indicator{
+    display: inline-block;
+    width: 1em; 
+    height: 1em;
+    margin-left: 10px;
+}
+
 .blue{
     background-color: rgb(65, 104, 244, 0.8);
 }
 
 .green{
     background-color: rgb(9, 166, 88);
+}
+
+.wooden {
+    background-color: rgb(147, 137, 2);
 }
 
 .col1, .col2{

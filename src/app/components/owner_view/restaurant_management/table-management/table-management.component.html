@@ -1,0 +1,58 @@
+<div class="main-container">
+    <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
+            <mat-expansion-panel [expanded]='true' class="expansion-panel">
+                <table class="table table-hover">
+                    <thead class="text-center">
+                        <tr>
+                            <th class="col1" scope="col">Id</th>
+                            <th class="col2" scope="col">Name</th>
+                            <th class="col3" scope="col">Capacity</th>
+                            <th class="col4" scope="col">Edit</th>
+                            <th class="col5" scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center" >
+                        <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                        <tr class="table-row"*ngFor="let table of tables; let mainIndex = index">
+                            <td class="col1" >{{mainIndex+1}}</td>
+                            <td class="col2" >
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Table name</mat-label>
+                                    <input type="text" class="table_name" matInput value={{table.table_name}}  (blur)="editTable(table, $event)" placeholder={{table.table_name}} [disabled]="!table.is_edit">
+                                </mat-form-field>
+                            </td>
+                            <td class="col3" >
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Capacity</mat-label>
+                                    <input type="text" class="table_capacity" #table_capacity matInput value={{table.capacity}}  (blur)="editTable(table, $event)" placeholder={{table.capacity}} [disabled]="!table.is_edit">
+                                </mat-form-field>
+                            </td>
+                            <td class="col3">
+                                <mat-icon title="Edit this item" (click)="enableEditTable(table)">create</mat-icon>
+                            </td>
+                            <td>
+                                <mat-icon  title="Delete this category" (click)="deleteTable(table)">delete</mat-icon>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>
+                                <form [formGroup]="tableFormControl">
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Table name</mat-label>
+                                        <input matInput type="text" formControlName="table_name" placeholder="Table name">
+                                    </mat-form-field>
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Capacity</mat-label>
+                                        <input matInput type="text" formControlName="table_capacity" placeholder="Table name">
+                                      </mat-form-field>
+                                </form>
+                            </td>
+                            <td><button mat-raised-button [disabled]="!tableFormControl.valid" (click)="addTable()" >Add Table</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-expansion-panel>
+    </cdk-virtual-scroll-viewport>
+</div>
+

@@ -20,6 +20,7 @@ const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'profile', component: ProfileComponent},
+      { path: 'menu/:id/:table_id', component: MenuComponent },
       { path: 'menu/:id', component: MenuComponent },
       { 
         path: 'myorders', 

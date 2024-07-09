@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { FormControl, FormGroup } from '@angular/forms';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-cancelled-orders',
@@ -13,7 +14,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 export class CancelledOrdersComponent {
   constructor(
     private _orderService: OrdersService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   timeFrames = [
@@ -53,7 +55,7 @@ export class CancelledOrdersComponent {
     } else {
       field.classList.add('hidden');
       let body = {
-        restaurant_id: sessionStorage.getItem('restaurant_id'),
+        restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
         _c: 'rule_id is optional',
         time_frame: this.selectedTimeFrame.actualValue,
         _c1: 'possible options for time_frame are today, this_week, this_month',
@@ -78,7 +80,7 @@ export class CancelledOrdersComponent {
     console.log(this.range.value.start, this.range.value.end);
     if (this.range.value.start && this.range.value.end) {
       let body = {
-        restaurant_id: sessionStorage.getItem('restaurant_id'),
+        restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
         _c: 'rule_id is optional',
 
         _c1: 'possible options for time_frame are today, this_week, this_month',

@@ -7,13 +7,16 @@ import { host, Utility} from '../../site-variable';
 })
 export class EditMenuService {
   host = host;
-  editItemEndpoint = 'inventory/edit_item/';
-  addItemEndpoint = 'inventory/add_item/';
-  addCategoryEndpoint = 'inventory/add_category/';
-  deleteItemEndpoint = 'inventory/delete_item/';
-  deleteCategoryEndpoint = 'inventory/delete_category/';
-  editItemAvailabilityEndpoint = 'inventory/edit_is_available/';
-  editCategoryAvailabilityEndpoint = 'inventory/hide_category/'
+  private editItemEndpoint = 'inventory/edit_item/';
+  private addItemEndpoint = 'inventory/add_item/';
+  private addCategoryEndpoint = 'inventory/add_category/';
+  private addItemUnitPriceEndpoint = 'inventory/add_item_unit_price/'
+  private deleteItemEndpoint = 'inventory/delete_item/';
+  private deleteItemUnitPriceEndpoint = 'inventory/delete_item_unit_price/'
+  private deleteCategoryEndpoint = 'inventory/delete_category/';
+  private editItemAvailabilityEndpoint = 'inventory/edit_is_available/';
+  private editItemUnitPriceEndpoint = 'inventory/edit_item_unit_price/'
+  private editCategoryAvailabilityEndpoint = 'inventory/hide_category/'
 
   constructor(private _http: HttpClient, public utility: Utility) {}
 
@@ -49,8 +52,19 @@ export class EditMenuService {
     });
   }
 
+  deleteSubItem(body) {
+    return this._http.delete(this.host + this.deleteItemUnitPriceEndpoint, {body: body})
+  }
+
   editItemAvailability(body) {
     return this._http.post(
       this.host + this.editItemAvailabilityEndpoint, body);
+  }
+
+  addItemUnitPrice(body) {
+    return this._http.post(this.host + this.addItemUnitPriceEndpoint, body)
+  }
+  editItemUnitPrice(body) {
+    return this._http.post(this.host + this.editItemUnitPriceEndpoint, body)
   }
 }

@@ -11,10 +11,11 @@ import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
 import { MatRadioButton } from '@angular/material/radio';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
-import { meAPIUtility } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -31,7 +32,8 @@ export class PointOfSaleComponent {
     public printerConn: PrintConnectorService,
     private dateUtils: dateUtils,
     private _counterService: CounterService,
-    private __snackbar: MatSnackBar
+    private __snackbar: MatSnackBar,
+    private __sessionWrapper: sessionWrapper,
   ) {}
   public menu;
   public summary;
@@ -45,9 +47,17 @@ export class PointOfSaleComponent {
   public restaurantAddress = null;
   public restaurantGST = null;
   public parcelCharges = 5; // hardcode
+  public filteredMenu;
+  public menuCopy
+  searchText = '';
+  private currentCategoryId;
+
   counters = [];
-  public outletType = sessionStorage.getItem('restaurantType').toLowerCase();
-  public restaurantId = Number(sessionStorage.getItem('restaurant_id'))
+  public outletType = this.__sessionWrapper.getItem('restaurantType').toLowerCase();
+  public isTableManagement = this.__sessionWrapper.isTableManagementEnabled()
+  public tableName = this.__sessionWrapper.getItem('table_name')
+  public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
+
   ngOnInit() {
     this.summary = {
       amount: 0,
@@ -60,12 +70,14 @@ export class PointOfSaleComponent {
         this.printerRequired = data['printer_required'];
         this.restaurantParcel = data['restaurant_parcel'];
         this.restaurantParcel = true;
+        this.createAllCategory()
         this.menu.map((category) => {
           category.category.items.filter(
             (element) => element.is_available == true
           );
         });
         this.setQuantity();
+        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
         this.showOnlyFirstCategory();
       });
     this._counterService
@@ -79,9 +91,9 @@ export class PointOfSaleComponent {
           console.log('Error: ', error);
         }
       );
-    this.restaurantName = sessionStorage.getItem('restaurant_name');
-    this.restaurantAddress = sessionStorage.getItem('restaurant_address');
-    this.restaurantGST = sessionStorage.getItem('restaurant_gst');
+    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
+    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
+    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
   }
 
   setQuantity() {
@@ -93,23 +105,27 @@ export class PointOfSaleComponent {
     });
   }
 
-  showOnlyFirstCategory() {
-    setTimeout(() => {
-      let allCategoryBlock = Array.from(
-        document.getElementsByClassName(
-          'category-wrapper'
-        ) as HTMLCollectionOf<HTMLElement>
-      );
-      allCategoryBlock.forEach((ele, index) => {
-        if (index == 0) {
-          ele.classList.add('show');
-          ele.classList.remove('hidden');
-        } else {
-          ele.classList.remove('show');
-          ele.classList.add('hidden');
-        }
+  createAllCategory() {
+    let allItems = [];
+    this.menu.forEach((ele, index) => {
+      ele.category.items.forEach(item => {
+        allItems.push(item);
       });
+    });
+    this.menu.push({
+      category: {
+        id: null,
+        name: 'All',
+        hide_category: false,
+        items: allItems,
+      },
+    });
+  }
 
+  showOnlyFirstCategory() {
+    this.filteredMenu = [this.menu[0]]
+    this.currentCategoryId = this.filteredMenu[0].category.id
+    setTimeout(() => {
       let allCategoryBar = Array.from(
         document.getElementsByClassName(
           'category-bar-items'
@@ -126,60 +142,163 @@ export class PointOfSaleComponent {
   }
 
   categoryClickEventHandler(category) {
-    category = category.replace(' ', '');
-    let allCategoryBlock = Array.from(
-      document.getElementsByClassName(
-        'category-wrapper'
-      ) as HTMLCollectionOf<HTMLElement>
-    );
-    allCategoryBlock.forEach((element) => {
-      element.classList.remove('show');
-      element.classList.add('hidden');
-    });
-    let categoryBlock = document.getElementById(category);
-    categoryBlock.classList.add('show');
-    categoryBlock.classList.remove('hidden');
-
+    this.filteredMenu = this.menu.filter((eleCategory) => eleCategory.category.id == category.category.id)
+    this.currentCategoryId = category.category.id
+    let categoryName = category.category.name.replace(' ', '');
     let allCategoryBar = Array.from(
       document.getElementsByClassName(
         'category-bar-items'
       ) as HTMLCollectionOf<HTMLElement>
     );
     allCategoryBar.forEach((ele) => {
-      if (ele.classList.contains(category)) {
+      if (ele.classList.contains(categoryName)) {
         ele.classList.add('active');
       } else {
         ele.classList.remove('active');
       }
     });
+
   }
 
+  // subItem(item) {
+  //   if (item.quantity > 0) {
+  //     item.quantity -= 1;
+  //     this.summary.amount -= item.price;
+  //   }
+  //   if (item.quantity == 0 && item.parcelQuantity == 0) {
+  //     this.summary.itemList = this.summary.itemList.filter(
+  //       (x) => x.id != item.id
+  //     );
+  //   }
+  // }
   subItem(item) {
-    if (item.quantity > 0) {
-      item.quantity -= 1;
-      this.summary.amount -= item.price;
-    }
-    if (item.quantity == 0 && item.parcelQuantity == 0) {
-      this.summary.itemList = this.summary.itemList.filter(
-        (x) => x.id != item.id
-      );
+    let itemAdded = this.summary.itemList.find((x) => (x.item_id == item.item_id) && (x.item_unit_price_id == item.item_unit_price_id))
+    if (itemAdded) {
+        if (itemAdded.quantity > 0) {
+          itemAdded.quantity -= 1
+          this.summary.amount -= item.price
+          if (itemAdded.item_unit_price_id) {
+            this.filteredMenu[0].category.items.forEach(menuItem => {
+              if (menuItem.id == itemAdded.item_id) {
+                menuItem.item_unit_price_list.forEach(menuSubItem => {
+                  if (menuSubItem.item_unit_price_id == itemAdded.item_unit_price_id) {
+                    menuSubItem.quantity -= 1
+                  }
+                }) 
+              }
+            })
+          }
+        }
+      this.summary.itemList = this.summary.itemList.filter((ele) => ele.quantity > 0)
+      this.menuCopy = JSON.parse(JSON.stringify(this.menu))
     }
   }
 
   addItem(item) {
-    let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
+    // todo: update cart and handle parcel quantity and stock/inventory
+    let itemAdded = this.summary.itemList.find((x) => (x.item_id == item.item_id) || (x.item_id == item.id) || (item.item_unit_price_id ? x.item_unit_price_id == item.item_unit_price_id: false))
     if (itemAdded) {
-      itemAdded.quantity += 1;
-      this.summary.amount += itemAdded.price;
+      if (item.item_unit_price_list?.length > 0) {
+        let dialogRef = this.dialog.open(SelectSubitemDialogComponent, {
+          data: {
+            item: item, restaurantParcel: this.restaurantParcel,
+            addfn: this.incrementSubItemfunction,
+            subfn: this.decrementSubItemfunction,
+            clearfn: this.clearSubItemfunction
+          }, disableClose: true
+        })
+      } else {
+        itemAdded.quantity += 1
+        this.summary.amount += itemAdded.price
+        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+      }
     } else {
-      item.quantity += 1;
-      this.summary.amount += item.price;
-      this.summary.itemList.push(item);
+      if (item.item_unit_price_list.length > 0) {
+        let dialogRef = this.dialog.open(SelectSubitemDialogComponent, {
+          data: {
+            item: item, restaurantParcel: this.restaurantParcel,
+            addfn: this.incrementSubItemfunction,
+            subfn: this.decrementSubItemfunction,
+            clearfn: this.clearSubItemfunction
+          }, disableClose: true
+        })
+      } else {
+        let additionalItem = {
+          "item_id": item.id,
+          "quantity": 1,
+          "parcel_quantity": 0,
+          "name": item.name,
+          "price": item.price,
+          "counter": item.counter
+        }
+        item.quantity = 1
+        this.summary.amount += item.price
+        this.summary.itemList.push(additionalItem)
+        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+      }
     }
+    
+  }
+
+
+  incrementSubItemfunction = (subItem, item) => {
+    let subItemAdded = this.summary.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
+    if (subItemAdded) {
+      subItemAdded.quantity += 1
+      subItem.quantity += 1
+      item.quantity += 1
+    } else {
+      let additionalSubItem = {
+        name: subItem.item_unit_name,
+        item_id: item.id,
+        item_unit_price_id: subItem.item_unit_price_id,
+        quantity: 1,
+        parcel_quantity: 0, //hardcode
+        price: subItem.price,
+        counter: subItem.counter
+      }
+      subItem.quantity = 1
+      item.quantity += 1
+      this.summary.itemList.push(additionalSubItem)
+    }
+    this.summary.amount += subItem.price
+    this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+  }
+
+  decrementSubItemfunction =  (subItem, item) => {
+      let subItemAdded = this.summary.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
+      if (subItemAdded && subItem.quantity > 0) {
+        subItem.quantity -= 1
+        item.quantity -= 1
+        subItemAdded.quantity -= 1
+        this.summary.amount -= subItem.price
+      } 
+    this.summary.itemList = this.summary.itemList.filter((ele) => ele.quantity > 0)
+    this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+  }
+  
+  clearSubItemfunction = (subItem, mainItem) => {
+    let subItemAdded = this.summary.itemList.filter((x) => x.item_unit_price_id == subItem.item_unit_price_id)
+    if (subItemAdded) {
+      this.summary.amount -= subItemAdded[0].quantity * subItemAdded[0].price
+      this.filteredMenu.forEach(category => {
+        if (category.category.name.toLowerCase() != 'all') {
+          let item = category.category.items.filter(item => mainItem.id == item.id && item.item_unit_price_list.filter(subEle => subEle.item_unit_price_id == subItem.item_unit_price_id).length > 0)
+          if (item.length > 0) {
+            item[0].quantity -= subItemAdded[0].quantity
+          }
+        }
+      })
+      subItemAdded[0].quantity = 0
+    }
+    
+    subItem.quantity = 0
+    this.summary.itemList = this.summary.itemList.filter(item => item.quantity > 0)
+    this.menuCopy = JSON.parse(JSON.stringify(this.menu))
   }
 
   calculateItemAmount(item) {
-    return item.price * (item.quantity + item.parcelQuantity);
+    return item.price * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
   }
 
   addParcelItem(item) {
@@ -207,11 +326,57 @@ export class PointOfSaleComponent {
     }
   }
 
+  clearItem(clearItem) {
+    console.log(clearItem)
+    this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+    let clearItemList = this.summary.itemList
+      .filter((x) => ((x.item_id == clearItem.item_id) && ( x.item_unit_price_id == clearItem.item_unit_price_id)))
+    clearItemList.forEach(clrItem => {
+      this.menu.forEach(category => {
+        category.category.items.forEach(menuItem => {
+          let subItemMatch = false
+          let itemMatch = false
+          if (menuItem.id == clrItem.item_id) {
+            itemMatch = true
+            menuItem.item_unit_price_list.forEach(menuSubItem => {
+              if (clrItem.item_unit_price_id == menuSubItem.item_unit_price_id) {
+                this.summary.amount -= (menuSubItem.quantity * menuSubItem.price)
+                menuSubItem.quantity = 0
+                clrItem.quantity = 0
+                subItemMatch = true
+              }
+            })
+          }
+          if (itemMatch && !subItemMatch) {
+            this.summary.amount -= (menuItem.quantity * menuItem.price)
+            clrItem.quantity = 0
+            menuItem.quantity = 0
+          }
+          
+        })
+      });
+      })
+    this.summary.itemList = this.summary.itemList.filter(sumItem => sumItem.quantity > 0)
+    this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+  }
+
   clearSummary() {
     this.summary.amount = 0;
-    this.summary.itemList.forEach((item) => {
-      item.quantity = 0;
-    });
+    this.summary.itemList.forEach(clrItem => {
+      this.menu.forEach(category => {
+        category.category.items.forEach(menuItem => {
+          if (menuItem.id == clrItem.item_id) {
+            menuItem.item_unit_price_list.forEach(menuSubItem => {
+              if (clrItem.item_unit_price_id == menuSubItem.item_unit_price_id) {
+                this.summary.amount -= (menuSubItem.quantity * menuSubItem.price)
+                menuSubItem.quantity = 0
+                clrItem.quantity = 0
+              }
+            })
+          }
+        })
+      })
+      })
     this.summary.itemList = [];
   }
 
@@ -224,25 +389,52 @@ export class PointOfSaleComponent {
   calculateTotalAmount() {
     let total = 0;
     this.summary.itemList.forEach((ele) => {
-      total += ele.price * (ele.quantity + ele.parcelQuantity);
+      total += ele.price * (ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0));
     });
     return total;
   }
 
+  filterItems() {
+    if (this.searchText) {
+      this.categoryClickEventHandler(
+        this.menu[this.menu.length - 1]
+      );
+      this.filteredMenu[this.filteredMenu.length - 1].category.items =
+        this.menuCopy[this.menuCopy.length - 1].category.items.filter((item) =>
+          item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        );
+    } else {
+      this.menu = JSON.parse(JSON.stringify(this.menuCopy));
+      this.showOnlyFirstCategory();
+    }
+  }
+
+  getMRPriceForItem(item) {
+    let item_mrp_price = item.item_unit_price_list.length > 0 ? item.item_unit_price_list[0].mrp_price : item.mrp_price 
+    return item_mrp_price
+  }
+
+  getPriceForItem(item) {
+    let item_price = item.item_unit_price_list.length > 0 ? item.item_unit_price_list[0].price : item.price 
+    return item_price
+  }
+  
   preparePlaceOrderBody() {
     let itemList = [];
     let actualTotalAmount = 0;
     this.summary.itemList.forEach((ele) => {
-      actualTotalAmount += ele.price * (ele.quantity + ele.parcelQuantity);
+      actualTotalAmount += ele.price * (ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0));
       itemList.push({
-        item_id: ele.id,
-        quantity: ele.quantity + ele.parcelQuantity,
+        item_id: ele.item_id,
+        item_unit_price_id: ele.item_unit_price_id,
+        quantity: ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0),
         parcel_quantity: ele.parcelQuantity,
       });
     });
     let body = {
       pos: true,
       order_list: itemList,
+      table_id: Number(this.__sessionWrapper.getItem('table_id')),
       restaurant_id: this.restaurantId,
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
@@ -469,6 +661,17 @@ export class PointOfSaleComponent {
     return content;
   }
 
+  getFormattedCounterItemDetails(counterItemList) {
+    let formattedText = '';
+    counterItemList.forEach((element) => {
+      let trimmedName = this.getFixedLengthString(element.name.substring(0, 28), 28, false, ' ')
+      let remainingName = trimmedName.trim() == element.name ? '' : ' ' + this.getFixedLengthString(element.name.substring(28, 48), 20, false, ' ') + '\n';
+      let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
+      formattedText += `${trimmedName}  ${itemQty}\n${remainingName}`
+    })
+    return formattedText
+  }
+
   getCounterPrintableText() {
     let countersWithOrders = [];
     this.counters.forEach((counterEle) => {
@@ -510,7 +713,6 @@ export class PointOfSaleComponent {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
-
       if (this.restaurantId == 12) {
         this.getCounterPrintableText().forEach((counterPrint) => {
           counterPrint.forEach((ele) => {
@@ -530,7 +732,6 @@ export class PointOfSaleComponent {
       }
 
 
-      
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
@@ -546,7 +747,6 @@ export class PointOfSaleComponent {
         .feed(4)
         .cut()
         .flush();
-
       // this.getCounterPrintableText().forEach(ele =>{
       //   ele.forEach(element => {
       //     printConnect.writeCustomLine(element)
@@ -613,7 +813,12 @@ export class PointOfSaleComponent {
   }
 
   placeEcomOrder() {
-    this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
+    let dialogRef = this.dialog.open(EcomPosOrdersComponent, { data: this.summary });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data['result']) {
+        this.ngOnInit();
+      }
+    });
   }
 
   placeOrder() {
@@ -630,33 +835,21 @@ export class PointOfSaleComponent {
 
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`,
+      `/owner/settings/edit-menu/${this.restaurantId}`,
     ]);
   }
 
   navigateToOrders() {
     let navigationURL =
-      sessionStorage.getItem('restaurant_kds') == 'true'
+    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
         ? '/owner/orders/pending-orders'
-        : sessionStorage.getItem('restaurantType') == 'e-commerce'
+        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this.router.navigate([navigationURL]);
   }
 
-  clearItem(item) {
-    console.log(item);
-    this.summary.itemList
-      .filter((x) => x.id == item.id)
-      .forEach((ele) => {
-        this.summary.amount -= ele.quantity * ele.price;
-        ele.quantity = 0;
-        ele.parcelQuantity = 0;
-      });
-    this.summary.itemList = this.summary.itemList.filter(
-      (x) => x.id != item.id
-    );
-  }
+
 
   updateTotalAmount() {
     this.summary.amount = 0;
@@ -669,4 +862,8 @@ export class PointOfSaleComponent {
     );
   }
 
+  ngOnDestroy() {
+    sessionStorage.removeItem('table_id');
+    sessionStorage.removeItem('table_name');
+  }
 }

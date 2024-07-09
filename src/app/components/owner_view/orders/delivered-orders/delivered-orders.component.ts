@@ -8,6 +8,7 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { ConfirmOrderCancelComponent } from '../../dialogbox/confirm-order-cancel/confirm-order-cancel.component';
 import { HttpParams } from '@angular/common/http';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-delivered-orders',
@@ -17,7 +18,8 @@ import { HttpParams } from '@angular/common/http';
 export class DeliveredOrdersComponent {
   constructor(
     private _ordersService: OrdersService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   displayedColumns: string[] = [
@@ -37,7 +39,7 @@ export class DeliveredOrdersComponent {
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
-  restaurantId = sessionStorage.getItem('restaurant_id');
+  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
 
   public showSpinner = true;
   public currentOrders = [];
@@ -56,7 +58,7 @@ export class DeliveredOrdersComponent {
   getEcomOrders() {
     this.showSpinner = true;
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       order_status: 'delivered',
     };
     let httpParams = new HttpParams();
@@ -133,7 +135,7 @@ export class DeliveredOrdersComponent {
   deliverEntireOrder(order) {
     console.log('Delivering: ', order);
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       order_id: order.order_id,
     };
     console.log('THis is body: ', body);
@@ -172,7 +174,7 @@ export class DeliveredOrdersComponent {
   updateStatus(element) {
     console.log(element);
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       order_id: element.order_id,
       order_status: element.orderStatus,
     };

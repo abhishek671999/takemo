@@ -42,6 +42,14 @@ import { ExpensesComponent } from './expense-management/expenses/expenses.compon
 import { VendorSettingsComponent } from './expense-management/vendor-settings/vendor-settings.component';
 import { EcomPosOrdersComponent } from './dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TableCockpitComponent } from './dine-in-order-management/table-cockpit/table-cockpit.component';
+import { TableOrdersDialogComponent } from './dialogbox/table-orders-dialog/table-orders-dialog.component';
+import { TableManagementComponent } from './restaurant_management/table-management/table-management.component';
+import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
+import { AddItemDialogComponent } from './dialogbox/add-item-dialog/add-item-dialog.component';
+import { AddPaymentDialogComponent } from './dialogbox/add-payment-dialog/add-payment-dialog.component';
+import { AddExpenseDialogComponent } from './dialogbox/add-expense-dialog/add-expense-dialog.component';
+import { EditExpenseDialogComponent } from './dialogbox/edit-expense-dialog/edit-expense-dialog.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +71,13 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     ExpensesComponent,
     VendorSettingsComponent,
     EcomPosOrdersComponent,
+    TableCockpitComponent,
+    TableOrdersDialogComponent,
+    TableManagementComponent,
+    AddItemDialogComponent,
+    AddPaymentDialogComponent,
+    AddExpenseDialogComponent,
+    EditExpenseDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -93,7 +108,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     MatSlideToggleModule,
     PdfViewerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    UploadFormComponent
   ],
   exports: [],
 })

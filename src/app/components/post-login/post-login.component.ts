@@ -11,21 +11,18 @@ import { LoginService } from 'src/app/shared/services/register/login.service';
   styleUrls: ['./post-login.component.css']
 })
 export class PostLoginComponent {
-  constructor(private _meService: MeService, private _router: Router, private _cc: ConnectComponentsService, 
-    private _utility: Utility, private _meAPIUtility: meAPIUtility,
+  constructor(private _router: Router, private _cc: ConnectComponentsService, 
     public meAPIUtility: meAPIUtility, public loginService: LoginService ){
-    // this.myInfo = this.meAPIUtility.getMeData()
   }
 
   showSpinner = true
   errorOccured = false
   myInfo;
   ngOnInit(){
-     console.log('In user component')
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
       if (this.myInfo['restaurants'].length > 0) {
-        sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
+        sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])  //hardcode
         sessionStorage.setItem(
           'restaurant_name',
           data['restaurants'][0]['restaurant_name']
@@ -50,25 +47,32 @@ export class PostLoginComponent {
           'counter_management',
           data['restaurants'][0]['counter_management']
         );
+        sessionStorage.setItem('pay_on_delivery', data['restaurants'][0]['pay_on_delivery'])
         sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
         sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
+        sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
+        sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
         let navigationURL =
           sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
         this._router.navigate([navigationURL]);
       } else if (this.myInfo['companies'].length > 0) {
-        console.log('Navigationto admin');
         sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
         this._router.navigate(['admin/user-management']);
       } else {
         if (Boolean(this.myInfo['first_name'])) {
-          this.loginService.redirectURL
-            ? this._router.navigate([this.loginService.redirectURL])
-            : this._router.navigate(['user/']);
+          if (this.loginService.redirectURL) {
+            this._router.navigate([this.loginService.redirectURL])
+          }else{
+            this._router.navigate(['user/']);
+          }
         } else {
           this._router.navigate(['user/profile']);
         }
       }
       this.showSpinner = false;
+    },
+      error => {
+      alert('Me api load failed')
     });
       
   }

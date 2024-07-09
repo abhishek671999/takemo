@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Send report</h2>
+<mat-dialog-content>
+            <mat-checkbox [checked]="checkedEmails.length == adminsEmails.length" (change)="onChange('all', $event)">All</mat-checkbox>
+            <div *ngFor="let email of adminsEmails; let i =index">
+                <mat-checkbox [checked]="checkedEmails.includes(email)" (change)="onChange(email, $event);"> {{email}}</mat-checkbox>
+            </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button (click)="sendReport()">
+        Send Report
+    </button>
+</mat-dialog-actions>

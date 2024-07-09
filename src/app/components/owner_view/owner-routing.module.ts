@@ -55,6 +55,15 @@ const routes: Routes = [
             loadChildren: () => import('./expense-management/expense-management.module').then(m => m.ExpenseManagementModule)
           }
         ]
+      },
+      {
+        path: 'dine-in',
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('./dine-in-order-management/dine-in-order-management.module').then(m => m.DineInOrderManagementModule)
+          }
+        ]
       }
     ],
   },

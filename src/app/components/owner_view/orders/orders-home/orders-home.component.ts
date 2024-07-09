@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-orders-home',
@@ -10,7 +11,8 @@ import { CounterService } from 'src/app/shared/services/inventory/counter.servic
 export class OrdersHomeComponent {
   constructor(
     private router: Router,
-    private _counterService: CounterService
+    private _counterService: CounterService,
+    private __sessionWrapper: sessionWrapper
   ) {}
   navLinks = [
     // {
@@ -61,9 +63,9 @@ export class OrdersHomeComponent {
   };
 
   addComponents() {
-    let restaurantType = sessionStorage.getItem('restaurantType').toLowerCase()
+    let restaurantType = this.__sessionWrapper.getItem('restaurantType').toLowerCase()
     let EcommerceComponents = restaurantType == "e-commerce" ? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : []
-    let restaurantComponents = sessionStorage.getItem('restaurant_kds') == 'true' ? ['pending', 'current', 'history'] : restaurantType == "e-commerce" ? [] : ['history']
+    let restaurantComponents = this.__sessionWrapper.getItem('restaurant_kds') == 'true' ? ['pending', 'current', 'history'] : restaurantType == "e-commerce" ? [] : ['history']
     let componentsNeeded = EcommerceComponents.concat(restaurantComponents)
     componentsNeeded.forEach((ele) => {
       this.navLinks.push(this.availableNavlinks[ele]);
@@ -72,7 +74,7 @@ export class OrdersHomeComponent {
   ngOnInit() {
     this.addComponents() //temp-fix
     this._counterService
-      .getRestaurantCounter(sessionStorage.getItem('restaurant_id'))
+      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
       .subscribe(
         (data) => {
           this.counters = data['counters'];
@@ -91,7 +93,7 @@ export class OrdersHomeComponent {
 
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/settings/edit-menu/${sessionStorage.getItem('restaurant_id')}`,
+      `/owner/settings/edit-menu/${this.__sessionWrapper.getItem('restaurant_id')}`,
     ]);
   }
 }

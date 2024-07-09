@@ -4,6 +4,7 @@ import { ManagmentHomeComponent } from './managment-home/managment-home.componen
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
 import { FoodCounterManagementComponent } from './food-counter-management/food-counter-management.component';
 import { ActivityLogComponent } from './activity-log/activity-log.component';
+import { TableManagementComponent } from './table-management/table-management.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,8 @@ const routes: Routes = [
     children: [
       { path: 'edit-menu/:id', component: EditMenuComponent },
       { path: 'food-counter-management', component: FoodCounterManagementComponent },
-      { path: 'activity-log', component: ActivityLogComponent}
+      { path: 'activity-log', component: ActivityLogComponent },
+      { path: 'table-management', component: TableManagementComponent}
   ]}
   
 ];

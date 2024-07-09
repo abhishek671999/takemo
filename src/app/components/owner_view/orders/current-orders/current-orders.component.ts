@@ -4,6 +4,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ConfirmOrderCancelComponent } from '../../dialogbox/confirm-order-cancel/confirm-order-cancel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-current-orders',
@@ -13,7 +14,8 @@ import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-deta
 export class CurrentOrdersComponent {
   constructor(
     private _ordersService: OrdersService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   displayedColumns: string[] = [
@@ -37,7 +39,7 @@ export class CurrentOrdersComponent {
   getRestaurantCurrentOrders() {
     this.showSpinner = true;
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       time_frame: 'current',
       start_date: '',
       end_date: '',
@@ -91,6 +93,7 @@ export class CurrentOrdersComponent {
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
       ordered_by: order.ordered_by,
       user_name: order.user_name,
+      table_name: order.table_name
     };
   }
 
@@ -105,7 +108,7 @@ export class CurrentOrdersComponent {
   deliverEntireOrder(order) {
     console.log('Delivering: ', order);
     let body = {
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
       order_id: order.order_id,
     };
     console.log('THis is body: ', body);

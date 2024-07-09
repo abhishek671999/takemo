@@ -17,6 +17,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { BillingService } from 'src/app/shared/services/billing/billing.service';
 
 import moment from 'moment';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 // const moment = _rollupMoment || _moment;
 
 // See the Moment.js docs for the meaning of these formats:
@@ -47,69 +48,76 @@ export const MY_FORMATS = {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
 export class BillingComponent {
-
   restaurantList = [
     // { displayValue: 'All', restaurant_id: 0},
-    { displayValue: 'Amulya Kitchen', restaurant_id: 1},
-    { displayValue: 'Tikkad kitchen', restaurant_id: 2}
-  ]
+    { displayValue: 'Amulya Kitchen', restaurant_id: 1 },
+    { displayValue: 'Amrit Kitchen', restaurant_id: 2 },
+  ];
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  restaurantFlag = sessionStorage.getItem('restaurant_id') ? true : false
+  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id')
+    ? true
+    : false;
 
-  constructor(private _billingService: BillingService){}
-  base64: string
+  constructor(
+    private _billingService: BillingService,
+    private __sessionWrapper: sessionWrapper
+  ) {}
+  base64: string;
 
-  ngOnInit(){
-    var date = new Date()
+  ngOnInit() {
+    var date = new Date();
     let body = {
-        "restaurant_id": sessionStorage.getItem('restaurant_id') ? sessionStorage.getItem('restaurant_id'): this.selectedRestaurant ,
-        "month_and_year": `${date.toLocaleString("default", { month: "2-digit" })}/${date.getFullYear()}`
-    }
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id')
+        ? this.__sessionWrapper.getItem('restaurant_id')
+        : this.selectedRestaurant,
+      month_and_year: `${date.toLocaleString('default', {
+        month: '2-digit',
+      })}/${date.getFullYear()}`,
+    };
     this._billingService.getRestaurantBilling(body).subscribe(
-      data => {
-        this.base64 = data['base64_invocie_data']
-        this.printPdf()
+      (data) => {
+        this.base64 = data['base64_invocie_data'];
+        this.printPdf();
       },
-      error => {
-        console.log('Error while getting pdf data: ', error)
+      (error) => {
+        console.log('Error while getting pdf data: ', error);
       }
-    )
+    );
   }
 
-
-  onDateChange(value){
-    console.log(value)
+  onDateChange(value) {
+    console.log(value);
     let body = {
-      "restaurant_id": this.selectedRestaurant,
-      "rule_id": 1,
-      "month_and_year":value
-  }
-  console.log(body)
-  this._billingService.getRestaurantBilling(body).subscribe(
-    data => {
-      this.base64 = data['base64_invocie_data']
-      this.printPdf()
-    },
-    error => {
-      console.log('Error while getting pdf data: ', error)
-    }
-  )
+      restaurant_id: this.selectedRestaurant,
+      rule_id: 1,
+      month_and_year: value,
+    };
+    console.log(body);
+    this._billingService.getRestaurantBilling(body).subscribe(
+      (data) => {
+        this.base64 = data['base64_invocie_data'];
+        this.printPdf();
+      },
+      (error) => {
+        console.log('Error while getting pdf data: ', error);
+      }
+    );
   }
   data: string;
-  pdfSrc = "";
+  pdfSrc = '';
   printPdf() {
     //let json: any =  { "type":"Buffer", "data":this.blob }
     //let bufferOriginal = Buffer.from(json.data);
     const byteArray = new Uint8Array(
       atob(this.base64)
-        .split("")
-        .map(char => char.charCodeAt(0))
+        .split('')
+        .map((char) => char.charCodeAt(0))
     );
-    const file = new Blob([byteArray], { type: "application/pdf" });
+    const file = new Blob([byteArray], { type: 'application/pdf' });
     const fileURL = URL.createObjectURL(file);
     this.pdfSrc = fileURL;
     //window.open(fileURL);
@@ -118,21 +126,21 @@ export class BillingComponent {
   downloadPdf() {
     const byteArray = new Uint8Array(
       atob(this.base64)
-        .split("")
-        .map(char => char.charCodeAt(0))
+        .split('')
+        .map((char) => char.charCodeAt(0))
     );
-    const file = new Blob([byteArray], { type: "application/pdf" });
+    const file = new Blob([byteArray], { type: 'application/pdf' });
     const fileURL = URL.createObjectURL(file);
-    let pdfName = "reports.pdf";
+    let pdfName = 'reports.pdf';
     if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
       (window.navigator as any).msSaveOrOpenBlob(file, pdfName);
     } else {
       //window.open(fileURL);
 
       // Construct the 'a' element
-      let link = document.createElement("a");
+      let link = document.createElement('a');
       link.download = pdfName;
-      link.target = "_blank";
+      link.target = '_blank';
 
       // Construct the URI
       link.href = fileURL;
@@ -146,7 +154,10 @@ export class BillingComponent {
 
   date = new FormControl(moment());
 
-  setMonthAndYear(normalizedMonthAndYear: Moment, datepicker: MatDatepicker<Moment>) {
+  setMonthAndYear(
+    normalizedMonthAndYear: Moment,
+    datepicker: MatDatepicker<Moment>
+  ) {
     const ctrlValue = this.date.value!;
     ctrlValue.month(normalizedMonthAndYear.month());
     ctrlValue.year(normalizedMonthAndYear.year());

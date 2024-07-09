@@ -8,6 +8,7 @@ import {
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-ecom-pos-orders',
@@ -20,7 +21,8 @@ export class EcomPosOrdersComponent {
     private orderService: OrdersService,
     private matDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public summary,
-    public dialogRef: MatDialogRef<EcomPosOrdersComponent>
+    public dialogRef: MatDialogRef<EcomPosOrdersComponent>,
+    private __sessionWrapper: sessionWrapper
   ) {}
 
   customerDetailsForm = this._fb.group({
@@ -45,8 +47,8 @@ export class EcomPosOrdersComponent {
     let itemList = [];
     this.summary.itemList.forEach((ele) => {
       itemList.push({
-        item_id: ele.id,
-        quantity: ele.quantity + ele.parcelQuantity,
+        item_id: ele.item_id,
+        quantity: ele.quantity +  (ele.parcelQuantity? ele.parcelQuantity: 0),
         parcel_quantity: ele.parcelQuantity,
       });
     });
@@ -55,7 +57,7 @@ export class EcomPosOrdersComponent {
       address: this.customerDetailsForm.value.address,
       transaction_id: this.customerDetailsForm.value.transaction_id,
       order_list: itemList,
-      restaurant_id: sessionStorage.getItem('restaurant_id'),
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
     };
     this.orderService.createEcomOrders(body).subscribe(
       (data) => {
@@ -68,7 +70,7 @@ export class EcomPosOrdersComponent {
           this.ngOnInit();
         });
         this.disablePlace = false;
-        this.dialogRef.close();
+        this.dialogRef.close({result: true});
       },
       (error) => {
         console.log('Place order response', error);
@@ -85,6 +87,6 @@ export class EcomPosOrdersComponent {
   }
 
   closeDialog() {
-    this.dialogRef.close();
+    this.dialogRef.close({result: false});
   }
 }

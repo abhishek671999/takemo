@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
-import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
+import { Utility, meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +14,9 @@ export class HeaderComponent {
   constructor(
     private _loginService: LoginService, 
     private router: Router,
-    private _meAPIutility: meAPIUtility) {
+    private _meAPIutility: meAPIUtility,
+    private __sessionWrapper: sessionWrapper
+  ) {
     }
     AvailableDropdownList = {
       'profile': {
@@ -52,14 +54,14 @@ export class HeaderComponent {
       'edit_menu': {
         name: 'Menu',
         action: () => {
-          this.router.navigate(['./owner/settings/edit-menu/' + sessionStorage.getItem('restaurant_id')])
+          this.router.navigate(['./owner/settings/edit-menu/' + this.__sessionWrapper.getItem('restaurant_id')])
         }
       },
       'orders': {
           name: 'Orders',
           action: () => {
             let navigationURL =
-            sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
+            this.__sessionWrapper.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
             this.router.navigate([navigationURL]);
           }
       },
@@ -108,6 +110,12 @@ export class HeaderComponent {
         action: () => {
           this.router.navigate(['./owner/expense/expense'])
         }
+      },
+      'table': {
+        name: 'Tables',
+        action: () => {
+          this.router.navigate(['./owner/dine-in/table-cockpit'])
+        }
       }
     }
   
@@ -143,7 +151,9 @@ export class HeaderComponent {
     if (restaurant.type.toLowerCase() == 'restaurant') { 
       restaurantOwnerNavOptions.push('POS') 
     }
-
+    if (restaurant.table_management) {
+      restaurantOwnerNavOptions.push('table')
+    }
     for(let option of restaurantOwnerNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -183,7 +193,7 @@ export class HeaderComponent {
         for(let company of data['companies']){
           if(company.role_name == 'corporate_admin'){
             
-            console.log('company_id', sessionStorage.getItem('company_id'))
+            console.log('company_id', this.__sessionWrapper.getItem('company_id'))
             this.addAdminNavOptions(company)
             break
           }

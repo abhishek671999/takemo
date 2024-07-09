@@ -1,0 +1,21 @@
+<div>
+    <h2 style="text-align: center">Add recieved payment</h2>
+    <form [formGroup]="partialExpenseForm" class="new-expense-form">
+    
+    <mat-form-field >
+        <mat-label>Vendor name</mat-label>
+        <mat-select (selectionChange)="fetchExpenses()" formControlName="vendor_id">
+          <mat-option *ngFor="let vendor of vendorList" [value]="vendor.id">{{vendor.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    <mat-form-field class="col2">
+        <mat-label>Amount recieved</mat-label>
+        <input type="number" matInput  placeholder="Total amount" formControlName="amount">
+        <div *ngIf="isAmountPaidInvalid()">
+          <small class="text-danger">New amount should be less or equal to balance ie {{this.totalBalanceAmount}}</small>
+        </div>
+    </mat-form-field>
+
+    <button mat-raised-button [disabled]="isAmountPaidInvalid()" color='primary' type="submit" (click)="addPartialPayment()" [disabled]="!partialExpenseForm.valid" >Add payment</button>
+</form>
+</div>

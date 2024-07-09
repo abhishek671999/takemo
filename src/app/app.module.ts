@@ -28,6 +28,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AuthInterceptorInterceptor } from './shared/services/auth-interceptor.interceptor';
 import { ConfirmActionDialogComponent } from './components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { UploadFormComponent } from './components/shared/upload-form/upload-form.component';
+import { SelectSubitemDialogComponent } from './components/shared/select-subitem-dialog/select-subitem-dialog.component';
+
+
 
 @NgModule({
   declarations: [
@@ -45,6 +49,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     PostLoginComponent,
     Login2Component,
     ConfirmActionDialogComponent,
+    SelectSubitemDialogComponent,
   ],
   imports: [
     BrowserModule,
