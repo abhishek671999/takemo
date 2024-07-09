@@ -187,6 +187,7 @@ export class EditMenuComponent {
       non_veg: item.non_veg,
       egg: item.egg,
       counter_id: item.counter.counter_id,
+      inventory_stock: item.inventory_stock
     };
     this._menuEditService.editMenu(body).subscribe(
       (data) => console.log(data),
@@ -348,6 +349,7 @@ export class EditMenuComponent {
       veg: item.veg,
       non_veg: item.non_veg,
       egg: item.egg,
+      counter_id: Number(item.counter.counter_id)
     };
     this._editMenuService.editMenu(body).subscribe(
       (data) => {
