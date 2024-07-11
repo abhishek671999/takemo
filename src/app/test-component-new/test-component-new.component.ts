@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { PrinterService } from '../shared/services/printer/printer.service';
+import { PrintConnectorService } from '../shared/services/printer/print-connector.service';
 // import { ScratchWorkService } from '../scratch-work.service';
 
 
@@ -9,8 +11,11 @@ import { Component } from '@angular/core';
 })
 export class TestComponentNewComponent {
 
-  printRecipt(){
-    window.print()
-  }
+    constructor(private printConnector: PrintConnectorService){}
 
+  ngOnInit() {
+    debugger
+    this.printConnector.seekConnection()
+    console.log(this.printConnector.isWebConnected)
+    }
 }

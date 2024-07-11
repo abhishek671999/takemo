@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { PrintBuffer } from './print-buffer';
-import { PrintBuilder } from './printbuilder';
-import { PrintDriver } from './printDriver';
+import { PrintBuffer } from './buffer/print-buffer';
+import { PrintBuilder } from './builders/printbuilder';
+import { PrintDriver } from './driver/printDriver';
 import { BehaviorSubject } from 'rxjs';
-import { EscBuilder } from './escbuilder';
+import { EscBuilder } from './builders/escbuilder';
+import { WebPrintDriver } from './driver/WebPrintDriver';
+import { WebPrintBuilder } from './builders/webPrintBuilder';
 
 
 const ESC = 0x1b;
@@ -40,7 +42,8 @@ export class PrinterService  extends PrintBuilder{
         }
         switch(this.printLanguage){
             case "WebPrint":
-                break
+              this.builder = new WebPrintBuilder()
+              break
             case "StarPRNT":
                 break
             default:
