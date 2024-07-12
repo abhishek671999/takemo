@@ -94,9 +94,9 @@ export class meAPIUtility {
 @Injectable({
   providedIn: 'root',
 })
-export class sessionWrapper{
+export class sessionWrapper {
 
-  constructor(public meAPIUtility: meAPIUtility){}
+  constructor(public meAPIUtility: meAPIUtility) { }
 
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
@@ -131,9 +131,11 @@ export class sessionWrapper{
           sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
           sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
           sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
+          sessionStorage.setItem('kot_receipt', data['restaurants'][0]['kot_receipt'])
+          sessionStorage.setItem('pos', data['restaurants'][0]['pos'])
         } else if (data['companies'].length > 0) {
           sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
-        } 
+        }
         resolve(true)
       }),
         error => reject(false)
@@ -142,11 +144,11 @@ export class sessionWrapper{
   }
 
   getItem(key: string) {
-      let item = sessionStorage.getItem(key);
-      if (item) return(item);
-      else {
-        this.setSessionVariables()
-      return sessionStorage.getItem(key) 
+    let item = sessionStorage.getItem(key);
+    if (item) return (item);
+    else {
+      this.setSessionVariables()
+      return sessionStorage.getItem(key)
     }
   }
 
@@ -183,15 +185,15 @@ export class sessionWrapper{
   }
 
   isCounterManagementEnabled() {
-    return this.getItem('counter_management') == 'true' ? true: false
+    return this.getItem('counter_management') == 'true' ? true : false
   }
 
   isExpenseManagementEnabled() {
-    return this.getItem('expense_management') == 'true' ? true: false
+    return this.getItem('expense_management') == 'true' ? true : false
   }
 
   isInventoryManagementEnabled() {
-    return this.getItem('inventory_management') == 'true' ? true: false
+    return this.getItem('inventory_management') == 'true' ? true : false
   }
 
   isTableManagementEnabled() {
@@ -200,5 +202,13 @@ export class sessionWrapper{
   
   isMobileOrderingEnabled() {
     return this.getItem('mobile_ordering') == 'true' ? true : false;
+  }
+
+  isKOTreceiptEnabled() {
+    return this.getItem('kot_receipt') == 'true' ? true : false;
+  }
+
+  isPOSEnabled() {
+    return this.getItem('pos') == 'true' ? true : false;
   }
 }

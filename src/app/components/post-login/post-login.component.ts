@@ -52,6 +52,8 @@ export class PostLoginComponent {
         sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
         sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
         sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
+        sessionStorage.setItem('kot_receipt', data['restaurants'][0]['kot_receipt'])
+        sessionStorage.setItem('pos', data['restaurants'][0]['pos'])
         let navigationURL =
           sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
         this._router.navigate([navigationURL]);

@@ -11,12 +11,13 @@ import {
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { FormControl, FormGroup } from '@angular/forms';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { StringUtils } from 'src/app/shared/utils/stringUtils';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -42,7 +43,8 @@ export class SalesAnalyticsComponent {
     private __sessionWrapper: sessionWrapper,
     private _counterService: CounterService,
     public printerConn: PrintConnectorService,
-    private __matDialog: MatDialog
+    private __matDialog: MatDialog,
+    public stringUtils: StringUtils
   ) {}
 
   timeFrames = [
@@ -588,4 +590,6 @@ export class SalesAnalyticsComponent {
   openSendEmailDialogBox() {
     let dialogRef = this.__matDialog.open(SendEmailReportDialogComponent, {data: {requestBody: this.getRequestBodyPrepared()}});
   }
+
+
 }

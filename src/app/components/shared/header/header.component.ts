@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
-import { MeService } from 'src/app/shared/services/register/me.service';
-import { Utility, meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-header',
@@ -117,8 +115,10 @@ export class HeaderComponent {
           this.router.navigate(['./owner/dine-in/table-cockpit'])
         }
       }
-    }
+  }
   
+  public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
+
     addAdminNavOptions(company){
       this.location = company.company_name
       let adminNavOptions
@@ -148,7 +148,7 @@ export class HeaderComponent {
     if (restaurant.expense_management) {
       restaurantOwnerNavOptions.push('expense')
     }
-    if (restaurant.type.toLowerCase() == 'restaurant') { 
+    if (this.isPOSEnabled) { 
       restaurantOwnerNavOptions.push('POS') 
     }
     if (restaurant.table_management) {
@@ -171,7 +171,8 @@ export class HeaderComponent {
   }
 
   addRestaurantStaffNavOptions(){
-    let restaurantStaffNavOptions = ['edit_menu', 'POS' ,'orders']
+    let restaurantStaffNavOptions = ['edit_menu', 'orders']
+    if(this.isPOSEnabled) restaurantStaffNavOptions.push('POS')
     for(let option of restaurantStaffNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])

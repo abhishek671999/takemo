@@ -24,6 +24,7 @@ export class EditFormDialogComponent {
   public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
   public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
   private restaurantType = this.__sessionWrapper.getItem('restaurantType')?.toLowerCase()
+  public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
 
   outputBoxVisible = false;
   progress = `0%`;

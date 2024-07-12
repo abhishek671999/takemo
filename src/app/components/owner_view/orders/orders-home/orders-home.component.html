@@ -1,5 +1,5 @@
 <div class="navigation">
-    <button mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
+    <button  *ngIf="isPOSEnabled" mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
     <button mat-raised-button (click)="navigateToEditMenu()" color="primary">Edit menu</button>
 </div>
 <nav mat-tab-nav-bar>
