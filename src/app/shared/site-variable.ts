@@ -97,11 +97,14 @@ export class meAPIUtility {
 export class sessionWrapper {
 
   constructor(public meAPIUtility: meAPIUtility) { }
-
+  public __isAdmin = false
+  public __isUser = false
+  public __isOwner = false
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
+          this.__isOwner = true
           sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
           sessionStorage.setItem(
             'restaurant_name',
@@ -134,7 +137,10 @@ export class sessionWrapper {
           sessionStorage.setItem('kot_receipt', data['restaurants'][0]['kot_receipt'])
           sessionStorage.setItem('pos', data['restaurants'][0]['pos'])
         } else if (data['companies'].length > 0) {
+          this.__isAdmin = true
           sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+        } else {
+          this.__isUser = true
         }
         resolve(true)
       }),
@@ -183,6 +189,22 @@ export class sessionWrapper {
     });
     return validation;
   }
+
+  public get isAdmin() {
+    this.setSessionVariables()
+    return this.__isAdmin
+  }
+
+  public get isUser() {
+    this.setSessionVariables()
+    return this.__isUser
+  }
+
+  public get isOwner() {
+    this.setSessionVariables()
+    return this.__isOwner
+  }
+
 
   isCounterManagementEnabled() {
     return this.getItem('counter_management') == 'true' ? true : false

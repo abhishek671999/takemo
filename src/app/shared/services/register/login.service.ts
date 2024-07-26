@@ -6,7 +6,7 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
-import { host, Utility, meAPIUtility } from '../../site-variable';
+import { host, Utility, meAPIUtility, sessionWrapper } from '../../site-variable';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
@@ -18,7 +18,8 @@ export class LoginService {
     private _router: Router,
     public cookieService: CookieService,
     public utility: Utility,
-    private meAPIUtility: meAPIUtility
+    private meAPIUtility: meAPIUtility,
+    private sessionWrapper: sessionWrapper
   ) {}
 
   public redirectURL = null;
@@ -75,6 +76,12 @@ export class LoginService {
   ): boolean {
     console.log('Is logged in: ', this.isLoggedIn());
     if (this.isLoggedIn()) {
+      debugger
+      if (window.location.pathname == '/login' && this.redirectURL != '/user/myorders') {
+        if(this.sessionWrapper.isUser) this.redirectURL = '/user/myorders'
+        else this.redirectURL = '/home'
+        this._router.navigate(['/'])
+      }
       return true;
     } else {
       this.redirectURL = window.location.pathname == '/' || window.location.pathname == '/home'? null: window.location.pathname;

@@ -18,7 +18,7 @@ export class PostLoginComponent {
   showSpinner = true
   errorOccured = false
   myInfo;
-  ngOnInit(){
+  ngOnInit() {
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
       if (this.myInfo['restaurants'].length > 0) {
@@ -61,6 +61,7 @@ export class PostLoginComponent {
         sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
         this._router.navigate(['admin/user-management']);
       } else {
+        debugger
         if (Boolean(this.myInfo['first_name'])) {
           if (this.loginService.redirectURL) {
             this._router.navigate([this.loginService.redirectURL])
