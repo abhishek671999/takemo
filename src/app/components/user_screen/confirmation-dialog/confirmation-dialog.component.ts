@@ -184,6 +184,8 @@ export class ConfirmationDialogComponent {
         sessionStorage.setItem('transaction_id', data['transaction_id']);
         sessionStorage.setItem('order_no', data['order_no']);
         sessionStorage.setItem('redirectURL', '/user/myorders');
+        this.__sessionWrapper.isPaymentDone = data['payment_url'] ? true : false
+        this.__sessionWrapper.isKDSEnabled = data['kds']
         this.clearCart()
         this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
         window.location.href = data['payment_url'];

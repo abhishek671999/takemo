@@ -100,6 +100,9 @@ export class sessionWrapper {
   public __isAdmin = false
   public __isUser = false
   public __isOwner = false
+  public __isKDSEnabled = false
+  public __isPaymentDone = false
+
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
@@ -188,6 +191,22 @@ export class sessionWrapper {
       }
     });
     return validation;
+  }
+
+  public set isKDSEnabled(value: boolean) {
+    this.__isKDSEnabled = value
+  }
+
+  public set isPaymentDone(value: boolean) {
+    this.__isPaymentDone = value
+  }
+
+  public get isKDSEnabled() {
+    return this.__isKDSEnabled
+  }
+
+  public get isPaymentDone() {
+    return this.__isPaymentDone
   }
 
   public get isAdmin() {

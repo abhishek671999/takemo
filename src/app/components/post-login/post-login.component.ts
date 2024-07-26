@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConnectComponentsService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
-import { Utility, meAPIUtility } from 'src/app/shared/site-variable';
+import { Utility, meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { LoginService } from 'src/app/shared/services/register/login.service';
 })
 export class PostLoginComponent {
   constructor(private _router: Router, private _cc: ConnectComponentsService, 
-    public meAPIUtility: meAPIUtility, public loginService: LoginService ){
+    public meAPIUtility: meAPIUtility, public loginService: LoginService, private sessionWrapper: sessionWrapper ){
   }
 
   showSpinner = true
@@ -65,7 +65,13 @@ export class PostLoginComponent {
         if (Boolean(this.myInfo['first_name'])) {
           if (this.loginService.redirectURL) {
             this._router.navigate([this.loginService.redirectURL])
-          }else{
+          } else if (this.sessionWrapper.isPaymentDone) {
+            if (this.sessionWrapper.isKDSEnabled) this._router.navigate(['/user/myorders/current-orders'])
+            else this._router.navigate(['user/myorders/order-history'])
+            this.sessionWrapper.isPaymentDone = false
+            this.sessionWrapper.isKDSEnabled = false
+          }
+          else {
             this._router.navigate(['user/']);
           }
         } else {

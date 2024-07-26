@@ -76,17 +76,12 @@ export class LoginService {
   ): boolean {
     console.log('Is logged in: ', this.isLoggedIn());
     if (this.isLoggedIn()) {
-      debugger
-      if (window.location.pathname == '/login' && this.redirectURL != '/user/myorders') {
-        if(this.sessionWrapper.isUser) this.redirectURL = '/user/myorders'
-        else this.redirectURL = '/home'
-        this._router.navigate(['/'])
-      }
       return true;
     } else {
       this.redirectURL = window.location.pathname == '/' || window.location.pathname == '/home'? null: window.location.pathname;
       this._router.navigate(['login']);
       return false;
+      
     }
   }
 }

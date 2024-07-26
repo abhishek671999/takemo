@@ -19,7 +19,6 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    canActivate: [authGuard2],
     loadChildren: () => 
       import('./components/home_screen/home.module').then((m) => m.HomeModule)
   },
