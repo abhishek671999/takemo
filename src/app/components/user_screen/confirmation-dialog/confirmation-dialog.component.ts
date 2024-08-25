@@ -16,6 +16,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -33,7 +34,8 @@ export class ConfirmationDialogComponent {
     private meService: MeService,
     private _fb: FormBuilder,
     private _tableService: TablesService,
-    private __sessionWrapper: sessionWrapper
+    private __sessionWrapper: sessionWrapper,
+    private __cartService: cartConnectService
   ) {}
 
   public isPayment;
@@ -133,6 +135,9 @@ export class ConfirmationDialogComponent {
   }
 
   preparePlaceOrderBody(wallet = null) {
+    this.data.summary.itemList.forEach(item => {
+      item.item_id = item.id
+    })
     let body = {
       order_list: this.data.summary.itemList,
       restaurant_id: this.data.summary.restaurant_id,
@@ -205,6 +210,7 @@ export class ConfirmationDialogComponent {
 
     this.__ordersService.createEcomOrders(body).subscribe(
       (data) => {
+        this.clearCart()
         let successDialogRef = this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Your Order id is: ' + data['order_no'] },
         });
@@ -317,7 +323,7 @@ export class ConfirmationDialogComponent {
   }
 
   calculateItemAmount(item) {
-    return item.price * (item.quantity + item.parcel_quantity);
+    return item.price * (item.quantity + (item.parcel_quantity? item.parcel_quantity : 0));
   }
 
   clearItem(item) {
@@ -392,6 +398,7 @@ export class ConfirmationDialogComponent {
       element.parcelQuantity = 0
     });
     this.data.summary.amount = 0
+    this.__cartService.setCartItems(this.data.summary)
   }
 
   placeTableOrder() {

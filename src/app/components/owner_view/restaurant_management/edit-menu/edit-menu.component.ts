@@ -24,6 +24,7 @@ import { CounterService } from 'src/app/shared/services/inventory/counter.servic
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { MatTableDataSource } from '@angular/material/table';
+import { EditCategoryDialogComponent } from '../../dialogbox/edit-category-dialog/edit-category-dialog.component';
 
 @Component({
   selector: 'app-edit-menu',
@@ -385,6 +386,18 @@ export class EditMenuComponent {
   onCategorySelection(category) {
     this.selectedCategory = this.allCategories.filter(ele => ele == category)
     this.showCategory()
+  }
+
+
+  editCategory(category){
+    let matdialgRef = this._dialog.open(EditCategoryDialogComponent, {data: category})
+    matdialgRef.afterClosed().subscribe(
+      (data: any) => {
+        if(data?.result){
+          this.ngOnInit()
+        }
+      }
+    )
   }
 
   disableAddButton() {

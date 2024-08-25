@@ -7,16 +7,19 @@ import { host, Utility} from '../../site-variable';
 })
 export class EditMenuService {
   host = host;
-  private editItemEndpoint = 'inventory/edit_item/';
   private addItemEndpoint = 'inventory/add_item/';
-  private addCategoryEndpoint = 'inventory/add_category/';
-  private addItemUnitPriceEndpoint = 'inventory/add_item_unit_price/'
+  private editItemEndpoint = 'inventory/edit_item/';
   private deleteItemEndpoint = 'inventory/delete_item/';
-  private deleteItemUnitPriceEndpoint = 'inventory/delete_item_unit_price/'
-  private deleteCategoryEndpoint = 'inventory/delete_category/';
-  private editItemAvailabilityEndpoint = 'inventory/edit_is_available/';
+  private addItemUnitPriceEndpoint = 'inventory/add_item_unit_price/'
   private editItemUnitPriceEndpoint = 'inventory/edit_item_unit_price/'
+  private deleteItemUnitPriceEndpoint = 'inventory/delete_item_unit_price/'
+
+  private addCategoryEndpoint = 'inventory/add_category/';
+  private editCategoryEndpoint = 'inventory/edit_category/'
+  private deleteCategoryEndpoint = 'inventory/delete_category/';
   private editCategoryAvailabilityEndpoint = 'inventory/hide_category/'
+  private editItemAvailabilityEndpoint = 'inventory/edit_is_available/';
+
 
   constructor(private _http: HttpClient, public utility: Utility) {}
 
@@ -24,18 +27,19 @@ export class EditMenuService {
     return this._http.post(this.host + this.editCategoryAvailabilityEndpoint, body)
   }
   editMenu(body) {
-    console.log('This is the body: ', body);
     return this._http.post(this.host + this.editItemEndpoint, body);
   }
 
   addItem(body) {
-    console.log('This is the body: ', body);
     return this._http.post(this.host + this.addItemEndpoint, body);
   }
 
   addCategory(body) {
-    console.log('This is the body: ', body);
     return this._http.post(this.host + this.addCategoryEndpoint, body);
+  }
+
+  editCategory(body){
+    return this._http.post(this.host + this.editCategoryEndpoint, body)
   }
 
   deleteItem(body) {

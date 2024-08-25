@@ -1,27 +1,20 @@
-import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import {
-  MatDialog,
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogConfig,
-} from '@angular/material/dialog';
-import { MaterialModule } from 'src/app/material/material.module';
-import { MenuService } from 'src/app/shared/services/menu/menu.service';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { TablesService } from 'src/app/shared/services/table/tables.service';
-import { HttpParams } from '@angular/common/http';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { Component } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
+import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { sessionWrapper } from 'src/app/shared/site-variable';
+import { HttpParams } from '@angular/common/http';
+import { TablesService } from 'src/app/shared/services/table/tables.service';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css'],
+  selector: 'app-menu2',
+  templateUrl: './menu2.component.html',
+  styleUrls: ['./menu2.component.css']
 })
-export class MenuComponent {
+export class Menu2Component {
   constructor(
     private _menuService: MenuService,
     private __cartService: cartConnectService,
@@ -32,13 +25,13 @@ export class MenuComponent {
     private _tableService: TablesService,
   ) {}
 
-public orderList = {
-    itemList: [],
-    amount: 0,
-    restaurant_id: null,
-    restaurant_parcel: false,
-    table_id: null,
-  };
+  public orderList = {
+      itemList: [],
+      amount: 0,
+      restaurant_id: null,
+      restaurant_parcel: false,
+      table_id: null,
+    };
 
   public restaurantParcel: boolean;
   public menu_response
@@ -58,6 +51,7 @@ public orderList = {
   public tableManagement = this.__sessionWrapper.isTableManagementEnabled();
 
  ngOnInit() {
+  debugger
   this.showSpinner = true
   this._route.paramMap.subscribe((params: ParamMap) => {
     this.restaurant_id = parseInt(params.get('id'));
@@ -65,6 +59,7 @@ public orderList = {
     sessionStorage.setItem('restaurant_id', String(this.restaurant_id));
     this._menuService.getMenu(this.restaurant_id).subscribe(
       (data) => {
+        debugger
         this.restaurantParcel = data['restaurant_parcel'];
         this.menu_response = data;
 
@@ -117,24 +112,19 @@ public orderList = {
 
   setCartQuantity(){
     let cartItems = this.__cartService.getCartItems()
+    console.log('Cart items: ', cartItems)
     if(cartItems){
-      if(cartItems.amount > 0 && cartItems.itemList.length == 0){
-        console.log(cartItems.amount, cartItems.itemList)
-        alert('Failed to fetch cart')
-        this.clearCart()
-      }else{
-        this.orderList.amount = cartItems.amount
-        cartItems.itemList.forEach(cartItem => {
-          if(cartItem){
-            let matchedItem = this.menu[cartItem.category_name].filter(menuItem => menuItem.id == cartItem.id)
-            if(matchedItem.length > 0 ){
-              matchedItem[0].quantity = cartItem.quantity
-              matchedItem[0].item_unit_price_list = cartItem.item_unit_price_list
-              this.orderList.itemList.push(matchedItem[0])
-            } 
-          }
-        })
-      }
+      this.orderList.amount = cartItems.amount
+      cartItems.itemList.forEach(cartItem => {
+        if(cartItem){
+          let matchedItem = this.menu[cartItem.category_name].filter(menuItem => menuItem.id == cartItem.id)
+          if(matchedItem.length > 0 ){
+            matchedItem[0].quantity = cartItem.quantity
+            matchedItem[0].item_unit_price_list = cartItem.item_unit_price_list
+            this.orderList.itemList.push(matchedItem[0])
+          } 
+        }
+      })
     }
   }
 
@@ -171,7 +161,7 @@ public orderList = {
   prepareSummary() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     matDialogConfig.position = { bottom: `0px` };
-    this.orderList.table_id = this.tableSelected?.table_id;
+    // this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
     let dialogRef = this.matdialog.open(ConfirmationDialogComponent, {
       data: {
@@ -340,5 +330,5 @@ public orderList = {
     this.filteredMenu = this.menu[this.currentCategory]
   }
 
-  
+
 }

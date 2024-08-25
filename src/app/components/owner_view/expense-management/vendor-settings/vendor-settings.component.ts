@@ -19,7 +19,7 @@ export class VendorSettingsComponent {
 
   vendorForm = this.__fb.group({
     name: ['', [Validators.required, Validators.maxLength(25)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [ Validators.email]],
     mobile: [
       '',
       [Validators.required, Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$')],

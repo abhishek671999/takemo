@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Edit Category</h2>
+<div mat-dialog-content>
+    <form [formGroup]="editCategoryForm">
+        <mat-form-field>
+            <mat-label>Category</mat-label>
+        <input matInput type="text" placeholder="Category" formControlName="category_name">
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button [mat-dialog-close]>Close</button>
+    <button mat-raised-button color="warning" (click)="toggleCategory()">Hide category</button>
+    <button mat-raised-button color="warning" (click)="deleteCategory()">Delete category</button>
+    <button mat-raised-button color="primary" (click)="editCategory()">Submit</button>
+</div>
