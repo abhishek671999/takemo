@@ -54,12 +54,15 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ProfileComponent } from '../shared/profile/profile.component';
 import {MatBadgeModule} from '@angular/material/badge';
 import { UploadFormComponent } from "../shared/upload-form/upload-form.component";
+import { Menu2Component } from './menu2/menu2.component';
+
 
 @NgModule({
     declarations: [
         HomeComponent,
         UserComponent,
         MenuComponent,
+        Menu2Component,
         MyOrdersComponent,
         ConfirmationDialogComponent,
         DeleteConfirmationDialogComponent,
@@ -77,7 +80,8 @@ import { UploadFormComponent } from "../shared/upload-form/upload-form.component
         RechargeWalletDialogComponent,
         PostRechargePaymentComponent,
         ClickOutsideDirective,
-        ProfileComponent
+        ProfileComponent,
+        Menu2Component
     ],
     exports: [],
     imports: [
@@ -104,7 +108,7 @@ import { UploadFormComponent } from "../shared/upload-form/upload-form.component
         MatSnackBarModule,
         MatBadgeModule,
       UploadFormComponent,
-      MatProgressSpinnerModule
+      MatProgressSpinnerModule,
     ]
 })
 export class UserModule {}

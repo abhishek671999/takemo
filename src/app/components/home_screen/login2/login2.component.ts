@@ -37,6 +37,12 @@ export class Login2Component {
     }
   };
   }
+
+  ngOnInit() {
+    if (this._loginService.isLoggedIn()) {
+      this._router.navigate(['/home'])
+    }
+  }
   ispause = new Subject();
   public resend_otp_time = 45 // seconds
   public time = this.resend_otp_time;

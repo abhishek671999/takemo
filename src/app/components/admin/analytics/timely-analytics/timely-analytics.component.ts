@@ -11,6 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
+import { StringUtils } from 'src/app/shared/utils/stringUtils';
 
 @Component({
   selector: 'app-timely-analytics',

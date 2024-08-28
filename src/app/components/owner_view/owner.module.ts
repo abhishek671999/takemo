@@ -50,6 +50,7 @@ import { AddItemDialogComponent } from './dialogbox/add-item-dialog/add-item-dia
 import { AddPaymentDialogComponent } from './dialogbox/add-payment-dialog/add-payment-dialog.component';
 import { AddExpenseDialogComponent } from './dialogbox/add-expense-dialog/add-expense-dialog.component';
 import { EditExpenseDialogComponent } from './dialogbox/edit-expense-dialog/edit-expense-dialog.component';
+import { EditCategoryDialogComponent } from './dialogbox/edit-category-dialog/edit-category-dialog.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { EditExpenseDialogComponent } from './dialogbox/edit-expense-dialog/edit
     AddPaymentDialogComponent,
     AddExpenseDialogComponent,
     EditExpenseDialogComponent,
+    EditCategoryDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -28,18 +28,17 @@ export class cartConnectService{
   constructor(private __cookieService: CookieService, private __sessionWrapper: sessionWrapper) {}
 
   setCartItems(cartItems) {
-    console.log('setting', cartItems)
     let expiryInDays = 30; // days
     let restaurantId = this.__sessionWrapper.getItem('restaurant_id')
     let expiryDate = new Date(
       new Date().getTime() + expiryInDays * 24 * 60 * 60 * 1000
     );
-    cartItems.itemList = cartItems.itemList.filter((ele) => ele.quantity + ele.parcelQuantity != 0)
+    
+    cartItems.itemList = cartItems.itemList.filter((ele) => (ele.quantity + (ele.parcelQuantity? ele.parcelQuantity : 0)) > 0)
     let existingCart = this.__cookieService.get('cart');
     let cartCookie = existingCart
       ? { ...JSON.parse(existingCart), [restaurantId]: cartItems }
       : { [restaurantId]: cartItems };
-    console.log('This is cartcokkie', cartCookie);
     this.__cookieService.set(
       'cart',
       JSON.stringify(cartCookie),

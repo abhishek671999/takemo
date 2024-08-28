@@ -6,7 +6,7 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
-import { host, Utility, meAPIUtility } from '../../site-variable';
+import { host, Utility, meAPIUtility, sessionWrapper } from '../../site-variable';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
@@ -18,7 +18,8 @@ export class LoginService {
     private _router: Router,
     public cookieService: CookieService,
     public utility: Utility,
-    private meAPIUtility: meAPIUtility
+    private meAPIUtility: meAPIUtility,
+    private sessionWrapper: sessionWrapper
   ) {}
 
   public redirectURL = null;
@@ -80,6 +81,7 @@ export class LoginService {
       this.redirectURL = window.location.pathname == '/' || window.location.pathname == '/home'? null: window.location.pathname;
       this._router.navigate(['login']);
       return false;
+      
     }
   }
 }

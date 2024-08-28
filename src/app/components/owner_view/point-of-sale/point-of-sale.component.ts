@@ -4,14 +4,10 @@ import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { SuccessMsgDialogComponent } from '../../shared/success-msg-dialog/success-msg-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
-import { PrinterService } from 'src/app/shared/services/printer/printer.service';
-import { UsbDriver } from 'src/app/shared/services/printer/usbDriver';
-import { MatRadioButton } from '@angular/material/radio';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { sessionWrapper } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -57,6 +53,8 @@ export class PointOfSaleComponent {
   public isTableManagement = this.__sessionWrapper.isTableManagementEnabled()
   public tableName = this.__sessionWrapper.getItem('table_name')
   public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
+  public isPOS = this.__sessionWrapper.isPOSEnabled()
+  public isKOTEnabled = this.__sessionWrapper.isKOTreceiptEnabled()
 
   ngOnInit() {
     this.summary = {
@@ -710,7 +708,7 @@ export class PointOfSaleComponent {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
       let printConnect = this.printerConn.printService.init();
-      if (this.restaurantId == 12) {
+      if (this.isKOTEnabled) {
         this.getCounterPrintableText().forEach((counterPrint) => {
           counterPrint.forEach((ele) => {
             if (ele.text != '') {

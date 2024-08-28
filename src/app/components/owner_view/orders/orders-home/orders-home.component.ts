@@ -61,7 +61,7 @@ export class OrdersHomeComponent {
       link: '/owner/orders/rejected-orders',
     },
   };
-
+  public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
   addComponents() {
     let restaurantType = this.__sessionWrapper.getItem('restaurantType').toLowerCase()
     let EcommerceComponents = restaurantType == "e-commerce" ? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : []

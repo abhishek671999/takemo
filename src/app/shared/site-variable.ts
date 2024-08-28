@@ -94,14 +94,20 @@ export class meAPIUtility {
 @Injectable({
   providedIn: 'root',
 })
-export class sessionWrapper{
+export class sessionWrapper {
 
-  constructor(public meAPIUtility: meAPIUtility){}
+  constructor(public meAPIUtility: meAPIUtility) { }
+  public __isAdmin = false
+  public __isUser = false
+  public __isOwner = false
+  public __isKDSEnabled = false
+  public __isPaymentDone = false
 
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
+          this.__isOwner = true
           sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
           sessionStorage.setItem(
             'restaurant_name',
@@ -131,9 +137,14 @@ export class sessionWrapper{
           sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
           sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
           sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
+          sessionStorage.setItem('kot_receipt', data['restaurants'][0]['kot_receipt'])
+          sessionStorage.setItem('pos', data['restaurants'][0]['pos'])
         } else if (data['companies'].length > 0) {
+          this.__isAdmin = true
           sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
-        } 
+        } else {
+          this.__isUser = true
+        }
         resolve(true)
       }),
         error => reject(false)
@@ -142,11 +153,11 @@ export class sessionWrapper{
   }
 
   getItem(key: string) {
-      let item = sessionStorage.getItem(key);
-      if (item) return(item);
-      else {
-        this.setSessionVariables()
-      return sessionStorage.getItem(key) 
+    let item = sessionStorage.getItem(key);
+    if (item) return (item);
+    else {
+      this.setSessionVariables()
+      return sessionStorage.getItem(key)
     }
   }
 
@@ -182,16 +193,48 @@ export class sessionWrapper{
     return validation;
   }
 
+  public set isKDSEnabled(value: boolean) {
+    this.__isKDSEnabled = value
+  }
+
+  public set isPaymentDone(value: boolean) {
+    this.__isPaymentDone = value
+  }
+
+  public get isKDSEnabled() {
+    return this.__isKDSEnabled
+  }
+
+  public get isPaymentDone() {
+    return this.__isPaymentDone
+  }
+
+  public get isAdmin() {
+    this.setSessionVariables()
+    return this.__isAdmin
+  }
+
+  public get isUser() {
+    this.setSessionVariables()
+    return this.__isUser
+  }
+
+  public get isOwner() {
+    this.setSessionVariables()
+    return this.__isOwner
+  }
+
+
   isCounterManagementEnabled() {
-    return this.getItem('counter_management') == 'true' ? true: false
+    return this.getItem('counter_management') == 'true' ? true : false
   }
 
   isExpenseManagementEnabled() {
-    return this.getItem('expense_management') == 'true' ? true: false
+    return this.getItem('expense_management') == 'true' ? true : false
   }
 
   isInventoryManagementEnabled() {
-    return this.getItem('inventory_management') == 'true' ? true: false
+    return this.getItem('inventory_management') == 'true' ? true : false
   }
 
   isTableManagementEnabled() {
@@ -200,5 +243,13 @@ export class sessionWrapper{
   
   isMobileOrderingEnabled() {
     return this.getItem('mobile_ordering') == 'true' ? true : false;
+  }
+
+  isKOTreceiptEnabled() {
+    return this.getItem('kot_receipt') == 'true' ? true : false;
+  }
+
+  isPOSEnabled() {
+    return this.getItem('pos') == 'true' ? true : false;
   }
 }

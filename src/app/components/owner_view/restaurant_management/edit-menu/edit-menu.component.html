@@ -12,7 +12,7 @@
                 <h4 class="text-center m-0">Outlet is {{ restaurantStatus? 'open': 'closed'}}</h4>
             </div>
         </ng-template>
-        <button mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
+        <button *ngIf="isPOSEnabled" mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
     </div>
     <div class="menu-action-bar">
         <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">
@@ -20,6 +20,7 @@
         </button>
         <div class="text-center">
             <button mat-raised-button color="primary" [disabled]="searchText != ''" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item {{selectedCategory[0].categoryName}}</button>
+            <button mat-flat-button [disabled]="searchText != ''" (click)="editCategory(selectedCategory[0])">Edit {{selectedCategory[0].categoryName}}</button>
         </div>
         <mat-form-field >
             <mat-label>Search item</mat-label>
