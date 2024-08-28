@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router,NavigationStart }  from "@angular/router";
 
 
 @Component({
@@ -9,5 +8,5 @@ import { Router,NavigationStart }  from "@angular/router";
   host: {'some-binding': 'some-value'},
 })
 export class HomeComponent {
-  
+
 }

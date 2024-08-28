@@ -1,17 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { CurrentOrdersComponent } from './orders/current-orders/current-orders.component';
-import { PendingOrdersComponent } from './orders/pending-orders/pending-orders.component';
-import { OrdersHistoryComponent } from './orders/orders-history/orders-history.component';
 import { EditMenuComponent } from './restaurant_management/edit-menu/edit-menu.component';
-import { OrdersHomeComponent } from './orders/orders-home/orders-home.component';
-import { CancelledOrdersComponent } from './orders/cancelled-orders/cancelled-orders.component';
 import { PointOfSaleComponent } from './point-of-sale/point-of-sale.component';
-import { UnconfirmedOrdersComponent } from './orders/unconfirmed-orders/unconfirmed-orders.component';
-import { ConfirmedOrdersComponent } from './orders/confirmed-orders/confirmed-orders.component';
-import { DeliveredOrdersComponent } from './orders/delivered-orders/delivered-orders.component';
-import { RejectedOrdersComponent } from './orders/rejected-orders/rejected-orders.component';
 
 const routes: Routes = [
   {
@@ -32,7 +23,7 @@ const routes: Routes = [
       },
       { path: 'point-of-sale', component: PointOfSaleComponent },
       {
-        path: 'edit-menu/:id',
+        path: 'edit-menu/',
         component: EditMenuComponent,
       },
       {

@@ -70,7 +70,7 @@ export class EditMenuComponent {
 
   menu: any;
   fontStyle?: string;
-  restaurantId: number;
+  restaurantId: number = Number(this.__sessionWrapper.getItem('restaurant_id'));
   restaurantStatus = false;
   RestaurantAction = this.restaurantStatus
     ? 'Close restaurant'
@@ -99,25 +99,23 @@ export class EditMenuComponent {
   }]
   public allCategories = []
   public filteredMenu = []
+  
 
   ngOnInit() {
     this.searchText = ''
-    this._route.paramMap.subscribe((params: ParamMap) => {
-      this.restaurantId = parseInt(params.get('id'));
-      this._menuService.getAdminMenu(this.restaurantId).subscribe(
-        (data) => {
-          this.restaurantStatus = data['is_open']
-          this.menu = data['menu']
-          this.createAllCategory();
-          this.allCategories = this.parseCategories()
-          this.selectedCategory = [this.allCategories[0]]
-          console.log(this.allCategories, 'all categories')
-          this.showCategory()
-          this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
-        },
-        (error) => console.log(error)
-      );
-    });
+    this._menuService.getAdminMenu(this.restaurantId).subscribe(
+      (data) => {
+        this.restaurantStatus = data['is_open']
+        this.menu = data['menu']
+        this.createAllCategory();
+        this.allCategories = this.parseCategories()
+        this.selectedCategory = [this.allCategories[0]]
+        console.log(this.allCategories, 'all categories')
+        this.showCategory()
+        this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
+      },
+      (error) => console.log(error)
+    );
     this._counterService
       .getRestaurantCounter(this.restaurantId)
       .subscribe((data) => {
