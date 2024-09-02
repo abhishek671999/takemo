@@ -21,7 +21,6 @@ export class OrdersHomeComponent {
     //   index: 3
     // }
   ];
-  counters = [];
 
   availableNavlinks = {
     current: {
@@ -71,20 +70,21 @@ export class OrdersHomeComponent {
       this.navLinks.push(this.availableNavlinks[ele]);
     });
   }
+
   ngOnInit() {
-    this.addComponents() //temp-fix
-    this._counterService
-      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
-      .subscribe(
-        (data) => {
-          this.counters = data['counters'];
-        },
-        (error) => {
-          alert("Couldn't fetch counters");
-        }
-      );
-
-
+    let restaurantType = this.__sessionWrapper.getItem('restaurantType').toLowerCase()
+    if(restaurantType == "e-commerce"){
+      let EcommerceComponents = ['unconfirmed', 'confirmed', 'delivered', 'rejected']
+      EcommerceComponents.forEach((tab) => {
+        this.navLinks.push(this.availableNavlinks[tab])
+      })
+    }else{
+      let restaurantComponents = this.__sessionWrapper.getItem('restaurant_kds') == 'true' ? ['pending', 'current', 'history'] : ['history']
+      restaurantComponents.forEach((tab) => {
+        this.navLinks.push(this.availableNavlinks[tab])
+      })
+    }
+    this.router.navigate([`.${this.navLinks[0].link}`])
   }
 
   navigateToPOS() {
@@ -92,8 +92,6 @@ export class OrdersHomeComponent {
   }
 
   navigateToEditMenu() {
-    this.router.navigate([
-      `/owner/settings/edit-menu/${this.__sessionWrapper.getItem('restaurant_id')}`,
-    ]);
+    this.router.navigate([`/owner/settings/edit-menu/`]);
   }
 }

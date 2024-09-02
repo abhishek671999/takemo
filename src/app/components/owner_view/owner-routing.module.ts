@@ -21,9 +21,12 @@ const routes: Routes = [
           },
         ],
       },
-      { path: 'point-of-sale', component: PointOfSaleComponent },
+      { 
+        path: 'point-of-sale', 
+        component: PointOfSaleComponent 
+      },
       {
-        path: 'edit-menu/',
+        path: 'edit-menu',
         component: EditMenuComponent,
       },
       {

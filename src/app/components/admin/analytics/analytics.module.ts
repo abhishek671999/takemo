@@ -8,7 +8,7 @@ import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
   declarations: [
-    AnalyticsHomeComponent
+    AnalyticsHomeComponent,
   ],
   imports: [
     CommonModule,

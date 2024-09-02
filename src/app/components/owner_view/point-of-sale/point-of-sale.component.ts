@@ -830,7 +830,7 @@ export class PointOfSaleComponent {
 
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/settings/edit-menu/${this.restaurantId}`,
+      `/owner/settings/edit-menu/`,
     ]);
   }
 

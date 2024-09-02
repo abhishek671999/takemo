@@ -102,18 +102,16 @@ export class sessionWrapper {
   public __isOwner = false
   public __isKDSEnabled = false
   public __isPaymentDone = false
+  public __isMultiRestaurantOwner = false
 
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
-       
         if (data['restaurants'].length > 0) {
           this.__isOwner = true
-          this.setRestaurantSessionVariables(data['restaurants'][0])
-
+          if (data['restaurants'].length > 1) this.__isMultiRestaurantOwner = true
         } else if (data['companies'].length > 0) {
           this.__isAdmin = true
-          this.setCompanySessionVariable(data['companies'][0])
         } else {
           this.__isUser = true
         }
@@ -235,6 +233,12 @@ export class sessionWrapper {
     this.setSessionVariables()
     return this.__isOwner
   }
+ 
+  public get isMultiRestaurantOwner() {
+    this.setSessionVariables()
+    return this.__isMultiRestaurantOwner
+  }
+
 
 
   isCounterManagementEnabled() {

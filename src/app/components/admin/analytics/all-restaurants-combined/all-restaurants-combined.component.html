@@ -1,0 +1,83 @@
+
+<div class="main-container">
+    <div style="text-align: center;">
+        <mat-form-field class="form-field">
+            <mat-label>Select time frame</mat-label>
+            <mat-select
+              [(value)]="selectedTimeFrame"
+              (selectionChange)="fetchAnalytics()"
+            >
+              <mat-option *ngFor="let time of timeFrames" [value]="time.actualValue">
+                {{ time.displayValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        <mat-form-field *ngIf="selectedTimeFrame == 'custom'" id="calendarInputField" class="hidden">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+              <input
+                matStartDate
+                (dateChange)="fetchAnalytics()"
+                [(ngModel)]="selectedFromDate"
+                placeholder="Start date"
+                [ngModelOptions]="{standalone: true}"
+              />
+              <input
+                matEndDate
+                (dateChange)="fetchAnalytics()"
+                [(ngModel)]="selectedToDate"
+                placeholder="End date"
+                [ngModelOptions]="{standalone: true}"
+              />
+            </mat-date-range-input>
+            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </mat-form-field>
+    </div>
+
+    <div class="table-container">
+        <table mat-table [dataSource]="salesDataSource" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="sl_no">
+            <th mat-header-cell *matHeaderCellDef>Sl.no</th>
+            <td mat-cell *matCellDef="let element; let i=index">{{ i + 1 }}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="restaurant_name">
+            <th mat-header-cell *matHeaderCellDef>Restaurant name</th>
+            <td mat-cell *matCellDef="let element">{{ element.restaurant_name }}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="total_quantity">
+            <th mat-header-cell *matHeaderCellDef>Total orders</th>
+            <td mat-cell *matCellDef="let element">{{ element.total_quantity }}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="total_amount">
+            <th mat-header-cell *matHeaderCellDef>Total Amount</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.total_amount }}
+            </td>
+          </ng-container>
+          
+          <ng-container matColumnDef="total_amount_without_tax">
+            <th mat-header-cell *matHeaderCellDef>Amount without tax</th>
+            <td mat-cell *matCellDef="let element">{{ element.total_amount_without_tax }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="total_gst_amount">
+            <th mat-header-cell *matHeaderCellDef>Tax amount</th>
+            <td mat-cell *matCellDef="let element">{{ element.total_gst_amount }}</td>
+          </ng-container>
+          
+
+
+          <tr mat-header-row *matHeaderRowDef="salesDataTableColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: salesDataTableColumns"></tr>
+        </table>
+      </div>
+</div>

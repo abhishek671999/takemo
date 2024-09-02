@@ -48,6 +48,7 @@ import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DummyUploadImagesComponent } from './dummy-upload-images/dummy-upload-images.component';
 import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
 import { SendEmailReportDialogComponent } from './dialogbox/send-email-report-dialog/send-email-report-dialog.component';
+import { AllRestaurantsCombinedComponent } from './analytics/all-restaurants-combined/all-restaurants-combined.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { SendEmailReportDialogComponent } from './dialogbox/send-email-report-di
     EditRulesDialogComponent,
     AddUserToRuleComponent,
     SalesAnalyticsComponent,
+    AllRestaurantsCombinedComponent,
     TimelyAnalyticsComponent,
     EditUserToRuleDialogComponent,
     SuccessMsgDialogComponent,

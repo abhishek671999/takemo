@@ -30,7 +30,7 @@ export class HeaderComponent {
         name: 'Analytics',
         action: () => {
           console.log('analytics');
-          this.router.navigate(['./admin/analytics/sales-analytics']);
+          this.router.navigate(['./admin/analytics/']); //fix this
         },
       },
       'shift': {
@@ -54,7 +54,7 @@ export class HeaderComponent {
       'edit_menu': {
         name: 'Menu',
         action: () => {
-          this.router.navigate(['./owner/settings/edit-menu/' + this.__sessionWrapper.getItem('restaurant_id')])
+          this.router.navigate(['./owner/settings/edit-menu/'])
         }
       },
       'orders': {
@@ -227,6 +227,7 @@ export class HeaderComponent {
   }
 
   setRestaurantsessionVariable(restaurant){
+    console.log('Setting from header', restaurant)
     this.__sessionWrapper.setRestaurantSessionVariables(restaurant)
     window.location.reload()
   }

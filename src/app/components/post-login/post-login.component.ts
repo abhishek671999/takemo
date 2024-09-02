@@ -21,8 +21,11 @@ export class PostLoginComponent {
   ngOnInit() {
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
+      
         if (this.myInfo['restaurants'].length > 0) {
-          if(sessionStorage.getItem('load_header') == 'true' || sessionStorage.getItem('load_header') == null) this.sessionWrapper.setRestaurantSessionVariables(data['restaurants'][0])
+          if(sessionStorage.getItem('load_header') == 'true' || sessionStorage.getItem('load_header') == null) {
+            this.sessionWrapper.setRestaurantSessionVariables(data['restaurants'][0])
+          }
           let navigationURL =
             sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
           this._router.navigate([navigationURL]);

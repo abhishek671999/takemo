@@ -31,7 +31,6 @@ export class EditCategoryDialogComponent {
   public editCategoryForm: FormGroup
 
   toggleCategory(){
-    debugger
     let body = {
       category_id: this.data.categoryId,
       hide_cateogry: !this.data.hide_category

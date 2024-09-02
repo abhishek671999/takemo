@@ -122,7 +122,6 @@ export class SignupService {
     new_password: string,
     isNewUser: boolean = false
   ) {
-    console.log('Token: ', token, 'Password: ', new_password);
     const headers = new HttpHeaders({ Authorization: 'Token ' + token });
     const body = {
       old_password: new_password,

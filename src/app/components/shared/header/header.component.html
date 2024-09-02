@@ -1,10 +1,10 @@
 <div class="main-header">
     <div class="right-section">
       <div *ngIf="hasMultipleRestaurants" class="dropdown">
-        <mat-icon> restaurant</mat-icon>
+        <a style="text-decoration: none; color: rgb(225, 223, 223);" ><mat-icon> store</mat-icon></a>
         <div class="dropdown-content" >
           <div *ngFor="let restaurant of meData['restaurants']">
-            <a (click)="setRestaurantsessionVariable(restaurant)" style="margin: 0;">{{restaurant['restaurant_name']}}</a>
+            <a (click)="setRestaurantsessionVariable(restaurant)" style="margin: 0; font-weight: 400; font-size: small;">{{restaurant['restaurant_name']}}</a>
           </div>
         </div>
       </div>
