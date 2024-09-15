@@ -1,5 +1,5 @@
 export type confirmedOrder = {
-    "line_items": lineItem[]
+    "order_list": lineItem[]
     "payment_mode": string,
     "total_amount": number,
     "restaurant_id": number,
@@ -20,11 +20,17 @@ export type lineItem = {
     "item_id": number,
     "item_name": string,
     "price": number,
-    "item_quantity": number,
+    "quantity": number,
     "parcel_charges": number,
     "parcel": boolean,
     "item_unit_price_id": number,
-    "parcel_quantity": number
+    "parcel_quantity": number,
+    counter?: counter
+}
+
+export type counter = {
+    counter_id: number,
+    counter_name: string
 }
 
 // let body = {

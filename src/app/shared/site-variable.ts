@@ -103,6 +103,7 @@ export class sessionWrapper {
   public __isKDSEnabled = false
   public __isPaymentDone = false
   public __isMultiRestaurantOwner = false
+  public __isPollingRequired = false
 
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
@@ -156,6 +157,8 @@ export class sessionWrapper {
     sessionStorage.setItem('kot_receipt', restaurant['kot_receipt'])
     sessionStorage.setItem('pos', restaurant['pos'])
     sessionStorage.setItem('load_header', 'false')
+    sessionStorage.setItem('ui_polling_for_mobile_order_receipt_printing', restaurant['ui_polling_for_mobile_order_receipt_printing'])
+    sessionStorage.setItem('ui_polling_for_mobile_order_receipt_printing_frequency', restaurant['ui_polling_for_mobile_order_receipt_printing_frequency'])
   }
 
   setCompanySessionVariable(company){
@@ -268,4 +271,10 @@ export class sessionWrapper {
   isPOSEnabled() {
     return this.getItem('pos') == 'true' ? true : false;
   }
+
+  isPollingRequired(){
+    return this.getItem('ui_polling_for_mobile_order_receipt_printing') == 'true' ? true: false
+  }
+
+  
 }

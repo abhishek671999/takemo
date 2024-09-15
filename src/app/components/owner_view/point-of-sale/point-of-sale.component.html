@@ -99,7 +99,7 @@
                   <mat-icon (click)="addItem(item)">add_circle</mat-icon>
                 </div>
                 <p
-                  *ngIf="restaurantParcel && item.parcel_available"
+                  *ngIf="restaurantParcel && item.parcel_available && false"
                   (click)="incrementParcelQuantity(item)"
                   style="text-decoration: underline; margin: 0; cursor: pointer"
                 >

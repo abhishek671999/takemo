@@ -49,7 +49,9 @@ export class PointOfSaleComponent {
   public restaurantGST = null;
   public parcelCharges = 5; // hardcode
   public filteredMenu;
-  public menuCopy
+  public menuCopy;
+  public isPollingRequired =  this.__sessionWrapper.isPollingRequired()
+  public pollingFrequency = Number(this.__sessionWrapper.getItem('ui_polling_for_mobile_order_receipt_printing_frequency'))
   searchText = '';
   private currentCategoryId;
 
@@ -73,7 +75,7 @@ export class PointOfSaleComponent {
     this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
     this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
 
-    this.pollingInterval = this.startMobileOrderingPoll()
+    if(this.isPollingRequired) this.pollingInterval = this.startMobileOrderingPoll()
   }
 
   startMobileOrderingPoll(){
@@ -83,9 +85,9 @@ export class PointOfSaleComponent {
       this.orderService.getMobileOrdersToPrint(httpParams).subscribe(
         (data: any) => {
           let printedOrderIds = []
-          data['order_list'].forEach((order) => {
+          data['orders'].forEach((order) => {
             this.receiptPrintFormatter.confirmedOrderObj = order
-            let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
+            let printObj = this.receiptPrintFormatter.getMobileOrderPrintableText()
             let printStatus = this.print(printObj)
             if(printStatus) printedOrderIds.push(order.order_id)
           })
@@ -105,7 +107,7 @@ export class PointOfSaleComponent {
         }
       }
     )
-    }, 10000);
+    }, this.pollingFrequency * 1000);
 
   }
 
@@ -117,7 +119,6 @@ export class PointOfSaleComponent {
       this.menu = data['menu'];
       this.printerRequired = data['printer_required'];
       this.restaurantParcel = data['restaurant_parcel'];
-      this.restaurantParcel = true;
       this.createAllCategory()
       this.menu.map((category) => {
         category.category.items.filter(
@@ -143,8 +144,6 @@ export class PointOfSaleComponent {
         }
       );
   }
-
-
 
   setQuantity() {
     this.menu.forEach((category) => {
@@ -210,17 +209,6 @@ export class PointOfSaleComponent {
 
   }
 
-  // subItem(item) {
-  //   if (item.quantity > 0) {
-  //     item.quantity -= 1;
-  //     this.summary.amount -= item.price;
-  //   }
-  //   if (item.quantity == 0 && item.parcelQuantity == 0) {
-  //     this.summary.itemList = this.summary.itemList.filter(
-  //       (x) => x.id != item.id
-  //     );
-  //   }
-  // }
   subItem(item) {
     let itemAdded = this.summary.itemList.find((x) => (x.item_id == item.item_id) && (x.item_unit_price_id == item.item_unit_price_id))
     if (itemAdded) {
@@ -279,7 +267,8 @@ export class PointOfSaleComponent {
           "parcel_quantity": 0,
           "name": item.name,
           "price": item.price,
-          "counter": item.counter
+          "counter": item.counter,
+          "parcel_available": item.parcel_available
         }
         item.quantity = 1
         this.summary.amount += item.price
@@ -289,7 +278,6 @@ export class PointOfSaleComponent {
     }
     
   }
-
 
   incrementSubItemfunction = (subItem, item) => {
     let subItemAdded = this.summary.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
@@ -476,11 +464,12 @@ export class PointOfSaleComponent {
       actualTotalAmount += ele.price * (ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0));
       itemList.push({
         item_id: ele.item_id,
-        item_name: ele.item_name,
+        item_name: ele.name,
         price: ele.price,
         item_unit_price_id: ele.item_unit_price_id,
-        quantity: ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0),
-        parcel_quantity: ele.parcelQuantity,
+        quantity: ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0),
+        parcel_quantity: ele.parcel_quantity,
+        counter: ele.counter
       });
     });
     let body = {
@@ -754,7 +743,6 @@ export class PointOfSaleComponent {
         countersWithOrders.push(printObj);
       }
     });
-    console.log(countersWithOrders);
     return countersWithOrders;
   }
 
@@ -767,12 +755,6 @@ export class PointOfSaleComponent {
         }
       });
       printConnect
-        // .writeCustomLine({
-        //   text: `Order No: ${orderNum}`,
-        //   size: 'large',
-        //   bold: true,
-        //   justification: 'center',
-        // })
         .feed(4)
         .cut()
         .flush();
@@ -837,11 +819,12 @@ export class PointOfSaleComponent {
       // .flush();
     }
   }
+
   testPrint() {
     let printConnect = this.printerConn.printService.init();
     let content = [
       {
-        text: 'This is Test print'.toUpperCase().repeat(50),
+        text: 'This is Test print'.toUpperCase().repeat(5),
         size: 'normal',
         justification: 'left',
       },
@@ -858,8 +841,18 @@ export class PointOfSaleComponent {
       : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
-        let orderNum = data['order_no'];
-        this.printRecipt(orderNum);
+        body['order_no'] = data['order_no']
+        if (this.isKOTEnabled) {
+          this.receiptPrintFormatter.confirmedOrderObj = body
+          debugger
+          let counterReceiptObjs = this.receiptPrintFormatter.getCounterPrintableText(this.counters)
+          counterReceiptObjs.forEach((counterReceiptObj) => {
+            this.print(counterReceiptObj)
+          })
+        }
+        this.receiptPrintFormatter.confirmedOrderObj = body
+        let receiptObjs = this.receiptPrintFormatter.getCustomerPrintableText()
+        this.print(receiptObjs)
         let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
           data: {
             msg: `Order created successfully. Order No: ${data['order_no']}`,
@@ -938,6 +931,6 @@ export class PointOfSaleComponent {
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
     sessionStorage.removeItem('table_name');
-    clearInterval(this.pollingInterval)
+    if(this.isPollingRequired) clearInterval(this.pollingInterval)
   }
 }

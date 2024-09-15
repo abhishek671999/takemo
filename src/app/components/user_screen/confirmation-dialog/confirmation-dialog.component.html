@@ -138,10 +138,11 @@
       <button mat-raised-button *ngIf="otpValidated" (click)="placeTableOrder()" color="primary">Place Order</button>
     </ng-container>
     <ng-template #walletPay>
-      <ng-container *ngIf="!isPayment; else paymentGateway">
+      <ng-container *ngIf="!isPayment &&  isApiLoaded; else paymentGateway">
         <button
+          #confirmOrderButton
           mat-raised-button
-          (click)="onConfirmButtonClick($event)"
+          (click)="onConfirmButtonClick()"
           color="primary"
         >
           Confirm Order
@@ -156,8 +157,9 @@
           else payviaVPA
         "
         ><button
+        #proceedToPayButton
           mat-raised-button
-          (click)="onProceedPaymentClick($event)"
+          (click)="onProceedPaymentClick()"
           color="primary"
         >
           Proceed to Pay
@@ -175,8 +177,9 @@
         class="upi-transaction-form"
         >
         <button
+        #payViaVPAButton
           mat-raised-button
-          (click)="onProceedPayViaVPAClick($event)"
+          (click)="onProceedPayViaVPAClick()"
           color="primary"
           [disabled]="!transactionForm.valid"
         >
@@ -189,8 +192,9 @@
       <ng-container
         *ngIf="isPayment == true && !paybyWalletCheck; else walletPayment"
         ><button
+        #proceedToPay
           mat-raised-button
-          (click)="onProceedPaymentClick($event)"
+          (click)="onProceedPaymentClick()"
           color="primary"
         >
           Proceed to Pay
@@ -201,8 +205,9 @@
       <ng-container
         *ngIf="isPayment && isWalletPayment && paybyWalletCheck; else elseBlock"
         ><button
+        #payViaWalletButton
           mat-raised-button
-          (click)="onProceedwithWalletClick($event)"
+          (click)="onProceedwithWalletClick()"
           color="primary"
         >
           Proceed with wallet

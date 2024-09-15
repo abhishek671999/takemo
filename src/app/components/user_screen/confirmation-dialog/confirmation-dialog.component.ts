@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import {
   MatDialog,
   MAT_DIALOG_DATA,
@@ -24,6 +24,11 @@ import { cartConnectService } from 'src/app/shared/services/connect-components/c
   styleUrls: ['./confirmation-dialog.component.css'],
 })
 export class ConfirmationDialogComponent {
+  @ViewChild('confirmOrderButton') confirmOrderButton: any;
+  @ViewChild('proceedToPayButton') proceedToPayButton: any;
+  @ViewChild('payViaVPAButton') payViaVPAButton: any;
+  @ViewChild('payViaWalletButton') payViaWalletButton: any;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
@@ -51,6 +56,7 @@ export class ConfirmationDialogComponent {
   showQRcode = false;
   public otpValidated = false;
   public payOnDelivery = false;
+  public isApiLoaded = false
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
@@ -88,6 +94,7 @@ export class ConfirmationDialogComponent {
       (data) => {
         console.log(data);
         this.isPayment = data['payment_required'];
+        this.isApiLoaded = true
         this.otpRequired = data['otp_required'] ? data['otp_required'] : false
         this.otpValidated = data['otp_required'] ? !data['otp_required'] : false
         this.payOnDelivery = this.__sessionWrapper.getItem('pay_on_delivery') ? this.__sessionWrapper.getItem('pay_on_delivery').toLowerCase() == 'true': false //data['pay_on_delivery']? data['pay_on_delivery'] : false
@@ -157,8 +164,8 @@ export class ConfirmationDialogComponent {
     return body;
   }
 
-  onConfirmButtonClick(event: Event) {
-    (event.target as HTMLButtonElement).disabled = true
+  onConfirmButtonClick() {
+    if(this.confirmOrderButton) this.confirmOrderButton._elementRef.nativeElement.disabled = true
       let body = this.preparePlaceOrderBody();
       this.__ordersService.createOrders(body).subscribe(
         (data) => {
@@ -175,15 +182,14 @@ export class ConfirmationDialogComponent {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
-          console.log('Error while paying: ', error.error.description);
-          (event.target as HTMLButtonElement).disabled = false
+          this.confirmOrderButton._elementRef.nativeElement.disabled = false
         }
       );
 
   }
 
-  onProceedPaymentClick(event: Event) {
-    (event.target as HTMLButtonElement).disabled = true
+  onProceedPaymentClick() {
+    if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = true
     let body = this.preparePlaceOrderBody(false);
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
@@ -200,15 +206,15 @@ export class ConfirmationDialogComponent {
         this.dialog.open(ErrorMsgDialogComponent, {
           data: { msg: error.error.description },
         });
-        (event.target as HTMLButtonElement).disabled = false
+        if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = false
       }
     );
     this.dialogRef.close({ mode: 'payment' });
 
   }
 
-  onProceedPayViaVPAClick(event: Event) {
-    (event.target as HTMLButtonElement).disabled = true
+  onProceedPayViaVPAClick() {
+    if(this.payViaVPAButton) this.payViaVPAButton._elementRef.nativeElement.disabled = true
       let body = this.preparePlaceOrderBody();
   
       this.__ordersService.createEcomOrders(body).subscribe(
@@ -226,13 +232,13 @@ export class ConfirmationDialogComponent {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
-          (event.target as HTMLButtonElement).disabled = false
+          if(this.payViaVPAButton) this.payViaVPAButton._elementRef.nativeElement.disabled = false
         }
       );
   }
 
-  onProceedwithWalletClick(event: Event) {
-    (event.target as HTMLButtonElement).disabled = false
+  onProceedwithWalletClick() {
+    if(this.payViaWalletButton) this.payViaWalletButton._elementRef.nativeElement.disabled = true
     let body = this.preparePlaceOrderBody(true);
     this.__ordersService.createOrders(body).subscribe(
         (data) => {
@@ -249,8 +255,7 @@ export class ConfirmationDialogComponent {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
-          console.log('Error while paying: ', error.error.description);
-          (event.target as HTMLButtonElement).disabled = false
+          if(this.payViaWalletButton) this.payViaWalletButton._elementRef.nativeElement.disabled = false
         }
       )
   }
