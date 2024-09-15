@@ -146,8 +146,8 @@
     <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
   </div>
 
-  <div *ngIf="tableView; else graphView">
-    <div class="graph-container">
+  <div class="view-container">
+    <div *ngIf="tableView; else graphView">
       <div class="table-container">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
           <!--- Note that these columns can be defined in any order.
@@ -182,25 +182,28 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
+
+        <div>
+          <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+            Print Report
+          </button>
+          <!-- <button mat-raised-button (click)="openSendEmailDialogBox()" color="primary">
+            Send email report
+          </button> -->
+        </div>
       </div>
-      <div>
-        <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
-          Print Report
-        </button>
-        <!-- <button mat-raised-button (click)="openSendEmailDialogBox()" color="primary">
-          Send email report
-        </button> -->
-      </div>
+
     </div>
+    <ng-template #graphView>
+      <div class="graph-container">
+        <div class="graph">
+          <canvas id="canvas1"></canvas>
+        </div>
+        <div class="graph">
+          <canvas id="canvas2"></canvas>
+        </div>
+      </div>
+    </ng-template>
   </div>
-  <ng-template #graphView>
-    <div class="graph-container">
-      <div class="graph">
-        <canvas id="canvas1"></canvas>
-      </div>
-      <div class="graph">
-        <canvas id="canvas2"></canvas>
-      </div>
-    </div>
-  </ng-template>
+
 </div>

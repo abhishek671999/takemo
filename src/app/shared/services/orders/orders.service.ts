@@ -28,6 +28,17 @@ export class OrdersService {
   private getTableOrdersEndpoint = 'order/get_table_orders/'
   private updateLineItemEndpoint = 'order/update_line_item/'
   private deleteLineItemEndpoint = 'order/delete_line_item/'
+  private mobileOrdersForReceiptEndpoint = host + 'order/get_mobile_orders_for_receipt/'
+  private markOrderAsPrintedEndpoint = host + 'order/mark_orders_as_printed/'
+
+  markOrderAsPrinted(body){
+    return this._http.post(this.markOrderAsPrintedEndpoint, body)
+  }
+
+
+  getMobileOrdersToPrint(httpParams){
+    return this._http.get(this.mobileOrdersForReceiptEndpoint, {params: httpParams})
+  }
 
   getMyOrders(body) {
     console.log('Get current orders called');

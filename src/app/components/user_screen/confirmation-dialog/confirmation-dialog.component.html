@@ -141,7 +141,7 @@
       <ng-container *ngIf="!isPayment; else paymentGateway">
         <button
           mat-raised-button
-          (click)="onConfirmButtonClick()"
+          (click)="onConfirmButtonClick($event)"
           color="primary"
         >
           Confirm Order
@@ -157,7 +157,7 @@
         "
         ><button
           mat-raised-button
-          (click)="onProceedPaymentClick()"
+          (click)="onProceedPaymentClick($event)"
           color="primary"
         >
           Proceed to Pay
@@ -176,7 +176,7 @@
         >
         <button
           mat-raised-button
-          (click)="onProceedPayViaVPAClick()"
+          (click)="onProceedPayViaVPAClick($event)"
           color="primary"
           [disabled]="!transactionForm.valid"
         >
@@ -190,7 +190,7 @@
         *ngIf="isPayment == true && !paybyWalletCheck; else walletPayment"
         ><button
           mat-raised-button
-          (click)="onProceedPaymentClick()"
+          (click)="onProceedPaymentClick($event)"
           color="primary"
         >
           Proceed to Pay
@@ -202,7 +202,7 @@
         *ngIf="isPayment && isWalletPayment && paybyWalletCheck; else elseBlock"
         ><button
           mat-raised-button
-          (click)="onProceedwithWalletClick()"
+          (click)="onProceedwithWalletClick($event)"
           color="primary"
         >
           Proceed with wallet

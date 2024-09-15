@@ -1,11 +1,17 @@
+.view-container{
+    border: solid 1px black;
+    margin: 0;
+    width: 100%;
+}
+
 .graph-container{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     width: 100%;
-    height: 60vh;
+    min-height: 60vh;
+    max-height: fit-content;
     align-items: center;
-    border: solid 1px black;
     gap: 20px;
 }
 
@@ -13,6 +19,10 @@
     height: 60vh;
     width: 100%;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .viewport {
@@ -35,7 +45,8 @@
 
 .graph{
     border: solid 1px black;
-    width: 50%;
+    width: 48%;
+    height: fit-content;
 }
 
 .hidden{
@@ -65,6 +76,31 @@
         padding-top: 1em;
     }
 }
+
+@media screen and (max-width: 768px) {
+    .graph-container{
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 5px 0 5px 0;
+    }
+
+    .graph{
+        width: 80%;
+    }
+
+    .input-container{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        row-gap: 1px;
+        gap: 0;
+    }
+
+    .total-view{
+        padding-top: 1em;
+    }
+}
+
 
 ::ng-deep .mat-form-field-wrapper{
     margin-bottom: -1.25em;

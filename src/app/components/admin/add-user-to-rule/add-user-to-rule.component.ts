@@ -31,7 +31,7 @@ export class AddUserToRuleComponent {
   restaurants = [
     { restaurant_name: 'Select Restaurant', restaurant_id: 0 },
     { restaurant_name: 'Amulya Kitchen', restaurant_id: 1 },
-    { restaurant_name: 'Amrit Kitchen', restaurant_id: 2 },
+    { restaurant_name: 'Honey Dew Kitchen', restaurant_id: 2 },
   ];
   selected_restaurant = this.restaurants[0];
 

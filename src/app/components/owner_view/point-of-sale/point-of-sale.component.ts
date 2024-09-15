@@ -12,6 +12,8 @@ import { CounterService } from 'src/app/shared/services/inventory/counter.servic
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
+import { HttpParams } from '@angular/common/http';
+import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -30,7 +32,10 @@ export class PointOfSaleComponent {
     private _counterService: CounterService,
     private __snackbar: MatSnackBar,
     private __sessionWrapper: sessionWrapper,
-  ) {}
+    private receiptPrintFormatter: ReceiptPrintFormatter
+  ) {
+
+  }
   public menu;
   public summary;
   public paymentFlag = false;
@@ -55,29 +60,77 @@ export class PointOfSaleComponent {
   public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
   public isPOS = this.__sessionWrapper.isPOSEnabled()
   public isKOTEnabled = this.__sessionWrapper.isKOTreceiptEnabled()
+  public pollingInterval
 
   ngOnInit() {
     this.summary = {
       amount: 0,
       itemList: [],
     };
+    this.fetchPOSMenu()
+    this.fetchCounters()
+    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
+    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
+    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
+
+    this.pollingInterval = this.startMobileOrderingPoll()
+  }
+
+  startMobileOrderingPoll(){
+    let httpParams = new HttpParams()
+    httpParams = httpParams.append('restaurant_id', this.restaurantId)
+    return setInterval(() => {
+      this.orderService.getMobileOrdersToPrint(httpParams).subscribe(
+        (data: any) => {
+          let printedOrderIds = []
+          data['order_list'].forEach((order) => {
+            this.receiptPrintFormatter.confirmedOrderObj = order
+            let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
+            let printStatus = this.print(printObj)
+            if(printStatus) printedOrderIds.push(order.order_id)
+          })
+        if(printedOrderIds.length > 0){
+          let body = {
+            "order_ids": printedOrderIds,
+            "restaurant_id": this.restaurantId
+          }
+          this.orderService.markOrderAsPrinted(body).subscribe(
+            (data) => {
+              console.log(data)
+            },
+            (error) => {
+              console.log(error)
+            }
+          )
+        }
+      }
+    )
+    }, 10000);
+
+  }
+
+
+  fetchPOSMenu(){
     this.menuService
-      .getPOSMenu(this.restaurantId)
-      .subscribe((data) => {
-        this.menu = data['menu'];
-        this.printerRequired = data['printer_required'];
-        this.restaurantParcel = data['restaurant_parcel'];
-        this.restaurantParcel = true;
-        this.createAllCategory()
-        this.menu.map((category) => {
-          category.category.items.filter(
-            (element) => element.is_available == true
-          );
-        });
-        this.setQuantity();
-        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
-        this.showOnlyFirstCategory();
+    .getPOSMenu(this.restaurantId)
+    .subscribe((data) => {
+      this.menu = data['menu'];
+      this.printerRequired = data['printer_required'];
+      this.restaurantParcel = data['restaurant_parcel'];
+      this.restaurantParcel = true;
+      this.createAllCategory()
+      this.menu.map((category) => {
+        category.category.items.filter(
+          (element) => element.is_available == true
+        );
       });
+      this.setQuantity();
+      this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+      this.showOnlyFirstCategory();
+    });
+  }
+
+  fetchCounters(){
     this._counterService
       .getRestaurantCounter(this.restaurantId)
       .subscribe(
@@ -89,10 +142,9 @@ export class PointOfSaleComponent {
           console.log('Error: ', error);
         }
       );
-    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
-    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
-    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
   }
+
+
 
   setQuantity() {
     this.menu.forEach((category) => {
@@ -424,6 +476,8 @@ export class PointOfSaleComponent {
       actualTotalAmount += ele.price * (ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0));
       itemList.push({
         item_id: ele.item_id,
+        item_name: ele.item_name,
+        price: ele.price,
         item_unit_price_id: ele.item_unit_price_id,
         quantity: ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0),
         parcel_quantity: ele.parcelQuantity,
@@ -704,10 +758,33 @@ export class PointOfSaleComponent {
     return countersWithOrders;
   }
 
+  print(printObjs){
+    if(this.printerConn.usbSought){
+      let printConnect = this.printerConn.printService.init();
+      printObjs.forEach((ele) => {
+        if (ele.text != '') {
+          printConnect.writeCustomLine(ele);
+        }
+      });
+      printConnect
+        // .writeCustomLine({
+        //   text: `Order No: ${orderNum}`,
+        //   size: 'large',
+        //   bold: true,
+        //   justification: 'center',
+        // })
+        .feed(4)
+        .cut()
+        .flush();
+        return true
+    }else{
+      return false
+    }
+  }
+
   printRecipt(orderNum) {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
-      let printConnect = this.printerConn.printService.init();
       if (this.isKOTEnabled) {
         this.getCounterPrintableText().forEach((counterPrint) => {
           counterPrint.forEach((ele) => {
@@ -726,7 +803,7 @@ export class PointOfSaleComponent {
         })
       }
 
-
+      let printConnect = this.printerConn.printService.init();
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
@@ -828,6 +905,7 @@ export class PointOfSaleComponent {
     }
   }
 
+
   navigateToEditMenu() {
     this.router.navigate([
       `/owner/settings/edit-menu/`,
@@ -860,5 +938,6 @@ export class PointOfSaleComponent {
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
     sessionStorage.removeItem('table_name');
+    clearInterval(this.pollingInterval)
   }
 }

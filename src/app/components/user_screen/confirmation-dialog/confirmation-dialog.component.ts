@@ -51,7 +51,6 @@ export class ConfirmationDialogComponent {
   showQRcode = false;
   public otpValidated = false;
   public payOnDelivery = false;
-  public lockPlaceButton = false;
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
@@ -158,9 +157,8 @@ export class ConfirmationDialogComponent {
     return body;
   }
 
-  onConfirmButtonClick() {
-    if(!this.lockPlaceButton){
-      this.lockPlaceButton = true
+  onConfirmButtonClick(event: Event) {
+    (event.target as HTMLButtonElement).disabled = true
       let body = this.preparePlaceOrderBody();
       this.__ordersService.createOrders(body).subscribe(
         (data) => {
@@ -172,52 +170,45 @@ export class ConfirmationDialogComponent {
             data: { msg: 'Your Order number is: ' + data['order_no'] },
           });
           this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
-          this.lockPlaceButton = false
         },
         (error) => {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
           console.log('Error while paying: ', error.error.description);
-          this.lockPlaceButton = false
+          (event.target as HTMLButtonElement).disabled = false
         }
       );
-    }
+
   }
 
-  onProceedPaymentClick() {
-    debugger
-    if(!this.lockPlaceButton){
-      this.lockPlaceButton = true
-      let body = this.preparePlaceOrderBody(false);
-  
-      this.__ordersService.createOrders(body).subscribe(
-        (data) => {
-          sessionStorage.setItem('transaction_id', data['transaction_id']);
-          sessionStorage.setItem('order_no', data['order_no']);
-          sessionStorage.setItem('redirectURL', '/user/myorders');
-          this.__sessionWrapper.isPaymentDone = data['payment_url'] ? true : false
-          this.__sessionWrapper.isKDSEnabled = data['kds']
-          this.clearCart()
-          this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
-          window.location.href = data['payment_url'];
-          this.lockPlaceButton = false
-        },
-        (error) => {
-          this.dialog.open(ErrorMsgDialogComponent, {
-            data: { msg: error.error.description },
-          });
-          console.log('Error while paying: ', error);
-          this.lockPlaceButton = false
-        }
-      );
-      this.dialogRef.close({ mode: 'payment' });
-    }
+  onProceedPaymentClick(event: Event) {
+    (event.target as HTMLButtonElement).disabled = true
+    let body = this.preparePlaceOrderBody(false);
+    this.__ordersService.createOrders(body).subscribe(
+      (data) => {
+        sessionStorage.setItem('transaction_id', data['transaction_id']);
+        sessionStorage.setItem('order_no', data['order_no']);
+        sessionStorage.setItem('redirectURL', '/user/myorders');
+        this.__sessionWrapper.isPaymentDone = data['payment_url'] ? true : false
+        this.__sessionWrapper.isKDSEnabled = data['kds']
+        this.clearCart()
+        this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
+        window.location.href = data['payment_url'];
+      },
+      (error) => {
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: error.error.description },
+        });
+        (event.target as HTMLButtonElement).disabled = false
+      }
+    );
+    this.dialogRef.close({ mode: 'payment' });
+
   }
 
-  onProceedPayViaVPAClick() {
-    if(!this.lockPlaceButton){
-      this.lockPlaceButton = true
+  onProceedPayViaVPAClick(event: Event) {
+    (event.target as HTMLButtonElement).disabled = true
       let body = this.preparePlaceOrderBody();
   
       this.__ordersService.createEcomOrders(body).subscribe(
@@ -230,23 +221,20 @@ export class ConfirmationDialogComponent {
             this.dialogRef.close();
             this._router.navigate(['/user/myorders']);
           });
-          this.lockPlaceButton = false
         },
         (error) => {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
-          this.lockPlaceButton = false
+          (event.target as HTMLButtonElement).disabled = false
         }
       );
-    }
   }
 
-  onProceedwithWalletClick() {
-    if(!this.lockPlaceButton){
-      this.lockPlaceButton = true
-      let body = this.preparePlaceOrderBody(true);
-      this.__ordersService.createOrders(body).subscribe(
+  onProceedwithWalletClick(event: Event) {
+    (event.target as HTMLButtonElement).disabled = false
+    let body = this.preparePlaceOrderBody(true);
+    this.__ordersService.createOrders(body).subscribe(
         (data) => {
           console.log('Payment done', data);
           sessionStorage.setItem('transaction_id', data['transaction_id']);
@@ -256,17 +244,15 @@ export class ConfirmationDialogComponent {
             data: { msg: 'Your Order number is: ' + data['order_no'] },
           });
           this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary });
-          this.lockPlaceButton = false
         },
         (error) => {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
           console.log('Error while paying: ', error.error.description);
-          this.lockPlaceButton = false
+          (event.target as HTMLButtonElement).disabled = false
         }
-      );
-    }
+      )
   }
 
   checkValue() {
@@ -380,10 +366,7 @@ export class ConfirmationDialogComponent {
   }
 
   placeTableOrder() {
-    if(!this.lockPlaceButton){
-      this.lockPlaceButton = true
       let body = this.preparePlaceOrderBody(false)
-
       this.__ordersService.createOrders(body).subscribe(
         data => {
           this.clearCart();
@@ -391,16 +374,13 @@ export class ConfirmationDialogComponent {
             data: { msg: 'Your Order number is: ' + data['order_no'] },
           });
           this.dialogRef.close({orderlist: this.data.summary})
-          this.lockPlaceButton = false
         },
         error => {
           this.dialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
-          this.lockPlaceButton = false
         }
       )
     }
 
-  }
 }

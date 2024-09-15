@@ -1,8 +1,8 @@
 .navigation{
-
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .menu{
@@ -27,9 +27,10 @@
     color: #040404;
     text-decoration: none;
     display: block;
-    font-size: x-large;
-    padding: .5em 2em;
+    font-size: large;
+    padding: .4em 1em;
     transition: 0.3s;
+    text-align: center;
 }
 
 .menu li a:hover{
