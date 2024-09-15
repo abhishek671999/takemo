@@ -102,46 +102,17 @@ export class sessionWrapper {
   public __isOwner = false
   public __isKDSEnabled = false
   public __isPaymentDone = false
+  public __isMultiRestaurantOwner = false
+  public __isPollingRequired = false
 
   async setSessionVariables() {
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
           this.__isOwner = true
-          sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])
-          sessionStorage.setItem(
-            'restaurant_name',
-            data['restaurants'][0]['restaurant_name']
-          );
-          sessionStorage.setItem(
-            'restaurant_address',
-            data['restaurants'][0]['restaurant_address']
-          );
-          sessionStorage.setItem(
-            'restaurant_gst',
-            data['restaurants'][0]['restaurant_gst']
-          );
-          sessionStorage.setItem(
-            'restaurant_kds',
-            data['restaurants'][0]['restaurant_kds']
-          );
-          sessionStorage.setItem(
-            'restaurantType',
-            (data['restaurants'][0]['type'] as string).toLowerCase()
-          );
-          sessionStorage.setItem(
-            'counter_management',
-            data['restaurants'][0]['counter_management']
-          );
-          sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
-          sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
-          sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
-          sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
-          sessionStorage.setItem('kot_receipt', data['restaurants'][0]['kot_receipt'])
-          sessionStorage.setItem('pos', data['restaurants'][0]['pos'])
+          if (data['restaurants'].length > 1) this.__isMultiRestaurantOwner = true
         } else if (data['companies'].length > 0) {
           this.__isAdmin = true
-          sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
         } else {
           this.__isUser = true
         }
@@ -150,6 +121,48 @@ export class sessionWrapper {
         error => reject(false)
     })
     
+  }
+
+  setRestaurantSessionVariables(restaurant){
+    sessionStorage.setItem('restaurant_id', restaurant['restaurant_id']) 
+    sessionStorage.setItem(
+      'restaurant_name',
+      restaurant['restaurant_name']
+    );
+    sessionStorage.setItem(
+      'restaurant_address',
+      restaurant['restaurant_address']
+    );
+    sessionStorage.setItem(
+      'restaurant_gst',
+      restaurant['restaurant_gst']
+    );
+    sessionStorage.setItem(
+      'restaurant_kds',
+      restaurant['restaurant_kds']
+    );
+    sessionStorage.setItem(
+      'restaurantType',
+      (restaurant['type'] as string).toLowerCase()
+    );
+    sessionStorage.setItem(
+      'counter_management',
+      restaurant['counter_management']
+    );
+    sessionStorage.setItem('pay_on_delivery', restaurant['pay_on_delivery'])
+    sessionStorage.setItem('inventory_management', restaurant['inventory_management']);
+    sessionStorage.setItem('counter_management', restaurant['counter_management'])
+    sessionStorage.setItem('table_management', restaurant['table_management'])
+    sessionStorage.setItem('mobile_ordering', restaurant['mobile_ordering'])
+    sessionStorage.setItem('kot_receipt', restaurant['kot_receipt'])
+    sessionStorage.setItem('pos', restaurant['pos'])
+    sessionStorage.setItem('load_header', 'false')
+    sessionStorage.setItem('ui_polling_for_mobile_order_receipt_printing', restaurant['ui_polling_for_mobile_order_receipt_printing'])
+    sessionStorage.setItem('ui_polling_for_mobile_order_receipt_printing_frequency', restaurant['ui_polling_for_mobile_order_receipt_printing_frequency'])
+  }
+
+  setCompanySessionVariable(company){
+    sessionStorage.setItem('company_id', company['company_id'])
   }
 
   getItem(key: string) {
@@ -223,6 +236,12 @@ export class sessionWrapper {
     this.setSessionVariables()
     return this.__isOwner
   }
+ 
+  public get isMultiRestaurantOwner() {
+    this.setSessionVariables()
+    return this.__isMultiRestaurantOwner
+  }
+
 
 
   isCounterManagementEnabled() {
@@ -252,4 +271,10 @@ export class sessionWrapper {
   isPOSEnabled() {
     return this.getItem('pos') == 'true' ? true : false;
   }
+
+  isPollingRequired(){
+    return this.getItem('ui_polling_for_mobile_order_receipt_printing') == 'true' ? true: false
+  }
+
+  
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService } from 'src/app/shared/services/data/data.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 
@@ -13,7 +14,8 @@ export class HeaderComponent {
     private _loginService: LoginService, 
     private router: Router,
     private _meAPIutility: meAPIUtility,
-    private __sessionWrapper: sessionWrapper
+    private __sessionWrapper: sessionWrapper,
+    private dataShare: DataService
   ) {
     }
     AvailableDropdownList = {
@@ -28,7 +30,7 @@ export class HeaderComponent {
         name: 'Analytics',
         action: () => {
           console.log('analytics');
-          this.router.navigate(['./admin/analytics/sales-analytics']);
+          this.router.navigate(['./admin/analytics/']); //fix this
         },
       },
       'shift': {
@@ -52,7 +54,7 @@ export class HeaderComponent {
       'edit_menu': {
         name: 'Menu',
         action: () => {
-          this.router.navigate(['./owner/settings/edit-menu/' + this.__sessionWrapper.getItem('restaurant_id')])
+          this.router.navigate(['./owner/settings/edit-menu/'])
         }
       },
       'orders': {
@@ -138,7 +140,6 @@ export class HeaderComponent {
   
   addRestaurantOwnerNavOptions(restaurant){
     let restaurantOwnerNavOptions
-    this.location = restaurant.restaurant_name
 
     if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
       restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
@@ -184,34 +185,38 @@ export class HeaderComponent {
   dropdownList = [ this.AvailableDropdownList['logout']]
   username: string
   message: string
-  location: string
-
+  location: string = sessionStorage.getItem('restaurant_name') || sessionStorage.getItem('organization_name')
+  meData: any;
+  isRestaurantAdmin: boolean = false
+  hasMultipleRestaurants: boolean = false
 
   ngOnInit(){
-    let data = this._meAPIutility.getMeData().subscribe(data => {
-      console.log('Header component: ', data)
-    this.username = data['username'] ? data['username'] : data['email']
-        for(let company of data['companies']){
-          if(company.role_name == 'corporate_admin'){
-            
-            console.log('company_id', this.__sessionWrapper.getItem('company_id'))
-            this.addAdminNavOptions(company)
-            break
+      this._meAPIutility.getMeData().subscribe(data => {
+        console.log('Header component: ', data)
+        this.meData = data
+      this.username = data['username'] ? data['username'] : data['email']
+      this.hasMultipleRestaurants = data['restaurants'].length > 1
+          for(let company of data['companies']){
+            if(company.role_name == 'corporate_admin'){
+              this.addAdminNavOptions(company)
+              break
+            }
           }
-        }
-        for(let restaurant of data['restaurants']){
-          if(restaurant.role_name == 'restaurant_admin'){
-            this.addRestaurantOwnerNavOptions(restaurant)
-            break
-          }else if(restaurant.role_name == 'restaurant_staff'){
-            this.addRestaurantStaffNavOptions()
-            break
+          for(let restaurant of data['restaurants']){
+            if(restaurant.role_name == 'restaurant_admin'){
+              this.isRestaurantAdmin = true
+              this.addRestaurantOwnerNavOptions(restaurant)
+              break
+            }else if(restaurant.role_name == 'restaurant_staff'){
+              this.addRestaurantStaffNavOptions()
+              break
+            }
           }
+          if(data['restaurants'].length == 0 && data['companies'].length == 0){
+            this.addUserNavOptions()
         }
-        if(data['restaurants'].length == 0 && data['companies'].length == 0){
-          this.addUserNavOptions()
-      }
-    })
+      })
+
     
    }  
 
@@ -220,5 +225,12 @@ export class HeaderComponent {
     checkbox.checked = false
     this.dropdownList[index].action();
   }
+
+  setRestaurantsessionVariable(restaurant){
+    console.log('Setting from header', restaurant)
+    this.__sessionWrapper.setRestaurantSessionVariables(restaurant)
+    window.location.reload()
+  }
+
 }
 

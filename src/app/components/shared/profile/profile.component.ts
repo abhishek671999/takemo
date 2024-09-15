@@ -81,7 +81,9 @@ export class ProfileComponent {
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Profile Updated' },
         });
+        sessionStorage.setItem('load_header', 'true')
         this.router.navigate(['home/']);
+
       },
       (error) => {
         console.log('error', error);

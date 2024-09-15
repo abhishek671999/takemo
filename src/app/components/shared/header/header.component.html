@@ -1,5 +1,14 @@
 <div class="main-header">
     <div class="right-section">
+      <div *ngIf="hasMultipleRestaurants" class="dropdown">
+        <a style="text-decoration: none; color: rgb(225, 223, 223);" ><mat-icon> store</mat-icon></a>
+        <div class="dropdown-content" >
+          <div *ngFor="let restaurant of meData['restaurants']">
+            <a (click)="setRestaurantsessionVariable(restaurant)" style="margin: 0; font-weight: 400; font-size: small;">{{restaurant['restaurant_name']}}</a>
+          </div>
+        </div>
+      </div>
+      
       <a style="text-decoration: none; color: rgb(225, 223, 223);" href="user/support"><mat-icon>contact_support</mat-icon></a>
       <a style="text-decoration: none; color: rgb(225, 223, 223);" href="user/profile"><mat-icon>person_outline</mat-icon></a>
       <div class="logo-home">

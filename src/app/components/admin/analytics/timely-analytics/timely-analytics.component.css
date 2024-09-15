@@ -1,5 +1,12 @@
+.view-container{
+    border: solid 1px black;
+    margin: 0;
+    width: 100%;
+}
+
 .main-container{
-    height: 87vh;
+    min-height: 87vh;
+    max-height: fit-content;
 }
 
 .graph-container{
@@ -7,15 +14,28 @@
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    height: 60vh;
+    min-height: 60vh;
+    max-height: fit-content;
     align-items: center;
     border: solid 1px black;
     gap: 20px;
+ 
 }
+
 .table-container{
     height: 60vh;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     overflow: auto;
+    position: relative;
+}
+
+.print-analytics{
+    position: sticky;
+    bottom: 0;
 }
 
 .total-view{
@@ -26,10 +46,13 @@
 
 .input-container{
     display: flex;
+    flex-direction: row;
     justify-content: center;
+    width: 100%;
     gap: 1em;
     align-items: center;
 }
+
 .graph{
     border: solid 1px black;
     width: 50%;
@@ -61,6 +84,30 @@
     }
 
     .form-field{
-        width: calc(100vw / 2.1);
+        width: calc(100vw / 3.1);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .graph-container{
+        flex-direction: column;
+        justify-content: flex-start;
+        height: auto;
+        padding: 5px 0 5px 0;
+    }
+
+    .graph{
+        width: 80%;
+    }
+
+    .input-container{
+        justify-content: center;
+        gap: 0.2em;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .form-field{
+        width: calc(100vw / 3.1);
     }
 }

@@ -21,62 +21,33 @@ export class PostLoginComponent {
   ngOnInit() {
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
-      if (this.myInfo['restaurants'].length > 0) {
-        sessionStorage.setItem('restaurant_id', data['restaurants'][0]['restaurant_id'])  //hardcode
-        sessionStorage.setItem(
-          'restaurant_name',
-          data['restaurants'][0]['restaurant_name']
-        );
-        sessionStorage.setItem(
-          'restaurant_address',
-          data['restaurants'][0]['restaurant_address']
-        );
-        sessionStorage.setItem(
-          'restaurant_gst',
-          data['restaurants'][0]['restaurant_gst']
-        );
-        sessionStorage.setItem(
-          'restaurant_kds',
-          data['restaurants'][0]['restaurant_kds']
-        );
-        sessionStorage.setItem(
-          'restaurantType',
-          (data['restaurants'][0]['type'] as string).toLowerCase()
-        );
-        sessionStorage.setItem(
-          'counter_management',
-          data['restaurants'][0]['counter_management']
-        );
-        sessionStorage.setItem('pay_on_delivery', data['restaurants'][0]['pay_on_delivery'])
-        sessionStorage.setItem('inventory_management', data['restaurants'][0]['inventory_management']);
-        sessionStorage.setItem('counter_management', data['restaurants'][0]['counter_management'])
-        sessionStorage.setItem('table_management', data['restaurants'][0]['table_management'])
-        sessionStorage.setItem('mobile_ordering', data['restaurants'][0]['mobile_ordering'])
-        sessionStorage.setItem('kot_receipt', data['restaurants'][0]['kot_receipt'])
-        sessionStorage.setItem('pos', data['restaurants'][0]['pos'])
-        let navigationURL =
-          sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
-        this._router.navigate([navigationURL]);
-      } else if (this.myInfo['companies'].length > 0) {
-        sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
-        this._router.navigate(['admin/user-management']);
-      } else {
-        debugger
-        if (Boolean(this.myInfo['first_name'])) {
-          if (this.loginService.redirectURL) {
-            this._router.navigate([this.loginService.redirectURL])
-          } else if (this.sessionWrapper.isPaymentDone) {
-            if (this.sessionWrapper.isKDSEnabled) this._router.navigate(['/user/myorders/current-orders'])
-            else this._router.navigate(['user/myorders/order-history'])
-            this.sessionWrapper.isPaymentDone = false
-            this.sessionWrapper.isKDSEnabled = false
+      
+        if (this.myInfo['restaurants'].length > 0) {
+          if(sessionStorage.getItem('load_header') == 'true' || sessionStorage.getItem('load_header') == null) {
+            this.sessionWrapper.setRestaurantSessionVariables(data['restaurants'][0])
           }
-          else {
-            this._router.navigate(['user/']);
-          }
+          let navigationURL =
+            sessionStorage.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': sessionStorage.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
+          this._router.navigate([navigationURL]);
+        } else if (this.myInfo['companies'].length > 0) {
+          sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+          this._router.navigate(['admin/user-management']);
         } else {
-          this._router.navigate(['user/profile']);
-        }
+          if (Boolean(this.myInfo['first_name'])) {
+            if (this.loginService.redirectURL) {
+              this._router.navigate([this.loginService.redirectURL])
+            } else if (this.sessionWrapper.isPaymentDone) {
+              if (this.sessionWrapper.isKDSEnabled) this._router.navigate(['/user/myorders/current-orders'])
+              else this._router.navigate(['user/myorders/order-history'])
+              this.sessionWrapper.isPaymentDone = false
+              this.sessionWrapper.isKDSEnabled = false
+            }
+            else {
+              this._router.navigate(['user/']);
+            }
+          } else {
+            this._router.navigate(['user/profile']);
+          }
       }
       this.showSpinner = false;
     },

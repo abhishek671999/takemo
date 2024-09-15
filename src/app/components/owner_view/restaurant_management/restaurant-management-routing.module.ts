@@ -11,7 +11,7 @@ const routes: Routes = [
     path: '',
     component: ManagmentHomeComponent,
     children: [
-      { path: 'edit-menu/:id', component: EditMenuComponent },
+      { path: 'edit-menu', component: EditMenuComponent },
       { path: 'food-counter-management', component: FoodCounterManagementComponent },
       { path: 'activity-log', component: ActivityLogComponent },
       { path: 'table-management', component: TableManagementComponent}

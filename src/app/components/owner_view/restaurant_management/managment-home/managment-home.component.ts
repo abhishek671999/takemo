@@ -12,7 +12,7 @@ export class ManagmentHomeComponent {
 
   constructor(private __sessionWrapper: sessionWrapper) { }
   managementPages = [
-    {name: 'Edit Menu' , href: `edit-menu/${this.__sessionWrapper.getItem('restaurant_id')}` },
+    {name: 'Edit Menu' , href: `edit-menu/` },
   ]
 
   counterPage = { name: 'Counter', href: "food-counter-management" }  

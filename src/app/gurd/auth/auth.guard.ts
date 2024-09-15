@@ -9,7 +9,6 @@ export const authGuard: CanActivateFn = (route, state) => {
       //inject(Router).navigate(['home'])
     return true;
   } else {
-    debugger
     console.log('Not logged in: setting: ', window.location.href)
     inject(LoginService).redirectURL = window.location.href
     inject(Router).navigate(['login']);

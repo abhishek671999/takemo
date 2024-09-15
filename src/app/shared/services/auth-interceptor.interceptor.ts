@@ -24,7 +24,6 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
     }
     return next.handle(request).pipe(
       tap((event) => {
-        console.log('Got correct resposne', event)
         this.loggedInFlag = true
       },
       error => {

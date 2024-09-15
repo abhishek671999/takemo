@@ -19,6 +19,7 @@ import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-repor
 import { MatDialog } from '@angular/material/dialog';
 import { StringUtils } from 'src/app/shared/utils/stringUtils';
 
+
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
   chart: ApexChart;
@@ -44,8 +45,10 @@ export class SalesAnalyticsComponent {
     private _counterService: CounterService,
     public printerConn: PrintConnectorService,
     private __matDialog: MatDialog,
-    public stringUtils: StringUtils
-  ) {}
+    public stringUtils: StringUtils,
+  ) {
+    
+  }
 
   timeFrames = [
     { displayValue: 'Today', actualValue: 'today' },
@@ -74,7 +77,7 @@ export class SalesAnalyticsComponent {
   restaurantList = [
     // { displayValue: 'All', restaurant_id: 0},
     { displayValue: 'Amulya Kitchen', restaurant_id: 1 },
-    { displayValue: 'Amrit Kitchen', restaurant_id: 2 },
+    { displayValue: 'Honey Dew Kitchen', restaurant_id: 2 },
   ];
 
   paymentMethods = [

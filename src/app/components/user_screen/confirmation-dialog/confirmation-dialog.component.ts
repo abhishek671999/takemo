@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import {
   MatDialog,
   MAT_DIALOG_DATA,
@@ -24,6 +24,11 @@ import { cartConnectService } from 'src/app/shared/services/connect-components/c
   styleUrls: ['./confirmation-dialog.component.css'],
 })
 export class ConfirmationDialogComponent {
+  @ViewChild('confirmOrderButton') confirmOrderButton: any;
+  @ViewChild('proceedToPayButton') proceedToPayButton: any;
+  @ViewChild('payViaVPAButton') payViaVPAButton: any;
+  @ViewChild('payViaWalletButton') payViaWalletButton: any;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
@@ -51,6 +56,7 @@ export class ConfirmationDialogComponent {
   showQRcode = false;
   public otpValidated = false;
   public payOnDelivery = false;
+  public isApiLoaded = false
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
@@ -67,7 +73,6 @@ export class ConfirmationDialogComponent {
   })
 
   ngOnInit() {
-    console.log(this.data.summary)
     this.dialogRef.updateSize('100%')
     this.meService.getMyInfo().subscribe((data) => {
       this.transactionForm.setValue({
@@ -89,6 +94,7 @@ export class ConfirmationDialogComponent {
       (data) => {
         console.log(data);
         this.isPayment = data['payment_required'];
+        this.isApiLoaded = true
         this.otpRequired = data['otp_required'] ? data['otp_required'] : false
         this.otpValidated = data['otp_required'] ? !data['otp_required'] : false
         this.payOnDelivery = this.__sessionWrapper.getItem('pay_on_delivery') ? this.__sessionWrapper.getItem('pay_on_delivery').toLowerCase() == 'true': false //data['pay_on_delivery']? data['pay_on_delivery'] : false
@@ -159,31 +165,32 @@ export class ConfirmationDialogComponent {
   }
 
   onConfirmButtonClick() {
-    //this.dialogRef.close({mode: 'wallet'})
-    let body = this.preparePlaceOrderBody();
-    this.__ordersService.createOrders(body).subscribe(
-      (data) => {
-        console.log('Payment done', data);
-        sessionStorage.setItem('transaction_id', data['transaction_id']);
-        sessionStorage.setItem('order_no', data['order_no']);
-        this.clearCart()
-        this.dialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Your Order number is: ' + data['order_no'] },
-        });
-        this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
-      },
-      (error) => {
-        this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: error.error.description },
-        });
-        console.log('Error while paying: ', error.error.description);
-      }
-    );
+    if(this.confirmOrderButton) this.confirmOrderButton._elementRef.nativeElement.disabled = true
+      let body = this.preparePlaceOrderBody();
+      this.__ordersService.createOrders(body).subscribe(
+        (data) => {
+          console.log('Payment done', data);
+          sessionStorage.setItem('transaction_id', data['transaction_id']);
+          sessionStorage.setItem('order_no', data['order_no']);
+          this.clearCart()
+          this.dialog.open(SuccessMsgDialogComponent, {
+            data: { msg: 'Your Order number is: ' + data['order_no'] },
+          });
+          this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
+        },
+        (error) => {
+          this.dialog.open(ErrorMsgDialogComponent, {
+            data: { msg: error.error.description },
+          });
+          this.confirmOrderButton._elementRef.nativeElement.disabled = false
+        }
+      );
+
   }
 
   onProceedPaymentClick() {
+    if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = true
     let body = this.preparePlaceOrderBody(false);
-
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
         sessionStorage.setItem('transaction_id', data['transaction_id']);
@@ -199,54 +206,58 @@ export class ConfirmationDialogComponent {
         this.dialog.open(ErrorMsgDialogComponent, {
           data: { msg: error.error.description },
         });
-        console.log('Error while paying: ', error);
+        if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = false
       }
     );
     this.dialogRef.close({ mode: 'payment' });
+
   }
 
   onProceedPayViaVPAClick() {
-    let body = this.preparePlaceOrderBody();
-
-    this.__ordersService.createEcomOrders(body).subscribe(
-      (data) => {
-        this.clearCart()
-        let successDialogRef = this.dialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Your Order id is: ' + data['order_no'] },
-        });
-        successDialogRef.afterClosed().subscribe((data) => {
-          this.dialogRef.close();
-          this._router.navigate(['/user/myorders']);
-        });
-      },
-      (error) => {
-        this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: error.error.description },
-        });
-      }
-    );
+    if(this.payViaVPAButton) this.payViaVPAButton._elementRef.nativeElement.disabled = true
+      let body = this.preparePlaceOrderBody();
+  
+      this.__ordersService.createEcomOrders(body).subscribe(
+        (data) => {
+          this.clearCart()
+          let successDialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+            data: { msg: 'Your Order id is: ' + data['order_no'] },
+          });
+          successDialogRef.afterClosed().subscribe((data) => {
+            this.dialogRef.close();
+            this._router.navigate(['/user/myorders']);
+          });
+        },
+        (error) => {
+          this.dialog.open(ErrorMsgDialogComponent, {
+            data: { msg: error.error.description },
+          });
+          if(this.payViaVPAButton) this.payViaVPAButton._elementRef.nativeElement.disabled = false
+        }
+      );
   }
 
   onProceedwithWalletClick() {
+    if(this.payViaWalletButton) this.payViaWalletButton._elementRef.nativeElement.disabled = true
     let body = this.preparePlaceOrderBody(true);
     this.__ordersService.createOrders(body).subscribe(
-      (data) => {
-        console.log('Payment done', data);
-        sessionStorage.setItem('transaction_id', data['transaction_id']);
-        sessionStorage.setItem('order_no', data['order_no']);
-        this.clearCart()
-        this.dialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Your Order number is: ' + data['order_no'] },
-        });
-        this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary });
-      },
-      (error) => {
-        this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: error.error.description },
-        });
-        console.log('Error while paying: ', error.error.description);
-      }
-    );
+        (data) => {
+          console.log('Payment done', data);
+          sessionStorage.setItem('transaction_id', data['transaction_id']);
+          sessionStorage.setItem('order_no', data['order_no']);
+          this.clearCart()
+          this.dialog.open(SuccessMsgDialogComponent, {
+            data: { msg: 'Your Order number is: ' + data['order_no'] },
+          });
+          this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary });
+        },
+        (error) => {
+          this.dialog.open(ErrorMsgDialogComponent, {
+            data: { msg: error.error.description },
+          });
+          if(this.payViaWalletButton) this.payViaWalletButton._elementRef.nativeElement.disabled = false
+        }
+      )
   }
 
   checkValue() {
@@ -255,35 +266,9 @@ export class ConfirmationDialogComponent {
 
   addItem(subItem) {
     this.data.addfn(subItem, this.data.item)
-    // console.log('Add item: ', item);
-    // let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
-    // console.log('item added: ', itemAdded, this.summary.itemList);
-    // if ((item.quantity < 30) && (item.inventory_stock ? (item.quantity + item.parcelQuantity) < item.inventory_stock : true)) {
-    //   itemAdded.quantity += 1;
-    //   this.summary.amount += itemAdded.price;
-    // } else if (
-    //   itemAdded.quantity + itemAdded.parcelQuantity <
-    //   itemAdded.inventory_stock
-    // ) {
-    //   item.quantity += 1;
-    //   this.summary.amount += item.price;
-    //   this.summary.itemList.push(item);
-    // }
   }
   subItem(subItem) {
     this.data.subfn(subItem, this.data.item)
-    // if (item.quantity > 0) {
-    //   item.quantity -= 1;
-    //   this.summary.amount -= item.price;
-    // }
-    // if (item.quantity == 0 && item.parcelQuantity == 0) {
-    //   this.summary.itemList = this.summary.itemList.filter(
-    //     (x) => x.id != item.id
-    //   );
-    // }
-    // if (this.summary.itemList.length == 0) {
-    //   this.dialogRef.close({ orderList: this.summary });
-    // }
   }
 
   incrementParcelQuantity(item) {
@@ -327,23 +312,7 @@ export class ConfirmationDialogComponent {
   }
 
   clearItem(item) {
-    console.log(item);
     this.data.clearfn(item)
-    // this.data.summary.itemList
-    //   .filter((x) => x.id == item.id)
-    //   .forEach((ele) => {
-    //     this.data.summary.amount -=
-    //       ele.quantity * ele.price +
-    //       ele.parcelQuantity * (ele.price + this.parcelCharges);
-    //     ele.quantity = 0;
-    //     ele.parcelQuantity = 0;
-    //   });
-    // this.data.summary.itemList = this.data.summary.itemList.filter(
-    //   (x) => x.id != item.id
-    // );
-    // if (this.data.summary.itemList.length == 0) {
-    //   this.dialogRef.close({ orderList: this.data.summary });
-    // }
   }
 
   getGrandTotalAmount() {
@@ -402,21 +371,21 @@ export class ConfirmationDialogComponent {
   }
 
   placeTableOrder() {
-    let body = this.preparePlaceOrderBody(false)
+      let body = this.preparePlaceOrderBody(false)
+      this.__ordersService.createOrders(body).subscribe(
+        data => {
+          this.clearCart();
+          this.dialog.open(SuccessMsgDialogComponent, {
+            data: { msg: 'Your Order number is: ' + data['order_no'] },
+          });
+          this.dialogRef.close({orderlist: this.data.summary})
+        },
+        error => {
+          this.dialog.open(ErrorMsgDialogComponent, {
+            data: { msg: error.error.description },
+          });
+        }
+      )
+    }
 
-    this.__ordersService.createOrders(body).subscribe(
-      data => {
-        this.clearCart();
-        this.dialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Your Order number is: ' + data['order_no'] },
-        });
-        this.dialogRef.close({orderlist: this.data.summary})
-      },
-      error => {
-        this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: error.error.description },
-        });
-      }
-    )
-  }
 }

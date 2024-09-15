@@ -138,8 +138,9 @@
       <button mat-raised-button *ngIf="otpValidated" (click)="placeTableOrder()" color="primary">Place Order</button>
     </ng-container>
     <ng-template #walletPay>
-      <ng-container *ngIf="!isPayment; else paymentGateway">
+      <ng-container *ngIf="!isPayment &&  isApiLoaded; else paymentGateway">
         <button
+          #confirmOrderButton
           mat-raised-button
           (click)="onConfirmButtonClick()"
           color="primary"
@@ -156,6 +157,7 @@
           else payviaVPA
         "
         ><button
+        #proceedToPayButton
           mat-raised-button
           (click)="onProceedPaymentClick()"
           color="primary"
@@ -175,6 +177,7 @@
         class="upi-transaction-form"
         >
         <button
+        #payViaVPAButton
           mat-raised-button
           (click)="onProceedPayViaVPAClick()"
           color="primary"
@@ -189,6 +192,7 @@
       <ng-container
         *ngIf="isPayment == true && !paybyWalletCheck; else walletPayment"
         ><button
+        #proceedToPay
           mat-raised-button
           (click)="onProceedPaymentClick()"
           color="primary"
@@ -201,6 +205,7 @@
       <ng-container
         *ngIf="isPayment && isWalletPayment && paybyWalletCheck; else elseBlock"
         ><button
+        #payViaWalletButton
           mat-raised-button
           (click)="onProceedwithWalletClick()"
           color="primary"

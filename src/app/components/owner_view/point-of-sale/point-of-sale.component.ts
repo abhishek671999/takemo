@@ -12,6 +12,8 @@ import { CounterService } from 'src/app/shared/services/inventory/counter.servic
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
+import { HttpParams } from '@angular/common/http';
+import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -30,7 +32,10 @@ export class PointOfSaleComponent {
     private _counterService: CounterService,
     private __snackbar: MatSnackBar,
     private __sessionWrapper: sessionWrapper,
-  ) {}
+    private receiptPrintFormatter: ReceiptPrintFormatter
+  ) {
+
+  }
   public menu;
   public summary;
   public paymentFlag = false;
@@ -44,7 +49,9 @@ export class PointOfSaleComponent {
   public restaurantGST = null;
   public parcelCharges = 5; // hardcode
   public filteredMenu;
-  public menuCopy
+  public menuCopy;
+  public isPollingRequired =  this.__sessionWrapper.isPollingRequired()
+  public pollingFrequency = Number(this.__sessionWrapper.getItem('ui_polling_for_mobile_order_receipt_printing_frequency'))
   searchText = '';
   private currentCategoryId;
 
@@ -55,29 +62,76 @@ export class PointOfSaleComponent {
   public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
   public isPOS = this.__sessionWrapper.isPOSEnabled()
   public isKOTEnabled = this.__sessionWrapper.isKOTreceiptEnabled()
+  public pollingInterval
 
   ngOnInit() {
     this.summary = {
       amount: 0,
       itemList: [],
     };
+    this.fetchPOSMenu()
+    this.fetchCounters()
+    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
+    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
+    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
+
+    if(this.isPollingRequired) this.pollingInterval = this.startMobileOrderingPoll()
+  }
+
+  startMobileOrderingPoll(){
+    let httpParams = new HttpParams()
+    httpParams = httpParams.append('restaurant_id', this.restaurantId)
+    return setInterval(() => {
+      this.orderService.getMobileOrdersToPrint(httpParams).subscribe(
+        (data: any) => {
+          let printedOrderIds = []
+          data['orders'].forEach((order) => {
+            this.receiptPrintFormatter.confirmedOrderObj = order
+            let printObj = this.receiptPrintFormatter.getMobileOrderPrintableText()
+            let printStatus = this.print(printObj)
+            if(printStatus) printedOrderIds.push(order.order_id)
+          })
+        if(printedOrderIds.length > 0){
+          let body = {
+            "order_ids": printedOrderIds,
+            "restaurant_id": this.restaurantId
+          }
+          this.orderService.markOrderAsPrinted(body).subscribe(
+            (data) => {
+              console.log(data)
+            },
+            (error) => {
+              console.log(error)
+            }
+          )
+        }
+      }
+    )
+    }, this.pollingFrequency * 1000);
+
+  }
+
+
+  fetchPOSMenu(){
     this.menuService
-      .getPOSMenu(this.restaurantId)
-      .subscribe((data) => {
-        this.menu = data['menu'];
-        this.printerRequired = data['printer_required'];
-        this.restaurantParcel = data['restaurant_parcel'];
-        this.restaurantParcel = true;
-        this.createAllCategory()
-        this.menu.map((category) => {
-          category.category.items.filter(
-            (element) => element.is_available == true
-          );
-        });
-        this.setQuantity();
-        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
-        this.showOnlyFirstCategory();
+    .getPOSMenu(this.restaurantId)
+    .subscribe((data) => {
+      this.menu = data['menu'];
+      this.printerRequired = data['printer_required'];
+      this.restaurantParcel = data['restaurant_parcel'];
+      this.createAllCategory()
+      this.menu.map((category) => {
+        category.category.items.filter(
+          (element) => element.is_available == true
+        );
       });
+      this.setQuantity();
+      this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+      this.showOnlyFirstCategory();
+    });
+  }
+
+  fetchCounters(){
     this._counterService
       .getRestaurantCounter(this.restaurantId)
       .subscribe(
@@ -89,9 +143,6 @@ export class PointOfSaleComponent {
           console.log('Error: ', error);
         }
       );
-    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
-    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
-    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
   }
 
   setQuantity() {
@@ -158,17 +209,6 @@ export class PointOfSaleComponent {
 
   }
 
-  // subItem(item) {
-  //   if (item.quantity > 0) {
-  //     item.quantity -= 1;
-  //     this.summary.amount -= item.price;
-  //   }
-  //   if (item.quantity == 0 && item.parcelQuantity == 0) {
-  //     this.summary.itemList = this.summary.itemList.filter(
-  //       (x) => x.id != item.id
-  //     );
-  //   }
-  // }
   subItem(item) {
     let itemAdded = this.summary.itemList.find((x) => (x.item_id == item.item_id) && (x.item_unit_price_id == item.item_unit_price_id))
     if (itemAdded) {
@@ -227,7 +267,8 @@ export class PointOfSaleComponent {
           "parcel_quantity": 0,
           "name": item.name,
           "price": item.price,
-          "counter": item.counter
+          "counter": item.counter,
+          "parcel_available": item.parcel_available
         }
         item.quantity = 1
         this.summary.amount += item.price
@@ -237,7 +278,6 @@ export class PointOfSaleComponent {
     }
     
   }
-
 
   incrementSubItemfunction = (subItem, item) => {
     let subItemAdded = this.summary.itemList.find((x) => x.item_unit_price_id == subItem.item_unit_price_id)
@@ -424,9 +464,12 @@ export class PointOfSaleComponent {
       actualTotalAmount += ele.price * (ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0));
       itemList.push({
         item_id: ele.item_id,
+        item_name: ele.name,
+        price: ele.price,
         item_unit_price_id: ele.item_unit_price_id,
-        quantity: ele.quantity + (ele.parcelQuantity? ele.parcelQuantity: 0),
-        parcel_quantity: ele.parcelQuantity,
+        quantity: ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0),
+        parcel_quantity: ele.parcel_quantity,
+        counter: ele.counter
       });
     });
     let body = {
@@ -700,14 +743,30 @@ export class PointOfSaleComponent {
         countersWithOrders.push(printObj);
       }
     });
-    console.log(countersWithOrders);
     return countersWithOrders;
+  }
+
+  print(printObjs){
+    if(this.printerConn.usbSought){
+      let printConnect = this.printerConn.printService.init();
+      printObjs.forEach((ele) => {
+        if (ele.text != '') {
+          printConnect.writeCustomLine(ele);
+        }
+      });
+      printConnect
+        .feed(4)
+        .cut()
+        .flush();
+        return true
+    }else{
+      return false
+    }
   }
 
   printRecipt(orderNum) {
     if (this.printerConn.usbSought) {
       //to-do: Interchange dialogbox call and print call
-      let printConnect = this.printerConn.printService.init();
       if (this.isKOTEnabled) {
         this.getCounterPrintableText().forEach((counterPrint) => {
           counterPrint.forEach((ele) => {
@@ -726,7 +785,7 @@ export class PointOfSaleComponent {
         })
       }
 
-
+      let printConnect = this.printerConn.printService.init();
       this.getCustomerPrintableText().forEach((ele) => {
         if (ele.text != '') {
           printConnect.writeCustomLine(ele);
@@ -760,11 +819,12 @@ export class PointOfSaleComponent {
       // .flush();
     }
   }
+
   testPrint() {
     let printConnect = this.printerConn.printService.init();
     let content = [
       {
-        text: 'This is Test print'.toUpperCase().repeat(50),
+        text: 'This is Test print'.toUpperCase().repeat(5),
         size: 'normal',
         justification: 'left',
       },
@@ -781,8 +841,18 @@ export class PointOfSaleComponent {
       : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
-        let orderNum = data['order_no'];
-        this.printRecipt(orderNum);
+        body['order_no'] = data['order_no']
+        if (this.isKOTEnabled) {
+          this.receiptPrintFormatter.confirmedOrderObj = body
+          debugger
+          let counterReceiptObjs = this.receiptPrintFormatter.getCounterPrintableText(this.counters)
+          counterReceiptObjs.forEach((counterReceiptObj) => {
+            this.print(counterReceiptObj)
+          })
+        }
+        this.receiptPrintFormatter.confirmedOrderObj = body
+        let receiptObjs = this.receiptPrintFormatter.getCustomerPrintableText()
+        this.print(receiptObjs)
         let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
           data: {
             msg: `Order created successfully. Order No: ${data['order_no']}`,
@@ -828,9 +898,10 @@ export class PointOfSaleComponent {
     }
   }
 
+
   navigateToEditMenu() {
     this.router.navigate([
-      `/owner/settings/edit-menu/${this.restaurantId}`,
+      `/owner/settings/edit-menu/`,
     ]);
   }
 
@@ -860,5 +931,6 @@ export class PointOfSaleComponent {
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
     sessionStorage.removeItem('table_name');
+    if(this.isPollingRequired) clearInterval(this.pollingInterval)
   }
 }
