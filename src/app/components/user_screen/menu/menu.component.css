@@ -50,7 +50,7 @@ td {
 }
 
 .cart-icon{
-  position: fixed;
+  position: absolute;
   top: 4.5em;
   right: 2em;
 }
@@ -65,7 +65,7 @@ td {
 .col4,
 .col5 th {
   border-right: dashed black 1px;
-
+  padding: 0;
 }
 
 th {
@@ -272,7 +272,11 @@ p {
   }
 
   .cart-bar{
-    width: 80vw;
+    width: 95vw;
+  }
+
+  .cart-description-wrapper th td{
+    padding: 0;
   }
 }
 
