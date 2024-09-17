@@ -69,7 +69,6 @@ public orderList = {
       (data) => {
         this.restaurantParcel = data['restaurant_parcel'];
         this.menu_response = data;
-
         let allItems = []
         data['menu'].forEach((category) => {
           if(!category.category.hide_category){
@@ -183,6 +182,7 @@ public orderList = {
     matDialogConfig.height = '100%'
     this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
+    this.orderList.restaurant_parcel = this.restaurantParcel
     let dialogRef = this.matdialog.open(ConfirmationDialogComponent, {
       data: {
         summary: this.orderList,
