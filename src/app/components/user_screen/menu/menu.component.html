@@ -23,7 +23,7 @@
                 <th class="col1" scope="col">Id</th>
                 <th class="col2" scope="col">Name</th>
                 <th class="col3" scope="col">Edit</th>
-                <th class="col4">Amount</th>
+                <th class="col4" scope="col">Amount</th>
                 <th class="col5" scope="col">Delete</th>
             </tr>
         </thead>
@@ -36,12 +36,13 @@
                   <div class="item-quantity">
                     <mat-icon (click)="subCartItem(item, $event)">remove_circle</mat-icon>
                     <div style="padding: 2px">
-                      {{ item.quantity }}
+                      <span *ngIf="item.parcel_quantity == 0">{{ item.quantity }}</span>
+                      <span *ngIf="item.parcel_quantity != 0">{{ item.quantity - item.parcel_quantity}}  ({{item.parcel_quantity}} P)</span>
                     </div>
                     <mat-icon (click)="addCartItem(item, $event)">add_circle</mat-icon>
                   </div>
                 </td>
-                <td class="col4" >{{item.quantity * item.price}}</td>
+                <td class="col4" >₹&nbsp;{{item.quantity * item.price}}</td>
                 <td class="col5">
                   <mat-icon (click)="clearCartItem(item, $event)">delete</mat-icon>
                 </td>
@@ -50,7 +51,7 @@
       </table>
       <div class="cart-action">
         <div class="text-center amount">
-          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount + orderList.parcel_amount }}
         </div>
         <div class="text-center prepare-summary">
           <button
@@ -90,7 +91,7 @@
 
     <div class="cart-action">
         <div class="text-center amount">
-          Total Amount:&nbsp; &nbsp;₹ {{ orderList.amount }}
+          Total Amount:&nbsp;₹&nbsp;{{ orderList.amount + orderList.parcel_amount }}
         </div>
         <div class="text-center prepare-summary">
           <button
@@ -108,7 +109,7 @@
     <div class="menu-container">
       <div class="item-bar">
         <div class="item" *ngFor="let item of filteredMenu">
-          <div class="item-card" (click)="addItem(item, $event)">
+          <div class="item-card">
           <div style="display: flex; justify-content: flex-start; height: 70%;">
               <div
               class="item-type"

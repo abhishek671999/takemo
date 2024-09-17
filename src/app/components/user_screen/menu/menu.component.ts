@@ -15,6 +15,7 @@ import { HttpParams } from '@angular/common/http';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
+import { ParcelDialogComponent } from '../parcel-dialog/parcel-dialog.component';
 
 @Component({
   selector: 'app-menu',
@@ -34,6 +35,7 @@ export class MenuComponent {
 
 public orderList = {
     itemList: [],
+    parcel_amount: 0,
     amount: 0,
     restaurant_id: null,
     restaurant_parcel: false,
@@ -67,12 +69,14 @@ public orderList = {
       (data) => {
         this.restaurantParcel = data['restaurant_parcel'];
         this.menu_response = data;
-
         let allItems = []
         data['menu'].forEach((category) => {
           if(!category.category.hide_category){
             let availableItems = category.category.items.filter((item) => item.is_available)
-            availableItems.forEach((item) => item['quantity'] = 0)
+            availableItems.forEach((item) => {
+              item['quantity'] = 0
+              item['parcel_quantity'] = 0
+          })
             let name = category.category.name
             category.category.items.forEach(item => {
               item['category_name'] = name
@@ -81,11 +85,12 @@ public orderList = {
             allItems.push(...availableItems)
           }
         })
+        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
         this.setCartQuantity()
         this.menu['all'] = allItems
         this.showFirstCategory()
         this.availableCategoryList = Object.keys(this.menu)
-        this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+
         this.showSpinner = false
       },
       (error) => {
@@ -124,11 +129,13 @@ public orderList = {
         this.clearCart()
       }else{
         this.orderList.amount = cartItems.amount
+        this.orderList.parcel_amount = cartItems.parcel_amount
         cartItems.itemList.forEach(cartItem => {
           if(cartItem){
             let matchedItem = this.menu[cartItem.category_name].filter(menuItem => menuItem.id == cartItem.id)
             if(matchedItem.length > 0 ){
               matchedItem[0].quantity = cartItem.quantity
+              matchedItem[0].parcel_quantity = cartItem.parcel_quantity
               matchedItem[0].item_unit_price_list = cartItem.item_unit_price_list
               this.orderList.itemList.push(matchedItem[0])
             } 
@@ -171,8 +178,11 @@ public orderList = {
   prepareSummary() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     matDialogConfig.position = { bottom: `0px` };
+    matDialogConfig.width = '98vw'
+    matDialogConfig.height = '100%'
     this.orderList.table_id = this.tableSelected?.table_id;
     this.orderList.restaurant_id = this.restaurant_id;
+    this.orderList.restaurant_parcel = this.restaurantParcel
     let dialogRef = this.matdialog.open(ConfirmationDialogComponent, {
       data: {
         summary: this.orderList,
@@ -180,9 +190,11 @@ public orderList = {
         subfn: this.decrementItemFunction,
         clearfn: this.clearItemFunction
       },
-      panelClass: ['animate__animated', 'animate__slideInUp']
+   
+
     });
     dialogRef.updatePosition(matDialogConfig.position)
+    dialogRef.updateSize(matDialogConfig.width, matDialogConfig.height)
     dialogRef.afterClosed().subscribe((result) => {
       this.orderList.itemList = this.orderList.itemList.filter((item) => item.quantity > 0)
       if (result) {
@@ -199,7 +211,22 @@ public orderList = {
   addItem(item, event){
     // todo: update cart and handle parcel quantity and stock/inventory
     event.stopPropagation();
-    if (item.item_unit_price_list.length > 0) {
+    console.log(item)
+    if(item.parcel_available) {
+      let dialogRef = this.matdialog.open(ParcelDialogComponent, {
+        data: {
+          item: item, orderList: this.orderList
+        }
+      })
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+          if(data?.result){
+            this.__cartService.setCartItems(this.orderList)
+          }
+        }
+      )
+    }
+    else if (item.item_unit_price_list.length > 0) {
       let dialogRef = this.matdialog.open(SelectSubitemDialogComponent, {
         data: {
           item: item, restaurantParcel: this.restaurantParcel,
@@ -220,7 +247,22 @@ public orderList = {
 
   subItem(item, event){
     event.stopPropagation();
-    if (item.item_unit_price_list.length > 0) {
+    if(item.parcel_available) {
+      let dialogRef = this.matdialog.open(ParcelDialogComponent, {
+        data: {
+          item: item, orderList: this.orderList
+        }
+      })
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+
+          if(data?.result){
+            this.__cartService.setCartItems(this.orderList)
+          }
+        }
+      )
+    }
+    else if (item.item_unit_price_list.length > 0) {
       let dialogRef = this.matdialog.open(SelectSubitemDialogComponent, {
         data: {
           item: item, restaurantParcel: this.restaurantParcel,
@@ -257,7 +299,9 @@ public orderList = {
 
   clearItemFunction = (clearItem) => {
     this.orderList.amount -= (clearItem.quantity * clearItem.price)
+    this.orderList.parcel_amount -= (clearItem.parcel_quantity * 5)
     clearItem.quantity = 0
+    clearItem.parcel_quantity = 0
     this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
     this.__cartService.setCartItems(this.orderList)
   }
@@ -296,27 +340,60 @@ public orderList = {
 
   addCartItem(item, event) {
     event.stopPropagation()
-    item.quantity += 1
+    if(item.parcel_available) {
+      let dialogRef = this.matdialog.open(ParcelDialogComponent, {
+        data: {
+          item: item, orderList: this.orderList
+        }
+      })
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+
+          if(data?.result){
+            this.__cartService.setCartItems(this.orderList)
+          }
+        }
+      )}
+    else{
+      item.quantity += 1
     this.orderList.amount += item.price
     this.__cartService.setCartItems(this.orderList)
+    }
   }
 
   
   subCartItem(item, event) {
     event.stopPropagation()
     if(item.quantity > 0){
-      item.quantity -= 1
-      this.orderList.amount -= item.price
-      this.__cartService.setCartItems(this.orderList)
+      if(item.parcel_available) {
+        let dialogRef = this.matdialog.open(ParcelDialogComponent, {
+          data: {
+            item: item, orderList: this.orderList
+          }
+        })
+        dialogRef.afterClosed().subscribe(
+          (data: any) => {
+            if(data?.result){
+              this.__cartService.setCartItems(this.orderList)
+            }
+          }
+        )}
+        else{
+          item.quantity -= 1
+          this.orderList.amount -= item.price
+          this.__cartService.setCartItems(this.orderList)
+        }
     }
   }
 
   clearCartItem(item, event) {
     event.stopPropagation()
-    this.orderList.amount -= ((item.quantity * item.price) + (item.parcel_quantity? item.parcel_quantity: 0 * item.price))
+    this.orderList.amount -= (item.quantity * item.price)
+    this.orderList.parcel_amount -= (item.parcel_quantity * 5) //hardcode
     item.quantity = 0
-    item.parcelQuantity = 0
+    item.parcel_quantity = 0
     this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
+    debugger
     this.__cartService.setCartItems(this.orderList)
   }
 
@@ -334,6 +411,7 @@ public orderList = {
 
   clearCart() {
     this.orderList.amount = 0
+    this.orderList.parcel_amount = 0
     this.orderList.itemList = []
     this.__cartService.setCartItems(this.orderList)
     this.menu = JSON.parse(JSON.stringify(this.menuCopy))
