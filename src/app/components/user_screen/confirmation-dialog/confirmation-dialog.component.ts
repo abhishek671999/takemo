@@ -17,6 +17,7 @@ import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
 import { sessionWrapper } from 'src/app/shared/site-variable';
 import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
+import { ParcelDialogComponent } from '../parcel-dialog/parcel-dialog.component';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -40,8 +41,10 @@ export class ConfirmationDialogComponent {
     private _fb: FormBuilder,
     private _tableService: TablesService,
     private __sessionWrapper: sessionWrapper,
-    private __cartService: cartConnectService
-  ) {}
+    private __cartService: cartConnectService,
+  ) {
+    console.log(data)
+  }
 
   public isPayment;
   public platformFee = undefined || {};
@@ -191,6 +194,7 @@ export class ConfirmationDialogComponent {
   onProceedPaymentClick() {
     if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = true
     let body = this.preparePlaceOrderBody(false);
+    debugger
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
         sessionStorage.setItem('transaction_id', data['transaction_id']);
@@ -210,7 +214,6 @@ export class ConfirmationDialogComponent {
       }
     );
     this.dialogRef.close({ mode: 'payment' });
-
   }
 
   onProceedPayViaVPAClick() {
@@ -265,10 +268,41 @@ export class ConfirmationDialogComponent {
   }
 
   addItem(subItem) {
-    this.data.addfn(subItem, this.data.item)
+    debugger
+    if(subItem.parcel_available) {
+      let dialogRef = this.dialog.open(ParcelDialogComponent, {
+        data: {
+          item: subItem, orderList: this.data.summary
+        }
+      })
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+          if(data?.result){
+            this.__cartService.setCartItems(this.data.summary)
+          }
+        }
+      )}
+      else{
+        this.data.addfn(subItem, this.data.item)
+      }
   }
   subItem(subItem) {
-    this.data.subfn(subItem, this.data.item)
+    if(subItem.parcel_available) {
+      let dialogRef = this.dialog.open(ParcelDialogComponent, {
+        data: {
+          item: subItem, orderList: this.data.summary
+        }
+      })
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+          if(data?.result){
+            this.__cartService.setCartItems(this.data.itemList)
+          }
+        }
+      )}
+      else{
+        this.data.subfn(subItem, this.data.item)
+      }
   }
 
   incrementParcelQuantity(item) {
@@ -308,7 +342,7 @@ export class ConfirmationDialogComponent {
   }
 
   calculateItemAmount(item) {
-    return item.price * (item.quantity + (item.parcel_quantity? item.parcel_quantity : 0));
+    return item.price * item.quantity;
   }
 
   clearItem(item) {
@@ -316,7 +350,7 @@ export class ConfirmationDialogComponent {
   }
 
   getGrandTotalAmount() {
-    return this.data.summary.amount;
+    return this.data.summary.amount + this.data.summary.parcel_amount;
   }
 
   getUPILink() {
@@ -367,6 +401,7 @@ export class ConfirmationDialogComponent {
       element.parcelQuantity = 0
     });
     this.data.summary.amount = 0
+    this.data.summary.parcel_amount = 0
     this.__cartService.setCartItems(this.data.summary)
   }
 

@@ -1,6 +1,6 @@
 import { HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { Injectable } from '@angular/core';
+import { booleanAttribute, Injectable } from '@angular/core';
 import { MeService } from './services/register/me.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -97,28 +97,27 @@ export class meAPIUtility {
 export class sessionWrapper {
 
   constructor(public meAPIUtility: meAPIUtility) { }
-  public __isAdmin = false
-  public __isUser = false
-  public __isOwner = false
-  public __isKDSEnabled = false
-  public __isPaymentDone = false
-  public __isMultiRestaurantOwner = false
-  public __isPollingRequired = false
 
   async setSessionVariables() {
+    debugger
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
-          this.__isOwner = true
-          if (data['restaurants'].length > 1) this.__isMultiRestaurantOwner = true
+          this.isOwner = true
+          debugger
+          if (data['restaurants'].length > 1) this.isMultiRestaurantOwner = true
         } else if (data['companies'].length > 0) {
-          this.__isAdmin = true
+          this.isAdmin = true
         } else {
-          this.__isUser = true
+          this.isUser = true
         }
         resolve(true)
       }),
-        error => reject(false)
+      (error: any) =>{
+        console.log(error)
+        reject(false)
+      }
+          
     })
     
   }
@@ -200,49 +199,66 @@ export class sessionWrapper {
       for (let restaurant of data['restaurants']) {
         if ([7].includes(restaurant.restaurant_id)) {
           validation = true;
+          break
         }
       }
     });
     return validation;
   }
-
-  public set isKDSEnabled(value: boolean) {
-    this.__isKDSEnabled = value
+  
+  public set isMultiRestaurantOwner(value: boolean){
+    localStorage.setItem('isMultiRestaurantOwner', String(value))
   }
 
-  public set isPaymentDone(value: boolean) {
-    this.__isPaymentDone = value
+  public get isMultiRestaurantOwner() {
+    let value = localStorage.getItem('isMultiRestaurantOwner')
+    return value == 'true' ? true: false
+  }
+
+  public set isKDSEnabled(value: boolean) {
+    localStorage.setItem('isKDSEnabled', String(value))
   }
 
   public get isKDSEnabled() {
-    return this.__isKDSEnabled
+    let value = localStorage.getItem('isKDSEnabled')
+    return value == 'true' ? true: false
+  }
+
+  public set isPaymentDone(value: boolean) {
+    localStorage.setItem('isPaymentDone', String(value))
   }
 
   public get isPaymentDone() {
-    return this.__isPaymentDone
+    let value = localStorage.getItem('isPaymentDone')
+    return value == 'true' ? true: false
+  }
+
+  public set isAdmin(value: boolean) {
+    localStorage.setItem('isAdmin', String(value))
   }
 
   public get isAdmin() {
-    this.setSessionVariables()
-    return this.__isAdmin
+    let value = localStorage.getItem('isAdmin')
+    return value == 'true' ? true: false
+  }
+
+  public set isUser(value: boolean) {
+    localStorage.setItem('isUser', String(value))
   }
 
   public get isUser() {
-    this.setSessionVariables()
-    return this.__isUser
+    let value = localStorage.getItem('isUser')
+    return value == 'true' ? true: false
   }
 
+  public set isOwner(value: boolean) {
+    localStorage.setItem('isOwner', String(value))
+  }
+  
   public get isOwner() {
-    this.setSessionVariables()
-    return this.__isOwner
+    let value = localStorage.getItem('isOwner')
+    return value == 'true' ? true: false
   }
- 
-  public get isMultiRestaurantOwner() {
-    this.setSessionVariables()
-    return this.__isMultiRestaurantOwner
-  }
-
-
 
   isCounterManagementEnabled() {
     return this.getItem('counter_management') == 'true' ? true : false

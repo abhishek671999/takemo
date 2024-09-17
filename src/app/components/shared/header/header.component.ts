@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/shared/services/data/data.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { ConfirmationDialogComponent } from '../../user_screen/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmActionDialogComponent } from '../confirm-action-dialog/confirm-action-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +18,8 @@ export class HeaderComponent {
     private router: Router,
     private _meAPIutility: meAPIUtility,
     private __sessionWrapper: sessionWrapper,
-    private dataShare: DataService
+    private dataShare: DataService,
+    private matdialog: MatDialog
   ) {
     }
     AvailableDropdownList = {
@@ -67,7 +71,15 @@ export class HeaderComponent {
       },
       'logout': {
         name: 'Logout',
-        action: () => this._loginService.logOut(),
+        action: () =>
+          {
+            let matdialogRef = this.matdialog.open(ConfirmActionDialogComponent, {data: 'Are you sure want to logout??'})
+            matdialogRef.afterClosed().subscribe(
+              (data: any) => {
+                if(data?.select) this._loginService.logOut()
+              }
+            )
+          }
       },
       'menu':{
         name: 'Outlets',

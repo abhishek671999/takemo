@@ -57,6 +57,13 @@
                     </td>
                 </ng-container>
 
+                <ng-container matColumnDef="price">
+                    <th mat-header-cell class="sticky-header" *matHeaderCellDef> Price </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        ₹&nbsp;{{element.price}}
+                    </td>
+                </ng-container>
+
                 <ng-container matColumnDef="available">
                     <th mat-header-cell class="sticky-header" *matHeaderCellDef> Available </th>
                     <td mat-cell *matCellDef="let element"> 

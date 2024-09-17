@@ -83,7 +83,7 @@ export class EditMenuComponent {
   public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
   public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
 
-  displayedColumns: string[] = ['id', 'item', ...(this.mobileOrderingEnabled? ['available']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
+  displayedColumns: string[] = ['id', 'item', 'price', ...(this.mobileOrderingEnabled? ['available']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
   dataSource = new MatTableDataSource([])
 
 

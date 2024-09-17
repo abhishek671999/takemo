@@ -27,23 +27,9 @@
               </div>
               <mat-icon (click)="addItem(item)">add_circle</mat-icon>
             </div>
-            <p
-              *ngIf="restaurantParcel && item.parcel_available"
-              (click)="incrementParcelQuantity(item)"
-              style="text-decoration: underline; margin: 0; cursor: pointer"
-            >
-              Create Parcel
-            </p>
-            <div class="item-quantity" *ngIf="item.parcelQuantity">
-              <mat-icon (click)="subParcelItem(item)">remove_circle</mat-icon>
-              <div style="padding: 2px">
-                {{ item.parcelQuantity }}
-              </div>
-              <mat-icon (click)="addParcelItem(item)">add_circle</mat-icon>
-            </div>
-            <p *ngIf="item.parcelQuantity">
-              <b>{{ item.parcelQuantity }}</b> Parcel |
-              <b>{{ item.quantity }}</b> Dine-in
+            <p *ngIf="item.parcel_quantity">
+              <b>{{ item.parcel_quantity }}</b> Parcel <br>
+              <b>{{ item.quantity - item.parcel_quantity}}</b> Dine-in
             </p>
           </td>
           <td class="col3">₹{{ item.price }}</td>
@@ -57,7 +43,7 @@
       </tbody>
     </table>
     <div>
-      <p>Amount:&nbsp;&nbsp;₹ {{ data.summary.amount }}</p>
+      <p>Amount:&nbsp;&nbsp;₹ {{ data.summary.amount }}</p><span *ngIf="restaurantParcel">Parcel charge: ₹ {{ data.summary.parcel_amount }}</span>
     </div>
     <small *ngIf="restaurantParcel" class="font-weight-bold text-warning"
       >Parcel charges Rs.5 per item</small

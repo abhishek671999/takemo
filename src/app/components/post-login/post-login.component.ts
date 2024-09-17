@@ -54,7 +54,7 @@ export class PostLoginComponent {
       error => {
       alert('Me api load failed')
     });
-      
+    this.sessionWrapper.setSessionVariables()
   }
 
   

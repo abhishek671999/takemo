@@ -55,6 +55,7 @@ import { ProfileComponent } from '../shared/profile/profile.component';
 import {MatBadgeModule} from '@angular/material/badge';
 import { UploadFormComponent } from "../shared/upload-form/upload-form.component";
 import { Menu2Component } from './menu2/menu2.component';
+import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
 
 
 @NgModule({
@@ -81,7 +82,8 @@ import { Menu2Component } from './menu2/menu2.component';
         PostRechargePaymentComponent,
         ClickOutsideDirective,
         ProfileComponent,
-        Menu2Component
+        Menu2Component,
+        ParcelDialogComponent
     ],
     exports: [],
     imports: [
