@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router, RouterState
 import { LoginService } from 'src/app/shared/services/register/login.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
-  debugger
   if (inject(LoginService).isLoggedIn()) {
     console.log('THis is true')
       //inject(Router).navigate(['home'])

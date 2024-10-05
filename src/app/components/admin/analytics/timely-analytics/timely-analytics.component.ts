@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
@@ -12,6 +12,9 @@ import { PrintConnectorService } from 'src/app/shared/services/printer/print-con
 import { MatDialog } from '@angular/material/dialog';
 import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 import { StringUtils } from 'src/app/shared/utils/stringUtils';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-timely-analytics',
@@ -29,6 +32,13 @@ export class TimelyAnalyticsComponent {
     public printerConn: PrintConnectorService,
     private __matDialog: MatDialog
   ) { }
+
+  @ViewChild(MatSort)
+  sort: MatSort = new MatSort;
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
+  private _liveAnnouncer = inject(LiveAnnouncer);
 
   timeFramesForTimelyAnalytics = [
     { displayValue: 'Last 30 days', actualValue: 'last_30_days' },
@@ -112,6 +122,11 @@ export class TimelyAnalyticsComponent {
           console.log('Error: ', error);
         }
       );
+  }
+
+  ngAfterViewInit(){
+    this.dataSource.sort = this.sort
+    this.dataSource.paginator = this.paginator;
   }
 
   onToggle(event) {
@@ -368,6 +383,18 @@ export class TimelyAnalyticsComponent {
       : prefix
         ? fixValue.repeat(length - string.length) + string
         : string + fixValue.repeat(length - string.length);
+  }
+
+  announceSortChange(sortState: Sort) {
+    // This example uses English messages. If your application supports
+    // multiple language, you would internationalize these strings.
+    // Furthermore, you can customize the message to add additional
+    // details about the values being sorted.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
 }

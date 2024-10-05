@@ -194,7 +194,6 @@ export class ConfirmationDialogComponent {
   onProceedPaymentClick() {
     if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = true
     let body = this.preparePlaceOrderBody(false);
-    debugger
     this.__ordersService.createOrders(body).subscribe(
       (data) => {
         sessionStorage.setItem('transaction_id', data['transaction_id']);

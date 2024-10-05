@@ -239,9 +239,12 @@ export class HeaderComponent {
   }
 
   setRestaurantsessionVariable(restaurant){
-    console.log('Setting from header', restaurant)
     this.__sessionWrapper.setRestaurantSessionVariables(restaurant)
     window.location.reload()
+  }
+
+  getSelectedRestaurantId(){
+    return localStorage.getItem('restaurant_id')
   }
 
 }

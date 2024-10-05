@@ -99,12 +99,10 @@ export class sessionWrapper {
   constructor(public meAPIUtility: meAPIUtility) { }
 
   async setSessionVariables() {
-    debugger
     return new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
           this.isOwner = true
-          debugger
           if (data['restaurants'].length > 1) this.isMultiRestaurantOwner = true
         } else if (data['companies'].length > 0) {
           this.isAdmin = true
@@ -124,6 +122,7 @@ export class sessionWrapper {
 
   setRestaurantSessionVariables(restaurant){
     sessionStorage.setItem('restaurant_id', restaurant['restaurant_id']) 
+    localStorage.setItem('restaurant_id', restaurant['restaurant_id']) 
     sessionStorage.setItem(
       'restaurant_name',
       restaurant['restaurant_name']

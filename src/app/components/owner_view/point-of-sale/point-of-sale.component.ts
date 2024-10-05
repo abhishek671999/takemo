@@ -844,7 +844,6 @@ export class PointOfSaleComponent {
         body['order_no'] = data['order_no']
         if (this.isKOTEnabled) {
           this.receiptPrintFormatter.confirmedOrderObj = body
-          debugger
           let counterReceiptObjs = this.receiptPrintFormatter.getCounterPrintableText(this.counters)
           counterReceiptObjs.forEach((counterReceiptObj) => {
             this.print(counterReceiptObj)

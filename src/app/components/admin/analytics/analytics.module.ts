@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AnalyticsRoutingModule } from './analytics-routing.module';
 import { AnalyticsHomeComponent } from './analytics-home/analytics-home.component';
 import { NgApexchartsModule } from "ng-apexcharts";
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
   imports: [
     CommonModule,
     AnalyticsRoutingModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    MatTabsModule
   ]
 })
 export class AnalyticsModule { }

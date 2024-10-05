@@ -49,6 +49,7 @@ import { DummyUploadImagesComponent } from './dummy-upload-images/dummy-upload-i
 import { UploadFormComponent } from '../shared/upload-form/upload-form.component';
 import { SendEmailReportDialogComponent } from './dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 import { AllRestaurantsCombinedComponent } from './analytics/all-restaurants-combined/all-restaurants-combined.component';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -100,7 +101,8 @@ import { AllRestaurantsCombinedComponent } from './analytics/all-restaurants-com
     MatTableModule,
     MatPaginatorModule,
     MatSlideToggleModule,
-    UploadFormComponent
+    UploadFormComponent,
+    MatSortModule
   ],
   providers: [
     {

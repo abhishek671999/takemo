@@ -61,7 +61,7 @@ import { EditFormDialogComponent } from '../dialogbox/edit-form-dialog/edit-form
     MatSelectModule,
     MatSnackBarModule,
     MatBadgeModule,
-
+    MatTabsModule
   ]
 })
 export class RestaurantManagementModule { }
