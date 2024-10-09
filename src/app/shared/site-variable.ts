@@ -85,9 +85,7 @@ export class meAPIUtility {
       this.cookieService.delete('token');
       this.cookieService.deleteAll('/');
     }
-  }
-
-  
+  }  
 }
 
 
@@ -157,6 +155,8 @@ export class sessionWrapper {
     sessionStorage.setItem('load_header', 'false')
     sessionStorage.setItem('ui_polling_for_mobile_order_receipt_printing', restaurant['ui_polling_for_mobile_order_receipt_printing'])
     sessionStorage.setItem('ui_polling_for_mobile_order_receipt_printing_frequency', restaurant['ui_polling_for_mobile_order_receipt_printing_frequency'])
+    sessionStorage.setItem('tax_inclusive',restaurant['tax_inclusive'])
+    sessionStorage.setItem('tax_percentage', restaurant['tax_percentage'])
   }
 
   setCompanySessionVariable(company){
@@ -193,16 +193,7 @@ export class sessionWrapper {
   }
 
   doesUserBelongsToRaviGobi() {
-    let validation = false;
-    this.meAPIUtility.getMeData().subscribe((data) => {
-      for (let restaurant of data['restaurants']) {
-        if ([7].includes(restaurant.restaurant_id)) {
-          validation = true;
-          break
-        }
-      }
-    });
-    return validation;
+    return this.getItem('restaurant_id') == '7'? true: false
   }
   
   public set isMultiRestaurantOwner(value: boolean){
@@ -257,6 +248,10 @@ export class sessionWrapper {
   public get isOwner() {
     let value = localStorage.getItem('isOwner')
     return value == 'true' ? true: false
+  }
+
+  isTaxInclusive(){
+    return this.getItem('tax_inclusive') == 'true' ? true : false
   }
 
   isCounterManagementEnabled() {

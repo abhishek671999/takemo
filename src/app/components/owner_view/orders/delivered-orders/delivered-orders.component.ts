@@ -62,7 +62,6 @@ export class DeliveredOrdersComponent {
       order_status: 'delivered',
     };
     let httpParams = new HttpParams();
-    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     httpParams = httpParams.append('offset', this.pageIndex * this.pageSize);
     httpParams = httpParams.append(
       'limit',

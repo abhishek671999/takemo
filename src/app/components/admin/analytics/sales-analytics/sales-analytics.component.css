@@ -53,6 +53,16 @@
     display: none;
 }
 
+.text-bold{
+    font-weight: bold;
+}
+
+.unsold-view-section{
+    padding: 1em;
+    position: relative;
+    bottom: 4em;
+}
+
 @media screen and (max-width: 425px) {
     .graph-container{
         flex-direction: column;

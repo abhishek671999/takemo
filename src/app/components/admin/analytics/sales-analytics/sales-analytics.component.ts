@@ -125,6 +125,7 @@ export class SalesAnalyticsComponent {
   selectedCounterId;
   tableView = true;
   dataLoadSpinner = false;
+  analyticsSpinner 
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -134,8 +135,12 @@ export class SalesAnalyticsComponent {
   ELEMENT_DATA = [];
   
 
-  displayedColumns: string[] = ['position', 'name', 'quantity', 'total_amount'];
+  displayedColumns: string[] = ['sl_no', 'name', 'quantity', 'total_amount'];
   public dataSource = new MatTableDataSource();
+
+  public unsoldItems = []
+  public unsoldCategories = []
+  public unsold = []
 
   ngOnInit() {
     this._ruleService.getAllRules().subscribe((data) => {
@@ -299,6 +304,9 @@ export class SalesAnalyticsComponent {
         (data) => {
           this.totalOrders = data['quantity']['total_quantity'];
           this.totalAmount = data['amount']['total_amount'];
+          this.unsoldCategories = data['unsold_categories']
+          this.unsoldItems = data['unsold_items']
+          this.unsold = this.unsoldCategories.concat(this.unsoldItems)
           if (this.tableView) {
             this.dataSource.data = this.parseResponse(data);
           } else {
@@ -370,7 +378,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['quantity']),
         datasets: [
           {
-            label: 'Number of orders',
+            label: 'Total Quantity',
             data: totalOrders,
             borderWidth: 1,
           },
@@ -398,7 +406,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['category_wise_data']),
         datasets: [
           {
-            label: 'Total amount ordered',
+            label: 'Total Amount',
             data: chartData,
             borderWidth: 1,
           },
@@ -426,7 +434,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['item_wise_data']),
         datasets: [
           {
-            label: 'Amount ordered',
+            label: 'Total Amount',
             data: chartData,
             borderWidth: 1,
           },
@@ -483,7 +491,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['category_wise_data']),
         datasets: [
           {
-            label: '# of orders',
+            label: 'Total Quantity',
             data: chartData,
             borderWidth: 1,
           },
@@ -512,7 +520,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['item_wise_data']),
         datasets: [
           {
-            label: '# of orders',
+            label: 'Total Quantity',
             data: chartData,
             borderWidth: 1,
           },

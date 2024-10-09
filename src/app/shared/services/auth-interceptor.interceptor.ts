@@ -20,6 +20,8 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
   constructor(public utility: Utility, private _loginService: LoginService, private _router: Router, private meAPIUtility: meAPIUtility, private matDialog: MatDialog) {}
   loggedInFlag = false
   showErrorMessage = true
+  
+
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     let unAuthRequestsURLs = [host + 'rest-auth/login/', host + 'users/auth/token/', host + 'users/auth/email/', host + 'users/auth/mobile/',  ,  host + 'users/auth/mobile/']
     if(!unAuthRequestsURLs.includes(request.url)){
@@ -49,8 +51,9 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
           } else if(error.status == 400 && error.error.description){
             if(this.showErrorMessage) this.matDialog.open(ErrorMsgDialogComponent, {data: {msg: `${error.error.description}`}})
           }
-          else if(error.status == 401 && request.url != host +'rest-auth/logout/'){
-           this._router.navigate(['home'])
+          else if(error.status == 401 ){
+            if(error.error.description == "You do not have access to perform this action") this._router.navigate(['user/profile'])
+            else if(request.url != host +'rest-auth/logout/') this._router.navigate(['home'])
           }
           this.showErrorMessage = false
         }

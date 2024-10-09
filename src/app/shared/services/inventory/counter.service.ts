@@ -10,8 +10,13 @@ export class CounterService {
   private addCounterEndpoint = 'inventory/add_counter/';
   private editCounterEndpoint = 'inventory/edit_counter/';
   private inventoryLogEndpoint = 'inventory/get_inventory_stock_log/';
+  private deleteCounterEndpoint = 'inventory/delete_counter/'
 
   constructor(private _http: HttpClient, private _utility: Utility) {}
+
+  deleteCounter(body){
+    return this._http.delete(host + this.deleteCounterEndpoint, {body: body})
+  }
 
   getRestaurantCounter(id) {
     let queryParams = new HttpParams();

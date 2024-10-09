@@ -72,6 +72,7 @@ export class EditMenuComponent {
   fontStyle?: string;
   restaurantId: number = Number(this.__sessionWrapper.getItem('restaurant_id'));
   restaurantStatus = false;
+  parcelEnabled = false
   RestaurantAction = this.restaurantStatus
     ? 'Close restaurant'
     : 'Open restaurant';
@@ -83,7 +84,7 @@ export class EditMenuComponent {
   public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
   public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
 
-  displayedColumns: string[] = ['id', 'item', 'price', ...(this.mobileOrderingEnabled? ['available']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
+  displayedColumns: string[] = ['id', 'item', 'price', ...(this.mobileOrderingEnabled? ['available', 'item_parcel']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
   dataSource = new MatTableDataSource([])
 
 
@@ -106,6 +107,7 @@ export class EditMenuComponent {
     this._menuService.getAdminMenu(this.restaurantId).subscribe(
       (data) => {
         this.restaurantStatus = data['is_open']
+        this.parcelEnabled = data['restaurant_parcel']
         this.menu = data['menu']
         this.createAllCategory();
         this.allCategories = this.parseCategories()
@@ -173,6 +175,21 @@ export class EditMenuComponent {
       },
       (error) => {
         alert('Failed to change availability')
+      }
+    );
+  }
+
+  toggleItemParcel(item){
+    let body = {
+      item_id: item.id,
+      parcel_available: !item.parcel_available
+    }
+    this._menuEditService.editItemAvailability(body).subscribe(
+      (data) => {
+        item.parcel_available = !item.parcel_available;
+      },
+      (error) => {
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: error.error.description} });
       }
     );
   }
@@ -301,6 +318,23 @@ export class EditMenuComponent {
       (error) => {
         this._dialog.open(ErrorMsgDialogComponent, { data: { msg: 'Something went wrong' } });
         console.log('Error while toggling: ', error);
+      }
+    );
+  }
+
+  toggleParcelOn(){
+    console.log('Restaurant toggled');
+    let body = {
+      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      is_open: this.restaurantStatus,
+      accept_parcel: !this.parcelEnabled
+    };
+    this._restaurantService.editIsRestaurantOpen(body).subscribe(
+      (data) => {
+        this.parcelEnabled = !this.parcelEnabled;
+      },
+      (error) => {
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: error.error.description} });
       }
     );
   }

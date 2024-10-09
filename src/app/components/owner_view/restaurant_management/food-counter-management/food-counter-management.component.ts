@@ -35,10 +35,11 @@ export class FoodCounterManagementComponent {
   counterResponse;
 
   counterFormControl = new FormControl('', [Validators.required]);
+  public restaurantId = this.__sessionWrapper.getItem('restaurant_id')
 
   ngOnInit(){
 
-    this.counterService.getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id')).subscribe(
+    this.counterService.getRestaurantCounter(this.restaurantId).subscribe(
       data => {
         this.counterResponse = data['counters']
         this.counterResponse.forEach(element => {
@@ -60,7 +61,7 @@ export class FoodCounterManagementComponent {
       counter.is_edit = !counter.is_edit
     }else{
       let body = {
-        "restaurant_id": this.__sessionWrapper.getItem('restaurant_id'),
+        "restaurant_id": this.restaurantId,
         "counter_id": counter.counter_id,
         "counter_name": event.target.value
       }
@@ -76,12 +77,23 @@ export class FoodCounterManagementComponent {
   }
 
   deleteCounter(counter){
-    
+    let body = {
+      counter_id: counter.counter_id,
+      restaurant_id: this.restaurantId
+    }
+    this.counterService.deleteCounter(body).subscribe(
+      (data: any) => {
+        this.ngOnInit()
+      },
+      (error: any) => {
+        alert('Failed to delete counter')
+      }
+    )
   }
 
   addCounter(){
     let body = {
-      "restaurant_id": this.__sessionWrapper.getItem('restaurant_id'),
+      "restaurant_id": this.restaurantId,
       "counter_name": this.counterFormControl.value
     }
     this.counterService.addRestaurantCounter(body).subscribe(

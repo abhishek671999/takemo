@@ -19,11 +19,7 @@ export class AnalyticsService {
 
   getSalesAnalyticsData(body) {
     let endpoint =
-      body['restaurant_id'] == 7
-        ? this._salesAnalyticsRGEndpoint
-        : body['ecom']
-        ? this._salesAnalyticsEcomEndpoint
-        : this._salesAnalyticEndpoint;
+      body['restaurant_id'] == 7? this._salesAnalyticsRGEndpoint: body['ecom']? this._salesAnalyticsEcomEndpoint: this._salesAnalyticEndpoint;
     return this._httpClient.post(host + endpoint, body);
   }
 

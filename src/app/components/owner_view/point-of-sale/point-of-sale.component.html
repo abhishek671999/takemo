@@ -83,7 +83,7 @@
               <th class="col1">Item</th>
               <th class="col2">Quantity</th>
               <th class="col3">Price</th>
-              <th class="col4">Amount</th>
+              <th class="col4">{{isTaxInclusive? 'Amount': 'Amount+GST' }}</th>
               <th class="col5">Clear</th>
             </tr>
           </thead>
@@ -144,7 +144,7 @@
                   ><p>UPI</p></mat-radio-button
                 >
                 <mat-radio-button class="ml-2 mr-2 p-1" value="credit"
-                  ><p>Credit</p></mat-radio-button
+                  ><p>Pay later</p></mat-radio-button
                 >
 
               </div>

@@ -79,7 +79,6 @@ export class ConfirmedOrdersComponent {
       order_status: 'confirmed',
     };
     let httpParams = new HttpParams();
-    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     httpParams = httpParams.append('offset', this.pageIndex * this.pageSize);
     httpParams = httpParams.append(
       'limit',

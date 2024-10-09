@@ -51,6 +51,8 @@ export class PointOfSaleComponent {
   public filteredMenu;
   public menuCopy;
   public isPollingRequired =  this.__sessionWrapper.isPollingRequired()
+  public isTaxInclusive = this.__sessionWrapper.isTaxInclusive()
+  public taxPercentage = this.isTaxInclusive? 0: Number(this.__sessionWrapper.getItem('tax_percentage'))
   public pollingFrequency = Number(this.__sessionWrapper.getItem('ui_polling_for_mobile_order_receipt_printing_frequency'))
   searchText = '';
   private currentCategoryId;
@@ -247,7 +249,8 @@ export class PointOfSaleComponent {
         })
       } else {
         itemAdded.quantity += 1
-        this.summary.amount += itemAdded.price
+        let pricebeAdded = this.isTaxInclusive? itemAdded.price: itemAdded.price * (this.taxPercentage * 0.01)
+        this.summary.amount += pricebeAdded
         this.menuCopy = JSON.parse(JSON.stringify(this.menu))
       }
     } else {
@@ -271,7 +274,8 @@ export class PointOfSaleComponent {
           "parcel_available": item.parcel_available
         }
         item.quantity = 1
-        this.summary.amount += item.price
+        let pricebeAdded = (this.isTaxInclusive? item.price: item.price * (this.taxPercentage * 0.01))
+        this.summary.amount += pricebeAdded 
         this.summary.itemList.push(additionalItem)
         this.menuCopy = JSON.parse(JSON.stringify(this.menu))
       }
@@ -336,7 +340,7 @@ export class PointOfSaleComponent {
   }
 
   calculateItemAmount(item) {
-    return item.price * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
+    return (this.isTaxInclusive? item.price: item.price + (item.price * this.taxPercentage * 0.01)) * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
   }
 
   addParcelItem(item) {
@@ -429,6 +433,7 @@ export class PointOfSaleComponent {
     this.summary.itemList.forEach((ele) => {
       total += ele.price * (ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0));
     });
+    total = this.isTaxInclusive? total: total + (total * (this.taxPercentage * 0.01 ))
     return total;
   }
 

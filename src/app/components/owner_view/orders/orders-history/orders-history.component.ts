@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
@@ -6,8 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { HttpParams } from '@angular/common/http';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+import { MatSort, Sort } from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-orders-history',
@@ -31,6 +33,12 @@ export class OrdersHistoryComponent {
   showFirstLastButtons = true;
   disabled = false;
 
+  @ViewChild(MatSort)
+  sort: MatSort = new MatSort;
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+  private _liveAnnouncer = inject(LiveAnnouncer);
+
   timeFrames = [
     { ViewValue: 'Today', actualValue: 'today' },
     { ViewValue: 'This week', actualValue: 'this_week' },
@@ -40,18 +48,18 @@ export class OrdersHistoryComponent {
   ];
 
   displayedColumns: string[] = [
-    'Order No',
+    'orderno',
     'Order details',
     'Amount',
-    'Ordered By',
+    'ordered_by',
+    'OrderedAt',
     'Details',
   ];
-
+  public isTaxInclusive = this.__sessionWrapper.isTaxInclusive()
+  public taxPercentage = this.isTaxInclusive? 0: Number(this.__sessionWrapper.getItem('tax_percentage'))
   public showSpinner = true;
   public cancelledOrders = [];
-  public cancelledOrdersDataSource = new MatTableDataSource(
-    this.cancelledOrders
-  );
+  public cancelledOrdersDataSource = new MatTableDataSource();
 
   selectedTimeFrame = this.timeFrames[0];
   range = new FormGroup({
@@ -61,6 +69,12 @@ export class OrdersHistoryComponent {
 
   ngOnInit() {
     this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
+  }
+
+  ngAfterViewInit(){
+    this.cancelledOrdersDataSource.sort = this.sort
+    this.cancelledOrdersDataSource.paginator = this.paginator
+
   }
 
   getRestaurantOrdersAPIBody() {
@@ -78,6 +92,7 @@ export class OrdersHistoryComponent {
           ));
       } else {
         body = null;
+        this.showSpinner = false
       }
     } else {
       body['time_frame'] = this.selectedTimeFrame.actualValue;
@@ -119,6 +134,7 @@ export class OrdersHistoryComponent {
           this.unparseResponse(data);
           this.showSpinner = false;
           this.length = data['no_of_orders'];
+
         },
         (error) => {
           console.log(error);
@@ -138,11 +154,7 @@ export class OrdersHistoryComponent {
 
   unParsedOrder(order) {
     let done_time = order.done_time
-      ? new Date(order.done_time).toLocaleString()
-      : null;
     let ordered_time = order.ordered_time
-      ? new Date(order.ordered_time).toLocaleString()
-      : null;
     return {
       orderno: order.order_no,
       order_detail:
@@ -193,5 +205,18 @@ export class OrdersHistoryComponent {
     let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
       data: order,
     });
+  }
+
+
+  announceSortChange(sortState: Sort) {
+    // This example uses English messages. If your application supports
+    // multiple language, you would internationalize these strings.
+    // Furthermore, you can customize the message to add additional
+    // details about the values being sorted.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 }

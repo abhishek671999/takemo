@@ -40,14 +40,12 @@ export class ParcelDialogComponent {
 
   subItem(event, selectedDeliveryMode){
     event.stopPropagation()
-    if(this.itemCopy.quantity > 0){
-      if(selectedDeliveryMode == 1){
+      if(selectedDeliveryMode == 1 && (this.itemCopy.quantity - this.itemCopy.parcel_quantity) > 0){
         this.itemCopy.quantity -= 1
-      }else if(selectedDeliveryMode == 2){
+      }else if(selectedDeliveryMode == 2 && this.itemCopy.parcel_quantity > 0){
         this.itemCopy.parcel_quantity -= 1
         this.itemCopy.quantity -= 1
       }
-    }
   }
 
   submit(){

@@ -1,10 +1,12 @@
-<nav mat-tab-nav-bar>
-    <a mat-tab-link
-    *ngFor="let page of analyticsPages"
-    [routerLink]="page.href"
-    routerLinkActive #rla="routerLinkActive"
-    [active]="rla.isActive"
-    >{{page.name}}
-    </a>
-</nav>
-<router-outlet></router-outlet>
+<div>
+    <nav mat-tab-nav-bar>
+        <a mat-tab-link
+        *ngFor="let page of analyticsPages"
+        [routerLink]="page.href"
+        routerLinkActive #rla="routerLinkActive"
+        [active]="rla.isActive"
+        >{{page.name}}
+        </a>
+    </nav>
+    <router-outlet></router-outlet>
+</div>

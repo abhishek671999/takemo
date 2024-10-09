@@ -50,6 +50,8 @@ import { UploadFormComponent } from '../shared/upload-form/upload-form.component
 import { SendEmailReportDialogComponent } from './dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 import { AllRestaurantsCombinedComponent } from './analytics/all-restaurants-combined/all-restaurants-combined.component';
 import { MatSortModule } from '@angular/material/sort';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -102,7 +104,9 @@ import { MatSortModule } from '@angular/material/sort';
     MatPaginatorModule,
     MatSlideToggleModule,
     UploadFormComponent,
-    MatSortModule
+    MatSortModule,
+    MatMenuModule,
+    MatBadgeModule
   ],
   providers: [
     {

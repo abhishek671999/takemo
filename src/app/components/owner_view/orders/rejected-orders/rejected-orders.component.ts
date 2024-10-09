@@ -62,7 +62,6 @@ export class RejectedOrdersComponent {
       order_status: 'rejected',
     };
     let httpParams = new HttpParams();
-    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     httpParams = httpParams.append('offset', this.pageIndex * this.pageSize);
     httpParams = httpParams.append(
       'limit',

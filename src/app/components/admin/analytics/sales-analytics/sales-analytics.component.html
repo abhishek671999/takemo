@@ -37,13 +37,6 @@
         [for]="picker"
       ></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
-
-      <!-- @if (range.controls.start.hasError('matStartDateInvalid')) {
-        <mat-error>Invalid start date</mat-error>
-      }
-      @if (range.controls.end.hasError('matEndDateInvalid')) {
-        <mat-error>Invalid end date</mat-error>
-      } -->
     </mat-form-field>
 
     <mat-form-field *ngIf="counters.length > 0">
@@ -139,71 +132,75 @@
     </mat-slide-toggle>
   </div>
   <div class="total-view">
+    <b>Total Quantity: {{ totalOrders }}</b>
     <b>Total Amount:&nbsp;₹&nbsp;{{ totalAmount }}</b>
-    <b>Total Orders: {{ totalOrders }}</b>
   </div>
-  <div *ngIf="dataLoadSpinner" class="center-spin">
-    <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
-  </div>
+
 
   <div class="view-container">
-    <div *ngIf="tableView; else graphView">
-      <div class="table-container">
-        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
-          <!--- Note that these columns can be defined in any order.
-                The actual rendered columns are set as a property on the row definition" -->
-
-          <!-- Position Column -->
-          <ng-container matColumnDef="position">
-            <th mat-header-cell *matHeaderCellDef>No.</th>
-            <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-          </ng-container>
-
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
-            <td mat-cell *matCellDef="let element">{{ stringUtils.titleCase(element.name) }}</td>
-          </ng-container>
-
-          <!-- Weight Column -->
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>Quantity</th>
-            <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
-          </ng-container>
-
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="total_amount">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef>Total Amount</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.total_amount }}
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-
-        <div>
-          <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
-            Print Report
-          </button>
-          <!-- <button mat-raised-button (click)="openSendEmailDialogBox()" color="primary">
-            Send email report
-          </button> -->
-        </div>
-      </div>
-
+    <div *ngIf="dataLoadSpinner" class="center-spin">
+      <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
     </div>
-    <ng-template #graphView>
-      <div class="graph-container">
-        <div class="graph">
-          <canvas id="canvas1"></canvas>
+      <div *ngIf="tableView; else graphView">
+        <div class="table-container">
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+  
+            <ng-container matColumnDef="sl_no">
+              <th mat-header-cell *matHeaderCellDef>No.</th>
+              <td mat-cell [ngClass]="{'text-bold': ((i == 0 )&& (selectedGroup == 'All')) }" *matCellDef="let element; let i=index">{{ i + 1 }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell [ngClass]="{'text-bold': ((i == 0 )&& (selectedGroup == 'All'))  }" *matCellDef="let element; let i=index">{{ stringUtils.titleCase(element.name) }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>Quantity</th>
+              <td mat-cell [ngClass]="{'text-bold': ((i == 0 )&& (selectedGroup == 'All')) }" *matCellDef="let element; let i=index" >{{ element.quantity }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="total_amount">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>Total Amount</th>
+              <td mat-cell [ngClass]="{'text-bold': ((i == 0 )&& (selectedGroup == 'All')) }" *matCellDef="let element; let i=index">
+                &nbsp;₹&nbsp;{{ element.total_amount }}
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+  
+          <div>
+            <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+              Print Report
+            </button>
+            <!-- <button mat-raised-button (click)="openSendEmailDialogBox()" color="primary">
+              Send email report
+            </button> -->
+          </div>
         </div>
-        <div class="graph">
-          <canvas id="canvas2"></canvas>
-        </div>
+  
       </div>
-    </ng-template>
+      <ng-template #graphView>
+        <div class="graph-container">
+          <div class="graph">
+            <canvas id="canvas2"></canvas>
+          </div>
+          <div class="graph">
+            <canvas id="canvas1"></canvas>
+          </div>
+        </div>
+      </ng-template>
+
+  </div>
+  <div class="unsold-view-section">
+    <button mat-raised-button color="primary" matBadge="{{(unsold.length > 0)? unsold.length : 0}}" matBadgeSize="medium" [matMenuTriggerFor]="menu" >Unsold </button>
+    <mat-menu #menu="matMenu">
+    <ng-container *ngFor="let name of unsold">
+        <p  style="padding-left: 1em">{{name}}</p>
+    </ng-container>
+</mat-menu>
   </div>
 
 </div>

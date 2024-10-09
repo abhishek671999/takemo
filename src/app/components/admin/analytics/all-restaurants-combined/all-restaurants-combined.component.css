@@ -3,3 +3,15 @@
     min-height: 85vh;
     max-height: max-content;
 }
+
+table{
+    padding: 1em;
+    width: 100%;
+}
+
+@media screen and (max-width: 430px)  {
+    th, td{
+        padding: 6px;
+        font-size: small;
+    }
+}

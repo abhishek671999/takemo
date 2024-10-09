@@ -5,6 +5,10 @@
     font-style: normal;
   }
   
+.price-section{
+  display: flex;
+  flex-direction: column;
+}
   .upload-form {
     display: flex;
     max-width: 29rem;

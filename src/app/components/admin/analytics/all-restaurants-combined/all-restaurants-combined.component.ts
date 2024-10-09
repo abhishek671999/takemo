@@ -36,8 +36,9 @@ export class AllRestaurantsCombinedComponent {
   public selectedFromDate: Date | undefined
   public selectedToDate: Date | undefined
   public salesDataSource = new MatTableDataSource<multilocationSalesAnalytics>()
-  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_quantity', 'total_amount', 'total_amount_without_tax', 'total_gst_amount',]
+  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_quantity', 'total_amount', 'total_amount_without_tax', 'total_gst_amount','total_making_price',]
 
+  public dataLoadSpinner: boolean = false
   ngOnInit(){
     this.fetchAnalytics()
   }
@@ -48,6 +49,7 @@ export class AllRestaurantsCombinedComponent {
   }
 
   fetchAnalytics(){
+    this.dataLoadSpinner = true
     let body: getMultilocationSalesAnalytics | {} = {
       time_frame: this.selectedTimeFrame,
     }
@@ -65,8 +67,11 @@ export class AllRestaurantsCombinedComponent {
       this.analyticsService.getMultilocationSalesAnalytics(body).subscribe(
         (data: any) => {
           this.salesDataSource.data = data['sales_result']
+          this.dataLoadSpinner = false
         },
-        (error: any) => {}
+        (error: any) => {
+          this.dataLoadSpinner = false
+        }
       )
     }
   }
