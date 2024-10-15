@@ -212,7 +212,7 @@ public orderList = {
     // todo: update cart and handle parcel quantity and stock/inventory
     event.stopPropagation();
     console.log(item)
-    if(item.parcel_available) {
+    if(this.restaurantParcel && item.parcel_available) {
       let dialogRef = this.matdialog.open(ParcelDialogComponent, {
         data: {
           item: item, orderList: this.orderList
@@ -247,7 +247,7 @@ public orderList = {
 
   subItem(item, event){
     event.stopPropagation();
-    if(item.parcel_available) {
+    if(this.restaurantParcel && item.parcel_available) {
       let dialogRef = this.matdialog.open(ParcelDialogComponent, {
         data: {
           item: item, orderList: this.orderList

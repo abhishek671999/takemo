@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
@@ -12,6 +12,9 @@ import { PrintConnectorService } from 'src/app/shared/services/printer/print-con
 import { MatDialog } from '@angular/material/dialog';
 import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 import { StringUtils } from 'src/app/shared/utils/stringUtils';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-timely-analytics',
@@ -30,12 +33,21 @@ export class TimelyAnalyticsComponent {
     private __matDialog: MatDialog
   ) { }
 
+  @ViewChild(MatSort)
+  sort: MatSort = new MatSort;
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
+  private _liveAnnouncer = inject(LiveAnnouncer);
+
   timeFramesForTimelyAnalytics = [
+    { displayValue: 'Today', actualValue: 'today' },
+    { displayValue: 'Yesterday', actualValue: 'yesterday' }, 
     { displayValue: 'Last 30 days', actualValue: 'last_30_days' },
     { displayValue: 'Last month', actualValue: 'last_month' },
     // { displayValue: 'Last week', actualValue: 'last_week'}, //future
     { displayValue: 'Last 12 months', actualValue: 'last_12_months' },
-    // { displayValue: 'Calendar', actualValue: 'custom'}
+    { displayValue: 'Calendar', actualValue: 'custom'}
   ];
   categoryList = [{ name: 'select', id: 0 }];
   itemList = [{ name: 'select', id: 0 }];
@@ -61,6 +73,9 @@ export class TimelyAnalyticsComponent {
   restaurantFlag = this.__sessionWrapper.getItem('restaurant_id')
     ? true
     : false;
+
+  selectedDate = new Date();
+
   selectedRule;
   ruleList = [];
   totalAmount = 0;
@@ -70,14 +85,11 @@ export class TimelyAnalyticsComponent {
   tableView = true;
   counters = [];
   selectedCounterId;
+  dataLoadSpinner = false;
 
   chart2: any = [];
   chart4: any = [];
 
-  range = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-  });
 
   ngOnInit() {
     this._menuService.getMenu(this.selectedRestaurant).subscribe((data) => {
@@ -114,13 +126,18 @@ export class TimelyAnalyticsComponent {
       );
   }
 
+  ngAfterViewInit(){
+    this.dataSource.sort = this.sort
+    this.dataSource.paginator = this.paginator;
+  }
+
   onToggle(event) {
     this.tableView = !this.tableView;
     this.onValueChange('none');
   }
 
   onValueChange(value: string) {
-    let field = document.getElementById('calendarInputField');
+    this.dataLoadSpinner = true
 
     if (value == 'item') {
       this.selectedCategory = { name: 'select', id: 0 };
@@ -129,8 +146,7 @@ export class TimelyAnalyticsComponent {
     }
     console.log('IN value change', this.selectedTimeFrameForTimelyAnalytics);
     if (this.selectedTimeFrameForTimelyAnalytics == 'custom') {
-      field.classList.remove('hidden');
-      if (this.range.value.start && this.range.value.end) {
+      if (this.selectedDate) {
         try {
           this.chart2.destroy();
           this.chart4.destroy();
@@ -140,7 +156,6 @@ export class TimelyAnalyticsComponent {
         this.createTimelyAnalytics(this.getRequestBodyPrepared());
       }
     } else {
-      field.classList.add('hidden');
       try {
         this.chart2.destroy();
         this.chart4.destroy();
@@ -159,11 +174,6 @@ export class TimelyAnalyticsComponent {
     );
   }
 
-  dateChanged() {
-    if (this.range.value.start && this.range.value.end) {
-      this.createTimelyAnalytics(this.getRequestBodyPrepared());
-    }
-  }
 
   getRequestBodyPrepared() {
     let body = {
@@ -183,17 +193,13 @@ export class TimelyAnalyticsComponent {
     console.log(
       'New: ',
       this.selectedTimeFrameForTimelyAnalytics,
-      this.range.value.start,
-      this.range.value.end
+
     );
     if (this.selectedTimeFrameForTimelyAnalytics == 'custom') {
-      if (this.range.value.start && this.range.value.end) {
+      if (this.selectedDate) {
         body['time_frame'] = this.selectedTimeFrameForTimelyAnalytics;
-        body['start_date'] = this.dateUtils.getStandardizedDateFormate(
-          this.range.value.start
-        );
-        body['end_date'] = this.dateUtils.getStandardizedDateFormate(
-          this.range.value.end
+        body['date'] = this.dateUtils.getStandardizedDateFormate(
+          new Date(this.selectedDate)
         );
       } else {
         body = null;
@@ -205,10 +211,11 @@ export class TimelyAnalyticsComponent {
   }
 
   createTimelyAnalytics(body) {
-    console.log('this is body', body);
+    console.log('this is body:: ', body);
     if (body) {
       this._analyticsService.getTimelyAnalyticsData(body).subscribe(
         (data) => {
+          console.log(data)
           console.log(
             'Timely analytics',
             data[this.selectedTimeFrameForTimelyAnalytics],
@@ -228,9 +235,11 @@ export class TimelyAnalyticsComponent {
               this.selectedTimeFrameForTimelyAnalytics
             );
           }
+          this.dataLoadSpinner = false
         },
         (error) => {
           console.log('Error in create timely anlaytics');
+          this.dataLoadSpinner = false
         }
       );
     }
@@ -368,6 +377,18 @@ export class TimelyAnalyticsComponent {
       : prefix
         ? fixValue.repeat(length - string.length) + string
         : string + fixValue.repeat(length - string.length);
+  }
+
+  announceSortChange(sortState: Sort) {
+    // This example uses English messages. If your application supports
+    // multiple language, you would internationalize these strings.
+    // Furthermore, you can customize the message to add additional
+    // details about the values being sorted.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
 }

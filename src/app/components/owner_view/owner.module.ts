@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { OwnerRoutingModule } from './owner-routing.module';
 import { HomeComponent } from './home/home.component';
 import { CurrentOrdersComponent } from './orders/current-orders/current-orders.component';
@@ -11,7 +10,7 @@ import { DeliveryOrderDialogComponent } from './dialogbox/delivery-order-dialog/
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { OrdersHomeComponent } from './orders/orders-home/orders-home.component';
@@ -51,6 +50,7 @@ import { AddPaymentDialogComponent } from './dialogbox/add-payment-dialog/add-pa
 import { AddExpenseDialogComponent } from './dialogbox/add-expense-dialog/add-expense-dialog.component';
 import { EditExpenseDialogComponent } from './dialogbox/edit-expense-dialog/edit-expense-dialog.component';
 import { EditCategoryDialogComponent } from './dialogbox/edit-category-dialog/edit-category-dialog.component';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -111,7 +111,8 @@ import { EditCategoryDialogComponent } from './dialogbox/edit-category-dialog/ed
     MatSlideToggleModule,
     PdfViewerModule,
     MatSnackBarModule,
-    UploadFormComponent
+    UploadFormComponent,
+    MatSortModule,
   ],
   exports: [],
 })

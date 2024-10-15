@@ -41,14 +41,15 @@ html{
 }
 
 .category-bar{
-    width: 20%;
-    height: 60vh;
-    overflow: scroll;
+    width: max-content;
+    margin: 0 1em;
+    height: 70vh;
+    overflow: auto;
 }
 
 .items-section{
     width: 80%;
-    height: 60vh;
+    height: 70vh;
     overflow: scroll;
 }
 
@@ -122,8 +123,13 @@ html{
 
 .nav-center-section{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+}
+
+.toggle-section{
+    text-align: center;
+    margin: 1em;
 }
 
 .menu-action-bar{

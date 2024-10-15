@@ -157,11 +157,7 @@ export class CurrentOrdersComponent {
 
   unParsedOrder(order) {
     let done_time = order.done_time
-      ? new Date(order.done_time).toLocaleString()
-      : null;
     let ordered_time = order.ordered_time
-      ? new Date(order.ordered_time).toLocaleString()
-      : null;
     return {
       orderno: order.order_no,
       order_detail:

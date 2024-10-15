@@ -4,12 +4,12 @@
         <a style="text-decoration: none; color: rgb(225, 223, 223);" ><mat-icon> store</mat-icon></a>
         <div class="dropdown-content" >
           <div *ngFor="let restaurant of meData['restaurants']">
-            <a (click)="setRestaurantsessionVariable(restaurant)" style="margin: 0; font-weight: 400; font-size: small;">{{restaurant['restaurant_name']}}</a>
+            <a (click)="setRestaurantsessionVariable(restaurant)" [style.font-weight]="getSelectedRestaurantId() == restaurant.restaurant_id? 'bolder': 'lighter'">{{restaurant['restaurant_name']}}</a>
           </div>
         </div>
       </div>
       
-      <a style="text-decoration: none; color: rgb(225, 223, 223);" href="user/support"><mat-icon>contact_support</mat-icon></a>
+      <a style="text-decoration: none; color: rgb(225, 223, 223); " href="user/support"><mat-icon>contact_support</mat-icon></a>
       <a style="text-decoration: none; color: rgb(225, 223, 223);" href="user/profile"><mat-icon>person_outline</mat-icon></a>
       <div class="logo-home">
         <a href="/home"><img src="assets/images/takemo_logo_transparent.png" alt="takemo-logo"></a>

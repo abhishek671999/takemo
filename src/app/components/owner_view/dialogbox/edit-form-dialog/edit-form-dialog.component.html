@@ -22,11 +22,15 @@
                       <mat-radio-button value="3" [checked]="data.item_unit.toLowerCase() == 'litre'">Litres</mat-radio-button>
                     </mat-radio-group>
                   </div>
-                  <div *ngIf="!showSubUnitSection()">
+                  <div *ngIf="!showSubUnitSection()" class="price-section">
                     <mat-form-field>
                         <mat-label>Price</mat-label>
-                    <input matInput placeholder="Price" value="{{data.price}}" formControlName="price">
+                      <input matInput placeholder="Price" value="{{data.price}}" formControlName="price">
                     </mat-form-field>
+                    <mat-form-field>
+                      <mat-label>Making price</mat-label>
+                    <input matInput placeholder="Price" value="{{data.making_price}}" formControlName="makingPrice">
+                  </mat-form-field>
                   </div>
                   <div *ngIf="!showSubUnitSection() && isTypeEcom()">
                       <mat-form-field>

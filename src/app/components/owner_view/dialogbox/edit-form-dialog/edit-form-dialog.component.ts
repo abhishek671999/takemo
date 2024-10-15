@@ -19,7 +19,9 @@ export class EditFormDialogComponent {
     private _editMenuService: EditMenuService,
     private __imageService: ImagesService,
     private __sessionWrapper: sessionWrapper
-  ) { }
+  ) { 
+    console.log('this is data: ', data)
+  }
 
   public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
   public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
@@ -61,6 +63,7 @@ export class EditFormDialogComponent {
     name: [this.data.name, Validators.required],
     price: [this.data.price],
     mrpPrice: [this.data.mrp_price],
+    makingPrice: [this.data.making_price],
     isVeg: [this.data.veg ? 'veg' : this.data.non_veg ? 'non_veg' : 'egg', Validators.required],
     counterId: [this.data.counter.counter_id],
     itemUnit: [{'Piece': '1', 'Grams': '2', 'Litre': '3'}[this.data.item_unit], Validators.required],
@@ -74,6 +77,7 @@ export class EditFormDialogComponent {
       item_id: this.editMenuForm.value.id,
       name: this.editMenuForm.value.name,
       price: this.editMenuForm.value.price,
+      making_price: Number(this.editMenuForm.value.makingPrice),
       veg: this.editMenuForm.value.isVeg == 'veg' ? true : false,
       non_veg: this.editMenuForm.value.isVeg == 'non_veg' ? true : false,
       egg: this.editMenuForm.value.isVeg == 'egg' ? true : false,

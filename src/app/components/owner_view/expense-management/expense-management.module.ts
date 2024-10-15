@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ExpenseManagementRoutingModule } from './expense-management-routing.module';
 import { ExpenseManagementHomeComponent } from './expense-management-home/expense-management-home.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   imports: [
     CommonModule,
     ExpenseManagementRoutingModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTabsModule
   ]
 })
 export class ExpenseManagementModule { }

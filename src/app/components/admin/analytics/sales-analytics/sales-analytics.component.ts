@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
@@ -18,6 +18,9 @@ import { PrintConnectorService } from 'src/app/shared/services/printer/print-con
 import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { StringUtils } from 'src/app/shared/utils/stringUtils';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 
 export type ChartOptions = {
@@ -36,6 +39,11 @@ export class SalesAnalyticsComponent {
   @ViewChild('chart') chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
+  @ViewChild(MatSort)
+  sort: MatSort = new MatSort;
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
   constructor(
     private _analyticsService: AnalyticsService,
     private _menuService: MenuService,
@@ -49,6 +57,9 @@ export class SalesAnalyticsComponent {
   ) {
     
   }
+
+  private _liveAnnouncer = inject(LiveAnnouncer);
+
 
   timeFrames = [
     { displayValue: 'Today', actualValue: 'today' },
@@ -114,6 +125,7 @@ export class SalesAnalyticsComponent {
   selectedCounterId;
   tableView = true;
   dataLoadSpinner = false;
+  analyticsSpinner 
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -121,9 +133,15 @@ export class SalesAnalyticsComponent {
   });
 
   ELEMENT_DATA = [];
+  
 
-  displayedColumns: string[] = ['position', 'name', 'quantity', 'total_amount'];
+  displayedColumns: string[] = ['sl_no', 'name', 'quantity', 'total_amount'];
   public dataSource = new MatTableDataSource();
+
+  public unsoldItems = []
+  public unsoldCategories = []
+  public unsold = []
+
   ngOnInit() {
     this._ruleService.getAllRules().subscribe((data) => {
       data['rules'].forEach((element) => {
@@ -146,6 +164,11 @@ export class SalesAnalyticsComponent {
           console.log('Error: ', error);
         }
       );
+  }
+
+  ngAfterViewInit(){
+    this.dataSource.sort = this.sort
+    this.dataSource.paginator = this.paginator;
   }
 
   onToggle(event) {
@@ -281,6 +304,9 @@ export class SalesAnalyticsComponent {
         (data) => {
           this.totalOrders = data['quantity']['total_quantity'];
           this.totalAmount = data['amount']['total_amount'];
+          this.unsoldCategories = data['unsold_categories']
+          this.unsoldItems = data['unsold_items']
+          this.unsold = this.unsoldCategories.concat(this.unsoldItems)
           if (this.tableView) {
             this.dataSource.data = this.parseResponse(data);
           } else {
@@ -352,7 +378,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['quantity']),
         datasets: [
           {
-            label: 'Number of orders',
+            label: 'Total Quantity',
             data: totalOrders,
             borderWidth: 1,
           },
@@ -380,7 +406,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['category_wise_data']),
         datasets: [
           {
-            label: 'Total amount ordered',
+            label: 'Total Amount',
             data: chartData,
             borderWidth: 1,
           },
@@ -408,7 +434,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['item_wise_data']),
         datasets: [
           {
-            label: 'Amount ordered',
+            label: 'Total Amount',
             data: chartData,
             borderWidth: 1,
           },
@@ -465,7 +491,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['category_wise_data']),
         datasets: [
           {
-            label: '# of orders',
+            label: 'Total Quantity',
             data: chartData,
             borderWidth: 1,
           },
@@ -494,7 +520,7 @@ export class SalesAnalyticsComponent {
         labels: Object.keys(data['item_wise_data']),
         datasets: [
           {
-            label: '# of orders',
+            label: 'Total Quantity',
             data: chartData,
             borderWidth: 1,
           },
@@ -592,6 +618,18 @@ export class SalesAnalyticsComponent {
 
   openSendEmailDialogBox() {
     let dialogRef = this.__matDialog.open(SendEmailReportDialogComponent, {data: {requestBody: this.getRequestBodyPrepared()}});
+  }
+
+  announceSortChange(sortState: Sort) {
+    // This example uses English messages. If your application supports
+    // multiple language, you would internationalize these strings.
+    // Furthermore, you can customize the message to add additional
+    // details about the values being sorted.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
 

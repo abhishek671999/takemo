@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Component, inject, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { getMultilocationSalesAnalytics, multilocationSalesAnalytics } from 'src/app/shared/datatypes/analytics';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 
@@ -10,6 +14,12 @@ import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.se
 export class AllRestaurantsCombinedComponent {
 
   constructor(private analyticsService: AnalyticsService){}
+
+  @ViewChild(MatSort)
+  sort: MatSort = new MatSort;
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+  private _liveAnnouncer = inject(LiveAnnouncer);
 
   timeFrames = [
     { displayValue: 'Today', actualValue: 'today' },
@@ -25,14 +35,21 @@ export class AllRestaurantsCombinedComponent {
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
   public selectedFromDate: Date | undefined
   public selectedToDate: Date | undefined
-  public salesDataSource: multilocationSalesAnalytics[] = []
-  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_quantity', 'total_amount', 'total_amount_without_tax', 'total_gst_amount',]
+  public salesDataSource = new MatTableDataSource<multilocationSalesAnalytics>()
+  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_quantity', 'total_amount', 'total_amount_without_tax', 'total_gst_amount','total_making_price',]
 
+  public dataLoadSpinner: boolean = false
   ngOnInit(){
     this.fetchAnalytics()
   }
 
+  ngAfterViewInit(){
+    this.salesDataSource.sort = this.sort
+    this.salesDataSource.paginator = this.paginator;
+  }
+
   fetchAnalytics(){
+    this.dataLoadSpinner = true
     let body: getMultilocationSalesAnalytics | {} = {
       time_frame: this.selectedTimeFrame,
     }
@@ -49,13 +66,26 @@ export class AllRestaurantsCombinedComponent {
     if (Object.keys(body).length > 0) {
       this.analyticsService.getMultilocationSalesAnalytics(body).subscribe(
         (data: any) => {
-          this.salesDataSource = data['sales_result']
+          this.salesDataSource.data = data['sales_result']
+          this.dataLoadSpinner = false
         },
-        (error: any) => {}
+        (error: any) => {
+          this.dataLoadSpinner = false
+        }
       )
     }
+  }
 
-
+  announceSortChange(sortState: Sort) {
+    // This example uses English messages. If your application supports
+    // multiple language, you would internationalize these strings.
+    // Furthermore, you can customize the message to add additional
+    // details about the values being sorted.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
 }
