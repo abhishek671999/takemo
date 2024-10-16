@@ -20,6 +20,10 @@
     height:70vh
 }
 
+.table-section{
+    width: 100%;
+    overflow: auto;
+}
 
 .viewport {
     height: 65vh;
