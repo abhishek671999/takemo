@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
@@ -9,6 +9,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { HttpParams } from '@angular/common/http';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
+import { MatSort, Sort } from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-current-orders',
@@ -22,6 +24,11 @@ export class CurrentOrdersComponent {
     private _ruleService: RulesService,
     private dateUtils: dateUtils
   ) {}
+
+  @ViewChild(MatSort)
+  sort: MatSort = new MatSort;
+
+  private _liveAnnouncer = inject(LiveAnnouncer);
 
   length = 50;
   pageSize = 10;
@@ -57,10 +64,11 @@ export class CurrentOrdersComponent {
   loadView = false;
 
   displayedColumns: string[] = [
-    'Order No',
+    'orderno',
     'Order details',
     'Amount',
-    'Ordered By',
+    'ordered_by',
+    'OrderedAt',
     'Details',
   ];
 
@@ -216,5 +224,17 @@ export class CurrentOrdersComponent {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     this.getRestaurantCurrentForAdminsOrders();
+  }
+
+  announceSortChange(sortState: Sort) {
+    // This example uses English messages. If your application supports
+    // multiple language, you would internationalize these strings.
+    // Furthermore, you can customize the message to add additional
+    // details about the values being sorted.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 }

@@ -35,12 +35,12 @@ export class OrdersHistoryComponent {
 
   @ViewChild(MatSort)
   sort: MatSort = new MatSort;
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
+
   private _liveAnnouncer = inject(LiveAnnouncer);
 
   timeFrames = [
     { ViewValue: 'Today', actualValue: 'today' },
+    { ViewValue: 'Yesterday', actualValue: 'yesterday'},
     { ViewValue: 'This week', actualValue: 'this_week' },
     { ViewValue: 'This month', actualValue: 'this_month' },
     { ViewValue: 'Last month', actualValue: 'last_month' },
@@ -73,8 +73,6 @@ export class OrdersHistoryComponent {
 
   ngAfterViewInit(){
     this.cancelledOrdersDataSource.sort = this.sort
-    this.cancelledOrdersDataSource.paginator = this.paginator
-
   }
 
   getRestaurantOrdersAPIBody() {
