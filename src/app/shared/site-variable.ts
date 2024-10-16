@@ -173,22 +173,8 @@ export class sessionWrapper {
   }
 
   doesUserBelongsToITT() {
-    let validation = false;
-    this.meAPIUtility.getMeData().subscribe((data) => {
-      for (let company of data['companies']) {
-        if (company.role_name == 'corporate_admin' && company.company_id == 1) {
-          validation = true;
-        }
-      }
-      for (let restaurant of data['restaurants']) {
-        if (
-          restaurant.role_name == 'restaurant_admin' &&
-          [1, 2].includes(restaurant.restaurant_id)
-        ) {
-          validation = true;
-        }
-      }
-    });
+    let restaurantId = Number(this.getItem('restaurant_id'))
+    let validation = [1, 2].includes(restaurantId);
     return validation;
   }
 
