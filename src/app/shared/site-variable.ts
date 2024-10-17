@@ -101,7 +101,11 @@ export class sessionWrapper {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
           this.isOwner = true
-          if (data['restaurants'].length > 2) this.isMultiRestaurantOwner = true
+          if (data['restaurants'].length > 2) {
+            this.isMultiRestaurantOwner = true
+          } else{
+            this.isMultiRestaurantOwner = false
+          }
         } else if (data['companies'].length > 0) {
           this.isAdmin = true
         } else {
