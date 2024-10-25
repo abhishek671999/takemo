@@ -31,6 +31,7 @@ export class PostLoginComponent {
           this._router.navigate([navigationURL]);
         } else if (this.myInfo['companies'].length > 0) {
           sessionStorage.setItem('company_id', data['companies'][0]['company_id'])
+          localStorage.setItem('role', 'corporate_admin')
           this._router.navigate(['admin/user-management']);
         } else {
           if (Boolean(this.myInfo['first_name'])) {

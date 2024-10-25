@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
 import { HttpParams } from '@angular/common/http';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
+import { AddItemNoteDialogComponent } from '../../shared/add-item-note-dialog/add-item-note-dialog.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -32,7 +33,8 @@ export class PointOfSaleComponent {
     private _counterService: CounterService,
     private __snackbar: MatSnackBar,
     private __sessionWrapper: sessionWrapper,
-    private receiptPrintFormatter: ReceiptPrintFormatter
+    private receiptPrintFormatter: ReceiptPrintFormatter,
+    private matdialog: MatDialog
   ) {
 
   }
@@ -78,6 +80,10 @@ export class PointOfSaleComponent {
     this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
 
     if(this.isPollingRequired) this.pollingInterval = this.startMobileOrderingPoll()
+  }
+
+  openAddItemNotesWindow(item){
+    this.matdialog.open(AddItemNoteDialogComponent, {data: item} )
   }
 
   startMobileOrderingPoll(){
@@ -444,7 +450,10 @@ export class PointOfSaleComponent {
       );
       this.filteredMenu[this.filteredMenu.length - 1].category.items =
         this.menuCopy[this.menuCopy.length - 1].category.items.filter((item) =>
-          item.name.toLowerCase().includes(this.searchText.toLowerCase())
+         {
+          let acronym = item.name.split(/\s/).reduce((response,word)=> response+=word.slice(0,1),'')
+          return ((item.name.toLowerCase().includes(this.searchText.toLowerCase())) || (acronym.toLowerCase().includes(this.searchText.toLowerCase())))
+        }
         );
     } else {
       this.menu = JSON.parse(JSON.stringify(this.menuCopy));
@@ -474,7 +483,8 @@ export class PointOfSaleComponent {
         item_unit_price_id: ele.item_unit_price_id,
         quantity: ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0),
         parcel_quantity: ele.parcel_quantity,
-        counter: ele.counter
+        counter: ele.counter,
+        note: ele.note
       });
     });
     let body = {

@@ -111,8 +111,6 @@ export class EditMenuComponent {
         this.menu = data['menu']
         this.createAllCategory();
         this.allCategories = this.parseCategories()
-        this.selectedCategory = [this.allCategories[0]]
-        console.log(this.allCategories, 'all categories')
         this.showCategory()
         this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
       },
@@ -127,9 +125,13 @@ export class EditMenuComponent {
 
   showCategory() {
     if (this.selectedCategory.length > 0) {
-      this.visibleCategory = this.menu.filter(category => category.category.id == this.selectedCategory[0].categoryId)
+      let lastViewCategory = localStorage.getItem('lastViewCategoryId')
+      let categoryId = lastViewCategory? lastViewCategory: this.selectedCategory[0].categoryId
+      this.visibleCategory = this.menu.filter(category => category.category.id == categoryId)
       this.dataSource.data = this.visibleCategory[0].category.items
+      this.selectedCategory = this.allCategories.filter((ele) => ele.categoryId == categoryId)
     } else {
+      this.selectedCategory = [this.allCategories[0]]
       this.visibleCategory = this.menu
       this.dataSource.data = this.visibleCategory[0].category.items
     }
@@ -417,6 +419,7 @@ export class EditMenuComponent {
 
   onCategorySelection(category) {
     this.selectedCategory = this.allCategories.filter(ele => ele == category)
+    localStorage.setItem('lastViewCategoryId', this.selectedCategory[0].categoryId)
     this.showCategory()
   }
 

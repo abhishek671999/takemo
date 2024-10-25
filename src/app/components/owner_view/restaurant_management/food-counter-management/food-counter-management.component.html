@@ -15,7 +15,10 @@
                                 <tr class="table-row"*ngFor="let counter of counterResponse; let mainIndex = index">
                                     <td class="col1" >{{mainIndex+1}}</td>
                                     <td class="col2" >
-                                        <mat-form-field class="example-full-width">
+                                        <div *ngIf="!counter.is_edit">
+                                            {{counter.counter_name}} 
+                                        </div>
+                                        <mat-form-field *ngIf="counter.is_edit">
                                             <mat-label>Counter name</mat-label>
                                             <input type="text" matInput value={{counter.counter_name}}  (blur)="editCounter(counter, $event)" placeholder={{counter.counter_name}} [disabled]="!counter.is_edit">
                                         </mat-form-field>

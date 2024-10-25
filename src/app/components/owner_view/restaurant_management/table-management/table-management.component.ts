@@ -26,6 +26,9 @@ export class TableManagementComponent {
     table_capacity: ['', [Validators.required]],
   });
 
+  newTableName = '';
+  newTableCapacity: number = 0;
+
   restaurantId = this.__sessionWrapper.getItem('restaurant_id');
   ngOnInit() {
     let httpParams = new HttpParams();
@@ -100,14 +103,15 @@ export class TableManagementComponent {
 
   addTable() {
     let body = {
-      name: this.tableFormControl.value.table_name,
-      capacity: this.tableFormControl.value.table_capacity,
+      name: this.newTableName,
+      capacity: this.newTableCapacity,
       restaurant_id: this.restaurantId,
     };
     this.__tableService.addTable(body).subscribe(
       (data) => {
         this.__dialog.open(SuccessMsgDialogComponent, {data: {msg: 'Successfully table Added'}})
-        this.tableFormControl.reset();
+        this.newTableCapacity = 0
+        this.newTableName = ''
         this.ngOnInit();
       },
       (error) => {

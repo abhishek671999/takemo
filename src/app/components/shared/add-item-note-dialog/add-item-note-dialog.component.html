@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>Add note to item: {{data.item_name}}</h2>
+<div mat-dialog-content>
+    <mat-form-field class="example-full-width">
+        <mat-label>Add a note</mat-label>
+        <input matInput placeholder="Add a note" [(ngModel)]="note">
+    </mat-form-field>
+</div>
+<mat-dialog-actions>
+    <button mat-raised-button (click)="close()">Close</button>
+    <button mat-raised-button (click)="addNote()" color="primary">Add Note</button>
+</mat-dialog-actions>

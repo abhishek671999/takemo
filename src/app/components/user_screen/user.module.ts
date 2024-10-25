@@ -49,12 +49,11 @@ import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
 import { RechargeWalletDialogComponent } from './recharge-wallet-dialog/recharge-wallet-dialog.component';
 import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
-import { ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
+import { ClickOutsideCartDirective, ClickOutsideDirective } from 'src/app/shared/utils/clickOutside';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ProfileComponent } from '../shared/profile/profile.component';
 import {MatBadgeModule} from '@angular/material/badge';
 import { UploadFormComponent } from "../shared/upload-form/upload-form.component";
-import { Menu2Component } from './menu2/menu2.component';
 import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
 
 
@@ -63,7 +62,6 @@ import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
         HomeComponent,
         UserComponent,
         MenuComponent,
-        Menu2Component,
         MyOrdersComponent,
         ConfirmationDialogComponent,
         DeleteConfirmationDialogComponent,
@@ -80,9 +78,8 @@ import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
         WalletComponent,
         RechargeWalletDialogComponent,
         PostRechargePaymentComponent,
-        ClickOutsideDirective,
+        ClickOutsideCartDirective,
         ProfileComponent,
-        Menu2Component,
         ParcelDialogComponent
     ],
     exports: [],

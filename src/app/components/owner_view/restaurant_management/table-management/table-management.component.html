@@ -16,13 +16,19 @@
                         <tr class="table-row"*ngFor="let table of tables; let mainIndex = index">
                             <td class="col1" >{{mainIndex+1}}</td>
                             <td class="col2" >
-                                <mat-form-field class="example-full-width">
+                                <div *ngIf="!table.is_edit">
+                                    {{table.table_name}}
+                                </div>
+                                <mat-form-field *ngIf="table.is_edit">
                                     <mat-label>Table name</mat-label>
                                     <input type="text" class="table_name" matInput value={{table.table_name}}  (blur)="editTable(table, $event)" placeholder={{table.table_name}} [disabled]="!table.is_edit">
                                 </mat-form-field>
                             </td>
                             <td class="col3" >
-                                <mat-form-field class="example-full-width">
+                                <div *ngIf="!table.is_edit">
+                                    {{table.capacity}}
+                                </div>
+                                <mat-form-field *ngIf="table.is_edit">
                                     <mat-label>Capacity</mat-label>
                                     <input type="text" class="table_capacity" #table_capacity matInput value={{table.capacity}}  (blur)="editTable(table, $event)" placeholder={{table.capacity}} [disabled]="!table.is_edit">
                                 </mat-form-field>
@@ -37,18 +43,18 @@
                         <tr>
                             <td>-</td>
                             <td>
-                                <form [formGroup]="tableFormControl">
-                                    <mat-form-field class="example-full-width">
-                                        <mat-label>Table name</mat-label>
-                                        <input matInput type="text" formControlName="table_name" placeholder="Table name">
-                                    </mat-form-field>
-                                    <mat-form-field class="example-full-width">
-                                        <mat-label>Capacity</mat-label>
-                                        <input matInput type="text" formControlName="table_capacity" placeholder="Table name">
-                                      </mat-form-field>
-                                </form>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Table name</mat-label>
+                                    <input matInput type="text" [(ngModel)]="newTableName" placeholder="Table name">
+                                </mat-form-field>
                             </td>
-                            <td><button mat-raised-button [disabled]="!tableFormControl.valid" (click)="addTable()" >Add Table</button></td>
+                            <td>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Capacity</mat-label>
+                                    <input matInput type="number" [(ngModel)]="newTableCapacity" placeholder="Table name">
+                                  </mat-form-field>
+                            </td>
+                            <td><button mat-raised-button [disabled]="! (newTableName && newTableCapacity)" (click)="addTable()" >Add Table</button></td>
                         </tr>
                     </tbody>
                 </table>

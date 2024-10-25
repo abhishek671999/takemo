@@ -125,6 +125,7 @@ export class sessionWrapper {
   setRestaurantSessionVariables(restaurant){
     sessionStorage.setItem('restaurant_id', restaurant['restaurant_id']) 
     localStorage.setItem('restaurant_id', restaurant['restaurant_id']) 
+    localStorage.setItem('role', restaurant['role_name'])
     sessionStorage.setItem(
       'restaurant_name',
       restaurant['restaurant_name']

@@ -133,46 +133,44 @@ export class HeaderComponent {
   
   public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
 
-    addAdminNavOptions(company){
-      this.location = company.company_name
-      let adminNavOptions
-      if(company.id == 1){
-        adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
-      }else{
-        adminNavOptions = ['userOrders', 'menu', 'admin_current_orders', 'analytics', 'shift']
-      }
-
-      for(let option of adminNavOptions){
-        if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
-          this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
-        }
-      }
-      
-    }
+  // addAdminNavOptions(company){
+  //   this.location = company.company_name
+  //   let adminNavOptions
+  //   if(company.id == 1){
+  //     adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
+  //   }else{
+  //     adminNavOptions = ['userOrders', 'menu', 'admin_current_orders', 'analytics', 'shift']
+  //   }
+  //   for(let option of adminNavOptions){
+  //     if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+  //       this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
+  //     }
+  //   }
+  // }
   
-  addRestaurantOwnerNavOptions(restaurant){
-    let restaurantOwnerNavOptions
+  // addRestaurantOwnerNavOptions(restaurant){
+  //   let restaurantOwnerNavOptions
 
-    if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
-      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
-    }else{
-      restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
-    }
-    if (restaurant.expense_management) {
-      restaurantOwnerNavOptions.push('expense')
-    }
-    if (this.isPOSEnabled) { 
-      restaurantOwnerNavOptions.push('POS') 
-    }
-    if (restaurant.table_management) {
-      restaurantOwnerNavOptions.push('table')
-    }
-    for(let option of restaurantOwnerNavOptions){
-      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
-        this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
-      }
-    }
-  }
+  //   if(restaurant.restaurant_id == 1 || restaurant.restaurant_id == 2){
+  //     restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
+  //   }else{
+  //     restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
+  //   }
+  //   if (restaurant.expense_management) {
+  //     restaurantOwnerNavOptions.push('expense')
+  //   }
+  //   if (this.isPOSEnabled) { 
+  //     restaurantOwnerNavOptions.push('POS') 
+  //   }
+  //   if (restaurant.table_management) {
+  //     restaurantOwnerNavOptions.push('table')
+  //   }
+  //   for(let option of restaurantOwnerNavOptions){
+  //     if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+  //       this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
+  //     }
+  //   }
+  // }
 
   addUserNavOptions(){
     let userNavOptions = [ 'menu', 'userOrders']
@@ -201,35 +199,64 @@ export class HeaderComponent {
   meData: any;
   isRestaurantAdmin: boolean = false
   hasMultipleRestaurants: boolean = false
+  hasTableOrderingEnabled: boolean = false
+
+  addRestaurantOwnerNavOptions(){
+    let restaurantOwnerNavOptions
+    this.hasTableOrderingEnabled = this.__sessionWrapper.getItem('table_management') == 'true'? true: false;
+    let restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
+    let hasExpenseManagement = this.__sessionWrapper.getItem('expense_management') == 'true'? true: false;
+    let isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
+    if(restaurantId == 1 || restaurantId == 2){
+      restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
+    }else{
+      restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
+    }
+    if (hasExpenseManagement) {
+      restaurantOwnerNavOptions.push('expense')
+    }
+    if (isPOSEnabled) { 
+      restaurantOwnerNavOptions.push('POS') 
+    }
+    if (this.hasTableOrderingEnabled) {
+      restaurantOwnerNavOptions.push('table')
+    }
+    for(let option of restaurantOwnerNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
+
+  addAdminNavOptions(){
+    this.location = this.__sessionWrapper.getItem('company_name')
+    let companyId = Number(this.__sessionWrapper.getItem('company_id'))
+    let adminNavOptions
+    if(companyId == 1){
+      adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
+    }else{
+      adminNavOptions = ['userOrders', 'menu', 'admin_current_orders', 'analytics', 'shift']
+    }
+    for(let option of adminNavOptions){
+      if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
+        this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
+      }
+    }
+  }
 
   ngOnInit(){
-      this._meAPIutility.getMeData().subscribe(data => {
-        console.log('Header component: ', data)
-        this.meData = data
+    let role = localStorage.getItem('role')
+    if(role == 'restaurant_admin') this.addRestaurantOwnerNavOptions();
+    else if (role == 'restaurant_staff') this.addRestaurantStaffNavOptions();
+    else if (role == 'corporate_admin') this.addAdminNavOptions
+    else this.addUserNavOptions()
+    this._meAPIutility.getMeData().subscribe(data => {
+      console.log('Header component: ', data)
+      this.meData = data
       this.username = data['username'] ? data['username'] : data['email']
       this.hasMultipleRestaurants = data['restaurants'].length > 1
-          for(let company of data['companies']){
-            if(company.role_name == 'corporate_admin'){
-              this.addAdminNavOptions(company)
-              break
-            }
-          }
-          for(let restaurant of data['restaurants']){
-            if(restaurant.role_name == 'restaurant_admin'){
-              this.isRestaurantAdmin = true
-              this.addRestaurantOwnerNavOptions(restaurant)
-              break
-            }else if(restaurant.role_name == 'restaurant_staff'){
-              this.addRestaurantStaffNavOptions()
-              break
-            }
-          }
-          if(data['restaurants'].length == 0 && data['companies'].length == 0){
-            this.addUserNavOptions()
-        }
-      })
-
-    
+      }
+    )
    }  
 
   onClick(index: number) {
@@ -239,12 +266,18 @@ export class HeaderComponent {
   }
 
   setRestaurantsessionVariable(restaurant){
+    localStorage.setItem('role', restaurant.role_name)
     this.__sessionWrapper.setRestaurantSessionVariables(restaurant)
     window.location.reload()
   }
 
   getSelectedRestaurantId(){
     return localStorage.getItem('restaurant_id')
+  }
+
+  closeNav(){
+    let checkbox = document.getElementById('hamburger-checkbox') as HTMLInputElement;
+    checkbox.checked = false
   }
 
 }

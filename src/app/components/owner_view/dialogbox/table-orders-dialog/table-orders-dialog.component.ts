@@ -11,6 +11,8 @@ import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+import { ConfirmationDialogComponent } from 'src/app/components/user_screen/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
 
 @Component({
   selector: 'app-table-orders-dialog',
@@ -60,22 +62,29 @@ export class TableOrdersDialogComponent {
   }
 
   markPaymentDone() {
-    let body = {
-      table_id: this.data.table_id,
-    };
-    this.__tableService.closeTableSession(body).subscribe(
-      (data) => {
-        this.__matDialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Marked as payment done' },
-        });
-        this.dialogRef.close();
-      },
-      (error) => {
-        this.__matDialog.open(ErrorMsgDialogComponent, {
-          data: { msg: 'Request failed' },
-        });
-      }
-    );
+    let matdialogRef = this.__matDialog.open(ConfirmActionDialogComponent, {data: 'Close this table session?'})
+    matdialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if(data?.select){
+          let body = {
+            table_id: this.data.table_id,
+          };
+          this.__tableService.closeTableSession(body).subscribe(
+            (data) => {
+              this.__matDialog.open(SuccessMsgDialogComponent, {
+                data: { msg: 'Marked as payment done' },
+              });
+              this.dialogRef.close();
+            },
+            (error) => {
+              this.__matDialog.open(ErrorMsgDialogComponent, {
+                data: { msg: 'Request failed' },
+              });
+            }
+          );
+        }
+        }
+    )
   }
 
   printBill() {}

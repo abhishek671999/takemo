@@ -15,7 +15,7 @@
                     <th class="sl_no">Sl.no</th>
                     <th class="item">Item</th>
                     <th class="price">Price</th>
-                    <th class="quantity">Quantity</th>
+                    <th >Quantity</th>
                     <th class="total_price">Total price</th>
                     <th class="delete">Delete</th>
                 </tr>
@@ -28,7 +28,7 @@
                     <td class="quantity">
                         <mat-icon (click)="subItem(order)">remove_circle</mat-icon>
                         {{order.quantity}}
-                        <mat-icon (click)="addItem(order)">add_circle</mat-icon>
+                        <!-- <mat-icon (click)="addItem(order)">add_circle</mat-icon> -->
                     </td>
                     <td class="total_price">₹&nbsp;{{order.line_item_price}}</td>
                     <td class="delete">

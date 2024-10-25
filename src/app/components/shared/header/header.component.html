@@ -8,7 +8,7 @@
           </div>
         </div>
       </div>
-      
+      <a *ngIf="hasTableOrderingEnabled" style="text-decoration: none; color: rgb(225, 223, 223); " href="/owner/dine-in/table-cockpit"><mat-icon>table_restaurant</mat-icon></a>
       <a style="text-decoration: none; color: rgb(225, 223, 223); " href="user/support"><mat-icon>contact_support</mat-icon></a>
       <a style="text-decoration: none; color: rgb(225, 223, 223);" href="user/profile"><mat-icon>person_outline</mat-icon></a>
       <div class="logo-home">
@@ -17,8 +17,8 @@
     </div>
     <div class="text-center">
       <p class="m-0" style="color: white; text-decoration: underline; font-size: large;">{{location}}</p>
-    </div>
-    <div class="navigation">
+    </div> 
+    <div class="navigation" (clickOutside)="closeNav()">
       <input id='hamburger-checkbox' type="checkbox"
                 class="toggle-menu">
       <div class="hamburger"></div>
