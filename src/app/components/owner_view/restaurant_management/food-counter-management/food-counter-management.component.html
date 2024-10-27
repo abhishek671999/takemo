@@ -6,8 +6,9 @@
                                 <tr>
                                     <th class="col1" scope="col">Id</th>
                                     <th class="col2" scope="col">Name</th>
-                                    <th class="col3" scope="col">Edit</th>
-                                    <th class="col4" scope="col">Delete</th>
+                                    <th class="col3">IP address</th>
+                                    <th class="col4" scope="col">Edit</th>
+                                    <th class="col5" scope="col">Delete</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center" >
@@ -20,10 +21,19 @@
                                         </div>
                                         <mat-form-field *ngIf="counter.is_edit">
                                             <mat-label>Counter name</mat-label>
-                                            <input type="text" matInput value={{counter.counter_name}}  (blur)="editCounter(counter, $event)" placeholder={{counter.counter_name}} [disabled]="!counter.is_edit">
+                                            <input type="text" matInput [(ngModel)]="counter.counter_name" (keydown.enter)="editCounter(counter)" (blur)="editCounter(counter)" placeholder={{counter.counter_name}} [disabled]="!counter.is_edit">
                                         </mat-form-field>
                                     </td>
-                                    <td class="col3">
+                                    <td class="col3" >
+                                        <div *ngIf="!counter.is_edit">
+                                            {{counter.ip}} 
+                                        </div>
+                                        <mat-form-field *ngIf="counter.is_edit">
+                                            <mat-label>Enter IP address </mat-label>
+                                            <input type="text" matInput [(ngModel)]="counter.ip"  (keydown.enter)="editCounter(counter)" (blur)="editCounter(counter)" placeholder={{counter.ip}} [disabled]="!counter.is_edit">
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="col4">
                                         <mat-icon svgIcon="edit" title="Edit this item" (click)="enableEditCounter(counter)"></mat-icon>
                                     </td>
                                     <td>
@@ -33,12 +43,18 @@
                                 <tr>
                                     <td>-</td>
                                     <td>
-                                        <mat-form-field class="example-full-width">
+                                        <mat-form-field>
                                             <mat-label>Counter name</mat-label>
-                                            <input type="text" matInput [formControl]="counterFormControl" placeholder="Counter">
+                                            <input type="text" matInput [formControl]="counternameFormControl" placeholder="Counter name">
                                           </mat-form-field>
                                     </td>
-                                    <td><button mat-raised-button  [disabled]="!counterFormControl.valid" color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCounter()">Add Counter</button></td>
+                                    <td>
+                                        <mat-form-field>
+                                            <mat-label>Counter IP</mat-label>
+                                            <input type="text" matInput [formControl]="counterIPFormControl" placeholder="000.000.000.000">
+                                          </mat-form-field>
+                                    </td>
+                                    <td><button mat-raised-button  [disabled]="!(counternameFormControl.valid && counterIPFormControl.valid)" color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCounter()">Add Counter</button></td>
                                 </tr>
                             </tbody>
                         </table>

@@ -19,54 +19,150 @@ export class ReceiptPrintFormatter{
     private confirmedOrder
 
     set confirmedOrderObj(confirmedOrder: confirmedOrder){
+      console.log(confirmedOrder)
         this.confirmedOrder = confirmedOrder
     }
 
-    getMobileOrderPrintableText(){
-        let sectionSeperatorCharacters = '-'.repeat(42);
-        let content = [
-          {
-            text: this.sessionWrapper.getItem('restaurant_name'),
-            justification: 'center',
-            bold: true,
-            size: 'xlarge',
-          },
-          {
-            text: this.confirmedOrder.ordered_time,
-            justification: 'right',
-          },
-          {
-            text: sectionSeperatorCharacters,
-            bold: true,
-            justification: 'center',
-          },
-          {
-            text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
-            justification: 'left',
-            size: 'xlarge'
-          },
-          {
-            text: this.getFormattedParcelItemDetails(),
-            justification: 'left',
-          },
-          {
-            text: sectionSeperatorCharacters,
-            justification: 'center',
-          },
-          {
-            text: `Order No: ${this.confirmedOrder.order_no}`,
-            size: 'large',
-            bold: true,
-            justification: 'center',
-          },
-          {
-            text: `Order by: ${this.confirmedOrder.ordered_by}`,
-            size: 'normal',
-            bold: true,
-            justification: 'center',
-          }
-        ];
-        return content;
+    getKOTReceiptText(counters){
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let printObjs = []
+      if(counters.length > 0){
+        counters.forEach((counterEle) => {
+          let counterItemList = this.confirmedOrder.order_list.filter(
+            (lineItem: lineItem) => lineItem.counter.counter_id == counterEle.counter_id);
+          if (counterItemList.length) {
+            let counterObjs = [
+              {
+                text: 'Waiter KOT',
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.ordered_time,
+                justification: 'right',
+                size: 'small'
+              },
+              {
+                text: this.getFormattedCounterItemDetails(counterItemList),
+                justification: 'left',
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.table_name,
+                justification: 'center',
+              },
+              {
+                text: counterEle.counter_name,
+                justification: 'center',
+              },
+            ]
+            printObjs.push(counterObjs)
+          } 
+          })
+        }else{
+          let printObj = [
+            {
+              text: 'Waiter KOT',
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.ordered_time,
+              justification: 'right',
+              size: 'small'
+            },
+            {
+              text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
+              justification: 'left',
+            },
+            {
+              text: sectionSeperatorCharacters,
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.table_name,
+              justification: 'center',
+            },
+          ]
+          printObjs.push(printObj)
+      }
+      return printObjs
+    }
+
+    getWKOTReceiptText(counters){
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let printObjs = []
+      if(counters.length > 0){
+        counters.forEach((counterEle) => {
+          let counterItemList = this.confirmedOrder.order_list.filter(
+            (lineItem: lineItem) => lineItem.counter.counter_id == counterEle.counter_id);
+          if (counterItemList.length) {
+            let counterObjs = [
+              {
+                text: 'Waiter KOT',
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.ordered_time,
+                justification: 'right',
+                size: 'small'
+              },
+              {
+                text: this.getFormattedCounterItemDetails(counterItemList),
+                justification: 'left',
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.table_name,
+                justification: 'center',
+              },
+              {
+                text: counterEle.counter_name,
+                justification: 'center',
+              },
+              {
+                text: ' '.repeat(20) + 'X' + ' '.repeat(20),
+                justification: 'center',
+              },
+            ]
+            printObjs.push(counterObjs)
+          } 
+          })
+        }else{
+          let printObj = [
+            {
+              text: 'Waiter KOT',
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.ordered_time,
+              justification: 'right',
+              size: 'small'
+            },
+            {
+              text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
+              justification: 'left',
+            },
+            {
+              text: sectionSeperatorCharacters,
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.table_name,
+              justification: 'center',
+            },
+            {
+              text: ' '.repeat(20) + 'X' + ' '.repeat(20),
+              justification: 'center',
+            },
+          ]
+          printObjs.push(printObj)
+      }
+      return printObjs
     }
 
     getCustomerPrintableText() {
@@ -152,10 +248,73 @@ export class ReceiptPrintFormatter{
         return content;
     }
 
+    getWaiterCheckKOTText(counters){
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let content = [
+        {
+          text: this.dateUtils.getDateForRecipePrint(),
+          justification: 'right',
+          size: 'small'
+        },
+        {
+          text: this.confirmedOrder.table_name,
+          justification: 'center',
+        },
+      ]
+      if(this.confirmedOrder.waiter_name) content.push({
+          text: this.confirmedOrder.waiter_name,
+          justification: 'center',
+        })
+      content.push({
+        text: sectionSeperatorCharacters,
+        justification: 'center',
+      })
+      if(counters.length > 0){
+        counters.forEach((counterEle) => {
+          let counterItemList = this.confirmedOrder.order_list.filter(
+            (lineItem: lineItem) => lineItem.counter.counter_id == counterEle.counter_id);
+          if (counterItemList.length) {
+            let counterText = [
+              {
+                text: counterEle.counter_name,
+                justification: 'center',
+                size: 'large',
+              },
+              {
+                text: this.getFormattedCounterItemDetails(counterItemList),
+                justification: 'left',
+                size: 'large',
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+                size: 'large',
+              }
+            ]
+            counterText.forEach(ele => content.push(ele))
+          }  
+          })
+        }else{
+        let printObj = [
+          {
+            text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
+            justification: 'left',
+            size: 'small',
+          },
+          {
+            text: sectionSeperatorCharacters,
+            justification: 'center',
+            size: 'small',
+          },
+        ];
+        printObj.forEach(ele => content.push(ele))
+      }
+      return content
+    }
+
     getCounterPrintableText(counters) {
       let sectionSeperatorCharacters = '-'.repeat(42);
       let countersWithOrders = [];
-      debugger
       if(counters.length > 0){
         counters.forEach((counterEle) => {
           let counterItemList = this.confirmedOrder.order_list.filter(
@@ -183,7 +342,6 @@ export class ReceiptPrintFormatter{
               },
               {
                 text: this.getFormattedCounterItemDetails(counterItemList),
-                size: 'xlarge', 
               },
               {
                 text: sectionSeperatorCharacters,
@@ -197,6 +355,14 @@ export class ReceiptPrintFormatter{
                     bold: true,
                     justification: 'center',
               })
+            }
+            if(this.confirmedOrder.table_name){
+              printObj.push({
+                text: `Table: ${this.confirmedOrder.table_name}`,
+                size: 'large',
+                bold: true,
+                justification: 'center',
+          })
             }
             countersWithOrders.push(printObj);
           }
@@ -221,7 +387,6 @@ export class ReceiptPrintFormatter{
           },
           {
             text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
-            size: 'xlarge', 
           },
           {
             text: sectionSeperatorCharacters,
@@ -241,7 +406,7 @@ export class ReceiptPrintFormatter{
       }
     }
 
-    
+  
   private getFormattedCounterItemDetails(counterItemList) {
       let formattedText = '';
       counterItemList.forEach((element) => {
@@ -249,6 +414,7 @@ export class ReceiptPrintFormatter{
         let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(16, 36), 20, false, ' ') + '\n';
         let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
         formattedText += `- ${trimmedName}  ${itemQty}\n${remainingName}`
+        if(element.note) formattedText += `(${element.note})`
       })
       return formattedText
     }

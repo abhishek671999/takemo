@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { of, switchMap } from 'rxjs';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+
 
 @Component({
   selector: 'app-edit-form-dialog',
@@ -50,12 +51,17 @@ export class EditFormDialogComponent {
   }
   unitPriceDetails = []
   itemUnitPreviousValue = null
+
   ngOnInit() {
     this.unitPriceDetails = this.data.item_unit_price_list
     console.log('unitprice details array', this.unitPriceDetails)
     this.editMenuForm.get('itemUnit').valueChanges.subscribe(newValue => { // todo: maintain previous state
       this.itemUnitPreviousValue = this.editMenuForm.get('itemUnit').value;
     });
+  }
+  private readonly counterValidator: ValidatorFn = c => {
+    let tableManagement = this.__sessionWrapper.getItem('table_management') == 'true'? true: false
+    return  tableManagement ? Validators.required(c) : Validators.nullValidator(c);
   }
 
   editMenuForm = this._fb.group({
@@ -65,12 +71,13 @@ export class EditFormDialogComponent {
     mrpPrice: [this.data.mrp_price],
     makingPrice: [this.data.making_price],
     isVeg: [this.data.veg ? 'veg' : this.data.non_veg ? 'non_veg' : 'egg', Validators.required],
-    counterId: [this.data.counter.counter_id],
+    counterId: [this.data.counter.counter_id, this.counterValidator],
     itemUnit: [{'Piece': '1', 'Grams': '2', 'Litre': '3'}[this.data.item_unit], Validators.required],
     itemDescription: [this.data.item_description],
     subItemUnit: [''],
     inventory_stock: [this.data.inventory_stock]
   });
+
 
   editMenu() {
     let body = {

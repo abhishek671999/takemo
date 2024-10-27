@@ -8,9 +8,10 @@
           </div>
         </div>
       </div>
-      <a *ngIf="hasTableOrderingEnabled" style="text-decoration: none; color: rgb(225, 223, 223); " href="/owner/dine-in/table-cockpit"><mat-icon>table_restaurant</mat-icon></a>
-      <a style="text-decoration: none; color: rgb(225, 223, 223); " href="user/support"><mat-icon>contact_support</mat-icon></a>
-      <a style="text-decoration: none; color: rgb(225, 223, 223);" href="user/profile"><mat-icon>person_outline</mat-icon></a>
+      <a style="text-decoration: none; " [style.color]="printerConn.usbSought? 'rgb(0, 136, 50)': 'rgb(225, 223, 223)' " (click)="connectToPrinter()"><mat-icon>print</mat-icon></a>
+      <a *ngIf="hasTableOrderingEnabled" style="text-decoration: none; color: rgb(225, 223, 223); " (click)="onHeaderIconClick('table')"><mat-icon>table_restaurant</mat-icon></a>
+      <a style="text-decoration: none; color: rgb(225, 223, 223); " (click)="onHeaderIconClick('support')"><mat-icon>contact_support</mat-icon></a>
+      <a style="text-decoration: none; color: rgb(225, 223, 223);" (click)="onHeaderIconClick('profile')"><mat-icon>person_outline</mat-icon></a>
       <div class="logo-home">
         <a href="/home"><img src="assets/images/takemo_logo_transparent.png" alt="takemo-logo"></a>
       </div>

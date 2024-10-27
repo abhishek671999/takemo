@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { MeService } from 'src/app/shared/services/register/me.service';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
-import { atLeastOne } from 'src/app/shared/email.validator';
+import { atLeastOne } from 'src/app/shared/validators/email.validator';
 
 @Component({
   selector: 'app-profile',

@@ -50,7 +50,11 @@ export class meAPIUtility {
     public cookieService: CookieService,
     private _meService: MeService,
     private _router: Router
-  ) {}
+  ) {
+
+  }
+
+  public indexSet = 0;
 
   setMeData(meData) {
     let meDataExpiryDuration = 30; // min
@@ -61,6 +65,31 @@ export class meAPIUtility {
       '/'
     );
   }
+
+  setRestaurantIndex(value, duration=6000){
+    this.indexSet = value
+    let DataExpiryDuration = duration; // min
+    this.cookieService.set(
+      'index',
+      JSON.stringify(value),
+      new Date(new Date().getTime() + DataExpiryDuration * 60 * 1000),
+      '/'
+    );
+  }
+
+  getRestaurantIndex(){
+    let index = Number(this.cookieService.get('index')); 
+    if(index) {
+      this.setRestaurantIndex(index)
+      return index
+    }
+    else {
+      this.setRestaurantIndex(0)
+      return 0
+    }
+  }
+
+
 
   getMeData() {
     let meDataObservable = new Observable((observer) => {
@@ -97,29 +126,41 @@ export class sessionWrapper {
   constructor(public meAPIUtility: meAPIUtility) { }
 
   async setSessionVariables() {
-    return new Promise((resolve, reject) => {
+    let myPromise =  new Promise((resolve, reject) => {
       this.meAPIUtility.getMeData().subscribe((data) => {
         if (data['restaurants'].length > 0) {
-          this.isOwner = true
-          if (data['restaurants'].length > 2) {
-            this.isMultiRestaurantOwner = true
-          } else{
-            this.isMultiRestaurantOwner = false
+          if (data['restaurants'].length > 1) {
+            this.isMultiRestaurantOwner = true;
+            this.setRestaurantSessionVariables(data['restaurants'][this.meAPIUtility.getRestaurantIndex()]);
+          } else {
+            this.isMultiRestaurantOwner = false;
+            this.setRestaurantSessionVariables(data['restaurants'][this.meAPIUtility.getRestaurantIndex()]);
           }
         } else if (data['companies'].length > 0) {
-          this.isAdmin = true
-        } else {
-          this.isUser = true
+          this.setCompanySessionVariable(data['companies'][this.meAPIUtility.getRestaurantIndex()]);
         }
-        resolve(true)
+        console.log('Success in promise')
+        resolve(true);
       }),
       (error: any) =>{
-        console.log(error)
+        console.log('Error in promise', error)
         reject(false)
       }
           
     })
-    
+    await myPromise
+  }
+
+  getItem(key: string) {
+    let item = sessionStorage.getItem(key);
+    console.log('getitem', key)
+    if (item) return (item);
+    else {
+      this.setSessionVariables()
+      let value = sessionStorage.getItem(key)
+      
+      return value
+    }
   }
 
   setRestaurantSessionVariables(restaurant){
@@ -168,14 +209,7 @@ export class sessionWrapper {
     sessionStorage.setItem('company_id', company['company_id'])
   }
 
-  getItem(key: string) {
-    let item = sessionStorage.getItem(key);
-    if (item) return (item);
-    else {
-      this.setSessionVariables()
-      return sessionStorage.getItem(key)
-    }
-  }
+
 
   doesUserBelongsToITT() {
     let restaurantId = Number(this.getItem('restaurant_id'))
@@ -191,10 +225,7 @@ export class sessionWrapper {
     localStorage.setItem('isMultiRestaurantOwner', String(value))
   }
 
-  public get isMultiRestaurantOwner() {
-    let value = localStorage.getItem('isMultiRestaurantOwner')
-    return value == 'true' ? true: false
-  }
+
 
   public set isKDSEnabled(value: boolean) {
     localStorage.setItem('isKDSEnabled', String(value))
@@ -211,33 +242,6 @@ export class sessionWrapper {
 
   public get isPaymentDone() {
     let value = localStorage.getItem('isPaymentDone')
-    return value == 'true' ? true: false
-  }
-
-  public set isAdmin(value: boolean) {
-    localStorage.setItem('isAdmin', String(value))
-  }
-
-  public get isAdmin() {
-    let value = localStorage.getItem('isAdmin')
-    return value == 'true' ? true: false
-  }
-
-  public set isUser(value: boolean) {
-    localStorage.setItem('isUser', String(value))
-  }
-
-  public get isUser() {
-    let value = localStorage.getItem('isUser')
-    return value == 'true' ? true: false
-  }
-
-  public set isOwner(value: boolean) {
-    localStorage.setItem('isOwner', String(value))
-  }
-  
-  public get isOwner() {
-    let value = localStorage.getItem('isOwner')
     return value == 'true' ? true: false
   }
 

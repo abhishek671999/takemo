@@ -4,6 +4,17 @@
         <mat-label>Add a note</mat-label>
         <input matInput placeholder="Add a note" [(ngModel)]="note">
     </mat-form-field>
+    <section>
+        <mat-checkbox *ngIf="!prepare" [(ngModel)]="hold">Hold</mat-checkbox>
+        <mat-checkbox *ngIf="!hold" [(ngModel)]="prepare">Running</mat-checkbox>
+    </section>
+    <div *ngIf="prepare || hold" class="item-quantity">
+        <mat-icon (click)="subItem()">remove_circle</mat-icon>
+        <div style="padding: 2px">
+          {{ quantity }}
+        </div>
+        <mat-icon (click)="addItem()">add_circle</mat-icon>
+      </div>
 </div>
 <mat-dialog-actions>
     <button mat-raised-button (click)="close()">Close</button>

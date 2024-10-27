@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -9,6 +9,7 @@ import { svgDeleteIcon } from 'src/app/shared/icons/svg-icons';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
 import { sessionWrapper } from 'src/app/shared/site-variable';
+
 
 @Component({
   selector: 'app-add-item-dialog',
@@ -67,17 +68,22 @@ export class AddItemDialogComponent {
   selectedUnit = ''
   
   unitPriceDetails = []
-
+  
+  private readonly counterValidator: ValidatorFn = c => {
+    let tableManagement = this.__sessionWrapper.getItem('table_management') == 'true'? true: false
+    return  tableManagement ? Validators.required(c) : Validators.nullValidator(c);
+  }
   addItemForm = this._fb.group({
     name: ['', Validators.required],
     price: [0],
     mrpPrice: [0],
     isVeg: ['veg', Validators.required],
-    counterId: [''],
+    counterId: ['', this.counterValidator],
     itemUnit: ['1', Validators.required],
     item_description: [''],
     subItemUnit: ['']
   });
+
 
   addItem() {
     let body = {

@@ -13,7 +13,9 @@ export type confirmedOrder = {
     "is_delivered"?: boolean,
     "ordered_time"?: string,
     "shift"?: string,
-    "refund_amount"?: number
+    "refund_amount"?: number,
+    "table_name"?: string,
+    "waiter_name"?: string
 }
 
 export type lineItem = {

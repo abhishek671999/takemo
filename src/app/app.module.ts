@@ -33,7 +33,8 @@ import { SelectSubitemDialogComponent } from './components/shared/select-subitem
 import { AddItemNoteDialogComponent } from './components/shared/add-item-note-dialog/add-item-note-dialog.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
+import { InputPasswordDialogComponent } from './components/shared/input-password-dialog/input-password-dialog.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -54,6 +55,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ConfirmActionDialogComponent,
     SelectSubitemDialogComponent,
     AddItemNoteDialogComponent,
+    InputPasswordDialogComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     NgApexchartsModule,
     MatDialogModule,
     MatFormFieldModule,
-     MatInputModule
+     MatInputModule,
+     MatCheckboxModule
     ],
   providers: [Utility, meAPIUtility, dateUtils, 
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}

@@ -12,17 +12,33 @@ export class AddItemNoteDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     private matdialogRef: MatDialogRef<AddItemNoteDialogComponent>
   ){
+    console.log(data, this.hold, this.prepare)
     this.note = data.note
+    this.quantity = this.data.quantity
   }
 
   public note: string;
+  public hold: boolean;
+  public prepare: boolean;
+  public quantity: number
 
   addNote(){
-    this.data.note = this.note
+    console.log(this.hold, this.prepare)
+    let addiitonalNote =  this.hold ? `${this.quantity} hold` : this.prepare? `${this.quantity} running`: ''
+    this.data.note = (this.note? this.note : '' ) + ((this.note && addiitonalNote)? ` | ${addiitonalNote}`: `${addiitonalNote}`)
+    console.log(this.data.note)
     this.matdialogRef.close()
   }
 
   close(){
     this.matdialogRef.close()
+  }
+
+  addItem(){
+    if(this.quantity < this.data.quantity ) this.quantity += 1
+  }
+
+  subItem(){
+    if(this.quantity > 0 ) this.quantity -= 1
   }
 }

@@ -19,7 +19,7 @@ import {
   svgNotAvailableIcon,
   svgPlusIcon,
 } from 'src/app/shared/icons/svg-icons';
-import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
+import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
@@ -40,7 +40,7 @@ export class EditMenuComponent {
     private _dialog: MatDialog,
     private _menuService: MenuService,
     private _menuEditService: EditMenuService,
-    private _restaurantService: RestuarantService,
+    private _restaurantService: RestaurantService,
     private _counterService: CounterService,
     private _editMenuService: EditMenuService,
     private __sessionWrapper: sessionWrapper,
@@ -124,13 +124,14 @@ export class EditMenuComponent {
   }
 
   showCategory() {
-    if (this.selectedCategory.length > 0) {
+    if (this.selectedCategory.length > 0 && this.selectedCategory[0].categoryId) {
       let lastViewCategory = localStorage.getItem('lastViewCategoryId')
       let categoryId = lastViewCategory? lastViewCategory: this.selectedCategory[0].categoryId
       this.visibleCategory = this.menu.filter(category => category.category.id == categoryId)
       this.dataSource.data = this.visibleCategory[0].category.items
       this.selectedCategory = this.allCategories.filter((ele) => ele.categoryId == categoryId)
     } else {
+
       this.selectedCategory = [this.allCategories[0]]
       this.visibleCategory = this.menu
       this.dataSource.data = this.visibleCategory[0].category.items
@@ -140,9 +141,11 @@ export class EditMenuComponent {
   createAllCategory() {
     let allItems = [];
     this.menu.forEach((ele, index) => {
-      ele.category.items.forEach(item => {
-        allItems.push(item);
-      });
+      if(ele.category.name.toUpperCase() != "FAVOURITES"){
+        ele.category.items.forEach(item => {
+          allItems.push(item);
+        });
+      }
     });
     this.menu.push({
       category: {
@@ -406,8 +409,10 @@ export class EditMenuComponent {
     if (this.searchText) {
         this.selectedCategory = this.allCategories.filter((ele, index) => index == this.allCategories.length - 1)
         this.visibleCategory = [JSON.parse(JSON.stringify(this.menu[this.menu.length - 1]))]
-        this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>
-            item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>{
+          let acronym = item.name.split(/\s/).reduce((response,word)=> response+=word.slice(0,1),'')
+          return (item.name.toLowerCase().includes(this.searchText.toLowerCase()) || (acronym.toLowerCase().includes(this.searchText.toLowerCase())) ) 
+        }
         );
         this.dataSource.data = this.visibleCategory[0].category.items
     } else {
@@ -439,4 +444,9 @@ export class EditMenuComponent {
     let disableAddButton = this.selectedCategory.length > 0 && !this.selectedCategory[0].categoryId
     return disableAddButton
   }
+
+  ngOnDestroy(){
+    localStorage.removeItem('lastViewCategoryId')
+  }
+
 }
