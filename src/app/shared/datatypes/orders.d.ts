@@ -27,6 +27,7 @@ export type lineItem = {
     "parcel": boolean,
     "item_unit_price_id": number,
     "parcel_quantity": number,
+    "tax_inclusive": boolean
     counter?: counter
 }
 
@@ -34,14 +35,3 @@ export type counter = {
     counter_id: number,
     counter_name: string
 }
-
-// let body = {
-//     pos: true,
-//     order_list: itemList,
-//     table_id: Number(this.__sessionWrapper.getItem('table_id')),
-//     restaurant_id: this.restaurantId,
-//     payment_mode: this.modeOfPayment,
-//     printer_conneted: this.printerConn.usbSought,
-//     total_amount: this.summary.amount,
-//     actual_total_amount: actualTotalAmount,
-//   };

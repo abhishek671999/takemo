@@ -7,7 +7,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { HttpParams } from '@angular/common/http';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { MatSort, Sort } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
@@ -21,7 +21,7 @@ export class OrdersHistoryComponent {
     private _orderService: OrdersService,
     private _dialog: MatDialog,
     private dateUtils: dateUtils,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
 
   length = 50;
@@ -55,11 +55,12 @@ export class OrdersHistoryComponent {
     'OrderedAt',
     'Details',
   ];
-  public isTaxInclusive = this.__sessionWrapper.isTaxInclusive()
-  public taxPercentage = this.isTaxInclusive? 0: Number(this.__sessionWrapper.getItem('tax_percentage'))
+  public isTaxInclusive: number
+  public taxPercentage: number
   public showSpinner = true;
   public cancelledOrders = [];
   public cancelledOrdersDataSource = new MatTableDataSource();
+  public restaurantId: number;
 
   selectedTimeFrame = this.timeFrames[0];
   range = new FormGroup({
@@ -68,7 +69,14 @@ export class OrdersHistoryComponent {
   });
 
   ngOnInit() {
-    this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.isTaxInclusive = restaurant['tax_inclusive']
+        this.taxPercentage = this.isTaxInclusive? 0: Number(restaurant['tax_percentage'])
+        this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
+      }
+    )
   }
 
   ngAfterViewInit(){
@@ -77,7 +85,7 @@ export class OrdersHistoryComponent {
 
   getRestaurantOrdersAPIBody() {
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
     };
     if (this.selectedTimeFrame.actualValue == 'custom') {
       if (this.range.value.start && this.range.value.end) {

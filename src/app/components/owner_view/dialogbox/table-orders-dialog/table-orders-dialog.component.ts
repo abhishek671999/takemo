@@ -5,13 +5,11 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { PointOfSaleComponent } from '../../point-of-sale/point-of-sale.component';
 import { Router } from '@angular/router';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
-import { sessionWrapper } from 'src/app/shared/site-variable';
-import { ConfirmationDialogComponent } from 'src/app/components/user_screen/confirmation-dialog/confirmation-dialog.component';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { Observable, of } from 'rxjs';
@@ -34,16 +32,16 @@ export class TableOrdersDialogComponent {
     private __matDialog: MatDialog,
     private __router: Router,
     private __tableService: TablesService,
-    private __sessionWrapper: sessionWrapper,
     private receiptPrintFormatter: ReceiptPrintFormatter,
     public printerConn: PrintConnectorService,
     private _counterService: CounterService,
+    private meUtility: meAPIUtility
   ) {
     console.log(data)
   }
   counters = [];
   hasOrderedItems = false;
-  restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'));
+  restaurantId: number
 
   orders;
   totalAmount;
@@ -51,8 +49,13 @@ export class TableOrdersDialogComponent {
   isEditEnabled: boolean = false;
 
   ngOnInit() {
-    this.getTableOrders()
-    this.fetchCounters()
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.getTableOrders()
+        this.fetchCounters()
+      }
+    )
   }
 
   getTableOrders(){
@@ -89,7 +92,7 @@ export class TableOrdersDialogComponent {
         (data: any) => {
           if(data?.password){
             let body = {
-              "restaurant_id": this.__sessionWrapper.getItem('restaurant_id'),
+              "restaurant_id": this.restaurantId,
               "password": data.password
             }
             this.restaurantService.validatePassword(body).subscribe(

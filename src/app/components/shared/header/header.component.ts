@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { DataService } from 'src/app/shared/services/data/data.service';
 import { LoginService } from 'src/app/shared/services/register/login.service';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
-import { ConfirmationDialogComponent } from '../../user_screen/confirmation-dialog/confirmation-dialog.component';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { ConfirmActionDialogComponent } from '../confirm-action-dialog/confirm-action-dialog.component';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { HttpParams } from '@angular/common/http';
@@ -22,15 +20,13 @@ export class HeaderComponent {
     private _loginService: LoginService, 
     private router: Router,
     private _meAPIutility: meAPIUtility,
-    private __sessionWrapper: sessionWrapper,
-    private dataShare: DataService,
     private matdialog: MatDialog,
     public printerConn: PrintConnectorService,
     private orderService: OrdersService,
     private receiptPrintFormatter: ReceiptPrintFormatter,
     private _counterService: CounterService,
   ) {
-    }
+  }
 
   public AvailableDropdownList = {
     'profile': {
@@ -75,7 +71,7 @@ export class HeaderComponent {
         name: 'Orders',
         action: () => {
           let navigationURL =
-          this.__sessionWrapper.getItem('restaurant_kds') == 'true'? '/owner/orders/pending-orders': this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
+          this.restaurantKDS ? '/owner/orders/pending-orders': this.restaurantType == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
           this.router.navigate([navigationURL]);
         }
     },
@@ -141,37 +137,63 @@ export class HeaderComponent {
     }
   }
 
-  public isPollingRequired =  this.__sessionWrapper.isPollingRequired()
-  public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
-  public pollingFrequency = Number(this.__sessionWrapper.getItem('ui_polling_for_mobile_order_receipt_printing_frequency'))
-  public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
-  public isKotReciptEnabled = this.__sessionWrapper.isKOTreceiptEnabled()
-      
-  dropdownList = [ this.AvailableDropdownList['logout']]
-  username: string
-  message: string
-  location: string = sessionStorage.getItem('restaurant_name') || sessionStorage.getItem('organization_name')
-  meData: any;
-  isRestaurantAdmin: boolean = false
-  hasMultipleRestaurants: boolean = false
-  hasTableOrderingEnabled: boolean = false
+  public isPollingRequired : any;
+  public restaurantId: any;
+  public pollingFrequency : any;
+  public isPOSEnabled : any;
+  public isKotReciptEnabled: any;
   public pollingInterval;
-  counters = [];
+  public restaurantKDS:boolean
+  public restaurantType: string
+
+  public location: string;
+  public meData: any;
+  public isRestaurantAdmin: boolean = false
+  public hasMultipleRestaurants: boolean = false
+  public hasTableOrderingEnabled: boolean = false
+  public hasExpenseManagement: boolean = false
+
+  public counters = [];
+  public dropdownList = [ this.AvailableDropdownList['logout']]
   
   ngOnInit(){
-    let role = localStorage.getItem('role')
-    if(role == 'restaurant_admin') this.addRestaurantOwnerNavOptions();
-    else if (role == 'restaurant_staff') this.addRestaurantStaffNavOptions();
-    else if (role == 'corporate_admin') this.addAdminNavOptions();
-    else this.addUserNavOptions()
-    this._meAPIutility.getMeData().subscribe(data => {
-      console.log('Header component: ', data)
-      this.meData = data
-      this.username = data['username'] ? data['username'] : data['email']
-      this.hasMultipleRestaurants = data['restaurants'].length > 1
-      this.__sessionWrapper.isMultiRestaurantOwner = data['restaurants'].length > 1
+    this._meAPIutility.getRestaurant().subscribe(
+      (data) => {
+        this.hasTableOrderingEnabled = data['table_management']
+        this.restaurantId = Number(data['restaurant_id'])
+        this.hasExpenseManagement = data['expense_management']
+        this.isPOSEnabled = data['pos']
+        this.pollingFrequency = Number(data['ui_polling_for_mobile_order_receipt_printing_frequency'])
+        this.restaurantId = Number(data['restaurant_id'])
+        this.isPollingRequired = data['ui_polling_for_mobile_order_receipt_printing']
+        this.location = data['restaurant_name']
+        this.restaurantKDS = data['restaurant_kds']
+        this.restaurantType = data['type']
+
+        if(data['role_name'] == 'restaurant_admin'){
+          this.addRestaurantOwnerNavOptions(data)
+        }else if(data['role_name'] == 'restaurant_staff'){
+          this.addRestaurantStaffNavOptions(data)
+        }
       }
     )
+
+    this._meAPIutility.getCompany().subscribe(
+      (data) => {
+        this.location = data['organization_name']
+        if(data['role_name'] == 'corporate_admin'){
+          this.addAdminNavOptions(data)
+        }
+      }
+    )
+
+    this._meAPIutility.getMeData().subscribe(data => {
+      this.meData = data
+      this.hasMultipleRestaurants = data['restaurants'].length > 1
+      if(data['restaurants'].length == 0 || data['companies'].length == 0) this.addUserNavOptions()
+      }
+    )
+
     this.fetchCounters()
     if(this.isPollingRequired){
       this.printerConn.printerConnected.subscribe(
@@ -184,6 +206,7 @@ export class HeaderComponent {
         }
       )
     } 
+    
    }  
   
   addUserNavOptions(){
@@ -195,7 +218,7 @@ export class HeaderComponent {
     }
   }
 
-  addRestaurantStaffNavOptions(){
+  addRestaurantStaffNavOptions(data){
     let restaurantStaffNavOptions = ['edit_menu', 'orders']
     if(this.isPOSEnabled) restaurantStaffNavOptions.push('POS')
     for(let option of restaurantStaffNavOptions){
@@ -206,21 +229,17 @@ export class HeaderComponent {
   }
 
 
-  addRestaurantOwnerNavOptions(){
+  addRestaurantOwnerNavOptions(restaurant){
     let restaurantOwnerNavOptions
-    this.hasTableOrderingEnabled = this.__sessionWrapper.getItem('table_management') == 'true'? true: false;
-    let restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
-    let hasExpenseManagement = this.__sessionWrapper.getItem('expense_management') == 'true'? true: false;
-    let isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
-    if(restaurantId == 1 || restaurantId == 2){
+    if(this.restaurantId == 1 || this.restaurantId == 2){
       restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
     }else{
       restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
     }
-    if (hasExpenseManagement) {
+    if (this.hasExpenseManagement) {
       restaurantOwnerNavOptions.push('expense')
     }
-    if (isPOSEnabled) { 
+    if (this.isPOSEnabled) { 
       restaurantOwnerNavOptions.push('POS') 
     }
     if (this.hasTableOrderingEnabled) {
@@ -233,10 +252,10 @@ export class HeaderComponent {
     }
   }
 
-  addAdminNavOptions(){
-    this.location = this.__sessionWrapper.getItem('company_name')
-    let companyId = Number(this.__sessionWrapper.getItem('company_id'))
-    let adminNavOptions
+  addAdminNavOptions(company){
+    this.location = company.company_name
+    let companyId = Number(company.company_id)
+    let adminNavOptions;
     if(companyId == 1){
       adminNavOptions = ['userOrders', 'menu', 'admin_current_orders',  'billing', 'analytics', 'shift']
     }else{
@@ -261,8 +280,8 @@ export class HeaderComponent {
     this.AvailableDropdownList[key].action()
   }
 
-  setRestaurantsessionVariable(restaurant){
-    this.__sessionWrapper.setRestaurantSessionVariables(restaurant)
+  setRestaurantVariable(restaurant){
+    this._meAPIutility.setRestaurant(restaurant)
     window.location.reload()
   }
 

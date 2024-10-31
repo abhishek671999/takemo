@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-managment-home',
@@ -10,7 +9,7 @@ import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 export class ManagmentHomeComponent {
 
 
-  constructor(private __sessionWrapper: sessionWrapper) { }
+  constructor(private meUtility: meAPIUtility) { }
   managementPages = [
     {name: 'Edit Menu' , href: `edit-menu/` },
   ]
@@ -19,20 +18,28 @@ export class ManagmentHomeComponent {
   activityPage = { name: 'Activity', href: 'activity-log' }
   tablePage = { name: 'Table', href: 'table-management'}
 
-  counterManagement = this.__sessionWrapper.isCounterManagementEnabled()
-  inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
-  tableManagement = this.__sessionWrapper.isTableManagementEnabled()
+  counterManagement
+  inventoryManagement
+  tableManagement
 
   ngOnInit() {
-    if(this.counterManagement) {
-      this.managementPages.push(this.counterPage)
-    }
-    if (this.inventoryManagement) {
-      this.managementPages.push(this.activityPage)
-    }
-    if (this.tableManagement) {
-      this.managementPages.push(this.tablePage)
-    }
+
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.counterManagement = restaurant['counter_management']
+        this.inventoryManagement = restaurant['inventory_management']
+        this.tableManagement = restaurant['table_management']
+        if(this.counterManagement) {
+          this.managementPages.push(this.counterPage)
+        }
+        if (this.inventoryManagement) {
+          this.managementPages.push(this.activityPage)
+        }
+        if (this.tableManagement) {
+          this.managementPages.push(this.tablePage)
+        }
+      }
+    )
 
   }
 }

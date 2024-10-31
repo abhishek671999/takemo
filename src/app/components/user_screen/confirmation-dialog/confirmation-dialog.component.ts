@@ -15,7 +15,7 @@ import { MeService } from 'src/app/shared/services/register/me.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { HttpParams } from '@angular/common/http';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { ParcelDialogComponent } from '../parcel-dialog/parcel-dialog.component';
 
@@ -42,10 +42,11 @@ export class ConfirmationDialogComponent {
     private _tableService: TablesService,
     private __sessionWrapper: sessionWrapper,
     private __cartService: cartConnectService,
+    private meUtility: meAPIUtility
   ) {
     console.log(data)
   }
-
+  public restaurantId;
   public isPayment;
   public platformFee = undefined || {};
   public totalAmount;
@@ -56,7 +57,7 @@ export class ConfirmationDialogComponent {
   public paymentMethod;
   public isWalletPayment = false;
   public restaurantParcel = false;
-  showQRcode = false;
+  public showQRcode = false;
   public otpValidated = false;
   public payOnDelivery = false;
   public isApiLoaded = false

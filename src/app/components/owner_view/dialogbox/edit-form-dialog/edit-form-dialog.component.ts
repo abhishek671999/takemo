@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { of, switchMap } from 'rxjs';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 
 @Component({
@@ -19,16 +19,15 @@ export class EditFormDialogComponent {
     public _fb: FormBuilder,
     private _editMenuService: EditMenuService,
     private __imageService: ImagesService,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) { 
     console.log('this is data: ', data)
   }
 
-  public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
-  public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
-  private restaurantType = this.__sessionWrapper.getItem('restaurantType')?.toLowerCase()
-  public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
-
+  public inventoryManagement: boolean
+  public counterMangement: boolean
+  private restaurantType: string
+  public mobileOrderingEnabled: boolean
   outputBoxVisible = false;
   progress = `0%`;
   uploadResult = '';
@@ -51,17 +50,25 @@ export class EditFormDialogComponent {
   }
   unitPriceDetails = []
   itemUnitPreviousValue = null
+  tableManagement: boolean = false
 
   ngOnInit() {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.tableManagement = restaurant['table_management']
+        this.inventoryManagement = restaurant['inventory_management']
+        this.counterMangement = restaurant['counter_management']
+        this.restaurantType = restaurant['type'].toLowerCase()
+        this.mobileOrderingEnabled = restaurant['mobile_ordering']
+      }
+    )
     this.unitPriceDetails = this.data.item_unit_price_list
-    console.log('unitprice details array', this.unitPriceDetails)
     this.editMenuForm.get('itemUnit').valueChanges.subscribe(newValue => { // todo: maintain previous state
       this.itemUnitPreviousValue = this.editMenuForm.get('itemUnit').value;
     });
   }
   private readonly counterValidator: ValidatorFn = c => {
-    let tableManagement = this.__sessionWrapper.getItem('table_management') == 'true'? true: false
-    return  tableManagement ? Validators.required(c) : Validators.nullValidator(c);
+    return  this.tableManagement ? Validators.required(c) : Validators.nullValidator(c);
   }
 
   editMenuForm = this._fb.group({

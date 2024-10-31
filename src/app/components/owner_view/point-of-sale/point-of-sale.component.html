@@ -155,7 +155,7 @@
         <div class="action-section">
           <button mat-raised-button (click)="clearSummary()">Clear</button>
           <div>
-            <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || ((!printerConn.usbSought && printerRequired) || !isTableManagement) || disablePlace" color="primary"> Place </button>
+            <button mat-raised-button (click)="placeOrder()" [disabled]="summary.amount == 0 || (!printerConn.usbSought && printerRequired) || disablePlace" color="primary"> Place </button>
             <small
               class="text-danger"
               style="display: block"

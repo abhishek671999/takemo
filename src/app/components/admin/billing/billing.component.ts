@@ -17,7 +17,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { BillingService } from 'src/app/shared/services/billing/billing.service';
 
 import moment from 'moment';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 // const moment = _rollupMoment || _moment;
 
 // See the Moment.js docs for the meaning of these formats:
@@ -58,35 +58,38 @@ export class BillingComponent {
     { displayValue: 'Honey Dew Kitchen', restaurant_id: 2 },
   ];
   selectedRestaurant: number = this.restaurantList[0].restaurant_id;
-  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id')
-    ? true
-    : false;
-
+  restaurantFlag: boolean;
   constructor(
     private _billingService: BillingService,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
   base64: string;
 
   ngOnInit() {
-    var date = new Date();
-    let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id')
-        ? this.__sessionWrapper.getItem('restaurant_id')
-        : this.selectedRestaurant,
-      month_and_year: `${date.toLocaleString('default', {
-        month: '2-digit',
-      })}/${date.getFullYear()}`,
-    };
-    this._billingService.getRestaurantBilling(body).subscribe(
-      (data) => {
-        this.base64 = data['base64_invocie_data'];
-        this.printPdf();
-      },
-      (error) => {
-        console.log('Error while getting pdf data: ', error);
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantFlag = restaurant['restaurant_id']? true: false
+        var date = new Date();
+        let body = {
+          restaurant_id: restaurant['restaurant_id']
+            ? restaurant['restaurant_id']
+            : this.selectedRestaurant,
+          month_and_year: `${date.toLocaleString('default', {
+            month: '2-digit',
+          })}/${date.getFullYear()}`,
+        };
+        this._billingService.getRestaurantBilling(body).subscribe(
+          (data) => {
+            this.base64 = data['base64_invocie_data'];
+            this.printPdf();
+          },
+          (error) => {
+            console.log('Error while getting pdf data: ', error);
+          }
+        );
       }
-    );
+    )
+
   }
 
   onDateChange(value) {

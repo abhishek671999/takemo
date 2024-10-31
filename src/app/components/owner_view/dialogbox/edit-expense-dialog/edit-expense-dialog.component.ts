@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
 import { ExpenseService } from 'src/app/shared/services/expense/expense.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
@@ -17,18 +17,28 @@ export class EditExpenseDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public expense,
     private __expenseService: ExpenseService,
-    private __sessionWrapper: sessionWrapper,
+
     private __matDialog: MatDialog,
     private dialogRef: MatDialogRef<EditExpenseDialogComponent>,
-    private __datetimeUtils: dateUtils
+    private __datetimeUtils: dateUtils,
+    private meUtility: meAPIUtility
   ) {}
 
   updatedPaidAmount = 0
-  private restaurantId = this.__sessionWrapper.getItem('restaurant_id')
+  private restaurantId: number
   public expenseData = []
   public showMoreInfo = false;
   
   ngOnInit() {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.fetchExpenseLogs()
+      }
+    )
+  }
+
+  fetchExpenseLogs(){
     let httpParams = new HttpParams()
     httpParams = httpParams.append('expense_id', this.expense.expense_id)
     this.__expenseService.getExpenseLogs(httpParams).subscribe(

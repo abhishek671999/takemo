@@ -4,7 +4,7 @@
         <a style="text-decoration: none; color: rgb(225, 223, 223);" ><mat-icon> store</mat-icon></a>
         <div class="dropdown-content" >
           <div *ngFor="let restaurant of meData['restaurants']">
-            <a (click)="setRestaurantsessionVariable(restaurant)" [style.font-weight]="getSelectedRestaurantId() == restaurant.restaurant_id? 'bolder': 'lighter'">{{restaurant['restaurant_name']}}</a>
+            <a (click)="setRestaurantVariable(restaurant)" [style.font-weight]="restaurantId == restaurant.restaurant_id? 'bolder': 'lighter'">{{restaurant['restaurant_name']}}</a>
           </div>
         </div>
       </div>
@@ -28,5 +28,4 @@
           <p>{{item.name}}</p>
       </ul>
     </div>
-    {{message}}
 </div>

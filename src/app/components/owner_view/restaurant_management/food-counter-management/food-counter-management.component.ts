@@ -8,7 +8,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { svgDeleteIcon, svgEditIcon } from 'src/app/shared/icons/svg-icons';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
@@ -22,7 +22,7 @@ export class FoodCounterManagementComponent {
     private counterService: CounterService,
     private iconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
-    private __sessionWrapper: sessionWrapper,
+    private meUtility: meAPIUtility,
     private matdialog: MatDialog
     ){
       iconRegistry.addSvgIconLiteral(
@@ -38,10 +38,19 @@ export class FoodCounterManagementComponent {
 
   counternameFormControl = new FormControl('', [Validators.required]);
   counterIPFormControl = new FormControl('');
-  public restaurantId = this.__sessionWrapper.getItem('restaurant_id')
+  public restaurantId: number
 
   ngOnInit(){
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.fetchCounters()
+      }
+    )
 
+  }
+  
+  fetchCounters(){
     this.counterService.getRestaurantCounter(this.restaurantId).subscribe(
       data => {
         this.counterResponse = data['counters']
@@ -50,10 +59,11 @@ export class FoodCounterManagementComponent {
         });
       },
       error => {
-
+  
       }
     )
   }
+
 
   enableEditCounter(counter){
     counter.is_edit = !counter.is_edit

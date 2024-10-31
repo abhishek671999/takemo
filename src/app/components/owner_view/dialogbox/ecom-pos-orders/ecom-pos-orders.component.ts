@@ -8,7 +8,7 @@ import {
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-ecom-pos-orders',
@@ -22,7 +22,7 @@ export class EcomPosOrdersComponent {
     private matDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public summary,
     public dialogRef: MatDialogRef<EcomPosOrdersComponent>,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
 
   customerDetailsForm = this._fb.group({
@@ -39,8 +39,15 @@ export class EcomPosOrdersComponent {
     ],
   });
   disablePlace = false;
+  public restaurantId: number;
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+      }
+    )
+  }
 
   placeOrder() {
     this.disablePlace = true;
@@ -57,7 +64,7 @@ export class EcomPosOrdersComponent {
       address: this.customerDetailsForm.value.address,
       transaction_id: this.customerDetailsForm.value.transaction_id,
       order_list: itemList,
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
     };
     this.orderService.createEcomOrders(body).subscribe(
       (data) => {
