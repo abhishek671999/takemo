@@ -183,6 +183,7 @@ export class OrdersHistoryComponent {
       ordered_by: order.ordered_by,
       parcel_charges: order.parcel_charges,
       user_name: order.user_name,
+      tax_amount: order.tax_amount
     };
   }
 

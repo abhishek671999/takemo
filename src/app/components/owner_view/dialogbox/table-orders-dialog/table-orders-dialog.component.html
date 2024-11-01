@@ -24,7 +24,7 @@
                     <th class="item">Item</th>
                     <th class="price">Price</th>
                     <th >Quantity</th>
-                    <th class="total_price">Total price</th>
+                    <th class="total_price">{{taxInclusive? "Amount": "Amount | GST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" }} </th>
                     <th class="delete" *ngIf="isEditEnabled">Delete</th>
                 </tr>
             </thead>
@@ -38,20 +38,13 @@
                         {{order.quantity}}
                         <!-- <mat-icon (click)="addItem(order)">add_circle</mat-icon> -->
                     </td>
-                    <td class="total_price">₹&nbsp;{{order.line_item_price}}</td>
+                    <td class="total_price">₹&nbsp;{{order.line_item_price.toFixed(1)}}{{taxInclusive? '': " | ₹&nbsp;" +calculateItemGST(order).toFixed(1)}}</td>
                     <td class="delete" *ngIf="isEditEnabled">
                         <mat-icon (click)="deleteItem(order)">delete</mat-icon>
                     </td>
                 </tr>
-                <tr>
-                    <td class="sl_no">-</td>
-                    <td class="item">-</td>
-                    <td class="price">-</td>
-                    <td class="quantity">-</td>
-                    <td class="total_price">₹&nbsp;{{totalAmount}}</td>
-                    <td class="delete" *ngIf="isEditEnabled">-</td>
-                </tr>
             </tbody>
         </table>
+        <h2>Total Amount: ₹&nbsp;{{totalAmountWithoutGst}} | ₹&nbsp;{{totalAmountWithGst}}</h2>
     </div>
 </div>

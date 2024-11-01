@@ -83,7 +83,8 @@ export class AddItemDialogComponent {
     counterId: ['', this.counterValidator],
     itemUnit: ['1', Validators.required],
     item_description: [''],
-    subItemUnit: ['']
+    subItemUnit: [''],
+    tax_inclusive: ['true']
   });
 
   ngOnInit(){
@@ -108,7 +109,8 @@ export class AddItemDialogComponent {
       egg: this.addItemForm.value.isVeg == 'egg' ? true : false,
       counter_id: this.addItemForm.value.counterId,
       item_unit: this.addItemForm.value.itemUnit,
-      item_unit_price_list: this.unitPriceDetails
+      item_unit_price_list: this.unitPriceDetails,
+      tax_inclusive: this.addItemForm.value.tax_inclusive == 'true'? true: false
     };
     this._editMenuService.addItem(body).pipe(
       switchMap(response => {

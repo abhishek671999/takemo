@@ -5,6 +5,11 @@
     font-style: normal;
   }
   
+
+  :host ::ng-deep mat-form-field {
+    padding: 0 !important;
+  }
+  
 .price-section{
   display: flex;
   flex-direction: column;

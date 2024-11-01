@@ -42,16 +42,20 @@ export class TableOrdersDialogComponent {
   counters = [];
   hasOrderedItems = false;
   restaurantId: number
+  taxInclusive: boolean
 
   orders;
   totalAmount;
   isBillPrinted: boolean = false;
   isEditEnabled: boolean = false;
+  totalAmountWithoutGst: number = 0
+  totalAmountWithGst: number = 0
 
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.restaurantId = restaurant['restaurant_id']
+        this.taxInclusive = restaurant['tax_inclusive']
         this.getTableOrders()
         this.fetchCounters()
       }
@@ -68,7 +72,8 @@ export class TableOrdersDialogComponent {
         this.hasOrderedItems = this.orders.length > 0;
         this.totalAmount = data['orders']['total_amount'];
         this.isBillPrinted = data['orders']['bill_printed']
-        console.log('Ordres: ', this.orders)
+        this.calculateAmountWithoutTax()
+        this.calculateAmountWithTax()
       },
       (error) => {
         this.__matDialog.open(ErrorMsgDialogComponent, {
@@ -294,6 +299,11 @@ export class TableOrdersDialogComponent {
     )
   }
 
+  calculateItemGST(item){
+    let total = (item.tax_inclusive? item.price: (item.price * 1.05)) * (item.quantity + (item.parcel_quantity? item.parcel_quantity: 0));
+    return total
+  }
+
   arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
@@ -323,4 +333,21 @@ export class TableOrdersDialogComponent {
         }
       );
   }
+
+  calculateAmountWithoutTax(){
+    this.totalAmountWithoutGst = 0
+    this.orders.forEach((item) => {
+      this.totalAmountWithoutGst += (item.price * (item.quantity + (item.parcel_quantity? item.parcel_quantity: 0)));
+    })
+    this.totalAmountWithoutGst = Number(this.totalAmountWithoutGst.toFixed(2))
+  }
+
+  calculateAmountWithTax(){
+    this.totalAmountWithGst = 0
+    this.orders.forEach((item) => {
+      this.totalAmountWithGst += (item.tax_inclusive? item.price: (item.price * 1.05)) * (item.quantity + (item.parcel_quantity? item.parcel_quantity: 0));
+    })
+    this.totalAmountWithGst = Number(Math.round(this.totalAmountWithGst))
+  }
+
 }
