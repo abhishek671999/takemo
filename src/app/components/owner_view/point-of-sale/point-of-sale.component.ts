@@ -542,8 +542,8 @@ export class PointOfSaleComponent {
       (data) => {
         body['order_no'] = data['order_no']
         if (this.isKOTEnabled) {
+          body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
           this.receiptPrintFormatter.confirmedOrderObj = body
-          this.receiptPrintFormatter.confirmedOrderObj.ordered_time = this.dateUtils.getDateForRecipePrint()
           let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
           counterReceiptObjs.forEach((counterReceiptObj) => {
             this.print(counterReceiptObj)
