@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExpenseService } from 'src/app/shared/services/expense/expense.service';
 import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-add-payment-dialog',
@@ -18,11 +18,10 @@ export class AddPaymentDialogComponent {
     private __fb: FormBuilder,
     private __expenseService: ExpenseService,
     private __vendorService: VendorService,
-    private __sessionWrapper: sessionWrapper,
+    private meUtility: meAPIUtility
   ) { }
 
   public vendorList = [];
-  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
   public expenses;
   totalAmount
   totalBalanceAmount
@@ -33,16 +32,20 @@ export class AddPaymentDialogComponent {
   })
 
   ngOnInit() {
-    let httpParams = new HttpParams();
-    httpParams = httpParams.append('restaurant_id', this.restaurantId);
-    this.__vendorService.getVendor(httpParams).subscribe(
-      (data) => {
-        this.vendorList = data['vendors'];
-      },
-      (error) => {
-        alert('Failed to fetch vendors');
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('restaurant_id', restaurant['restaurant_id']);
+        this.__vendorService.getVendor(httpParams).subscribe(
+          (data) => {
+            this.vendorList = data['vendors'];
+          },
+          (error) => {
+            alert('Failed to fetch vendors');
+          }
+        );
       }
-    );
+    )
   }
 
   addPartialPayment() {

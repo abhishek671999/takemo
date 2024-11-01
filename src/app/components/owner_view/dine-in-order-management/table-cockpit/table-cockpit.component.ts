@@ -3,16 +3,16 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { TableOrdersDialogComponent } from '../../dialogbox/table-orders-dialog/table-orders-dialog.component';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
-import { SuccessfulDialogComponent } from '../../dialogbox/successful-dialog/successful-dialog.component';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-table-cockpit',
@@ -24,26 +24,36 @@ export class TableCockpitComponent {
   constructor(
     private __tableService: TablesService, 
     private __matDialog: MatDialog, 
-    private __sessionWrapper: sessionWrapper,
     private __orderService: OrdersService,
     private _counterService: CounterService,
     private receiptPrintFormatter: ReceiptPrintFormatter,
     public printerConn: PrintConnectorService,
+    private meUtility: meAPIUtility,
+    private route: Router
   ) { }
   public tables;
   counters = [];
   hasOrderedItems = false;
-  restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'));
+  restaurantId: number
   orders;
   totalAmount;
 
   ngOnInit() {
-    this.fetchCounters()
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        if(!restaurant['table_management']) this.route.navigate(['./home'])
+        this.fetchCounters()
+        this.fetchTables()
+      }
+    )
+  }
+
+  fetchTables(){
     let httpParams = new HttpParams()
-    httpParams = httpParams.append('restaurant_id', this.__sessionWrapper.getItem('restaurant_id'));
+    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     this.__tableService.getTables(httpParams).subscribe(
       data => {
-        console.log('This is data: ', data)
         this.tables = data['restaurants']
       },
       error => {

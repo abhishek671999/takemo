@@ -101,7 +101,7 @@ public orderList = {
       let httpParams = new HttpParams();
       httpParams = httpParams.append(
         'restaurant_id',
-        this.__sessionWrapper.getItem('restaurant_id')
+        this.restaurant_id
       );
       this._tableService.getTables(httpParams).subscribe(
         (data) => {

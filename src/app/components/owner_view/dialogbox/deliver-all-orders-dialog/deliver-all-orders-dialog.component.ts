@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-deliver-all-orders-dialog',
@@ -14,13 +14,23 @@ export class DeliverAllOrdersDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     private __orderService: OrdersService,
     private dialogRef: MatDialogRef<DeliverAllOrdersDialogComponent>,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ){
     console.log('selected ', data)
   }
 
+  restaurantId: number
+
+  ngOnInit(){
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+      }
+    )
+  }
+
   deliverAll(){
-    let body = {"restaurant_id": this.__sessionWrapper.getItem('restaurant_id')}
+    let body = {"restaurant_id": this.restaurantId}
     if(this.data){
       body['counter_id'] = this.data['counter']['counter_id']
     }

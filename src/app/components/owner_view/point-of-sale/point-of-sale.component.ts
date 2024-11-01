@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -29,12 +29,12 @@ export class PointOfSaleComponent {
     private orderService: OrdersService,
     private dialog: MatDialog,
     public printerConn: PrintConnectorService,
-    private dateUtils: dateUtils,
     private _counterService: CounterService,
     private __snackbar: MatSnackBar,
-    private __sessionWrapper: sessionWrapper,
     private receiptPrintFormatter: ReceiptPrintFormatter,
-    private matdialog: MatDialog
+    private matdialog: MatDialog,
+    private meUtility: meAPIUtility,
+    private dateUtils: dateUtils
   ) {
 
   }
@@ -46,34 +46,55 @@ export class PointOfSaleComponent {
   public disablePlace = false;
   public restaurantParcel = false;
 
-  public restaurantName = this.__sessionWrapper.getItem('restaurant_name');
-  public restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
-  public restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
+  public restaurantName
+  public restaurantAddress
+  public restaurantGST 
   public parcelCharges = 5; // hardcode
   public filteredMenu;
   public menuCopy;
-  public isPollingRequired =  this.__sessionWrapper.isPollingRequired()
-  public isTaxInclusive = this.__sessionWrapper.isTaxInclusive()
-  public taxPercentage = this.isTaxInclusive? 0: Number(this.__sessionWrapper.getItem('tax_percentage'))
-  public pollingFrequency = Number(this.__sessionWrapper.getItem('ui_polling_for_mobile_order_receipt_printing_frequency'))
+  public isPollingRequired;
+  public isTaxInclusive
+  public taxPercentage
+  public pollingFrequency;
   searchText = '';
   private currentCategoryId;
 
   counters = [];
-  public outletType = this.__sessionWrapper.getItem('restaurantType').toLowerCase();
-  public isTableManagement = this.__sessionWrapper.isTableManagementEnabled()
-  public tableName = this.__sessionWrapper.getItem('table_name')
-  public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
-  public isPOS = this.__sessionWrapper.isPOSEnabled()
-  public isKOTEnabled = this.__sessionWrapper.isKOTreceiptEnabled()
+  public outletType;
+  public isTableManagement
+  public tableName = sessionStorage.getItem('table_name')
+  public restaurantId
+  public isPOS
+  public isKOTEnabled
+  public restaurantKDSenabled
 
   ngOnInit() {
     this.summary = {
       amount: 0,
       itemList: [],
     };
-    this.fetchPOSMenu()
-    this.fetchCounters()
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.restaurantName = restaurant['restaurant_name']
+        this.restaurantAddress = restaurant['restaurant_address']
+        this.restaurantGST = restaurant['restaurant_gst']
+        this.isPollingRequired = restaurant['ui_polling_for_mobile_order_receipt_printing']
+        this.isTaxInclusive = restaurant['tax_inclusive']
+        this.taxPercentage =  this.isTaxInclusive? 0: Number(restaurant['tax_percentage'])
+        this.pollingFrequency = Number(restaurant['ui_polling_for_mobile_order_receipt_printing_frequency'])
+        this.outletType = restaurant['type'].toLowerCase()
+        this.isTableManagement = restaurant['table_management']
+        this.isPOS = restaurant['pos']
+        this.isKOTEnabled = restaurant['kot_receipt']
+        this.restaurantKDSenabled = restaurant['restaurant_kds'] 
+        if(this.isTableManagement && !this.tableName){
+            this.router.navigate(['./owner/dine-in/table-cockpit'])
+        }
+        this.fetchPOSMenu()
+        this.fetchCounters()
+      }
+    )
   }
 
   openAddItemNotesWindow(item){
@@ -240,7 +261,8 @@ export class PointOfSaleComponent {
           "name": item.name,
           "price": item.price,
           "counter": item.counter,
-          "parcel_available": item.parcel_available
+          "parcel_available": item.parcel_available,
+          "tax_inclusive": item.tax_inclusive
         }
         item.quantity = 1
         let pricebeAdded = (this.isTaxInclusive? item.price: item.price * (this.taxPercentage * 0.01))
@@ -309,11 +331,10 @@ export class PointOfSaleComponent {
   }
 
   calculateItemAmount(item) {
-    return (this.isTaxInclusive? item.price: item.price + (item.price * this.taxPercentage * 0.01)) * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
+    return (item.tax_inclusive? item.price: item.price + (item.price * this.taxPercentage * 0.01)) * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
   }
 
   addParcelItem(item) {
-    console.log('Parcel: ', item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
@@ -400,10 +421,11 @@ export class PointOfSaleComponent {
   calculateTotalAmount() {
     let total = 0;
     this.summary.itemList.forEach((ele) => {
-      total += ele.price * (ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0));
+      total += (ele.tax_inclusive? ele.price : ( ele.price + (ele.price * (this.taxPercentage * 0.01)))) * (ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0));
     });
-    total = this.isTaxInclusive? total: total + (total * (this.taxPercentage * 0.01 ))
-    return total;
+    // 150.5
+    // 151 - pos, receipt
+    return Math.round(total);
   }
 
   filterItems() {
@@ -448,7 +470,8 @@ export class PointOfSaleComponent {
         quantity: ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0),
         parcel_quantity: ele.parcel_quantity,
         counter: ele.counter,
-        note: ele.note
+        note: ele.note,
+        tax_inclusive: ele.tax_inclusive
       });
     });
     let body = {
@@ -461,8 +484,8 @@ export class PointOfSaleComponent {
       actual_total_amount: actualTotalAmount,
     };
     if(this.isTableManagement){
-      body['table_id'] =  Number(this.__sessionWrapper.getItem('table_id'))
-      body['table_name'] = this.__sessionWrapper.getItem('table_name')
+      body['table_id'] =  Number(sessionStorage.getItem('table_id'))
+      body['table_name'] = sessionStorage.getItem('table_name')
       body['wkot_printed'] = this.printerConn.usbSought
       body['kot_printed'] = this.printerConn.usbSought
     }
@@ -520,6 +543,7 @@ export class PointOfSaleComponent {
         body['order_no'] = data['order_no']
         if (this.isKOTEnabled) {
           this.receiptPrintFormatter.confirmedOrderObj = body
+          this.receiptPrintFormatter.confirmedOrderObj.ordered_time = this.dateUtils.getDateForRecipePrint()
           let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
           counterReceiptObjs.forEach((counterReceiptObj) => {
             this.print(counterReceiptObj)
@@ -632,9 +656,9 @@ export class PointOfSaleComponent {
 
   navigateToOrders() {
     let navigationURL =
-    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
+    this.restaurantKDSenabled
         ? '/owner/orders/pending-orders'
-        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
+        : this.outletType == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this.router.navigate([navigationURL]);

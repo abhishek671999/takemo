@@ -8,7 +8,7 @@ import { of, switchMap } from 'rxjs';
 import { svgDeleteIcon } from 'src/app/shared/icons/svg-icons';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 
 @Component({
@@ -25,7 +25,7 @@ export class AddItemDialogComponent {
     private __imageService: ImagesService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {
 
     this.matIconRegistry.addSvgIconLiteral(
@@ -42,7 +42,8 @@ export class AddItemDialogComponent {
       this.domSanitizer.bypassSecurityTrustHtml(svgDeleteIcon)
     );
    }
-   private restaurantType = this.__sessionWrapper.getItem('restaurantType')?.toLowerCase()
+
+   private restaurantType: string
 
 
   outputBoxVisible = false;
@@ -69,9 +70,10 @@ export class AddItemDialogComponent {
   
   unitPriceDetails = []
   
+  public tableManagement = false
   private readonly counterValidator: ValidatorFn = c => {
-    let tableManagement = this.__sessionWrapper.getItem('table_management') == 'true'? true: false
-    return  tableManagement ? Validators.required(c) : Validators.nullValidator(c);
+    
+    return  this.tableManagement ? Validators.required(c) : Validators.nullValidator(c);
   }
   addItemForm = this._fb.group({
     name: ['', Validators.required],
@@ -83,6 +85,15 @@ export class AddItemDialogComponent {
     item_description: [''],
     subItemUnit: ['']
   });
+
+  ngOnInit(){
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.tableManagement = restaurant['table_management']
+        this.restaurantType = restaurant['type'].toLowerCase()
+      }
+    )
+  }
 
 
   addItem() {

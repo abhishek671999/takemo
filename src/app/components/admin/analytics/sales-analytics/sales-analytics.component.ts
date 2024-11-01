@@ -11,7 +11,7 @@ import {
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { FormControl, FormGroup } from '@angular/forms';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
@@ -49,7 +49,7 @@ export class SalesAnalyticsComponent {
     private _menuService: MenuService,
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
-    private __sessionWrapper: sessionWrapper,
+    private meUtility: meAPIUtility,
     private _counterService: CounterService,
     public printerConn: PrintConnectorService,
     private __matDialog: MatDialog,
@@ -108,15 +108,10 @@ export class SalesAnalyticsComponent {
   selectedRule;
   totalAmount = 0;
   totalOrders = 0;
-  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id')
-    ? true
-    : false;
-  hasOrderTypes =
-    this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
-      ? true
-      : false;
-  isITTUser = this.__sessionWrapper.doesUserBelongsToITT();
-  isRaviGobiUser = this.__sessionWrapper.doesUserBelongsToRaviGobi();
+  restaurantFlag
+  hasOrderTypes 
+  isITTUser
+  isRaviGobiUser
 
   chart1: any = [];
   chart2: any = [];
@@ -141,29 +136,42 @@ export class SalesAnalyticsComponent {
   public unsoldItems = []
   public unsoldCategories = []
   public unsold = []
+  public restaurant
+  
 
   ngOnInit() {
-    this._ruleService.getAllRules().subscribe((data) => {
-      data['rules'].forEach((element) => {
-        this.ruleList.push({
-          rule_id_list: element.id,
-          rule_name: element.name,
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurant = restaurant
+        this.restaurantFlag = restaurant['restaurant_id']? true: false;
+        this.hasOrderTypes = restaurant['type'] == 'e-commerce'? true: false;
+        this.isITTUser = this.meUtility.doesUserBelongToITT
+        this.isRaviGobiUser = this.meUtility.doesUserBelongToRaviGobi
+        this._ruleService.getAllRules().subscribe((data) => {
+          data['rules'].forEach((element) => {
+            this.ruleList.push({
+              rule_id_list: element.id,
+              rule_name: element.name,
+            });
+          });
+          this.selectedRule = this.ruleList[0].rule_id_list;
+          this.createChart(this.getRequestBodyPrepared());
+          this.loadView = true;
         });
-      });
-      this.selectedRule = this.ruleList[0].rule_id_list;
-      this.createChart(this.getRequestBodyPrepared());
-      this.loadView = true;
-    });
-    this._counterService
-      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
-      .subscribe(
-        (data) => {
-          this.counters = data['counters'];
-        },
-        (error) => {
-          console.log('Error: ', error);
-        }
-      );
+        this._counterService
+          .getRestaurantCounter(this.restaurant['restaurant_id'])
+          .subscribe(
+            (data) => {
+              this.counters = data['counters'];
+            },
+            (error) => {
+              console.log('Error: ', error);
+            }
+          );
+      }
+    )
+
+
   }
 
   ngAfterViewInit(){
@@ -181,8 +189,8 @@ export class SalesAnalyticsComponent {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id')
-        ? this.__sessionWrapper.getItem('restaurant_id')
+      restaurant_id: this.restaurant['restaurant_id']
+        ? this.restaurant['restaurant_id']
         : this.selectedRestaurant,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
@@ -556,7 +564,7 @@ export class SalesAnalyticsComponent {
     let sectionSeperatorCharacters = '-'.repeat(40);
     let content = [
       {
-        text: this.__sessionWrapper.getItem('restaurant_name'),
+        text: this.restaurant['restaurant_name'],
         size: 'xlarge',
         bold: true,
         justification: 'center',

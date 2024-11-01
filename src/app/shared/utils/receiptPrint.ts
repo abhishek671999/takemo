@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { confirmedOrder, lineItem } from "../datatypes/orders";
-import { sessionWrapper } from "../site-variable";
+import { meAPIUtility } from "../site-variable";
 import { dateUtils } from "./date_utils";
 
 
@@ -10,16 +10,26 @@ import { dateUtils } from "./date_utils";
 export class ReceiptPrintFormatter{
 
     constructor(
-        private sessionWrapper: sessionWrapper,
+        private meUtility: meAPIUtility, 
         private dateUtils: dateUtils
     ){
 
     }
-
+    private restaurantName
+    private restaurantAddress
+    private restaurantGST
+    private isGSTInclusive
     private confirmedOrder
 
     set confirmedOrderObj(confirmedOrder: confirmedOrder){
-      console.log(confirmedOrder)
+      this.meUtility.getRestaurant().subscribe(
+        (restaurant) => {
+          this.restaurantName = restaurant['restaurant_name']
+          this.restaurantAddress = restaurant['restaurant_address']
+          this.restaurantGST = restaurant['restaurant_gst']
+          this.isGSTInclusive = restaurant['tax_inclusive']
+        }
+      )
         this.confirmedOrder = confirmedOrder
     }
 
@@ -33,7 +43,7 @@ export class ReceiptPrintFormatter{
           if (counterItemList.length) {
             let counterObjs = [
               {
-                text: 'Waiter KOT',
+                text: 'Kitchen KOT',
                 justification: 'center',
               },
               {
@@ -50,21 +60,22 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
               },
               {
-                text: this.confirmedOrder.table_name,
-                justification: 'center',
-              },
-              {
                 text: counterEle.counter_name,
                 justification: 'center',
+                bold: true
               },
             ]
+            if(this.confirmedOrder.table_name) counterObjs.push({
+              text: this.confirmedOrder.table_name,
+              justification: 'center',
+            })
             printObjs.push(counterObjs)
           } 
           })
         }else{
           let printObj = [
             {
-              text: 'Waiter KOT',
+              text: 'Kitchen KOT',
               justification: 'center',
             },
             {
@@ -169,17 +180,17 @@ export class ReceiptPrintFormatter{
         let sectionHeader1 =
           '-'.repeat(16) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(16);
         let tableHeader = '       DESCRIPTION         QTY  RATE   AMT';
-        let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
+        let endNote = 'Thank you. Visit again';
         let sectionSeperatorCharacters = '-'.repeat(42);
         let content = [
           {
-            text: this.sessionWrapper.getItem('restaurant_name'),
+            text: this.restaurantName,
             justification: 'center',
             bold: true,
             size: 'xlarge',
           },
           {
-            text: this.sessionWrapper.getItem('restaurant_address').replace(/-/gi, '\n'),
+            text: this.restaurantAddress.replace(/-/gi, '\n'),
             justification: 'center',
             bold: true,
           },
@@ -219,6 +230,10 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
+            text: this.getSubTotalStrint(),
+            justification: 'right'
+          },
+          {
             text: this.getTotalAmount(),
             bold: true,
             size: 'xlarge',
@@ -233,7 +248,7 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
-            text: this.sessionWrapper.getItem('restaurant_gst'),
+            text: this.restaurantGST,
             justification: 'center',
           },
         ];
@@ -322,7 +337,7 @@ export class ReceiptPrintFormatter{
           if (counterItemList.length) {
             let printObj = [
               {
-                text: this.sessionWrapper.getItem('restaurant_name'),
+                text: this.restaurantName,
                 justification: 'center',
                 size: 'xlarge',
                 bold: true,
@@ -372,7 +387,7 @@ export class ReceiptPrintFormatter{
       else{
         let printObj = [
           {
-            text: this.sessionWrapper.getItem('restaurant_name'),
+            text: this.restaurantName,
             justification: 'center',
             size: 'xlarge',
             bold: true,
@@ -515,22 +530,60 @@ export class ReceiptPrintFormatter{
     }
 
     private getGstDetails() {
-      let gstAmount = (this.confirmedOrder.total_amount * 0.05).toFixed(2); //check total amount /amount
-      return `GST @ 5%: Rs.${gstAmount}`;
+      if(this.isGSTInclusive){
+        let gstAmount = (this.confirmedOrder.total_amount * 0.05).toFixed(2); //check total amount /amount
+        return `GST inclusive @ 5%: Rs.${gstAmount}`;
+      }else{
+        let gstAmount = `SGST (2.5%): ${this.calculateGSTcomponents()/2}\nCGST (2.5%): ${this.calculateGSTcomponents()/2}`
+        return gstAmount
+      }
+    }
+
+    private calculateGSTcomponents(){
+      let gsttotal = 0;
+      this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
+        let gstValue = (lineItem.tax_inclusive? 0 : (Math.round(((lineItem.price * 0.05) + Number.EPSILON) * 100) / 100))
+        gsttotal += (gstValue * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0)));
+      });
+      return gsttotal;
+    }
+
+    private getSubTotal(){
+      let amount = this.isGSTInclusive? this.calculateTotalAmountTaxInclusive(): this.calculateTotalAmountTaxExclusive()
+      return amount
     }
 
     private getTotalAmount() {
-      return `Total Amount: Rs.${this.calculateTotalAmount()}`;
+      let subTotal = this.getSubTotal()
+      let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
+      let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
+      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference 0.5
+      return `Total Amount: Rs.${amountRoundedToNextInteger}`;    // 0.5, 3
+    }
+
+    private getSubTotalStrint(){
+      let subTotal = this.getSubTotal()
+      let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
+      let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
+      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference 0.5
+      return `Sub-total: ${amountRounded}\nRound off: ${roundOffAmount}`;    // 0.5, 3
     }
 
     private getFormattedCurrentDate() {
       return this.dateUtils.getDateForRecipePrint();
     }
 
-    private calculateTotalAmount() {
+    private calculateTotalAmountTaxInclusive() {
       let total = 0;
       this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
         total += lineItem.price * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0));
+      });
+      return total;
+    }
+    private calculateTotalAmountTaxExclusive() {
+      let total = 0;
+      this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
+        total += (lineItem.tax_inclusive? lineItem.price: (lineItem.price * 1.05)) * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0));
       });
       return total;
     }

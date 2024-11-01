@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-vendor-settings',
@@ -13,9 +13,10 @@ export class VendorSettingsComponent {
   constructor(
     private __vendorService: VendorService,
     private __fb: FormBuilder,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
   public vendorList = [];
+  public restaurantId: number;
 
   vendorForm = this.__fb.group({
     name: ['', [Validators.required, Validators.maxLength(25)]],
@@ -28,11 +29,17 @@ export class VendorSettingsComponent {
   });
 
   ngOnInit() {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+      this.fetchVendors()
+      }
+    )
+  }
+
+  fetchVendors(){
     let httpParams = new HttpParams();
-    httpParams = httpParams.append(
-      'restaurant_id',
-      this.__sessionWrapper.getItem('restaurant_id')
-    );
+    httpParams = httpParams.append('restaurant_id', this.restaurantId);
     this.__vendorService.getVendor(httpParams).subscribe(
       (data) => {
         this.vendorList = data['vendors'];
@@ -52,7 +59,7 @@ export class VendorSettingsComponent {
       email: this.vendorForm.value.email,
       mobile: this.vendorForm.value.mobile,
       description: this.vendorForm.value.description,
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
     };
     this.__vendorService.addVendor(body).subscribe(
       (data) => {
@@ -74,7 +81,7 @@ export class VendorSettingsComponent {
       email: vendor.email,
       mobile: vendor.mobile,
       description: vendor.description,
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       vendor_id: vendor.id,
     };
     this.__vendorService.editVendor(body).subscribe(

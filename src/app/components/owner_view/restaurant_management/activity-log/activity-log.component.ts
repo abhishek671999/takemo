@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { PageEvent } from '@angular/material/paginator';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-activity-log',
@@ -10,7 +10,7 @@ import { sessionWrapper } from 'src/app/shared/site-variable';
   styleUrls: ['./activity-log.component.css'],
 })
 export class ActivityLogComponent {
-  constructor(private __counterService: CounterService, private __sessionWrapper: sessionWrapper) {}
+  constructor(private __counterService: CounterService, private meUtility: meAPIUtility) {}
 
 
   length = 50;
@@ -21,10 +21,16 @@ export class ActivityLogComponent {
   showPageSizeOptions = true;
   showFirstLastButtons = true;
 
-  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
+  restaurantId;
   activities = [];
   ngOnInit() {
-    this.getInventoryLogs()
+
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.getInventoryLogs()
+      }
+    )
   }
 
   getInventoryLogs() {

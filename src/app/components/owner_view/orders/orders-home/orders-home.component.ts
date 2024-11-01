@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-orders-home',
@@ -11,8 +11,7 @@ import { sessionWrapper } from 'src/app/shared/site-variable';
 export class OrdersHomeComponent {
   constructor(
     private router: Router,
-    private _counterService: CounterService,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
   navLinks = [
     // {
@@ -60,31 +59,31 @@ export class OrdersHomeComponent {
       link: '/owner/orders/rejected-orders',
     },
   };
-  public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
-  addComponents() {
-    let restaurantType = this.__sessionWrapper.getItem('restaurantType').toLowerCase()
-    let EcommerceComponents = restaurantType == "e-commerce" ? ['unconfirmed', 'confirmed', 'delivered', 'rejected'] : []
-    let restaurantComponents = this.__sessionWrapper.getItem('restaurant_kds') == 'true' ? ['pending', 'current', 'history'] : restaurantType == "e-commerce" ? [] : ['history']
-    let componentsNeeded = EcommerceComponents.concat(restaurantComponents)
-    componentsNeeded.forEach((ele) => {
-      this.navLinks.push(this.availableNavlinks[ele]);
-    });
-  }
+  public isPOSEnabled: boolean
+  public restaurantId: number;
+
 
   ngOnInit() {
-    let restaurantType = this.__sessionWrapper.getItem('restaurantType').toLowerCase()
-    if(restaurantType == "e-commerce"){
-      let EcommerceComponents = ['unconfirmed', 'confirmed', 'delivered', 'rejected']
-      EcommerceComponents.forEach((tab) => {
-        this.navLinks.push(this.availableNavlinks[tab])
-      })
-    }else{
-      let restaurantComponents = this.__sessionWrapper.getItem('restaurant_kds') == 'true' ? ['pending', 'current', 'history'] : ['history']
-      restaurantComponents.forEach((tab) => {
-        this.navLinks.push(this.availableNavlinks[tab])
-      })
-    }
-    this.router.navigate([`.${this.navLinks[0].link}`])
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.isPOSEnabled = restaurant['pos']
+        let restaurantType = restaurant['type'].toLowerCase()
+        if(restaurantType == "e-commerce"){
+          let EcommerceComponents = ['unconfirmed', 'confirmed', 'delivered', 'rejected']
+          EcommerceComponents.forEach((tab) => {
+            this.navLinks.push(this.availableNavlinks[tab])
+          })
+        }else{
+          let restaurantComponents = restaurant['restaurant_kds'] == 'true' ? ['pending', 'current', 'history'] : ['history']
+          restaurantComponents.forEach((tab) => {
+            this.navLinks.push(this.availableNavlinks[tab])
+          })
+        }
+        this.router.navigate([`.${this.navLinks[0].link}`])
+      }
+    )
+
   }
 
   navigateToPOS() {

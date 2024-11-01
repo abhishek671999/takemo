@@ -6,7 +6,7 @@ import { Observable, Subscription, interval } from 'rxjs';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { HttpParams } from '@angular/common/http';
 import { DeliverAllOrdersDialogComponent } from '../../dialogbox/deliver-all-orders-dialog/deliver-all-orders-dialog.component';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-pending-orders',
@@ -18,7 +18,7 @@ export class PendingOrdersComponent {
     private _orderService: OrdersService,
     private _dialog: MatDialog,
     private __counterService: CounterService,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
 
   orderList = [];
@@ -27,20 +27,30 @@ export class PendingOrdersComponent {
   refreshInterval = 5; // seconds
   public showSpinner = true;
   public firstPageLoad = true;
-
+public restaurantId: number
   counters = [];
   selectedCounterId;
 
   ngOnInit() {
-    this.getCurrentOrders();
-    this.firstPageLoad = false;
-    this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
-      (val) => {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
         this.getCurrentOrders();
+        this.firstPageLoad = false;
+        this.updateSubscription = interval(this.refreshInterval * 1000).subscribe(
+          (val) => {
+            this.getCurrentOrders();
+          }
+        );
+        this.fetchCounters()
       }
-    );
+    )
+    
+  }
+  
+  fetchCounters(){
     this.__counterService
-      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
+      .getRestaurantCounter(this.restaurantId)
       .subscribe(
         (data) => {
           this.counters = data['counters'];
@@ -48,15 +58,15 @@ export class PendingOrdersComponent {
         (error) => {
           console.log('Couldnt log counters');
         }
-      );
-  }
+      ); 
+    }
 
   getCurrentOrders() {
     this.showSpinner = true;
     let httpParams = new HttpParams();
     httpParams = httpParams.append(
       'restaurant_id',
-      this.__sessionWrapper.getItem('restaurant_id')
+      this.restaurantId
     );
     if (this.selectedCounterId) {
       httpParams = httpParams.append('counter_id', this.selectedCounterId);

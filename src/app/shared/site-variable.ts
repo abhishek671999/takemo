@@ -49,15 +49,20 @@ export class meAPIUtility {
   constructor(
     public cookieService: CookieService,
     private _meService: MeService,
-    private _router: Router
+    private _router: Router,
   ) {
 
   }
 
   public indexSet = 0;
+  public isMultiRestaurantOwner = false;
+  public doesUserBelongToITT: boolean = false
+  public doesUserBelongToRaviGobi: boolean = false
+
 
   setMeData(meData) {
     let meDataExpiryDuration = 30; // min
+    this.isMultiRestaurantOwner = meData['restaurants'].length > 1
     this.cookieService.set(
       'me',
       JSON.stringify(meData),
@@ -89,15 +94,75 @@ export class meAPIUtility {
     }
   }
 
+  setRestaurant(restaurant, duration=6000){
+    this.cookieService.delete('company', '/')
+    let expiryDuration = duration; // min
+    this.cookieService.set(
+      'restaurant',
+      JSON.stringify(restaurant),
+      new Date(new Date().getTime() + expiryDuration * 60 * 1000),
+      '/'
+    );
+  }
 
+  getRestaurant(){
+    let restaurantObservable = new Observable((observer) => {
+      let restaurantData = this.cookieService.get('restaurant')
+      if(restaurantData){
+        let data = JSON.parse(restaurantData)
+        this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
+        this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
+        observer.next(data)
+      } else {
+        this.getMeData().subscribe((data) => {
+          this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
+          this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
+          this.setRestaurant(data['restaurants'][0])
+          observer.next(data['restaurants'][0])
+        })
+      }
+    })
+    return restaurantObservable
+  }
+
+  setCompany(company, duration=6000){
+    this.cookieService.delete('restaurant', '/')
+    let expiryDuration = duration; // min
+    this.cookieService.set(
+      'company',
+      JSON.stringify(company),
+      new Date(new Date().getTime() + expiryDuration * 60 * 1000),
+      '/'
+    );
+  }
+
+  getCompany(){
+    let restaurantObservable = new Observable((observer) => {
+      let restaurantData = this.cookieService.get('company')
+      if(restaurantData){
+        observer.next(JSON.parse(restaurantData))
+      } else {
+        this.getMeData().subscribe((data) => {
+          if(data['companies'].length > 0){
+            this.setCompany(data['companies'][0])
+            observer.next(data['companies'][0])
+          }
+        })
+      }
+    })
+    return restaurantObservable
+  }
 
   getMeData() {
     let meDataObservable = new Observable((observer) => {
       let meData: any = this.cookieService.get('me');
       if (meData) {
-        observer.next(JSON.parse(meData));
+        let data = JSON.parse(meData)
+        this.isMultiRestaurantOwner = data['restaurants'].length > 1
+        observer.next(data);
       } else {
         this._meService.getMyInfo().subscribe((data) => {
+          this.isMultiRestaurantOwner = data['restaurants'].length > 1
           this.setMeData(data);
           observer.next(data);
         });
@@ -110,11 +175,17 @@ export class meAPIUtility {
     this.cookieService.deleteAll('/');
     this.cookieService.delete('token');
     this.cookieService.delete('me');
+    this.cookieService.delete('restaurant')
+    this.cookieService.delete('company')
     if (this.cookieService.getAll()) {
       this.cookieService.delete('token');
       this.cookieService.deleteAll('/');
+      this.cookieService.delete('restaurant')
+      this.cookieService.delete('company')
     }
   }  
+
+
 }
 
 
@@ -207,18 +278,6 @@ export class sessionWrapper {
 
   setCompanySessionVariable(company){
     sessionStorage.setItem('company_id', company['company_id'])
-  }
-
-
-
-  doesUserBelongsToITT() {
-    let restaurantId = Number(this.getItem('restaurant_id'))
-    let validation = [1, 2].includes(restaurantId);
-    return validation;
-  }
-
-  doesUserBelongsToRaviGobi() {
-    return this.getItem('restaurant_id') == '7'? true: false
   }
   
   public set isMultiRestaurantOwner(value: boolean){

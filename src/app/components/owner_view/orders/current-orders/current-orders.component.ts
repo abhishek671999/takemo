@@ -4,7 +4,7 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ConfirmOrderCancelComponent } from '../../dialogbox/confirm-order-cancel/confirm-order-cancel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-current-orders',
@@ -15,7 +15,7 @@ export class CurrentOrdersComponent {
   constructor(
     private _ordersService: OrdersService,
     private _dialog: MatDialog,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
 
   displayedColumns: string[] = [
@@ -29,18 +29,25 @@ export class CurrentOrdersComponent {
     'Details',
   ];
 
+  public restaurantId: number;
   public showSpinner = true;
   public currentOrders = [];
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders);
 
   ngOnInit() {
+
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+      }
+    )
     this.getRestaurantCurrentOrders();
   }
 
   getRestaurantCurrentOrders() {
     this.showSpinner = true;
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       time_frame: 'current',
       start_date: '',
       end_date: '',
@@ -105,7 +112,7 @@ export class CurrentOrdersComponent {
   deliverEntireOrder(order) {
     console.log('Delivering: ', order);
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       order_id: order.order_id,
     };
     console.log('THis is body: ', body);
