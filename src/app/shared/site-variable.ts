@@ -108,7 +108,6 @@ export class meAPIUtility {
   getRestaurant(){
     let restaurantObservable = new Observable((observer) => {
       let restaurantData = this.cookieService.get('restaurant')
-      debugger
       if(!(typeof(restaurantData) == "undefined" || restaurantData === "")){
         let data = JSON.parse(restaurantData)
         this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])

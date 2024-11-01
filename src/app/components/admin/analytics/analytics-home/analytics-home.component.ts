@@ -17,12 +17,16 @@ export class AnalyticsHomeComponent {
   ]
 
   ngOnInit(){
-    if( this.meUtility.isMultiRestaurantOwner ){
-      this.analyticsPages.splice(0, 0,{name: 'All-restaurants', href: 'all-restaurants'})
-      this.router.navigate(['./admin/analytics/all-restaurants'])
-    }else{
-      this.router.navigate(['./admin/analytics/sales-analytics'])
-    }
+    this.meUtility.getMeData().subscribe(
+      (data:any) => {
+        if( this.meUtility.isMultiRestaurantOwner ){
+          this.analyticsPages.splice(0, 0,{name: 'All-restaurants', href: 'all-restaurants'})
+          this.router.navigate(['./admin/analytics/all-restaurants'])
+        }else{
+          this.router.navigate(['./admin/analytics/sales-analytics'])
+        }
+      }
+    )
   }
 
 }
