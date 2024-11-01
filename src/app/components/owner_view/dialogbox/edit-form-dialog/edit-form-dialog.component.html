@@ -26,7 +26,14 @@
                     <mat-form-field>
                         <mat-label>Price</mat-label>
                       <input matInput placeholder="Price" value="{{data.price}}" formControlName="price">
-                    </mat-form-field>
+                      </mat-form-field>
+                      <div>
+                        <mat-radio-group formControlName="tax_inclusive">
+                          <mat-radio-button value=true>Tax Incl</mat-radio-button>
+                          <mat-radio-button value=false>Tax Excl</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+
                     <mat-form-field>
                       <mat-label>Making price</mat-label>
                     <input matInput placeholder="Price" value="{{data.making_price}}" formControlName="makingPrice">

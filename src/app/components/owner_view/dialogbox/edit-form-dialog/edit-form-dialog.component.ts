@@ -82,7 +82,8 @@ export class EditFormDialogComponent {
     itemUnit: [{'Piece': '1', 'Grams': '2', 'Litre': '3'}[this.data.item_unit], Validators.required],
     itemDescription: [this.data.item_description],
     subItemUnit: [''],
-    inventory_stock: [this.data.inventory_stock]
+    inventory_stock: [this.data.inventory_stock],
+    tax_inclusive: [String(this.data.tax_inclusive)]
   });
 
 
@@ -99,7 +100,8 @@ export class EditFormDialogComponent {
       item_description: this.editMenuForm.value.itemDescription,
       counter_id: this.editMenuForm.value.counterId,
       item_unit: Number(this.editMenuForm.value.itemUnit),
-      inventory_stock: this.editMenuForm.value.inventory_stock
+      inventory_stock: this.editMenuForm.value.inventory_stock,
+      tax_inclusive: this.editMenuForm.value.tax_inclusive == 'true'? true: false
       // item_unit_price_list: this.unitPriceDetails
     };
     return this._editMenuService.editMenu(body)

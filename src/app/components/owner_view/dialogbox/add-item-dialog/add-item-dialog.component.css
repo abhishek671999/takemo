@@ -12,6 +12,9 @@
     right: 0;
     gap: 2em;
 }
+:host ::ng-deep mat-form-field {
+  padding: 0 !important;
+}
 
 * {
     box-sizing: border-box;

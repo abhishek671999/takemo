@@ -155,6 +155,7 @@ export class HeaderComponent {
 
   public counters = [];
   public dropdownList = [ this.AvailableDropdownList['logout']]
+  public userType: string;
   
   ngOnInit(){
     this._meAPIutility.getRestaurant().subscribe(
@@ -169,10 +170,11 @@ export class HeaderComponent {
         this.location = data['restaurant_name']
         this.restaurantKDS = data['restaurant_kds']
         this.restaurantType = data['type']
+        this.userType = data['role_name']
         this.fetchCounters()
-        if(data['role_name'] == 'restaurant_admin'){
+        if(this.userType == 'restaurant_admin'){
           this.addRestaurantOwnerNavOptions(data)
-        }else if(data['role_name'] == 'restaurant_staff'){
+        }else if(this.userType == 'restaurant_staff'){
           this.addRestaurantStaffNavOptions(data)
         }
       }
@@ -181,7 +183,8 @@ export class HeaderComponent {
     this._meAPIutility.getCompany().subscribe(
       (data) => {
         this.location = data['organization_name']
-        if(data['role_name'] == 'corporate_admin'){
+        this.userType = data['role_name']
+        if(this.userType == 'corporate_admin'){
           this.addAdminNavOptions(data)
         }
       }
@@ -190,7 +193,10 @@ export class HeaderComponent {
     this._meAPIutility.getMeData().subscribe(data => {
       this.meData = data
       this.hasMultipleRestaurants = data['restaurants'].length > 1
-      if(data['restaurants'].length == 0 && data['companies'].length == 0) this.addUserNavOptions()
+      if(data['restaurants'].length == 0 && data['companies'].length == 0) {
+        this.addUserNavOptions()
+        this.userType = 'user'
+      }
       }
     )
 
@@ -378,8 +384,6 @@ export class HeaderComponent {
       return false
     }
   }
-
-
   
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');

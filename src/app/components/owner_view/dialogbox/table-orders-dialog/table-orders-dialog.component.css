@@ -19,6 +19,9 @@ th.edit, td.edit{
     width: 10%;
 }
 
+.total_price{
+    text-align: center;
+}
 .quantity{
     display: flex;
     width: 100%;

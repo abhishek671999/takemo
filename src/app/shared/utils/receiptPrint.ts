@@ -47,6 +47,11 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
               },
               {
+                text: counterEle.counter_name,
+                justification: 'center',
+                bold: true
+              },
+              {
                 text: this.confirmedOrder.ordered_time,
                 justification: 'right',
                 size: 'small'
@@ -64,13 +69,12 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
               },
               {
-                text: counterEle.counter_name,
+                text: `Order No: ${this.confirmedOrder.order_no}`,
                 justification: 'center',
-                bold: true
               },
             ]
             if(this.confirmedOrder.table_name) counterObjs.push({
-              text: this.confirmedOrder.table_name,
+              text: `Table name: ${this.confirmedOrder.table_name}`,
               justification: 'center',
             })
             printObjs.push(counterObjs)
@@ -100,7 +104,11 @@ export class ReceiptPrintFormatter{
               justification: 'center',
             },
             {
-              text: this.confirmedOrder.table_name,
+              text: `Order No: ${this.confirmedOrder.order_no}`,
+              justification: 'center',
+            },
+            {
+              text: `Table name: ${this.confirmedOrder.table_name}`,
               justification: 'center',
             },
           ]
@@ -123,9 +131,17 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
               },
               {
+                text: counterEle.counter_name,
+                justification: 'center',
+              },
+              {
                 text: this.confirmedOrder.ordered_time,
                 justification: 'right',
                 size: 'small'
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
               },
               {
                 text: this.getFormattedCounterItemDetails(counterItemList),
@@ -136,18 +152,19 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
               },
               {
-                text: this.confirmedOrder.table_name,
-                justification: 'center',
-              },
-              {
-                text: counterEle.counter_name,
+                text: `Order No: ${this.confirmedOrder.order_no}`,
                 justification: 'center',
               },
               {
                 text: ' '.repeat(20) + 'X' + ' '.repeat(20),
                 justification: 'center',
+                bold: true
               },
             ]
+            if(this.confirmedOrder.table_name) counterObjs.push({
+              text: `Table name: ${this.confirmedOrder.table_name}`,
+              justification: 'center',
+            })
             printObjs.push(counterObjs)
           } 
           })
@@ -163,6 +180,10 @@ export class ReceiptPrintFormatter{
               size: 'small'
             },
             {
+              text: sectionSeperatorCharacters,
+              justification: 'center',
+            },
+            {
               text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
               justification: 'left',
             },
@@ -171,7 +192,7 @@ export class ReceiptPrintFormatter{
               justification: 'center',
             },
             {
-              text: this.confirmedOrder.table_name,
+              text: `Order No: ${this.confirmedOrder.order_no}`,
               justification: 'center',
             },
             {
@@ -179,6 +200,10 @@ export class ReceiptPrintFormatter{
               justification: 'center',
             },
           ]
+          if(this.confirmedOrder.table_name) printObj.push({
+            text: `Table name: ${this.confirmedOrder.table_name}`,
+            justification: 'center',
+          })
           printObjs.push(printObj)
       }
       return printObjs
@@ -186,8 +211,8 @@ export class ReceiptPrintFormatter{
 
     getCustomerPrintableText() {
         let sectionHeader1 =
-          '-'.repeat(16) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(16);
-        let tableHeader = '       DESCRIPTION         QTY  RATE   AMT';
+          '-'.repeat(15) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(15);
+        let tableHeader = '           ITEM            QTY  RATE   AMT';
         let endNote = 'Thank you. Visit again';
         let sectionSeperatorCharacters = '-'.repeat(42);
         let content = [
@@ -261,7 +286,7 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
-            text: this.restaurantGST,
+            text: `GSTIN : ${this.restaurantGST}` ,
             justification: 'center',
           },
         ];
@@ -280,12 +305,16 @@ export class ReceiptPrintFormatter{
       let sectionSeperatorCharacters = '-'.repeat(42);
       let content = [
         {
+          text: 'Check KOT',
+          justification: 'center',
+        },
+        {
           text: this.dateUtils.getDateForRecipePrint(),
           justification: 'right',
           size: 'small'
         },
         {
-          text: this.confirmedOrder.table_name,
+          text: `Table name: ${this.confirmedOrder.table_name}`,
           justification: 'center',
         },
       ]
@@ -306,17 +335,14 @@ export class ReceiptPrintFormatter{
               {
                 text: counterEle.counter_name,
                 justification: 'center',
-                size: 'large',
               },
               {
                 text: this.getFormattedCounterItemDetails(counterItemList),
                 justification: 'left',
-                size: 'large',
               },
               {
                 text: sectionSeperatorCharacters,
                 justification: 'center',
-                size: 'large',
               }
             ]
             counterText.forEach(ele => content.push(ele))
@@ -386,7 +412,7 @@ export class ReceiptPrintFormatter{
             }
             if(this.confirmedOrder.table_name){
               printObj.push({
-                text: `Table: ${this.confirmedOrder.table_name}`,
+                text: `Table name: ${this.confirmedOrder.table_name}`,
                 size: 'large',
                 bold: true,
                 justification: 'center',
@@ -544,15 +570,17 @@ export class ReceiptPrintFormatter{
 
     private getGstDetails() {
       if(this.isGSTInclusive){
-        let gstAmount = (this.confirmedOrder.total_amount * 0.05).toFixed(2); //check total amount /amount
-        return `GST inclusive @ 5%: Rs.${gstAmount}`;
+        let orderAmount = (this.confirmedOrder.total_amount / 1.05);
+        let gstAmount = this.confirmedOrder.total_amount - orderAmount //check total amount amount 105/1.05
+        return `SGST (2.5%): ${(gstAmount/2).toFixed(2)}\nCGST (2.5%): ${(gstAmount/2).toFixed(2)}`;
       }else{
-        let gstAmount = `SGST (2.5%): ${this.calculateGSTcomponents()/2}\nCGST (2.5%): ${this.calculateGSTcomponents()/2}`
+        let gstAmount = `SGST (2.5%): ${(this.calculateGSTcomponents()/2).toFixed(2)}\nCGST (2.5%): ${(this.calculateGSTcomponents()/2).toFixed(2)}`
         return gstAmount
       }
     }
 
     private calculateGSTcomponents(){
+      // exclusive to find GST component only
       let gsttotal = 0;
       this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
         let gstValue = (lineItem.tax_inclusive? 0 : (Math.round(((lineItem.price * 0.05) + Number.EPSILON) * 100) / 100))
@@ -570,7 +598,7 @@ export class ReceiptPrintFormatter{
       let subTotal = this.getSubTotal()
       let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
       let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
-      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference 0.5
+      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference    0.5
       return `Total Amount: Rs.${amountRoundedToNextInteger}`;    // 0.5, 3
     }
 
@@ -578,8 +606,8 @@ export class ReceiptPrintFormatter{
       let subTotal = this.getSubTotal()
       let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
       let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
-      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference 0.5
-      return `Sub-total: ${amountRounded}\nRound off: ${roundOffAmount}`;    // 0.5, 3
+      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference   0.5
+      return `Sub-total: ${amountRounded}\nRound off: ${roundOffAmount.toFixed(2)}`;    // 0.5, 3
     }
 
     private getFormattedCurrentDate() {

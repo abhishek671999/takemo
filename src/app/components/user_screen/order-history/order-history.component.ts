@@ -91,6 +91,7 @@ export class OrderHistoryComponent {
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
     let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
     console.log('Length of line times: ', order.line_items.length)
+    
     return { 
       orderno : order.order_no,
       order_detail: order.line_items.length != 1?
@@ -106,6 +107,7 @@ export class OrderHistoryComponent {
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
       OrderStatus:  order.order_status,
+      tax_amount: order.tax_amount
     }
   }
 
