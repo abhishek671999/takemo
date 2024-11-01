@@ -108,7 +108,8 @@ export class meAPIUtility {
   getRestaurant(){
     let restaurantObservable = new Observable((observer) => {
       let restaurantData = this.cookieService.get('restaurant')
-      if(restaurantData){
+      debugger
+      if(!(typeof(restaurantData) == "undefined" || restaurantData === "")){
         let data = JSON.parse(restaurantData)
         this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
         this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
@@ -139,7 +140,7 @@ export class meAPIUtility {
   getCompany(){
     let restaurantObservable = new Observable((observer) => {
       let restaurantData = this.cookieService.get('company')
-      if(restaurantData){
+      if(!(typeof(restaurantData) == "undefined" || restaurantData === "")){
         observer.next(JSON.parse(restaurantData))
       } else {
         this.getMeData().subscribe((data) => {

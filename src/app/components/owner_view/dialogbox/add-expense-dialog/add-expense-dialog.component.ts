@@ -34,6 +34,7 @@ export class AddExpenseDialogComponent {
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
         let httpParams = new HttpParams();
         httpParams = httpParams.append('restaurant_id', restaurant['restaurant_id']);
         this.__vendorService.getVendor(httpParams).subscribe(
