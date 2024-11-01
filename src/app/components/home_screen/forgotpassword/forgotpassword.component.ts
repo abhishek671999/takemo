@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { userNameValidator } from '../../../shared/email.validator';
+import { userNameValidator } from '../../../shared/validators/email.validator';
 import { SignupService } from '../../../shared/services/register/signup.service';
 import { PwdrecoveryService } from '../../../shared/services/register/pwdrecovery.service';
 import { MatDialog } from '@angular/material/dialog';

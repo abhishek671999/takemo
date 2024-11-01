@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, Route, ActivatedRoute} from '@angular/router';
 import { delay } from 'rxjs';
-import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
+import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +12,7 @@ import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant
 export class HomeComponent {
   constructor(
     private _router: Router,
-    private _restuarantService: RestuarantService,
+    private _RestaurantService: RestaurantService,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -20,7 +20,7 @@ export class HomeComponent {
   public restaurantInfo;
   ngOnInit() {
     setTimeout(() => {
-      this._restuarantService.getResturantInfo().subscribe(
+      this._RestaurantService.getResturantInfo().subscribe(
         (data) => (this.restaurantInfo = data),
         (error) => console.log(error)
       );

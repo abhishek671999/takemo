@@ -30,7 +30,11 @@ import { ConfirmActionDialogComponent } from './components/shared/confirm-action
 import { MatDialogModule } from '@angular/material/dialog';
 import { UploadFormComponent } from './components/shared/upload-form/upload-form.component';
 import { SelectSubitemDialogComponent } from './components/shared/select-subitem-dialog/select-subitem-dialog.component';
-
+import { AddItemNoteDialogComponent } from './components/shared/add-item-note-dialog/add-item-note-dialog.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { InputPasswordDialogComponent } from './components/shared/input-password-dialog/input-password-dialog.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -50,6 +54,9 @@ import { SelectSubitemDialogComponent } from './components/shared/select-subitem
     Login2Component,
     ConfirmActionDialogComponent,
     SelectSubitemDialogComponent,
+    AddItemNoteDialogComponent,
+    InputPasswordDialogComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -62,7 +69,10 @@ import { SelectSubitemDialogComponent } from './components/shared/select-subitem
     MaterialModule,
     CanvasJSAngularChartsModule,
     NgApexchartsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatFormFieldModule,
+     MatInputModule,
+     MatCheckboxModule
     ],
   providers: [Utility, meAPIUtility, dateUtils, 
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}

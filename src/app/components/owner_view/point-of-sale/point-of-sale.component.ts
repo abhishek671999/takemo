@@ -7,13 +7,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { ErrorMsgDialogComponent } from '../../shared/error-msg-dialog/error-msg-dialog.component';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
 import { HttpParams } from '@angular/common/http';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
+import { AddItemNoteDialogComponent } from '../../shared/add-item-note-dialog/add-item-note-dialog.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -28,11 +29,12 @@ export class PointOfSaleComponent {
     private orderService: OrdersService,
     private dialog: MatDialog,
     public printerConn: PrintConnectorService,
-    private dateUtils: dateUtils,
     private _counterService: CounterService,
     private __snackbar: MatSnackBar,
-    private __sessionWrapper: sessionWrapper,
-    private receiptPrintFormatter: ReceiptPrintFormatter
+    private receiptPrintFormatter: ReceiptPrintFormatter,
+    private matdialog: MatDialog,
+    private meUtility: meAPIUtility,
+    private dateUtils: dateUtils
   ) {
 
   }
@@ -44,75 +46,61 @@ export class PointOfSaleComponent {
   public disablePlace = false;
   public restaurantParcel = false;
 
-  public restaurantName = null;
-  public restaurantAddress = null;
-  public restaurantGST = null;
+  public restaurantName
+  public restaurantAddress
+  public restaurantGST 
   public parcelCharges = 5; // hardcode
   public filteredMenu;
   public menuCopy;
-  public isPollingRequired =  this.__sessionWrapper.isPollingRequired()
-  public isTaxInclusive = this.__sessionWrapper.isTaxInclusive()
-  public taxPercentage = this.isTaxInclusive? 0: Number(this.__sessionWrapper.getItem('tax_percentage'))
-  public pollingFrequency = Number(this.__sessionWrapper.getItem('ui_polling_for_mobile_order_receipt_printing_frequency'))
+  public isPollingRequired;
+  public isTaxInclusive
+  public taxPercentage
+  public pollingFrequency;
   searchText = '';
   private currentCategoryId;
 
   counters = [];
-  public outletType = this.__sessionWrapper.getItem('restaurantType').toLowerCase();
-  public isTableManagement = this.__sessionWrapper.isTableManagementEnabled()
-  public tableName = this.__sessionWrapper.getItem('table_name')
-  public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'))
-  public isPOS = this.__sessionWrapper.isPOSEnabled()
-  public isKOTEnabled = this.__sessionWrapper.isKOTreceiptEnabled()
-  public pollingInterval
+  public outletType;
+  public isTableManagement
+  public tableName = sessionStorage.getItem('table_name')
+  public restaurantId
+  public isPOS
+  public isKOTEnabled
+  public restaurantKDSenabled
 
   ngOnInit() {
     this.summary = {
       amount: 0,
       itemList: [],
     };
-    this.fetchPOSMenu()
-    this.fetchCounters()
-    this.restaurantName = this.__sessionWrapper.getItem('restaurant_name');
-    this.restaurantAddress = this.__sessionWrapper.getItem('restaurant_address');
-    this.restaurantGST = this.__sessionWrapper.getItem('restaurant_gst');
-
-    if(this.isPollingRequired) this.pollingInterval = this.startMobileOrderingPoll()
-  }
-
-  startMobileOrderingPoll(){
-    let httpParams = new HttpParams()
-    httpParams = httpParams.append('restaurant_id', this.restaurantId)
-    return setInterval(() => {
-      this.orderService.getMobileOrdersToPrint(httpParams).subscribe(
-        (data: any) => {
-          let printedOrderIds = []
-          data['orders'].forEach((order) => {
-            this.receiptPrintFormatter.confirmedOrderObj = order
-            let printObj = this.receiptPrintFormatter.getMobileOrderPrintableText()
-            let printStatus = this.print(printObj)
-            if(printStatus) printedOrderIds.push(order.order_id)
-          })
-        if(printedOrderIds.length > 0){
-          let body = {
-            "order_ids": printedOrderIds,
-            "restaurant_id": this.restaurantId
-          }
-          this.orderService.markOrderAsPrinted(body).subscribe(
-            (data) => {
-              console.log(data)
-            },
-            (error) => {
-              console.log(error)
-            }
-          )
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.restaurantName = restaurant['restaurant_name']
+        this.restaurantAddress = restaurant['restaurant_address']
+        this.restaurantGST = restaurant['restaurant_gst']
+        this.isPollingRequired = restaurant['ui_polling_for_mobile_order_receipt_printing']
+        this.isTaxInclusive = restaurant['tax_inclusive']
+        this.taxPercentage =  this.isTaxInclusive? 0: Number(restaurant['tax_percentage'])
+        this.pollingFrequency = Number(restaurant['ui_polling_for_mobile_order_receipt_printing_frequency'])
+        this.outletType = restaurant['type'].toLowerCase()
+        this.isTableManagement = restaurant['table_management']
+        this.isPOS = restaurant['pos']
+        this.isKOTEnabled = restaurant['kot_receipt']
+        this.restaurantKDSenabled = restaurant['restaurant_kds'] 
+        if(this.isTableManagement && !this.tableName){
+            this.router.navigate(['./owner/dine-in/table-cockpit'])
         }
+        this.fetchPOSMenu()
+        this.fetchCounters()
       }
     )
-    }, this.pollingFrequency * 1000);
-
   }
 
+  openAddItemNotesWindow(item){
+    this.matdialog.open(AddItemNoteDialogComponent, {data: item} )
+    
+  }
 
   fetchPOSMenu(){
     this.menuService
@@ -159,9 +147,11 @@ export class PointOfSaleComponent {
   createAllCategory() {
     let allItems = [];
     this.menu.forEach((ele, index) => {
-      ele.category.items.forEach(item => {
-        allItems.push(item);
-      });
+      if(ele.category.name.toUpperCase() != "FAVOURITES"){
+        ele.category.items.forEach(item => {
+          allItems.push(item);
+        });
+      }
     });
     this.menu.push({
       category: {
@@ -193,7 +183,7 @@ export class PointOfSaleComponent {
   }
 
   categoryClickEventHandler(category) {
-    this.filteredMenu = this.menu.filter((eleCategory) => eleCategory.category.id == category.category.id)
+    this.filteredMenu = JSON.parse(JSON.stringify(this.menu.filter((eleCategory) => eleCategory.category.id == category.category.id)))
     this.currentCategoryId = category.category.id
     let categoryName = category.category.name.replace(' ', '');
     let allCategoryBar = Array.from(
@@ -271,7 +261,8 @@ export class PointOfSaleComponent {
           "name": item.name,
           "price": item.price,
           "counter": item.counter,
-          "parcel_available": item.parcel_available
+          "parcel_available": item.parcel_available,
+          "tax_inclusive": item.tax_inclusive
         }
         item.quantity = 1
         let pricebeAdded = (this.isTaxInclusive? item.price: item.price * (this.taxPercentage * 0.01))
@@ -340,11 +331,10 @@ export class PointOfSaleComponent {
   }
 
   calculateItemAmount(item) {
-    return (this.isTaxInclusive? item.price: item.price + (item.price * this.taxPercentage * 0.01)) * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
+    return (item.tax_inclusive? item.price: item.price + (item.price * this.taxPercentage * 0.01)) * (item.quantity + (item.parcelQuantity? item.parcelQuantity: 0));
   }
 
   addParcelItem(item) {
-    console.log('Parcel: ', item);
     let itemAdded = this.summary.itemList.find((x) => x.id == item.id);
     if (!itemAdded) {
       this.summary.itemList.push(item);
@@ -431,10 +421,11 @@ export class PointOfSaleComponent {
   calculateTotalAmount() {
     let total = 0;
     this.summary.itemList.forEach((ele) => {
-      total += ele.price * (ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0));
+      total += (ele.tax_inclusive? ele.price : ( ele.price + (ele.price * (this.taxPercentage * 0.01)))) * (ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0));
     });
-    total = this.isTaxInclusive? total: total + (total * (this.taxPercentage * 0.01 ))
-    return total;
+    // 150.5
+    // 151 - pos, receipt
+    return Math.round(total);
   }
 
   filterItems() {
@@ -442,10 +433,14 @@ export class PointOfSaleComponent {
       this.categoryClickEventHandler(
         this.menu[this.menu.length - 1]
       );
+      
       this.filteredMenu[this.filteredMenu.length - 1].category.items =
-        this.menuCopy[this.menuCopy.length - 1].category.items.filter((item) =>
-          item.name.toLowerCase().includes(this.searchText.toLowerCase())
-        );
+        JSON.parse(JSON.stringify(this.menuCopy[this.menuCopy.length - 1].category.items.filter((item) =>
+         {
+          let acronym = item.name.split(/\s/).reduce((response,word)=> response+=word.slice(0,1),'')
+          return ((item.name.toLowerCase().includes(this.searchText.toLowerCase())) || (acronym.toLowerCase().includes(this.searchText.toLowerCase())))
+        }
+        )));
     } else {
       this.menu = JSON.parse(JSON.stringify(this.menuCopy));
       this.showOnlyFirstCategory();
@@ -474,26 +469,27 @@ export class PointOfSaleComponent {
         item_unit_price_id: ele.item_unit_price_id,
         quantity: ele.quantity + (ele.parcel_quantity? ele.parcel_quantity: 0),
         parcel_quantity: ele.parcel_quantity,
-        counter: ele.counter
+        counter: ele.counter,
+        note: ele.note,
+        tax_inclusive: ele.tax_inclusive
       });
     });
     let body = {
       pos: true,
       order_list: itemList,
-      table_id: Number(this.__sessionWrapper.getItem('table_id')),
       restaurant_id: this.restaurantId,
       payment_mode: this.modeOfPayment,
       printer_conneted: this.printerConn.usbSought,
       total_amount: this.summary.amount,
       actual_total_amount: actualTotalAmount,
     };
+    if(this.isTableManagement){
+      body['table_id'] =  Number(sessionStorage.getItem('table_id'))
+      body['table_name'] = sessionStorage.getItem('table_name')
+      body['wkot_printed'] = this.printerConn.usbSought
+      body['kot_printed'] = this.printerConn.usbSought
+    }
     return body;
-  }
-
-  trimString(text, length = 16) {
-    return text.length > length
-      ? text.substring(0, length - 2) + '..'
-      : text + '.'.repeat(length - text.length);
   }
 
   getPrintStatus() {
@@ -502,253 +498,6 @@ export class PointOfSaleComponent {
     } else {
       return 'warn';
     }
-  }
-
-  getFixedLengthString(string, length, prefix = true, fixValue = '0') {
-    string = String(string);
-    console.log('string length', string.toLocaleString().length);
-    return string.length > length
-      ? string.substring(0, length)
-      : prefix
-      ? fixValue.repeat(length - string.length) + string
-      : string + fixValue.repeat(length - string.length);
-  }
-
-  getFormattedDineInItemDetails() {
-    let formattedTable = '';
-    this.summary.itemList.forEach((element: any, index) => {
-      if (element.quantity > 0) {
-        let trimmedName = this.getFixedLengthString(
-          element.name.substring(0, 24),
-          24,
-          false,
-          ' '
-        );
-        let remainingName =
-          trimmedName.trim() == element.name
-            ? ''
-            : ' ' +
-              this.getFixedLengthString(
-                element.name.substring(24, 48),
-                24,
-                false,
-                ' '
-              ) +
-              '\n';
-        let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
-        let itemPrice = this.getFixedLengthString(element.price, 4, true, ' ');
-        let itemAmount = this.getFixedLengthString(
-          element.quantity * element.price,
-          4,
-          true,
-          ' '
-        );
-        formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
-      }
-    });
-    return formattedTable;
-  }
-
-  getFormattedParcelItemDetails() {
-    let inititalString = '------------------Parcel------------------\n';
-    let formattedTable = inititalString;
-    let totalParcelItem = 0;
-    this.summary.itemList.forEach((element: any) => {
-      if (element.parcelQuantity > 0) {
-        let trimmedName = this.getFixedLengthString(
-          element.name.substring(0, 24),
-          24,
-          false,
-          ' '
-        );
-        let remainingName =
-          trimmedName.trim() == element.name
-            ? ''
-            : ' ' +
-              this.getFixedLengthString(
-                element.name.substring(24, 48),
-                24,
-                false,
-                ' '
-              ) +
-              '\n';
-        let itemQty = this.getFixedLengthString(
-          element.parcelQuantity,
-          3,
-          true,
-          ' '
-        );
-        let itemPrice = this.getFixedLengthString(element.price, 4, true, ' ');
-        let itemAmount = this.getFixedLengthString(
-          element.parcelQuantity * element.price,
-          4,
-          true,
-          ' '
-        );
-        totalParcelItem += element.parcelQuantity;
-
-        formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
-      }
-    });
-    let parcelInfo = `${this.getFixedLengthString(
-      'Parcel Charges Rs5/item',
-      24,
-      false,
-      ' '
-    )}   ${this.getFixedLengthString(
-      totalParcelItem,
-      3,
-      true,
-      ' '
-    )}  ${this.getFixedLengthString(
-      '5',
-      4,
-      true,
-      ' '
-    )}  ${this.getFixedLengthString(totalParcelItem * 5, 4, true, ' ')}`;
-    return formattedTable == inititalString ? '' : formattedTable + parcelInfo;
-  }
-
-  getGstDetails() {
-    let gstAmount = (this.summary.amount * 0.05).toFixed(2);
-    return `GST @ 5%: Rs.${gstAmount}`;
-  }
-
-  getTotalAmount() {
-    return `Total Amount: Rs.${this.calculateTotalAmount()}`;
-  }
-  getFormattedCurrentDate() {
-    return this.dateUtils.getDateForRecipePrint();
-  }
-
-  getCustomerPrintableText() {
-    let sectionHeader1 =
-      '-'.repeat(16) + `${this.modeOfPayment.toUpperCase()}` + '-'.repeat(16);
-    let tableHeader = '       DESCRIPTION         QTY  RATE   AMT';
-    let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
-    let sectionSeperatorCharacters = '-'.repeat(42);
-    let content = [
-      {
-        text: this.restaurantName,
-        justification: 'center',
-        bold: true,
-        size: 'xlarge',
-      },
-      {
-        text: this.restaurantAddress.replace(/-/gi, '\n'),
-        justification: 'center',
-        bold: true,
-      },
-      {
-        text: this.dateUtils.getDateForRecipePrint(),
-        justification: 'right',
-      },
-      {
-        text: sectionHeader1,
-        bold: true,
-        justification: 'center',
-      },
-      {
-        text: tableHeader,
-        underline: true,
-        justification: 'left',
-      },
-      {
-        text: this.getFormattedDineInItemDetails(),
-        justification: 'left',
-      },
-      {
-        text: this.getFormattedParcelItemDetails(),
-        justification: 'left',
-      },
-      {
-        text: sectionSeperatorCharacters,
-        justification: 'center',
-      },
-      {
-        text: this.getGstDetails(),
-        bold: true,
-        justification: 'right',
-      },
-      {
-        text: sectionSeperatorCharacters,
-        justification: 'center',
-      },
-      {
-        text: this.getTotalAmount(),
-        bold: true,
-        size: 'xlarge',
-        justification: 'right',
-      },
-      {
-        text: sectionSeperatorCharacters,
-        justification: 'center',
-      },
-      {
-        text: endNote,
-        justification: 'center',
-      },
-      {
-        text: this.restaurantGST,
-        justification: 'center',
-      },
-    ];
-    return content;
-  }
-
-
-  getFormattedCounterItemDetails(counterItemList) {
-    let formattedText = '';
-    counterItemList.forEach((element) => {
-      let trimmedName = this.getFixedLengthString(element.name.substring(0, 16), 16, false, ' ')
-      let remainingName = trimmedName.trim() == element.name ? '' : ' ' + this.getFixedLengthString(element.name.substring(16, 36), 20, false, ' ') + '\n';
-      let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
-      formattedText += `${trimmedName}  ${itemQty}\n${remainingName}`
-    })
-    return formattedText
-  }
-
-  getCounterPrintableText() {
-    let sectionSeperatorCharacters = '-'.repeat(42);
-    let countersWithOrders = [];
-    this.counters.forEach((counterEle) => {
-      let counterItemList = this.summary.itemList.filter(
-        (itemEle) => itemEle.counter.counter_id == counterEle.counter_id
-      );
-      if (counterItemList.length) {
-        let printObj = [
-          {
-            text: this.restaurantName,
-            justification: 'center',
-            size: 'xlarge',
-            bold: true,
-          },
-          {
-            text: this.dateUtils.getDateForRecipePrint(),
-            justification: 'right',
-          },
-          {
-            text: counterEle.counter_name,
-            justification: 'center',
-            size: 'xlarge',
-          },
-          {
-            text: sectionSeperatorCharacters,
-            justification: 'center',
-          },
-          {
-            text: this.getFormattedCounterItemDetails(counterItemList),
-            size: 'xlarge', 
-          },
-          {
-            text: sectionSeperatorCharacters,
-            justification: 'center',
-          },
-        ];
-        countersWithOrders.push(printObj);
-      }
-    });
-    return countersWithOrders;
   }
 
   print(printObjs){
@@ -769,61 +518,6 @@ export class PointOfSaleComponent {
     }
   }
 
-  printRecipt(orderNum) {
-    if (this.printerConn.usbSought) {
-      //to-do: Interchange dialogbox call and print call
-      if (this.isKOTEnabled) {
-        this.getCounterPrintableText().forEach((counterPrint) => {
-          counterPrint.forEach((ele) => {
-            if (ele.text != '') {
-              printConnect.writeCustomLine(ele)
-            }
-          })
-          printConnect
-          .writeCustomLine({
-            text: `Order No: ${orderNum}`,
-            size: 'large',
-            bold: true,
-            justification: 'center',
-          })
-            .feed(4).cut().flush()
-        })
-      }
-
-      let printConnect = this.printerConn.printService.init();
-      this.getCustomerPrintableText().forEach((ele) => {
-        if (ele.text != '') {
-          printConnect.writeCustomLine(ele);
-        }
-      });
-      printConnect
-        .writeCustomLine({
-          text: `Order No: ${orderNum}`,
-          size: 'large',
-          bold: true,
-          justification: 'center',
-        })
-        .feed(4)
-        .cut()
-        .flush();
-      // this.getCounterPrintableText().forEach(ele =>{
-      //   ele.forEach(element => {
-      //     printConnect.writeCustomLine(element)
-      //   }
-      //   );
-      //   printConnect
-      //   .writeCustomLine({
-      //     text: `Order No: ${orderNum}`,
-      //     size: 'xxlarge',
-      //     bold: true,
-      //     justification: 'center',
-      //   })
-      //   .feed(5).cut('partial')
-      // })
-      // printConnect
-      // .flush();
-    }
-  }
 
   testPrint() {
     let printConnect = this.printerConn.printService.init();
@@ -849,7 +543,8 @@ export class PointOfSaleComponent {
         body['order_no'] = data['order_no']
         if (this.isKOTEnabled) {
           this.receiptPrintFormatter.confirmedOrderObj = body
-          let counterReceiptObjs = this.receiptPrintFormatter.getCounterPrintableText(this.counters)
+          this.receiptPrintFormatter.confirmedOrderObj.ordered_time = this.dateUtils.getDateForRecipePrint()
+          let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
           counterReceiptObjs.forEach((counterReceiptObj) => {
             this.print(counterReceiptObj)
           })
@@ -893,14 +588,64 @@ export class PointOfSaleComponent {
   placeOrder() {
     if (this.outletType == 'e-commerce') {
       this.placeEcomOrder();
+    } else if(this.outletType == 'restaurant' && this.isTableManagement){
+      this.placePrintTableOrder()
     } else if (this.outletType == 'restaurant') {
       this.placePOSOrder();
-    } else {
+    }  else {
       this.__snackbar.open(`Invalid Outlet type: ${this.outletType}`, '', {
         duration: 3000,
       });
     }
   }
+
+
+  placePrintTableOrder(){
+    this.disablePlace = true;
+    let body = this.preparePlaceOrderBody();
+    this.printerRequired && !this.printerConn.usbSought
+      ? this.printerConn.seekUSB()
+      : null;
+    this.orderService.createOrders(body).subscribe(
+      (data) => {
+        body['order_no'] = data['order_no']
+        if(this.printerConn.usbSought){
+          this.receiptPrintFormatter.confirmedOrderObj = body
+          let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptText(this.counters)
+          counterReceiptObjs.forEach((counterReceiptObj) => {
+            this.print(counterReceiptObj)
+          })
+          if(this.isKOTEnabled){
+            let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
+            counterReceiptObjs.forEach((counterReceiptObj) => {
+              this.print(counterReceiptObj)
+            })
+          }
+        }
+        let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+          data: {
+            msg: `Order created successfully. Order No: ${data['order_no']}`,
+          },
+        });
+        dialogRef.afterClosed().subscribe((data) => {
+          this.ngOnInit();
+        });
+        this.disablePlace = false;
+      },
+      (error) => {
+        console.log('Place order response', error);
+        let errorMsg =
+          error.status != 0
+            ? `Failed to create Order. ${error.error.error}`
+            : 'Failed to create order. No internet';
+        this.dialog.open(ErrorMsgDialogComponent, {
+          data: { msg: errorMsg },
+        });
+        this.disablePlace = false;
+      }
+    );
+  }
+
 
 
   navigateToEditMenu() {
@@ -911,9 +656,9 @@ export class PointOfSaleComponent {
 
   navigateToOrders() {
     let navigationURL =
-    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
+    this.restaurantKDSenabled
         ? '/owner/orders/pending-orders'
-        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
+        : this.outletType == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this.router.navigate([navigationURL]);
@@ -935,6 +680,5 @@ export class PointOfSaleComponent {
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
     sessionStorage.removeItem('table_name');
-    if(this.isPollingRequired) clearInterval(this.pollingInterval)
   }
 }

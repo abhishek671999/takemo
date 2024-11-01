@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 
 @Component({
@@ -10,14 +10,14 @@ import { sessionWrapper } from 'src/app/shared/site-variable';
 })
 export class AnalyticsHomeComponent {
 
-  constructor(private sessionWrapper: sessionWrapper, private router: Router){}
+  constructor(private meUtility: meAPIUtility, private router: Router){}
   analyticsPages = [
     {name: 'Sales-analytics' , href: "sales-analytics" },
     {name: 'Timely-analytics', href: "timely-analytics"},
   ]
 
   ngOnInit(){
-    if( this.sessionWrapper.isMultiRestaurantOwner ){
+    if( this.meUtility.isMultiRestaurantOwner ){
       this.analyticsPages.splice(0, 0,{name: 'All-restaurants', href: 'all-restaurants'})
       this.router.navigate(['./admin/analytics/all-restaurants'])
     }else{

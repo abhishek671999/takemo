@@ -12,7 +12,6 @@ import { SupportComponent } from './support/support.component';
 import { WalletComponent } from './wallet/wallet.component';
 import { PostRechargePaymentComponent } from './post-recharge-payment/post-recharge-payment.component';
 import { ProfileComponent } from '../shared/profile/profile.component';
-import { Menu2Component } from './menu2/menu2.component';
 
 const routes: Routes = [
   {
@@ -21,7 +20,6 @@ const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'profile', component: ProfileComponent},
-      { path: 'menu2', component: Menu2Component},
       { path: 'menu/:id/:table_id', component: MenuComponent },
       { path: 'menu/:id', component: MenuComponent },
       { 

@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,7 +8,8 @@ import { of, switchMap } from 'rxjs';
 import { svgDeleteIcon } from 'src/app/shared/icons/svg-icons';
 import { ImagesService } from 'src/app/shared/services/images/images.service';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
+
 
 @Component({
   selector: 'app-add-item-dialog',
@@ -24,7 +25,7 @@ export class AddItemDialogComponent {
     private __imageService: ImagesService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {
 
     this.matIconRegistry.addSvgIconLiteral(
@@ -41,7 +42,8 @@ export class AddItemDialogComponent {
       this.domSanitizer.bypassSecurityTrustHtml(svgDeleteIcon)
     );
    }
-   private restaurantType = this.__sessionWrapper.getItem('restaurantType')?.toLowerCase()
+
+   private restaurantType: string
 
 
   outputBoxVisible = false;
@@ -67,17 +69,32 @@ export class AddItemDialogComponent {
   selectedUnit = ''
   
   unitPriceDetails = []
-
+  
+  public tableManagement = false
+  private readonly counterValidator: ValidatorFn = c => {
+    
+    return  this.tableManagement ? Validators.required(c) : Validators.nullValidator(c);
+  }
   addItemForm = this._fb.group({
     name: ['', Validators.required],
     price: [0],
     mrpPrice: [0],
     isVeg: ['veg', Validators.required],
-    counterId: [''],
+    counterId: ['', this.counterValidator],
     itemUnit: ['1', Validators.required],
     item_description: [''],
     subItemUnit: ['']
   });
+
+  ngOnInit(){
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.tableManagement = restaurant['table_management']
+        this.restaurantType = restaurant['type'].toLowerCase()
+      }
+    )
+  }
+
 
   addItem() {
     let body = {

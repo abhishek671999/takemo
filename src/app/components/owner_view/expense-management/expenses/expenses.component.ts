@@ -3,10 +3,10 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { timeInterval } from 'rxjs';
+
 import { ExpenseService } from 'src/app/shared/services/expense/expense.service';
 import { VendorService } from 'src/app/shared/services/vendor/vendor.service';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { AddPaymentDialogComponent } from '../../dialogbox/add-payment-dialog/add-payment-dialog.component';
 import { AddExpenseDialogComponent } from '../../dialogbox/add-expense-dialog/add-expense-dialog.component';
@@ -24,13 +24,13 @@ export class ExpensesComponent {
     private __vendorService: VendorService,
     private __fb: FormBuilder,
     private __snackbar: MatSnackBar,
-    private __sessionWrapper: sessionWrapper,
     private dateUtils: dateUtils,
-    private __dialog: MatDialog
+    private __dialog: MatDialog,
+    private meUtility: meAPIUtility
   ) {}
   public vendorList = [];
   public expenses = [];
-  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
+  restaurantId : number
 
   length = 50;
   pageSize = 10;
@@ -82,9 +82,14 @@ export class ExpensesComponent {
   public totalBalanceAmount = 0;
 
   ngOnInit() {
-    this.fetchVendorList().then((resolve) => {
-      this.fetchExpenses();
-    });
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.fetchVendorList().then((resolve) => {
+          this.fetchExpenses();
+        });
+      }
+    )
   }
 
 

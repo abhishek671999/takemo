@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { confirmedOrder, lineItem } from "../datatypes/orders";
-import { sessionWrapper } from "../site-variable";
+import { meAPIUtility } from "../site-variable";
 import { dateUtils } from "./date_utils";
 
 
@@ -10,80 +10,187 @@ import { dateUtils } from "./date_utils";
 export class ReceiptPrintFormatter{
 
     constructor(
-        private sessionWrapper: sessionWrapper,
+        private meUtility: meAPIUtility, 
         private dateUtils: dateUtils
     ){
 
     }
-
+    private restaurantName
+    private restaurantAddress
+    private restaurantGST
+    private isGSTInclusive
     private confirmedOrder
 
     set confirmedOrderObj(confirmedOrder: confirmedOrder){
+      this.meUtility.getRestaurant().subscribe(
+        (restaurant) => {
+          this.restaurantName = restaurant['restaurant_name']
+          this.restaurantAddress = restaurant['restaurant_address']
+          this.restaurantGST = restaurant['restaurant_gst']
+          this.isGSTInclusive = restaurant['tax_inclusive']
+        }
+      )
         this.confirmedOrder = confirmedOrder
     }
 
-    getMobileOrderPrintableText(){
-        let sectionSeperatorCharacters = '-'.repeat(42);
-        let content = [
-          {
-            text: this.sessionWrapper.getItem('restaurant_name'),
-            justification: 'center',
-            bold: true,
-            size: 'xlarge',
-          },
-          {
-            text: this.confirmedOrder.ordered_time,
-            justification: 'right',
-          },
-          {
-            text: sectionSeperatorCharacters,
-            bold: true,
-            justification: 'center',
-          },
-          {
-            text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
-            justification: 'left',
-            size: 'xlarge'
-          },
-          {
-            text: this.getFormattedParcelItemDetails(),
-            justification: 'left',
-          },
-          {
-            text: sectionSeperatorCharacters,
-            justification: 'center',
-          },
-          {
-            text: `Order No: ${this.confirmedOrder.order_no}`,
-            size: 'large',
-            bold: true,
-            justification: 'center',
-          },
-          {
-            text: `Order by: ${this.confirmedOrder.ordered_by}`,
-            size: 'normal',
-            bold: true,
-            justification: 'center',
-          }
-        ];
-        return content;
+    getKOTReceiptText(counters){
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let printObjs = []
+      if(counters.length > 0){
+        counters.forEach((counterEle) => {
+          let counterItemList = this.confirmedOrder.order_list.filter(
+            (lineItem: lineItem) => lineItem.counter.counter_id == counterEle.counter_id);
+          if (counterItemList.length) {
+            let counterObjs = [
+              {
+                text: 'Kitchen KOT',
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.ordered_time,
+                justification: 'right',
+                size: 'small'
+              },
+              {
+                text: this.getFormattedCounterItemDetails(counterItemList),
+                justification: 'left',
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+              },
+              {
+                text: counterEle.counter_name,
+                justification: 'center',
+                bold: true
+              },
+            ]
+            if(this.confirmedOrder.table_name) counterObjs.push({
+              text: this.confirmedOrder.table_name,
+              justification: 'center',
+            })
+            printObjs.push(counterObjs)
+          } 
+          })
+        }else{
+          let printObj = [
+            {
+              text: 'Kitchen KOT',
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.ordered_time,
+              justification: 'right',
+              size: 'small'
+            },
+            {
+              text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
+              justification: 'left',
+            },
+            {
+              text: sectionSeperatorCharacters,
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.table_name,
+              justification: 'center',
+            },
+          ]
+          printObjs.push(printObj)
+      }
+      return printObjs
+    }
+
+    getWKOTReceiptText(counters){
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let printObjs = []
+      if(counters.length > 0){
+        counters.forEach((counterEle) => {
+          let counterItemList = this.confirmedOrder.order_list.filter(
+            (lineItem: lineItem) => lineItem.counter.counter_id == counterEle.counter_id);
+          if (counterItemList.length) {
+            let counterObjs = [
+              {
+                text: 'Waiter KOT',
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.ordered_time,
+                justification: 'right',
+                size: 'small'
+              },
+              {
+                text: this.getFormattedCounterItemDetails(counterItemList),
+                justification: 'left',
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+              },
+              {
+                text: this.confirmedOrder.table_name,
+                justification: 'center',
+              },
+              {
+                text: counterEle.counter_name,
+                justification: 'center',
+              },
+              {
+                text: ' '.repeat(20) + 'X' + ' '.repeat(20),
+                justification: 'center',
+              },
+            ]
+            printObjs.push(counterObjs)
+          } 
+          })
+        }else{
+          let printObj = [
+            {
+              text: 'Waiter KOT',
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.ordered_time,
+              justification: 'right',
+              size: 'small'
+            },
+            {
+              text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
+              justification: 'left',
+            },
+            {
+              text: sectionSeperatorCharacters,
+              justification: 'center',
+            },
+            {
+              text: this.confirmedOrder.table_name,
+              justification: 'center',
+            },
+            {
+              text: ' '.repeat(20) + 'X' + ' '.repeat(20),
+              justification: 'center',
+            },
+          ]
+          printObjs.push(printObj)
+      }
+      return printObjs
     }
 
     getCustomerPrintableText() {
         let sectionHeader1 =
           '-'.repeat(16) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(16);
         let tableHeader = '       DESCRIPTION         QTY  RATE   AMT';
-        let endNote = 'Inclusive of GST (5%)\nThank you. Visit again';
+        let endNote = 'Thank you. Visit again';
         let sectionSeperatorCharacters = '-'.repeat(42);
         let content = [
           {
-            text: this.sessionWrapper.getItem('restaurant_name'),
+            text: this.restaurantName,
             justification: 'center',
             bold: true,
             size: 'xlarge',
           },
           {
-            text: this.sessionWrapper.getItem('restaurant_address').replace(/-/gi, '\n'),
+            text: this.restaurantAddress.replace(/-/gi, '\n'),
             justification: 'center',
             bold: true,
           },
@@ -123,6 +230,10 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
+            text: this.getSubTotalStrint(),
+            justification: 'right'
+          },
+          {
             text: this.getTotalAmount(),
             bold: true,
             size: 'xlarge',
@@ -137,7 +248,7 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
-            text: this.sessionWrapper.getItem('restaurant_gst'),
+            text: this.restaurantGST,
             justification: 'center',
           },
         ];
@@ -152,10 +263,73 @@ export class ReceiptPrintFormatter{
         return content;
     }
 
+    getWaiterCheckKOTText(counters){
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let content = [
+        {
+          text: this.dateUtils.getDateForRecipePrint(),
+          justification: 'right',
+          size: 'small'
+        },
+        {
+          text: this.confirmedOrder.table_name,
+          justification: 'center',
+        },
+      ]
+      if(this.confirmedOrder.waiter_name) content.push({
+          text: this.confirmedOrder.waiter_name,
+          justification: 'center',
+        })
+      content.push({
+        text: sectionSeperatorCharacters,
+        justification: 'center',
+      })
+      if(counters.length > 0){
+        counters.forEach((counterEle) => {
+          let counterItemList = this.confirmedOrder.order_list.filter(
+            (lineItem: lineItem) => lineItem.counter.counter_id == counterEle.counter_id);
+          if (counterItemList.length) {
+            let counterText = [
+              {
+                text: counterEle.counter_name,
+                justification: 'center',
+                size: 'large',
+              },
+              {
+                text: this.getFormattedCounterItemDetails(counterItemList),
+                justification: 'left',
+                size: 'large',
+              },
+              {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+                size: 'large',
+              }
+            ]
+            counterText.forEach(ele => content.push(ele))
+          }  
+          })
+        }else{
+        let printObj = [
+          {
+            text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
+            justification: 'left',
+            size: 'small',
+          },
+          {
+            text: sectionSeperatorCharacters,
+            justification: 'center',
+            size: 'small',
+          },
+        ];
+        printObj.forEach(ele => content.push(ele))
+      }
+      return content
+    }
+
     getCounterPrintableText(counters) {
       let sectionSeperatorCharacters = '-'.repeat(42);
       let countersWithOrders = [];
-      debugger
       if(counters.length > 0){
         counters.forEach((counterEle) => {
           let counterItemList = this.confirmedOrder.order_list.filter(
@@ -163,7 +337,7 @@ export class ReceiptPrintFormatter{
           if (counterItemList.length) {
             let printObj = [
               {
-                text: this.sessionWrapper.getItem('restaurant_name'),
+                text: this.restaurantName,
                 justification: 'center',
                 size: 'xlarge',
                 bold: true,
@@ -183,7 +357,6 @@ export class ReceiptPrintFormatter{
               },
               {
                 text: this.getFormattedCounterItemDetails(counterItemList),
-                size: 'xlarge', 
               },
               {
                 text: sectionSeperatorCharacters,
@@ -198,6 +371,14 @@ export class ReceiptPrintFormatter{
                     justification: 'center',
               })
             }
+            if(this.confirmedOrder.table_name){
+              printObj.push({
+                text: `Table: ${this.confirmedOrder.table_name}`,
+                size: 'large',
+                bold: true,
+                justification: 'center',
+          })
+            }
             countersWithOrders.push(printObj);
           }
         });
@@ -206,7 +387,7 @@ export class ReceiptPrintFormatter{
       else{
         let printObj = [
           {
-            text: this.sessionWrapper.getItem('restaurant_name'),
+            text: this.restaurantName,
             justification: 'center',
             size: 'xlarge',
             bold: true,
@@ -221,7 +402,6 @@ export class ReceiptPrintFormatter{
           },
           {
             text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
-            size: 'xlarge', 
           },
           {
             text: sectionSeperatorCharacters,
@@ -241,7 +421,7 @@ export class ReceiptPrintFormatter{
       }
     }
 
-    
+  
   private getFormattedCounterItemDetails(counterItemList) {
       let formattedText = '';
       counterItemList.forEach((element) => {
@@ -249,6 +429,7 @@ export class ReceiptPrintFormatter{
         let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(16, 36), 20, false, ' ') + '\n';
         let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
         formattedText += `- ${trimmedName}  ${itemQty}\n${remainingName}`
+        if(element.note) formattedText += `(${element.note})`
       })
       return formattedText
     }
@@ -349,22 +530,60 @@ export class ReceiptPrintFormatter{
     }
 
     private getGstDetails() {
-      let gstAmount = (this.confirmedOrder.total_amount * 0.05).toFixed(2); //check total amount /amount
-      return `GST @ 5%: Rs.${gstAmount}`;
+      if(this.isGSTInclusive){
+        let gstAmount = (this.confirmedOrder.total_amount * 0.05).toFixed(2); //check total amount /amount
+        return `GST inclusive @ 5%: Rs.${gstAmount}`;
+      }else{
+        let gstAmount = `SGST (2.5%): ${this.calculateGSTcomponents()/2}\nCGST (2.5%): ${this.calculateGSTcomponents()/2}`
+        return gstAmount
+      }
+    }
+
+    private calculateGSTcomponents(){
+      let gsttotal = 0;
+      this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
+        let gstValue = (lineItem.tax_inclusive? 0 : (Math.round(((lineItem.price * 0.05) + Number.EPSILON) * 100) / 100))
+        gsttotal += (gstValue * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0)));
+      });
+      return gsttotal;
+    }
+
+    private getSubTotal(){
+      let amount = this.isGSTInclusive? this.calculateTotalAmountTaxInclusive(): this.calculateTotalAmountTaxExclusive()
+      return amount
     }
 
     private getTotalAmount() {
-      return `Total Amount: Rs.${this.calculateTotalAmount()}`;
+      let subTotal = this.getSubTotal()
+      let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
+      let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
+      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference 0.5
+      return `Total Amount: Rs.${amountRoundedToNextInteger}`;    // 0.5, 3
+    }
+
+    private getSubTotalStrint(){
+      let subTotal = this.getSubTotal()
+      let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
+      let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
+      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference 0.5
+      return `Sub-total: ${amountRounded}\nRound off: ${roundOffAmount}`;    // 0.5, 3
     }
 
     private getFormattedCurrentDate() {
       return this.dateUtils.getDateForRecipePrint();
     }
 
-    private calculateTotalAmount() {
+    private calculateTotalAmountTaxInclusive() {
       let total = 0;
       this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
         total += lineItem.price * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0));
+      });
+      return total;
+    }
+    private calculateTotalAmountTaxExclusive() {
+      let total = 0;
+      this.confirmedOrder.order_list.forEach((lineItem: lineItem) => { // check itemlist vs item_list
+        total += (lineItem.tax_inclusive? lineItem.price: (lineItem.price * 1.05)) * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0));
       });
       return total;
     }

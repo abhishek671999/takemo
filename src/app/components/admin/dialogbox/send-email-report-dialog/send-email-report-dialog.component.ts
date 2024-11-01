@@ -3,6 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MeService } from 'src/app/shared/services/register/me.service';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-send-email-report-dialog',
@@ -15,7 +16,8 @@ export class SendEmailReportDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<SendEmailReportDialogComponent>,
     private __meService: MeService,
-    private __analyticsService: AnalyticsService
+    private __analyticsService: AnalyticsService,
+    private meUtility: meAPIUtility
   ) { }
 
   timeFramesForReport = [
@@ -33,9 +35,18 @@ export class SendEmailReportDialogComponent {
 
   adminsEmails;
   checkedEmails = []
-  restaurantId = Number(sessionStorage.getItem('restaurant_id'))
+  restaurantId
   
   ngOnInit() {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.fetchRestaurantEmail()
+      }
+    )
+   }
+
+   fetchRestaurantEmail(){
     let httpParams = new HttpParams()
     httpParams = httpParams.append('restaurant_id', this.restaurantId)
     this.__meService.getRestaurantAdminEmail(httpParams).subscribe(

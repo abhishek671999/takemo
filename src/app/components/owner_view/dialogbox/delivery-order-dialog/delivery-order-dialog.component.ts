@@ -7,7 +7,7 @@ import {
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ConfirmActionDialogComponent } from '../../../shared/confirm-action-dialog/confirm-action-dialog.component';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-delivery-order-dialog',
@@ -20,7 +20,7 @@ export class DeliveryOrderDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     private _dialogRef: MatDialogRef<DeliveryOrderDialogComponent>,
     private dialog: MatDialog,
-    private __sessionWrapper: sessionWrapper
+    private meUtiltiy: meAPIUtility
   ) {
     console.log('Data received: ', data);
     data.obj.forEach((ele) => {
@@ -28,8 +28,14 @@ export class DeliveryOrderDialogComponent {
     });
   }
 
+  public restaurantId: number
+
   ngOnInit() {
-    console.log('In ngOnitit', this.data.obj);
+    this.meUtiltiy.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+      }
+    )
     this.data.obj = this.data.obj.filter((ele) => {
       return ele.is_delivered == false;
     });
@@ -41,7 +47,7 @@ export class DeliveryOrderDialogComponent {
 
   updateStatusToDelivered(order) {
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       line_item_id_list: [order.line_item_id],
       status: !order.is_ready ? 'delivered' : 'ready_and_delivered',
     };
@@ -62,7 +68,7 @@ export class DeliveryOrderDialogComponent {
 
   updateStatusToReady(order) {
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       line_item_id_list: [order.line_item_id],
       status: 'ready',
     };
@@ -81,7 +87,7 @@ export class DeliveryOrderDialogComponent {
 
   deliverAllOrders() {
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       line_item_id_list: this.data.obj.map((ele) => ele.line_item_id),
       status: 'delivered',
     };

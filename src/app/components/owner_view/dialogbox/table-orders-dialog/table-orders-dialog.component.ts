@@ -5,12 +5,18 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { PointOfSaleComponent } from '../../point-of-sale/point-of-sale.component';
 import { Router } from '@angular/router';
 import { TablesService } from 'src/app/shared/services/table/tables.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg-dialog/success-msg-dialog.component';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
+import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
+import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
+import { Observable, of } from 'rxjs';
+import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
+import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
+import { InputPasswordDialogComponent } from 'src/app/components/shared/input-password-dialog/input-password-dialog.component';
+import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 
 @Component({
   selector: 'app-table-orders-dialog',
@@ -22,26 +28,46 @@ export class TableOrdersDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<TableOrdersDialogComponent>,
     private __orderService: OrdersService,
+    private restaurantService: RestaurantService,
     private __matDialog: MatDialog,
     private __router: Router,
     private __tableService: TablesService,
-    private __sessionWrapper: sessionWrapper
-  ) {}
-
-  tableOccupied = false;
-  restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'));
+    private receiptPrintFormatter: ReceiptPrintFormatter,
+    public printerConn: PrintConnectorService,
+    private _counterService: CounterService,
+    private meUtility: meAPIUtility
+  ) {
+    console.log(data)
+  }
+  counters = [];
+  hasOrderedItems = false;
+  restaurantId: number
 
   orders;
   totalAmount;
+  isBillPrinted: boolean = false;
+  isEditEnabled: boolean = false;
+
   ngOnInit() {
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.getTableOrders()
+        this.fetchCounters()
+      }
+    )
+  }
+
+  getTableOrders(){
     let body = {
       table_id: this.data.table_id,
     };
     this.__orderService.getTableOrders(body).subscribe(
       (data) => {
         this.orders = data['orders']['item_details'];
-        this.tableOccupied = this.orders.length > 0;
+        this.hasOrderedItems = this.orders.length > 0;
         this.totalAmount = data['orders']['total_amount'];
+        this.isBillPrinted = data['orders']['bill_printed']
         console.log('Ordres: ', this.orders)
       },
       (error) => {
@@ -59,26 +85,160 @@ export class TableOrdersDialogComponent {
     this.dialogRef.close();
   }
 
-  markPaymentDone() {
-    let body = {
-      table_id: this.data.table_id,
-    };
-    this.__tableService.closeTableSession(body).subscribe(
-      (data) => {
-        this.__matDialog.open(SuccessMsgDialogComponent, {
-          data: { msg: 'Marked as payment done' },
-        });
-        this.dialogRef.close();
-      },
-      (error) => {
-        this.__matDialog.open(ErrorMsgDialogComponent, {
-          data: { msg: 'Request failed' },
-        });
-      }
-    );
+  verifyPassword(){
+    let verifyPasswordObserver = new Observable((observer) => {
+      let dialogRef = this.__matDialog.open(InputPasswordDialogComponent)
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+          if(data?.password){
+            let body = {
+              "restaurant_id": this.restaurantId,
+              "password": data.password
+            }
+            this.restaurantService.validatePassword(body).subscribe(
+              (data: any) => {
+                observer.next({validated: true})
+              },
+              (error: any) => {
+                observer.next({validated: false})
+              }
+            )
+          }else{
+            observer.next({validated: false})
+          }
+        },
+    )
+    })
+    return verifyPasswordObserver
   }
 
-  printBill() {}
+  markBillasPaid(){
+    let body = {
+      "table_id": this.data.table_id,
+    }
+    this.__tableService.markBillPrinted(body).subscribe(
+      (data: any) => {
+        console.log('Marked')
+      },
+      (error: any) => {
+        this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
+      }
+    )
+  }
+
+  enableOrderEdit(){
+      this.verifyPassword().subscribe(
+        (data: any) => {
+          if(data?.validated){
+            this.isEditEnabled = true
+          }else{
+            this.isEditEnabled = false
+          }
+        },
+        (error: any) => {
+          console.log('this is error: ', error)
+          this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Incorrect password'}})
+        }
+      )
+  }
+
+  waiterKOTPrint(){
+    let orderObj = {
+      order_list: this.orders,
+      total_amount: this.totalAmount,
+      payment_mode: 'Table order',
+      restaurant_id :this.restaurantId,
+      table_name: this.data.table_name,
+      waiter_name: this.data.waiter_name
+    }
+    this.receiptPrintFormatter.confirmedOrderObj = orderObj
+    let printObj = this.receiptPrintFormatter.getWaiterCheckKOTText(this.counters)
+    this.print(printObj)
+  }
+    
+  requestPrintBill(){
+    if(this.isBillPrinted){
+      this.verifyPassword().subscribe(
+        (data: any) => {
+          if(data?.validated){
+            this.printBill().subscribe(
+              (data: any) => {
+                if(data?.billPrinted) this.markBillasPaid()
+              }
+            )
+          }
+        }
+      )
+    }else{
+      this.printBill().subscribe(
+        (data: any) => {
+          if(data?.billPrinted) this.markBillasPaid()
+        }
+      )
+    }
+  }
+
+
+  printBill() {
+    let statusObserver = new Observable((observer) => {
+      let orderObj = {
+        order_list: this.orders,
+        total_amount: this.totalAmount,
+        payment_mode: 'Table order',
+        restaurant_id :this.restaurantId
+      }
+      this.receiptPrintFormatter.confirmedOrderObj = orderObj
+      let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
+      this.print(printObj)
+      this.isBillPrinted = true
+      observer.next({billPrinted: true})
+    })
+    return statusObserver
+  } 
+
+  markPaymentDone() {
+    let matdialogRef = this.__matDialog.open(ConfirmActionDialogComponent, {data: 'Close this table session?'})
+    matdialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if(data?.select){
+          let body = {
+            table_id: this.data.table_id,
+          };
+          this.__tableService.closeTableSession(body).subscribe(
+            (data) => {
+              this.__matDialog.open(SuccessMsgDialogComponent, {
+                data: { msg: 'Marked as payment done' },
+              });
+              this.dialogRef.close();
+            },
+            (error) => {
+              this.__matDialog.open(ErrorMsgDialogComponent, {
+                data: { msg: 'Request failed' },
+              });
+            }
+          );
+        }
+      }
+    )
+  }
+
+  print(printObjs){
+    if(this.printerConn.usbSought){
+      let printConnect = this.printerConn.printService.init();
+      printObjs.forEach((ele) => {
+        if (ele.text != '') {
+          printConnect.writeCustomLine(ele);
+        }
+      });
+      printConnect
+        .feed(4)
+        .cut()
+        .flush();
+        return true
+    }else{
+      return false
+    }
+  }
 
   addItem(order) {
     let body = {
@@ -108,8 +268,8 @@ export class TableOrdersDialogComponent {
       this.__orderService.updateLineItem(body).subscribe(
         (data) => {
           order.quantity -= 1
-          order.line_item_price -= order.item_price
-          this.totalAmount -= order.item_price
+          order.line_item_price -= order.price
+          this.totalAmount -= order.price
         },
         (error) => {
           this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to subtract item'}})
@@ -148,5 +308,19 @@ export class TableOrdersDialogComponent {
       if (a[i] !== b[i]) return false;
     }
     return true;
+  }
+
+  fetchCounters(){
+    this._counterService
+      .getRestaurantCounter(this.restaurantId)
+      .subscribe(
+        (data) => {
+          console.log('counters available', data);
+          this.counters = data['counters'];
+        },
+        (error) => {
+          console.log('Error: ', error);
+        }
+      );
   }
 }

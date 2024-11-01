@@ -5,8 +5,16 @@
     </div>
     <div mat-dialog-content>
         <div mat-dialog-actions class="action-container">
-            <button mat-raised-button color="primary" (click)="printBill()">Print bill</button>
-            <button mat-raised-button color="primary" (click)="markPaymentDone()">Payment done</button>
+            <div>
+                <button mat-raised-button color="primary" [disabled]="!(printerConn.usbSought && data.is_occupied)" (click)="requestPrintBill()">Print bill</button>
+                <small *ngIf="!printerConn.usbSought" class="text-danger" style="display: block">Connect printer</small>
+            </div>
+            <div>
+                <button mat-raised-button color="primary"  [disabled]="!(printerConn.usbSought && data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
+                <small *ngIf="!printerConn.usbSought" class="text-danger" style="display: block">Connect printer</small>
+            </div>
+            <button mat-raised-button color="primary" [disabled]="!data.is_occupied" (click)="markPaymentDone()">Payment done</button>
+            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems" (click)="enableOrderEdit()">Edit order</button>
             <button mat-raised-button color="primary" (click)="posOrder()" >POS order</button>
         </div>
         <table class="table-order-container">
@@ -15,23 +23,23 @@
                     <th class="sl_no">Sl.no</th>
                     <th class="item">Item</th>
                     <th class="price">Price</th>
-                    <th class="quantity">Quantity</th>
+                    <th >Quantity</th>
                     <th class="total_price">Total price</th>
-                    <th class="delete">Delete</th>
+                    <th class="delete" *ngIf="isEditEnabled">Delete</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let order of orders; let main_index=index">
                     <td class="sl_no">{{main_index + 1}}</td>
                     <td class="item">{{order.item_name}}</td>
-                    <td class="price">{{order.item_price}}</td>
+                    <td class="price">{{order.price}}</td>
                     <td class="quantity">
-                        <mat-icon (click)="subItem(order)">remove_circle</mat-icon>
+                        <mat-icon (click)="subItem(order)" *ngIf="isEditEnabled">remove_circle</mat-icon>
                         {{order.quantity}}
-                        <mat-icon (click)="addItem(order)">add_circle</mat-icon>
+                        <!-- <mat-icon (click)="addItem(order)">add_circle</mat-icon> -->
                     </td>
                     <td class="total_price">₹&nbsp;{{order.line_item_price}}</td>
-                    <td class="delete">
+                    <td class="delete" *ngIf="isEditEnabled">
                         <mat-icon (click)="deleteItem(order)">delete</mat-icon>
                     </td>
                 </tr>
@@ -41,7 +49,7 @@
                     <td class="price">-</td>
                     <td class="quantity">-</td>
                     <td class="total_price">₹&nbsp;{{totalAmount}}</td>
-                    <td class="delete">-</td>
+                    <td class="delete" *ngIf="isEditEnabled">-</td>
                 </tr>
             </tbody>
         </table>

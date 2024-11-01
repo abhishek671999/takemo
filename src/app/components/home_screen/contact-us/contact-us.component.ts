@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { passwordValidator } from '../../../shared/password.validator';
+import { passwordValidator } from '../../../shared/validators/password.validator';
 import { ContactService } from '../../../shared/services/contact-us/contact.service';
 
 @Component({

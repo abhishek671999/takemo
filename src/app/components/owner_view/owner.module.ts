@@ -51,6 +51,15 @@ import { AddExpenseDialogComponent } from './dialogbox/add-expense-dialog/add-ex
 import { EditExpenseDialogComponent } from './dialogbox/edit-expense-dialog/edit-expense-dialog.component';
 import { EditCategoryDialogComponent } from './dialogbox/edit-category-dialog/edit-category-dialog.component';
 import { MatSortModule } from '@angular/material/sort';
+import {
+  CdkDragDrop,
+  CdkDrag,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+
 
 @NgModule({
   declarations: [
@@ -113,6 +122,9 @@ import { MatSortModule } from '@angular/material/sort';
     MatSnackBarModule,
     UploadFormComponent,
     MatSortModule,
+    CdkDropListGroup,
+    CdkDropList,
+    CdkDrag
   ],
   exports: [],
 })

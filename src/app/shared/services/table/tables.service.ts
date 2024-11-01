@@ -13,9 +13,15 @@ export class TablesService {
   private __checkIfOTPRequiredEndpoint = 'tables/check_if_otp_required/';
   private __checkIfOTPValidEndpoint = 'tables/check_if_otp_valid/'
   private __closeTableSessionEndpoint = 'tables/mark_table_paid/'
+  private __markBillPrintedEndpoint = 'tables/mark_bill_printed/'
+  private moveTableEndpoint = 'tables/move_table/'
 
   constructor(private __httpClient: HttpClient) {}
 
+  moveTable(body){
+    return this.__httpClient.post(host + this.moveTableEndpoint, body)
+  }
+  
   getTables(httpParams: HttpParams) {
     return this.__httpClient.get(host + this.__getTableEndpoint, {
       params: httpParams,
@@ -46,5 +52,9 @@ export class TablesService {
 
   closeTableSession(body) {
     return this.__httpClient.post(host + this.__closeTableSessionEndpoint, body)
+  }
+
+  markBillPrinted(body){
+    return this.__httpClient.post(host + this.__markBillPrintedEndpoint, body)
   }
 }

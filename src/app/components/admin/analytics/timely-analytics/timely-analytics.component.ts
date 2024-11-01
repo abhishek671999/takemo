@@ -1,17 +1,13 @@
 import { Component, inject, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
 import { dateUtils } from 'src/app/shared/utils/date_utils';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
-import { MatDialog } from '@angular/material/dialog';
-import { SendEmailReportDialogComponent } from '../../dialogbox/send-email-report-dialog/send-email-report-dialog.component';
-import { StringUtils } from 'src/app/shared/utils/stringUtils';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -27,10 +23,9 @@ export class TimelyAnalyticsComponent {
     private _menuService: MenuService,
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
-    private __sessionWrapper: sessionWrapper,
+    private meUtility: meAPIUtility,
     private _counterService: CounterService,
     public printerConn: PrintConnectorService,
-    private __matDialog: MatDialog
   ) { }
 
   @ViewChild(MatSort)
@@ -65,14 +60,8 @@ export class TimelyAnalyticsComponent {
     this.timeFramesForTimelyAnalytics[0].actualValue;
   selectedCategory = this.categoryList[0];
   selectedItem = this.itemList[0];
-  selectedRestaurant: number | string = this.__sessionWrapper.getItem(
-    'restaurant_id'
-  )
-    ? this.__sessionWrapper.getItem('restaurant_id')
-    : this.restaurantList[0].restaurant_id;
-  restaurantFlag = this.__sessionWrapper.getItem('restaurant_id')
-    ? true
-    : false;
+  selectedRestaurant: number
+  restaurantFlag: boolean;
 
   selectedDate = new Date();
 
@@ -81,7 +70,7 @@ export class TimelyAnalyticsComponent {
   totalAmount = 0;
   totalOrders = 0;
   loadView = false;
-  isITTUser = this.__sessionWrapper.doesUserBelongsToITT();
+  isITTUser: boolean = false
   tableView = true;
   counters = [];
   selectedCounterId;
@@ -89,32 +78,44 @@ export class TimelyAnalyticsComponent {
 
   chart2: any = [];
   chart4: any = [];
+  public restaurant
 
 
   ngOnInit() {
-    this._menuService.getMenu(this.selectedRestaurant).subscribe((data) => {
-      data['menu'].forEach((element) => {
-        this.categoryList.push({
-          name: element.category.name,
-          id: element.category.id,
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurant = restaurant
+        this.isITTUser = this.meUtility.doesUserBelongToITT
+        this.restaurantFlag = this.restaurant['restaurant_id']? true : false;
+        this.selectedRestaurant = this.restaurant['restaurant_id'] ? this.restaurant['restaurant_id']: this.restaurantList[0].restaurant_id
+        this._menuService.getMenu(this.selectedRestaurant).subscribe((data) => {
+          data['menu'].forEach((element) => {
+            this.categoryList.push({
+              name: element.category.name,
+              id: element.category.id,
+            });
+            element.category.items.forEach((element) => {
+              this.itemList.push({ name: element.name, id: element.id });
+            });
+          });
         });
-        element.category.items.forEach((element) => {
-          this.itemList.push({ name: element.name, id: element.id });
+    
+        this._ruleService.getAllRules().subscribe((data) => {
+          data['rules'].forEach((element) => {
+            this.ruleList.push({ rule_id: element.id, rule_name: element.name });
+          });
+          this.selectedRule = this.ruleList[0].rule_id;
+          this.createTimelyAnalytics(this.getRequestBodyPrepared());
+          this.loadView = true;
         });
-      });
-    });
 
-    this._ruleService.getAllRules().subscribe((data) => {
-      data['rules'].forEach((element) => {
-        this.ruleList.push({ rule_id: element.id, rule_name: element.name });
-      });
-      this.selectedRule = this.ruleList[0].rule_id;
-      this.createTimelyAnalytics(this.getRequestBodyPrepared());
-      this.loadView = true;
-    });
+      }
+    )
+
+
 
     this._counterService
-      .getRestaurantCounter(this.__sessionWrapper.getItem('restaurant_id'))
+      .getRestaurantCounter(this.restaurant['restaurant_id'])
       .subscribe(
         (data) => {
           console.log('counters available', data);
@@ -180,8 +181,8 @@ export class TimelyAnalyticsComponent {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id')
-        ? this.__sessionWrapper.getItem('restaurant_id')
+      restaurant_id: this.restaurant['restaurant_id']
+        ?  this.restaurant['restaurant_id']
         : this.selectedRestaurant,
       category_id: this.selectedCategory.id,
       item_id: this.selectedCategory.id == 0 ? this.selectedItem.id : '',
@@ -334,7 +335,7 @@ export class TimelyAnalyticsComponent {
     let sectionSeperatorCharacters = '-'.repeat(40);
     let content = [
       {
-        text: this.__sessionWrapper.getItem('restaurant_name'),
+        text: this.restaurant['restaurant_name'],
         size: 'xlarge',
         bold: true,
         justification: 'center',

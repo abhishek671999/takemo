@@ -8,7 +8,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { svgDeleteIcon, svgEditIcon } from 'src/app/shared/icons/svg-icons';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
+import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-food-counter-management',
@@ -21,7 +22,8 @@ export class FoodCounterManagementComponent {
     private counterService: CounterService,
     private iconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility,
+    private matdialog: MatDialog
     ){
       iconRegistry.addSvgIconLiteral(
         'delete',
@@ -34,11 +36,21 @@ export class FoodCounterManagementComponent {
     }
   counterResponse;
 
-  counterFormControl = new FormControl('', [Validators.required]);
-  public restaurantId = this.__sessionWrapper.getItem('restaurant_id')
+  counternameFormControl = new FormControl('', [Validators.required]);
+  counterIPFormControl = new FormControl('');
+  public restaurantId: number
 
   ngOnInit(){
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.fetchCounters()
+      }
+    )
 
+  }
+  
+  fetchCounters(){
     this.counterService.getRestaurantCounter(this.restaurantId).subscribe(
       data => {
         this.counterResponse = data['counters']
@@ -47,34 +59,35 @@ export class FoodCounterManagementComponent {
         });
       },
       error => {
-
+  
       }
     )
   }
+
 
   enableEditCounter(counter){
     counter.is_edit = !counter.is_edit
   }
 
-  editCounter(counter, event){
-    if(event.target.value == counter.counter_name){
-      counter.is_edit = !counter.is_edit
-    }else{
+  editCounter(counter){
       let body = {
         "restaurant_id": this.restaurantId,
         "counter_id": counter.counter_id,
-        "counter_name": event.target.value
+        "counter_name": counter.counter_name,
+        "ip": counter.ip
       }
       this.counterService.editRestaurantCounter(body).subscribe(
         data =>{
-          console.log(data)
-          counter.counter_name = event.target.value
+          counter.counter_name = counter.counter_name,
+          counter.ip = counter.ip
           counter.is_edit = false
         },
-        error => alert('Update failed')
+        error => {
+          this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to update counter'}})
+          this.ngOnInit()
+        }
       )
     }
-  }
 
   deleteCounter(counter){
     let body = {
@@ -94,11 +107,13 @@ export class FoodCounterManagementComponent {
   addCounter(){
     let body = {
       "restaurant_id": this.restaurantId,
-      "counter_name": this.counterFormControl.value
+      "counter_name": this.counternameFormControl.value,
+      "ip": this.counterIPFormControl.value
     }
     this.counterService.addRestaurantCounter(body).subscribe(
       data => {
-        console.log(data)
+        this.counternameFormControl.reset()
+        this.counterIPFormControl.reset()
         this.ngOnInit()
       },
       error => {

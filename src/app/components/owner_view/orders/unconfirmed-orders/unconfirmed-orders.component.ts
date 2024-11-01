@@ -4,11 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { OrderMoreDetailsDialogComponent } from '../../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { ConfirmOrderCancelComponent } from '../../dialogbox/confirm-order-cancel/confirm-order-cancel.component';
 import { HttpParams } from '@angular/common/http';
-import { sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 
 @Component({
   selector: 'app-unconfirmed-orders',
@@ -19,7 +18,7 @@ export class UnconfirmedOrdersComponent {
   constructor(
     private _ordersService: OrdersService,
     private _dialog: MatDialog,
-    private __sessionWrapper: sessionWrapper
+    private meUtility: meAPIUtility
   ) {}
 
   displayedColumns: string[] = [
@@ -49,16 +48,21 @@ export class UnconfirmedOrdersComponent {
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
-  restaurantId = this.__sessionWrapper.getItem('restaurant_id');
+  restaurantId
 
   ngOnInit() {
-    this.getEcomOrders();
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.getEcomOrders();
+      }
+    )
   }
 
   getEcomOrders() {
     this.showSpinner = true;
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       order_status: 'unconfirmed',
     };
     let httpParams = new HttpParams();
@@ -134,7 +138,7 @@ export class UnconfirmedOrdersComponent {
   deliverEntireOrder(order) {
     console.log('Delivering: ', order);
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       order_id: order.order_id,
     };
     console.log('THis is body: ', body);
@@ -173,7 +177,7 @@ export class UnconfirmedOrdersComponent {
   updateStatus(element) {
     console.log(element);
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       order_id: element.order_id,
       order_status: element.orderStatus,
     };

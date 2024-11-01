@@ -101,7 +101,7 @@ public orderList = {
       let httpParams = new HttpParams();
       httpParams = httpParams.append(
         'restaurant_id',
-        this.__sessionWrapper.getItem('restaurant_id')
+        this.restaurant_id
       );
       this._tableService.getTables(httpParams).subscribe(
         (data) => {
@@ -393,7 +393,6 @@ public orderList = {
     item.quantity = 0
     item.parcel_quantity = 0
     this.orderList.itemList = this.orderList.itemList.filter((ele) => ele.quantity > 0)
-    debugger
     this.__cartService.setCartItems(this.orderList)
   }
 

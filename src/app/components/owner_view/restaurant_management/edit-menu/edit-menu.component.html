@@ -25,7 +25,7 @@
             Add category
         </button>
         <div class="text-center">
-            <button mat-raised-button color="primary" [disabled]="searchText != ''" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item {{selectedCategory[0].categoryName}}</button>
+            <button mat-raised-button color="primary" [disabled]="searchText != ''" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item to {{selectedCategory[0].categoryName}}</button>
             <button mat-flat-button [disabled]="searchText != ''" (click)="editCategory(selectedCategory[0])">Edit {{selectedCategory[0].categoryName}}</button>
         </div>
         <mat-form-field >

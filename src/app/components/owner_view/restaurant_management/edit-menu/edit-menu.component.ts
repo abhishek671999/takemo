@@ -19,10 +19,10 @@ import {
   svgNotAvailableIcon,
   svgPlusIcon,
 } from 'src/app/shared/icons/svg-icons';
-import { RestuarantService } from 'src/app/shared/services/restuarant/restuarant.service';
+import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dialog/error-msg-dialog.component';
-import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
+import { meAPIUtility } from 'src/app/shared/site-variable';
 import { MatTableDataSource } from '@angular/material/table';
 import { EditCategoryDialogComponent } from '../../dialogbox/edit-category-dialog/edit-category-dialog.component';
 
@@ -40,11 +40,11 @@ export class EditMenuComponent {
     private _dialog: MatDialog,
     private _menuService: MenuService,
     private _menuEditService: EditMenuService,
-    private _restaurantService: RestuarantService,
+    private _restaurantService: RestaurantService,
     private _counterService: CounterService,
     private _editMenuService: EditMenuService,
-    private __sessionWrapper: sessionWrapper,
-    private __cd: ChangeDetectorRef
+    private __cd: ChangeDetectorRef,
+    private meUtility: meAPIUtility
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -70,7 +70,7 @@ export class EditMenuComponent {
 
   menu: any;
   fontStyle?: string;
-  restaurantId: number = Number(this.__sessionWrapper.getItem('restaurant_id'));
+  restaurantId: number;
   restaurantStatus = false;
   parcelEnabled = false
   RestaurantAction = this.restaurantStatus
@@ -78,16 +78,15 @@ export class EditMenuComponent {
     : 'Open restaurant';
 
   countersAvailable;
-  public restaurantType = this.__sessionWrapper.getItem('restaurantType');
-  public counterMangement = this.__sessionWrapper.isCounterManagementEnabled()
-  public inventoryManagement = this.__sessionWrapper.isInventoryManagementEnabled()
-  public mobileOrderingEnabled = this.__sessionWrapper.isMobileOrderingEnabled()
-  public isPOSEnabled = this.__sessionWrapper.isPOSEnabled()
+  public restaurantKDSenabled;
+  public restaurantType
+  public counterMangement
+  public inventoryManagement
+  public mobileOrderingEnabled 
+  public isPOSEnabled
 
-  displayedColumns: string[] = ['id', 'item', 'price', ...(this.mobileOrderingEnabled? ['available', 'item_parcel']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
+  displayedColumns
   dataSource = new MatTableDataSource([])
-
-
 
   public selectedCategoryId = ''
   public searchText = '';
@@ -100,10 +99,28 @@ export class EditMenuComponent {
   }]
   public allCategories = []
   public filteredMenu = []
-  
+
 
   ngOnInit() {
     this.searchText = ''
+    this.meUtility.getRestaurant().subscribe(
+      (restaurant) => {
+        this.restaurantId = restaurant['restaurant_id']
+        this.restaurantKDSenabled = restaurant['restaurant_kds'] 
+        this.restaurantType = restaurant['type']
+        this.counterMangement = restaurant['counter_management']
+        this.inventoryManagement = restaurant['inventory_management']
+        this.mobileOrderingEnabled = restaurant['mobile_ordering']
+        this.isPOSEnabled = restaurant['pos']
+        this.fetchAdminMenu()
+        this.fetchCounters()
+        this.displayedColumns = ['id', 'item', 'price', ...(this.mobileOrderingEnabled? ['available', 'item_parcel']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
+      }
+    )
+
+  }
+
+  fetchAdminMenu(){
     this._menuService.getAdminMenu(this.restaurantId).subscribe(
       (data) => {
         this.restaurantStatus = data['is_open']
@@ -111,13 +128,14 @@ export class EditMenuComponent {
         this.menu = data['menu']
         this.createAllCategory();
         this.allCategories = this.parseCategories()
-        this.selectedCategory = [this.allCategories[0]]
-        console.log(this.allCategories, 'all categories')
         this.showCategory()
         this.filteredMenu = JSON.parse(JSON.stringify(this.menu));
       },
       (error) => console.log(error)
     );
+  }
+
+  fetchCounters(){
     this._counterService
       .getRestaurantCounter(this.restaurantId)
       .subscribe((data) => {
@@ -126,10 +144,15 @@ export class EditMenuComponent {
   }
 
   showCategory() {
-    if (this.selectedCategory.length > 0) {
-      this.visibleCategory = this.menu.filter(category => category.category.id == this.selectedCategory[0].categoryId)
+    if (this.selectedCategory.length > 0 && this.selectedCategory[0].categoryId) {
+      let lastViewCategory = localStorage.getItem('lastViewCategoryId')
+      let categoryId = lastViewCategory? lastViewCategory: this.selectedCategory[0].categoryId
+      this.visibleCategory = this.menu.filter(category => category.category.id == categoryId)
       this.dataSource.data = this.visibleCategory[0].category.items
+      this.selectedCategory = this.allCategories.filter((ele) => ele.categoryId == categoryId)
     } else {
+
+      this.selectedCategory = [this.allCategories[0]]
       this.visibleCategory = this.menu
       this.dataSource.data = this.visibleCategory[0].category.items
     }
@@ -138,9 +161,11 @@ export class EditMenuComponent {
   createAllCategory() {
     let allItems = [];
     this.menu.forEach((ele, index) => {
-      ele.category.items.forEach(item => {
-        allItems.push(item);
-      });
+      if(ele.category.name.toUpperCase() != "FAVOURITES"){
+        ele.category.items.forEach(item => {
+          allItems.push(item);
+        });
+      }
     });
     this.menu.push({
       category: {
@@ -304,7 +329,7 @@ export class EditMenuComponent {
   toggleRestOpen() {
     console.log('Restaurant toggled');
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       is_open: !this.restaurantStatus,
     };
     this._restaurantService.editIsRestaurantOpen(body).subscribe(
@@ -325,7 +350,7 @@ export class EditMenuComponent {
   toggleParcelOn(){
     console.log('Restaurant toggled');
     let body = {
-      restaurant_id: this.__sessionWrapper.getItem('restaurant_id'),
+      restaurant_id: this.restaurantId,
       is_open: this.restaurantStatus,
       accept_parcel: !this.parcelEnabled
     };
@@ -362,9 +387,9 @@ export class EditMenuComponent {
 
   navigateToOrders() {
     let navigationURL =
-    this.__sessionWrapper.getItem('restaurant_kds') == 'true'
+    this.restaurantKDSenabled
         ? '/owner/orders/pending-orders'
-        : this.__sessionWrapper.getItem('restaurantType') == 'e-commerce'
+        : this.restaurantType == 'e-commerce'
         ? '/owner/orders/unconfirmed-orders'
         : '/owner/orders/orders-history';
     this._router.navigate([navigationURL]);
@@ -404,8 +429,10 @@ export class EditMenuComponent {
     if (this.searchText) {
         this.selectedCategory = this.allCategories.filter((ele, index) => index == this.allCategories.length - 1)
         this.visibleCategory = [JSON.parse(JSON.stringify(this.menu[this.menu.length - 1]))]
-        this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>
-            item.name.toLowerCase().includes(this.searchText.toLowerCase())
+        this.visibleCategory[0].category.items = this.visibleCategory[0].category.items.filter((item) =>{
+          let acronym = item.name.split(/\s/).reduce((response,word)=> response+=word.slice(0,1),'')
+          return (item.name.toLowerCase().includes(this.searchText.toLowerCase()) || (acronym.toLowerCase().includes(this.searchText.toLowerCase())) ) 
+        }
         );
         this.dataSource.data = this.visibleCategory[0].category.items
     } else {
@@ -417,6 +444,7 @@ export class EditMenuComponent {
 
   onCategorySelection(category) {
     this.selectedCategory = this.allCategories.filter(ele => ele == category)
+    localStorage.setItem('lastViewCategoryId', this.selectedCategory[0].categoryId)
     this.showCategory()
   }
 
@@ -436,4 +464,9 @@ export class EditMenuComponent {
     let disableAddButton = this.selectedCategory.length > 0 && !this.selectedCategory[0].categoryId
     return disableAddButton
   }
+
+  ngOnDestroy(){
+    localStorage.removeItem('lastViewCategoryId')
+  }
+
 }
