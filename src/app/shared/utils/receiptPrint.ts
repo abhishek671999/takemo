@@ -52,6 +52,10 @@ export class ReceiptPrintFormatter{
                 size: 'small'
               },
               {
+                text: sectionSeperatorCharacters,
+                justification: 'center',
+              },
+              {
                 text: this.getFormattedCounterItemDetails(counterItemList),
                 justification: 'left',
               },
@@ -82,6 +86,10 @@ export class ReceiptPrintFormatter{
               text: this.confirmedOrder.ordered_time,
               justification: 'right',
               size: 'small'
+            },
+            {
+              text: sectionSeperatorCharacters,
+              justification: 'center',
             },
             {
               text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
@@ -195,11 +203,16 @@ export class ReceiptPrintFormatter{
             bold: true,
           },
           {
+            text: sectionHeader1,
+            bold: true,
+            justification: 'center',
+          },
+          {
             text: this.dateUtils.getDateForRecipePrint(),
             justification: 'right',
           },
           {
-            text: sectionHeader1,
+            text: sectionSeperatorCharacters,
             bold: true,
             justification: 'center',
           },
@@ -425,8 +438,8 @@ export class ReceiptPrintFormatter{
   private getFormattedCounterItemDetails(counterItemList) {
       let formattedText = '';
       counterItemList.forEach((element) => {
-        let trimmedName = this.getFixedLengthString(element.item_name.substring(0, 16), 16, false, ' ')
-        let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(16, 36), 20, false, ' ') + '\n';
+        let trimmedName = this.getFixedLengthString(element.item_name.substring(0, 30), 30, false, ' ')
+        let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(30, 60), 30, false, ' ') + '\n';
         let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
         formattedText += `- ${trimmedName}  ${itemQty}\n${remainingName}`
         if(element.note) formattedText += `(${element.note})`
@@ -545,7 +558,7 @@ export class ReceiptPrintFormatter{
         let gstValue = (lineItem.tax_inclusive? 0 : (Math.round(((lineItem.price * 0.05) + Number.EPSILON) * 100) / 100))
         gsttotal += (gstValue * (lineItem.quantity + (lineItem.parcel_quantity? lineItem.parcel_quantity: 0)));
       });
-      return gsttotal;
+      return Number(gsttotal.toFixed(2));
     }
 
     private getSubTotal(){

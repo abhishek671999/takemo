@@ -7,7 +7,8 @@ import { AllRestaurantsCombinedComponent } from './all-restaurants-combined/all-
 
 
 const routes: Routes = [
-  { path: '', component: AnalyticsHomeComponent, children: [
+  { path: '', component: AnalyticsHomeComponent,
+     children: [
     { path: 'sales-analytics', component: SalesAnalyticsComponent},
     { path: 'timely-analytics', component: TimelyAnalyticsComponent},
     { path: 'all-restaurants', component: AllRestaurantsCombinedComponent}
