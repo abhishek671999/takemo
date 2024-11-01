@@ -169,7 +169,7 @@ export class HeaderComponent {
         this.location = data['restaurant_name']
         this.restaurantKDS = data['restaurant_kds']
         this.restaurantType = data['type']
-
+        this.fetchCounters()
         if(data['role_name'] == 'restaurant_admin'){
           this.addRestaurantOwnerNavOptions(data)
         }else if(data['role_name'] == 'restaurant_staff'){
@@ -190,11 +190,12 @@ export class HeaderComponent {
     this._meAPIutility.getMeData().subscribe(data => {
       this.meData = data
       this.hasMultipleRestaurants = data['restaurants'].length > 1
-      if(data['restaurants'].length == 0 || data['companies'].length == 0) this.addUserNavOptions()
+      if(data['restaurants'].length == 0 && data['companies'].length == 0) this.addUserNavOptions()
       }
     )
 
-    this.fetchCounters()
+    
+
     if(this.isPollingRequired){
       this.printerConn.printerConnected.subscribe(
         (data: any) => {
