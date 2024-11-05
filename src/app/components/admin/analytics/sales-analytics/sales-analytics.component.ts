@@ -108,7 +108,7 @@ export class SalesAnalyticsComponent {
   selectedRule;
   totalAmount = 0;
   totalOrders = 0;
-  restaurantFlag
+  restaurantFlag = false
   hasOrderTypes 
   isITTUser
   isRaviGobiUser
@@ -140,6 +140,16 @@ export class SalesAnalyticsComponent {
   
 
   ngOnInit() {
+    this._ruleService.getAllRules().subscribe((data) => {
+      data['rules'].forEach((element) => {
+        this.ruleList.push({
+          rule_id_list: element.id,
+          rule_name: element.name,
+        });
+      });
+      this.selectedRule = this.ruleList[0].rule_id_list;
+      this.loadView = true;
+    });
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.restaurant = restaurant
@@ -147,17 +157,6 @@ export class SalesAnalyticsComponent {
         this.hasOrderTypes = restaurant['type'] == 'e-commerce'? true: false;
         this.isITTUser = this.meUtility.doesUserBelongToITT
         this.isRaviGobiUser = this.meUtility.doesUserBelongToRaviGobi
-        this._ruleService.getAllRules().subscribe((data) => {
-          data['rules'].forEach((element) => {
-            this.ruleList.push({
-              rule_id_list: element.id,
-              rule_name: element.name,
-            });
-          });
-          this.selectedRule = this.ruleList[0].rule_id_list;
-          this.createChart(this.getRequestBodyPrepared());
-          this.loadView = true;
-        });
         this._counterService
           .getRestaurantCounter(this.restaurant['restaurant_id'])
           .subscribe(
@@ -168,9 +167,11 @@ export class SalesAnalyticsComponent {
               console.log('Error: ', error);
             }
           );
-      }
+      },
     )
-
+    setTimeout(() => {
+      this.createChart(this.getRequestBodyPrepared());
+    }, 1000);
 
   }
 
@@ -189,7 +190,7 @@ export class SalesAnalyticsComponent {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: this.restaurant['restaurant_id']
+      restaurant_id: this.restaurant
         ? this.restaurant['restaurant_id']
         : this.selectedRestaurant,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
