@@ -108,17 +108,21 @@ export class meAPIUtility {
   getRestaurant(){
     let restaurantObservable = new Observable((observer) => {
       let restaurantData = this.cookieService.get('restaurant')
-      if(!(typeof(restaurantData) == "undefined" || restaurantData === "")){
+      if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
         let data = JSON.parse(restaurantData)
         this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
         this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
         observer.next(data)
       } else {
         this.getMeData().subscribe((data) => {
-          this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
-          this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
-          this.setRestaurant(data['restaurants'][0])
-          observer.next(data['restaurants'][0])
+          if(data['restaurants'].length > 0){
+            let firstRestaurantInList = data['restaurants'][0]
+            this.doesUserBelongToITT = [1,2].includes(firstRestaurantInList['restaurant_id'])
+            this.doesUserBelongToRaviGobi = firstRestaurantInList['restaurant_id'] == 7
+            this.setRestaurant(firstRestaurantInList)
+            observer.next(firstRestaurantInList)
+          }
+
         })
       }
     })
@@ -139,7 +143,7 @@ export class meAPIUtility {
   getCompany(){
     let restaurantObservable = new Observable((observer) => {
       let restaurantData = this.cookieService.get('company')
-      if(!(typeof(restaurantData) == "undefined" || restaurantData === "")){
+      if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
         observer.next(JSON.parse(restaurantData))
       } else {
         this.getMeData().subscribe((data) => {

@@ -60,7 +60,7 @@ export class TimelyAnalyticsComponent {
     this.timeFramesForTimelyAnalytics[0].actualValue;
   selectedCategory = this.categoryList[0];
   selectedItem = this.itemList[0];
-  selectedRestaurant: number
+  selectedRestaurant: number = this.restaurantList[0].restaurant_id;
   restaurantFlag: boolean;
 
   selectedDate = new Date();
@@ -82,6 +82,15 @@ export class TimelyAnalyticsComponent {
 
 
   ngOnInit() {
+    this._ruleService.getAllRules().subscribe((data) => {
+      data['rules'].forEach((element) => {
+        this.ruleList.push({ rule_id: element.id, rule_name: element.name });
+      });
+      this.selectedRule = this.ruleList[0].rule_id;
+      
+      this.loadView = true;
+    });
+
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.restaurant = restaurant
@@ -99,32 +108,26 @@ export class TimelyAnalyticsComponent {
             });
           });
         });
-    
-        this._ruleService.getAllRules().subscribe((data) => {
-          data['rules'].forEach((element) => {
-            this.ruleList.push({ rule_id: element.id, rule_name: element.name });
-          });
-          this.selectedRule = this.ruleList[0].rule_id;
-          this.createTimelyAnalytics(this.getRequestBodyPrepared());
-          this.loadView = true;
-        });
 
+
+        this._counterService
+        .getRestaurantCounter(this.restaurant['restaurant_id'])
+        .subscribe(
+          (data) => {
+            console.log('counters available', data);
+            this.counters = data['counters'];
+          },
+          (error) => {
+            console.log('Error: ', error);
+          }
+        );
+        
       }
     )
 
-
-
-    this._counterService
-      .getRestaurantCounter(this.restaurant['restaurant_id'])
-      .subscribe(
-        (data) => {
-          console.log('counters available', data);
-          this.counters = data['counters'];
-        },
-        (error) => {
-          console.log('Error: ', error);
-        }
-      );
+      setTimeout(() => {
+        this.createTimelyAnalytics(this.getRequestBodyPrepared());
+      }, 2000);
   }
 
   ngAfterViewInit(){
@@ -181,7 +184,7 @@ export class TimelyAnalyticsComponent {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: this.restaurant['restaurant_id']
+      restaurant_id: this.restaurant
         ?  this.restaurant['restaurant_id']
         : this.selectedRestaurant,
       category_id: this.selectedCategory.id,
