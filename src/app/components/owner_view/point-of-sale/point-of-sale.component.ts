@@ -609,9 +609,10 @@ export class PointOfSaleComponent {
     this.orderService.createOrders(body).subscribe(
       (data) => {
         body['order_no'] = data['order_no']
+        body['ordered_time'] = this.dateUtils.getDateForRecipePrint(new Date())
         if(this.printerConn.usbSought){
           this.receiptPrintFormatter.confirmedOrderObj = body
-          let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptText(this.counters)
+          let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptTextV2()
           counterReceiptObjs.forEach((counterReceiptObj) => {
             this.print(counterReceiptObj)
           })

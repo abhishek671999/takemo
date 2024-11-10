@@ -255,6 +255,8 @@ export class TimelyAnalyticsComponent {
       ([key, value], index) => {
         tabulatedResponse.push({
           date: key,
+          position: index + 1,
+          name: key,
           quantity: value['quantity'],
           total_amount: value['total_amount'],
         });

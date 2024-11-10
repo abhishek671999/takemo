@@ -110,7 +110,7 @@ export class SalesAnalyticsComponent {
   totalOrders = 0;
   restaurantFlag = false
   hasOrderTypes 
-  isITTUser
+  isITTUser = false;
   isRaviGobiUser
 
   chart1: any = [];
@@ -195,7 +195,7 @@ export class SalesAnalyticsComponent {
         : this.selectedRestaurant,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
-      pos: this.isITTUser ? false : true,
+      pos: (!this.isITTUser && this.restaurant),
     };
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
@@ -333,6 +333,7 @@ export class SalesAnalyticsComponent {
                 : this.createItemWiseTotalAmountChart(data);
           }
           this.dataLoadSpinner = false;
+          
         },
         (error) => {
           console.log('Error while loading analytics');
