@@ -333,6 +333,7 @@ export class SalesAnalyticsComponent {
                 : this.createItemWiseTotalAmountChart(data);
           }
           this.dataLoadSpinner = false;
+          
         },
         (error) => {
           console.log('Error while loading analytics');

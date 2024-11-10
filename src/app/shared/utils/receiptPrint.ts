@@ -117,6 +117,47 @@ export class ReceiptPrintFormatter{
       return printObjs
     }
 
+    getWKOTReceiptTextV2(){
+      let sectionHeader1 =
+      '-'.repeat(15) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(15);
+      let tableHeader = '           ITEM            QTY  RATE   AMT';
+      let endNote = 'Thank you. Visit again';
+      let sectionSeperatorCharacters = '-'.repeat(42);
+      let content = [
+        {
+          text: 'Waiter KOT',
+          justification: 'center',
+          bold: false,
+          size: 'small'
+        },
+        {
+          text: this.confirmedOrder.ordered_time,
+          justification: 'right',
+          size: 'small'
+        },
+        {
+          text: sectionSeperatorCharacters,
+          justification: 'center',
+        },
+        {
+          text: tableHeader,
+          underline: true,
+          justification: 'left',
+        },
+        {
+          text: this.getFormattedDineInItemDetails(),
+          justification: 'left',
+        },
+      ]
+      if(this.confirmedOrder.table_name) content.splice(0,0, {
+        text: `Table name: ${this.confirmedOrder.table_name}`,
+        justification: 'center',
+        bold: true,
+        size: 'large'
+      })
+      return [content]
+    }
+
     getWKOTReceiptText(counters){
       let sectionSeperatorCharacters = '-'.repeat(42);
       let printObjs = []
