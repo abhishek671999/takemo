@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
-  FormGroup,
   Validators,
 } from '@angular/forms';
 import { SignupService } from '../../../shared/services/register/signup.service';
-import { RegistrationUser } from '../../../user';
-import { forbiddenNameValidator } from '../../../shared/user-name.validator';
 import { passwordValidator } from '../../../shared/validators/password.validator';
 import { userNameValidator } from '../../../shared/validators/email.validator';
 import { MatDialog } from '@angular/material/dialog';

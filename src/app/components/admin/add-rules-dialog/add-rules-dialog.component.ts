@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RulesService } from 'src/app/shared/services/roles/rules.service';
+import { addRule } from 'src/app/shared/type/rule';
 
 @Component({
   selector: 'app-add-rules-dialog',
@@ -22,24 +23,23 @@ export class AddRulesDialogComponent {
   });
 
   
-  getTwentyFourHourTime(amPmString) { 
+  getTwentyFourHourTime(amPmString: string) { 
+    console.log('this is string: ', amPmString)
     var d = new Date("1/1/2013 " + amPmString); 
     return d.getHours() + ':' + d.getMinutes(); 
 }
 
 
   addRule(){
-    let body = {
+    let body: addRule = {
         "name": this.addRuleForm.value.name,
         "start_time":this.getTwentyFourHourTime(this.addRuleForm.value.start_time),
         "end_time": this.getTwentyFourHourTime(this.addRuleForm.value.end_time),
-        "max_amount_per_shift": this.addRuleForm.value.max_amount_per_shift,
+        "max_amount_per_shift": Number(this.addRuleForm.value.max_amount_per_shift),
         "same_day_end_date": this.addRuleForm.value.checked
     }
-    console.log('This is body: ', body)
     this._rulesService.addRule(body).subscribe(
       data => {
-        console.log(data)
         this.dialogRef.close({success: 'ok'})
       },
       error => {

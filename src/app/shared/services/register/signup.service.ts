@@ -5,11 +5,9 @@ import {
   HttpParams,
   HttpHeaders,
 } from '@angular/common/http';
-import { RegistrationUser } from '../../../user';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { host } from '../../site-variable';
-import { timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 @Injectable({

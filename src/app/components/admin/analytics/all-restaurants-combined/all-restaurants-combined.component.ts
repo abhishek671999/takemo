@@ -5,6 +5,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { getMultilocationSalesAnalytics, multilocationSalesAnalytics } from 'src/app/shared/datatypes/analytics';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
+import { AddRulesDialogComponent } from '../../add-rules-dialog/add-rules-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-all-restaurants-combined',
@@ -13,8 +15,11 @@ import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.se
 })
 export class AllRestaurantsCombinedComponent {
 
-  constructor(private analyticsService: AnalyticsService){}
+  constructor(private analyticsService: AnalyticsService, private dialog: MatDialog){}
+  openDialog(){
+    let dialogRef = this.dialog.open(AddRulesDialogComponent);
 
+  }
   @ViewChild(MatSort)
   sort: MatSort = new MatSort;
   @ViewChild(MatPaginator)
