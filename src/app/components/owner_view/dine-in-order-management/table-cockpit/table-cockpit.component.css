@@ -10,7 +10,7 @@
 }
 
 .billpaid-table{
-    background-color: rgba(56, 137, 64, 0.8);
+    background-color: rgba(48, 244, 68, 0.8);
 }
 
 .vacant-table {
@@ -18,7 +18,7 @@
   } 
 
 .occupied-table {
-    background-color: rgb(202, 153, 75);
+    background-color: rgb(238, 245, 32);
 }
 
 .reserved-table {

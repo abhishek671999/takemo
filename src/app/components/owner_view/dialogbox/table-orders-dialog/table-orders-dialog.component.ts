@@ -48,6 +48,7 @@ export class TableOrdersDialogComponent {
   totalAmount;
   isBillPrinted: boolean = false;
   isEditEnabled: boolean = false;
+  orderNo: number;
   totalAmountWithoutGst: number = 0
   totalAmountWithGst: number = 0
 
@@ -72,6 +73,7 @@ export class TableOrdersDialogComponent {
         this.hasOrderedItems = this.orders.length > 0;
         this.totalAmount = data['orders']['total_amount'];
         this.isBillPrinted = data['orders']['bill_printed']
+        this.orderNo = data['orders']['order_no']
         this.calculateAmountWithoutTax()
         this.calculateAmountWithTax()
       },
@@ -151,10 +153,11 @@ export class TableOrdersDialogComponent {
     let orderObj = {
       order_list: this.orders,
       total_amount: this.totalAmount,
-      payment_mode: 'Table order',
+      payment_mode: `Table order`,
       restaurant_id :this.restaurantId,
       table_name: this.data.table_name,
-      waiter_name: this.data.waiter_name
+      waiter_name: this.data.waiter_name,
+      order_no: this.orderNo
     }
     this.receiptPrintFormatter.confirmedOrderObj = orderObj
     let printObj = this.receiptPrintFormatter.getWaiterCheckKOTText(this.counters)
@@ -189,8 +192,10 @@ export class TableOrdersDialogComponent {
       let orderObj = {
         order_list: this.orders,
         total_amount: this.totalAmount,
-        payment_mode: 'Table order',
-        restaurant_id :this.restaurantId
+        payment_mode: `Table order`,
+        restaurant_id :this.restaurantId,
+        order_no: this.orderNo,
+        table_name: this.data.table_name,
       }
       this.receiptPrintFormatter.confirmedOrderObj = orderObj
       let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
