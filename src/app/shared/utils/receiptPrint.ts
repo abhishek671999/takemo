@@ -50,11 +50,14 @@ export class ReceiptPrintFormatter{
                 text: counterEle.counter_name,
                 justification: 'center',
                 bold: true
+                
               },
               {
                 text: this.confirmedOrder.ordered_time,
                 justification: 'right',
-                size: 'small'
+                size: 'small',
+                bold: false
+
               },
               {
                 text: sectionSeperatorCharacters,
@@ -63,6 +66,7 @@ export class ReceiptPrintFormatter{
               {
                 text: this.getFormattedCounterItemDetails(counterItemList),
                 justification: 'left',
+                bold: true
               },
               {
                 text: sectionSeperatorCharacters,
@@ -73,10 +77,13 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
               },
             ]
-            if(this.confirmedOrder.table_name) counterObjs.push({
-              text: `Table name: ${this.confirmedOrder.table_name}`,
+            if(this.confirmedOrder.table_name) counterObjs.splice(0,0, {
+              text: `Table no: ${this.confirmedOrder.table_name}`,
               justification: 'center',
+              bold: true,
+              size: 'large'
             })
+  
             printObjs.push(counterObjs)
           } 
           })
@@ -89,7 +96,8 @@ export class ReceiptPrintFormatter{
             {
               text: this.confirmedOrder.ordered_time,
               justification: 'right',
-              size: 'small'
+              size: 'small',
+              bold: false
             },
             {
               text: sectionSeperatorCharacters,
@@ -108,10 +116,16 @@ export class ReceiptPrintFormatter{
               justification: 'center',
             },
             {
-              text: `Table name: ${this.confirmedOrder.table_name}`,
+              text: `Table no: ${this.confirmedOrder.table_name}`,
               justification: 'center',
             },
           ]
+          if(this.confirmedOrder.table_name) printObj.splice(0,0, {
+            text: `Table no: ${this.confirmedOrder.table_name}`,
+            justification: 'center',
+            bold: true,
+            size: 'large'
+          })
           printObjs.push(printObj)
       }
       return printObjs
@@ -120,7 +134,7 @@ export class ReceiptPrintFormatter{
     getWKOTReceiptTextV2(){
       let sectionHeader1 =
       '-'.repeat(15) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(15);
-      let tableHeader = '           ITEM            QTY  RATE   AMT';
+      let tableHeader = '                ITEM                  QTY';
       let endNote = 'Thank you. Visit again';
       let sectionSeperatorCharacters = '-'.repeat(42);
       let content = [
@@ -145,12 +159,13 @@ export class ReceiptPrintFormatter{
           justification: 'left',
         },
         {
-          text: this.getFormattedDineInItemDetails(),
+          text: this.getFormattedDineInItemDetailsForKOT(),
           justification: 'left',
+          bold: true
         },
       ]
       if(this.confirmedOrder.table_name) content.splice(0,0, {
-        text: `Table name: ${this.confirmedOrder.table_name}`,
+        text: `Table no: ${this.confirmedOrder.table_name}`,
         justification: 'center',
         bold: true,
         size: 'large'
@@ -203,7 +218,7 @@ export class ReceiptPrintFormatter{
               },
             ]
             if(this.confirmedOrder.table_name) counterObjs.push({
-              text: `Table name: ${this.confirmedOrder.table_name}`,
+              text: `Table no: ${this.confirmedOrder.table_name}`,
               justification: 'center',
             })
             printObjs.push(counterObjs)
@@ -242,7 +257,7 @@ export class ReceiptPrintFormatter{
             },
           ]
           if(this.confirmedOrder.table_name) printObj.push({
-            text: `Table name: ${this.confirmedOrder.table_name}`,
+            text: `Table no: ${this.confirmedOrder.table_name}`,
             justification: 'center',
           })
           printObjs.push(printObj)
@@ -274,8 +289,8 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
-            text: this.dateUtils.getDateForRecipePrint(),
-            justification: 'right',
+            text: 'Date: ' + this.dateUtils.getDateForRecipePrint(),
+            justification: 'left',
           },
           {
             text: sectionSeperatorCharacters,
@@ -331,7 +346,20 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
         ];
-        if(this.confirmedOrder.order_no){
+        if(this.confirmedOrder.table_name) content.splice(3,0, 
+          {
+            text: 'Table no: ' + this.confirmedOrder.table_name,
+            justification: 'left',
+          },
+        )
+        if(this.confirmedOrder.table_name) content.splice(4,0, 
+          {
+            text: 'Order No: ' + this.confirmedOrder.order_no,
+            justification: 'left',
+            bold: true
+          },
+        )
+        if(this.confirmedOrder.order_no && !this.confirmedOrder.table_name){
           content.push({
                 text: `Order No: ${this.confirmedOrder.order_no}`,
                 size: 'large',
@@ -339,33 +367,39 @@ export class ReceiptPrintFormatter{
                 justification: 'center',
           })
         }
-        return content;
+      return content;
     }
 
     getWaiterCheckKOTText(counters){
       let sectionSeperatorCharacters = '-'.repeat(42);
       let content = [
         {
+          text: `Table no: ${this.confirmedOrder.table_name}`,
+          justification: 'center',
+          bold: true,
+          size: 'large'
+        },
+        {
           text: 'Check KOT',
           justification: 'center',
+          bold: false
         },
         {
           text: this.dateUtils.getDateForRecipePrint(),
           justification: 'right',
-          size: 'small'
-        },
-        {
-          text: `Table name: ${this.confirmedOrder.table_name}`,
-          justification: 'center',
+          size: 'small',
+          bold: false
         },
       ]
       if(this.confirmedOrder.waiter_name) content.push({
           text: this.confirmedOrder.waiter_name,
           justification: 'center',
+          bold: false
         })
       content.push({
         text: sectionSeperatorCharacters,
         justification: 'center',
+        bold: false
       })
       if(counters.length > 0){
         counters.forEach((counterEle) => {
@@ -376,14 +410,17 @@ export class ReceiptPrintFormatter{
               {
                 text: counterEle.counter_name,
                 justification: 'center',
+                bold: true
               },
               {
                 text: this.getFormattedCounterItemDetails(counterItemList),
                 justification: 'left',
+                bold: true
               },
               {
                 text: sectionSeperatorCharacters,
                 justification: 'center',
+                bold: true
               }
             ]
             counterText.forEach(ele => content.push(ele))
@@ -395,11 +432,13 @@ export class ReceiptPrintFormatter{
             text: this.getFormattedCounterItemDetails(this.confirmedOrder.order_list),
             justification: 'left',
             size: 'small',
+            bold: false
           },
           {
             text: sectionSeperatorCharacters,
             justification: 'center',
             size: 'small',
+            bold: false
           },
         ];
         printObj.forEach(ele => content.push(ele))
@@ -453,7 +492,7 @@ export class ReceiptPrintFormatter{
             }
             if(this.confirmedOrder.table_name){
               printObj.push({
-                text: `Table name: ${this.confirmedOrder.table_name}`,
+                text: `Table no: ${this.confirmedOrder.table_name}`,
                 size: 'large',
                 bold: true,
                 justification: 'center',
@@ -504,11 +543,11 @@ export class ReceiptPrintFormatter{
   
   private getFormattedCounterItemDetails(counterItemList) {
       let formattedText = '';
-      counterItemList.forEach((element) => {
+      counterItemList.forEach((element, index) => {
         let trimmedName = this.getFixedLengthString(element.item_name.substring(0, 30), 30, false, ' ')
         let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(30, 60), 30, false, ' ') + '\n';
         let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
-        formattedText += `- ${trimmedName}  ${itemQty}\n${remainingName}`
+        formattedText += `${index + 1} ${trimmedName}  ${itemQty}\n${remainingName}`
         if(element.note) formattedText += `(${element.note})`
       })
       return formattedText
@@ -543,11 +582,40 @@ export class ReceiptPrintFormatter{
           true,
           ' '
         );
-        formattedTable += `-${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
+        formattedTable += `${index + 1} ${trimmedName}  ${itemQty}  ${itemPrice}  ${itemAmount}\n${remainingName}`;
       }
     });
     return formattedTable;
     }
+
+    private getFormattedDineInItemDetailsForKOT() {
+      let formattedTable = '';
+      this.confirmedOrder.order_list.forEach((lineItem: lineItem, index) => {
+        if (lineItem.quantity > 0) {
+          let trimmedName = this.getFixedLengthString(
+              lineItem.item_name.substring(0, 33),
+            33,
+            false,
+            ' '
+          );
+          let remainingName =
+            trimmedName.trim() == lineItem.item_name
+              ? ''
+              : ' ' +
+                this.getFixedLengthString(
+                  lineItem.item_name.substring(33, 70),
+                  24,
+                  false,
+                  ' '
+                ) +
+                '\n';
+          let itemQty = this.getFixedLengthString(lineItem.quantity, 3, true, ' ');
+          formattedTable += `- ${trimmedName}  ${itemQty}\n${remainingName}`;
+        }
+      });
+      return formattedTable;
+      }
+
 
     private getFormattedParcelItemDetails() {
       let inititalString = '------------------Parcel------------------\n';

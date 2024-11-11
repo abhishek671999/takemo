@@ -612,10 +612,10 @@ export class PointOfSaleComponent {
         body['ordered_time'] = this.dateUtils.getDateForRecipePrint(new Date())
         if(this.printerConn.usbSought){
           this.receiptPrintFormatter.confirmedOrderObj = body
-          let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptTextV2()
-          counterReceiptObjs.forEach((counterReceiptObj) => {
-            this.print(counterReceiptObj)
-          })
+          // let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptTextV2()
+          // counterReceiptObjs.forEach((counterReceiptObj) => {
+          //   this.print(counterReceiptObj)
+          // })
           if(this.isKOTEnabled){
             let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
             counterReceiptObjs.forEach((counterReceiptObj) => {
