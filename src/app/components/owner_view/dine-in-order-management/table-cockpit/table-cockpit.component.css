@@ -1,5 +1,6 @@
 .main-container{
-    height: 85vh;
+    min-height: 85vh;
+    max-height: fit-content;
     width: 100%;
 }
 
@@ -43,7 +44,8 @@
 
 .card-box {
     padding: 10px;
-    height: 9em;
+    min-height: 10em;
+    max-height: fit-content;
     cursor: pointer;
     width: 10em;
     border-radius: 5px;

@@ -487,7 +487,7 @@ export class PointOfSaleComponent {
     if(this.isTableManagement){
       body['table_id'] =  Number(sessionStorage.getItem('table_id'))
       body['table_name'] = sessionStorage.getItem('table_name')
-      body['wkot_printed'] = this.printerConn.usbSought
+      body['wkot_printed'] = true //this.printerConn.usbSought
       body['kot_printed'] = this.printerConn.usbSought
     }
     return body;

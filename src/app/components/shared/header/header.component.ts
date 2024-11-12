@@ -171,6 +171,7 @@ export class HeaderComponent {
         this.restaurantKDS = data['restaurant_kds']
         this.restaurantType = data['type']
         this.userType = data['role_name']
+        this.isKotReciptEnabled = data['kot_receipt']
         this.fetchCounters()
         if(this.userType == 'restaurant_admin'){
           this.addRestaurantOwnerNavOptions(data)
@@ -329,6 +330,7 @@ export class HeaderComponent {
           let printedWKOTOrderIds = []
           data['orders'].forEach((order) => {
             this.receiptPrintFormatter.confirmedOrderObj = order
+            debugger
             if(order.kot_printed == false && this.isKotReciptEnabled){
               let printObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
               let printStatus = false
