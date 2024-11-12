@@ -13,9 +13,10 @@
                 <button mat-raised-button color="primary"  [disabled]="!(printerConn.usbSought && data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
                 <small *ngIf="!printerConn.usbSought" class="text-danger" style="display: block">Connect printer</small>
             </div>
-            <button mat-raised-button color="primary" [disabled]="!data.is_occupied" (click)="markPaymentDone()">Payment done</button>
-            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems" (click)="enableOrderEdit()">Edit order</button>
-            <button mat-raised-button color="primary" (click)="posOrder()" >POS order</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!data.is_occupied" (click)="markPaymentDone()">Payment done</button>
+            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
+            <button mat-raised-button color="primary" [disabled]="data.bill_printed" (click)="posOrder()" >POS order</button>
+            <button mat-raised-button color="primary" (click)="moveItemsBetweenTables()" >Move</button>
         </div>
         <table class="table-order-container">
             <thead>

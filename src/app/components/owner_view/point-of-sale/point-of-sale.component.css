@@ -47,7 +47,7 @@ th{
 }
 
 .active{
-    font-weight: bold;
+    font-weight:bolder;
 }
 
 .green-bar{
@@ -150,6 +150,14 @@ th{
     flex-wrap: wrap;
 }
 
+.category-bar-items{
+    font-size: calc(1.0*(1vh + 0.5vw));
+}
+
+.responsive-font-text{
+    font-size: calc(1*(1vh + 0.5vw));
+}
+
 .radio-button-container p{
     font-size: small;
     margin: 0;
@@ -227,9 +235,8 @@ th{
         --mdc-radio-state-layer-size: 20px;
     }
     .item-card{
-        width: 6.5em;
+        width: 6em;
         height: 4.7em;
-        
     }
 
     .item-card  p{

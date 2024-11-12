@@ -37,6 +37,8 @@ export class TableCockpitComponent {
   restaurantId: number
   orders;
   totalAmount;
+  private refreshFrequency: number = 10;
+  private pollingInterval;
 
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
@@ -47,6 +49,18 @@ export class TableCockpitComponent {
         this.fetchTables()
       }
     )
+    this.pollingInterval = this.startPageRefresh()
+  }
+
+  startPageRefresh(){
+    return setInterval(() => {
+      this.fetchTables()
+     
+    }, this.refreshFrequency * 100000);
+  }
+
+  ngOnDestroy(){
+    clearInterval(this.pollingInterval)
   }
 
   fetchTables(){
@@ -66,7 +80,9 @@ export class TableCockpitComponent {
     let dialogRef = this.__matDialog.open(TableOrdersDialogComponent, { data: table, width: '100vw' })
     dialogRef.afterClosed().subscribe(
       data => {
-        this.ngOnInit()
+        if(data?.refresh){
+          this.ngOnInit()
+        }
       },
       error => {
         this.ngOnInit()

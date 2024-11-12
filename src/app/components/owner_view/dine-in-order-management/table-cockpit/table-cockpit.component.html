@@ -2,9 +2,12 @@
     <div  style="width: 100%; text-align: right;">
         <small>*Drag and drop table cards to move orders between tables</small>
     </div>
-    <div class="content-box" cdkDropListOrientation="horizontal" cdkDropList (cdkDropListDropped)="onDrop($event)">
-        <div *ngFor="let table of tables" (cdkDragEntered)="onHover(table, $event)" [cdkDragDisabled]="!table.is_occupied" cdkDrag class="card-box" [ngClass]="table.bill_printed? 'billpaid-table': table.is_occupied? 'occupied-table': 'vacant-table'" (click)="openTableDetails(table)">
-                    <h2 style="font-size: xx-large; display: inline-block;" class="text-center text-black">{{table.table_name}}  </h2>
+    <div class="content-box" >
+        <div *ngFor="let table of tables" class="card-box" [ngClass]="table.bill_printed? 'billpaid-table': table.is_occupied? 'occupied-table': 'vacant-table'" (click)="openTableDetails(table)">
+                    <div class="table-header">
+                        <h2 style="font-size: xx-large; display: inline-block;" class="text-center text-black">{{table.table_name}}</h2>
+                        <h4>₹&nbsp;{{table.standing_amount}}</h4>
+                    </div>
                     <div>
                         <div class="capacity-block">
                             <mat-icon class="p-0 m-0">people</mat-icon><h1 class="text-center text-black p-0 m-0" style="display: inline-block;">{{table.capacity}}</h1>

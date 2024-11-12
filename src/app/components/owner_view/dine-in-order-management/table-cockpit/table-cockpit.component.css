@@ -10,6 +10,15 @@
     justify-content: center;
 }
 
+.table-header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.text-center{
+  text-align: center;
+}
+
 .billpaid-table{
     background-color: rgba(48, 244, 68, 0.8);
 }

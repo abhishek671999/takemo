@@ -59,6 +59,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { MoveTablesComponent } from './dialogbox/move-tables/move-tables.component';
 
 
 @NgModule({
@@ -89,6 +90,7 @@ import {
     AddExpenseDialogComponent,
     EditExpenseDialogComponent,
     EditCategoryDialogComponent,
+    MoveTablesComponent,
   ],
   imports: [
     CommonModule,

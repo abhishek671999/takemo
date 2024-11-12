@@ -207,6 +207,7 @@ export class HeaderComponent {
       this.printerConn.printerConnected.subscribe(
         (data: any) => {
           if(data){
+            if(this.pollingInterval) clearInterval(this.pollingInterval)
             this.pollingInterval = this.startMobileOrderingPoll()
           }else{
             if(this.pollingInterval) clearInterval(this.pollingInterval)
@@ -216,6 +217,7 @@ export class HeaderComponent {
     } 
     
    }  
+
   
   addUserNavOptions(){
     let userNavOptions = [ 'menu', 'userOrders']
@@ -390,6 +392,7 @@ export class HeaderComponent {
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
     sessionStorage.removeItem('table_name');
+    if(this.pollingInterval) clearInterval(this.pollingInterval)
   }
 
 }
