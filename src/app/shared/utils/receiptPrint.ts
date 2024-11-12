@@ -547,8 +547,8 @@ export class ReceiptPrintFormatter{
         let trimmedName = this.getFixedLengthString(element.item_name.substring(0, 30), 30, false, ' ')
         let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(30, 60), 30, false, ' ') + '\n';
         let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
-        formattedText += `${index + 1} ${trimmedName}  ${itemQty}\n${remainingName}`
-        if(element.note) formattedText += `(${element.note})`
+        formattedText += `- ${trimmedName}  ${itemQty}\n${remainingName}`
+        if(element.note) formattedText += `(${element.note})\n`
       })
       return formattedText
     }

@@ -23,6 +23,7 @@
     <mat-form-field >
       <mat-label>Search item</mat-label>
       <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
+      <mat-icon matSuffix (click)="clearSearchText()" class="my-icon">close</mat-icon>
     </mat-form-field>
     <button
       mat-raised-button
@@ -38,7 +39,7 @@
       <div class="category-button" *ngFor="let category of menu">
         <ul>
           <li
-            class="fs-6 category-bar-items {{
+            class="category-bar-items {{
               category['category']['name'].replace(' ', '')
             }}"
             (click)="categoryClickEventHandler(category)"
@@ -64,8 +65,8 @@
                   'bg-warning': item.egg
                 }"
               ></div>
-              <div class="item-name">
-                <p class="pr-1 pl-1 pt-1 m-0">
+              <div class="item-name responsive-font-text">
+                <p class="pr-1 pl-1 pt-1 m-0 ">
                   {{ item.name }}
                 </p>
                 <p class="fs-8 m-0">₹&nbsp;{{ getPriceForItem(item) }}</p>
@@ -131,7 +132,7 @@
           <h4 style="font-weight: bold; " class="m-0">
             Total Amount:&nbsp;₹&nbsp;{{ calculateTotalAmount() }}
           </h4>
-          <section class="mop-section">
+          <section *ngIf="!isTableManagement" class="mop-section">
             <mat-radio-group class="radio-group" [(ngModel)]="modeOfPayment">
               <div class="radio-button-container">
                 <mat-radio-button class="ml-2 mr-2 p-1" value="card"

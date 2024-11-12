@@ -17,6 +17,7 @@ import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { InputPasswordDialogComponent } from 'src/app/components/shared/input-password-dialog/input-password-dialog.component';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { MoveTablesComponent } from '../move-tables/move-tables.component';
 
 @Component({
   selector: 'app-table-orders-dialog',
@@ -73,7 +74,7 @@ export class TableOrdersDialogComponent {
         this.hasOrderedItems = this.orders.length > 0;
         this.totalAmount = data['orders']['total_amount'];
         this.isBillPrinted = data['orders']['bill_printed']
-        this.orderNo = data['orders']['order_no']
+        this.orderNo = data['orders']['table_order_no']
         this.calculateAmountWithoutTax()
         this.calculateAmountWithTax()
       },
@@ -89,7 +90,11 @@ export class TableOrdersDialogComponent {
     sessionStorage.setItem('table_id', this.data.table_id);
     sessionStorage.setItem('table_name', this.data.table_name);
     this.__router.navigate(['owner/point-of-sale']);
-    this.dialogRef.close();
+    this.dialogRef.close({refresh: false});
+  }
+
+  moveItemsBetweenTables(){
+    this.__matDialog.open(MoveTablesComponent, {data: {table_id: this.data.table_id, table_name: this.data.table_name}})
   }
 
   verifyPassword(){
@@ -125,7 +130,7 @@ export class TableOrdersDialogComponent {
     }
     this.__tableService.markBillPrinted(body).subscribe(
       (data: any) => {
-        console.log('Marked')
+        this.dialogRef.close({refresh: true});
       },
       (error: any) => {
         this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
@@ -219,7 +224,7 @@ export class TableOrdersDialogComponent {
               this.__matDialog.open(SuccessMsgDialogComponent, {
                 data: { msg: 'Marked as payment done' },
               });
-              this.dialogRef.close();
+              this.dialogRef.close({refresh: true});
             },
             (error) => {
               this.__matDialog.open(ErrorMsgDialogComponent, {

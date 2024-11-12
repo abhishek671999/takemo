@@ -429,6 +429,11 @@ export class PointOfSaleComponent {
     return Math.round(total);
   }
 
+  clearSearchText(){
+    this.searchText = ''
+    this.filterItems()
+  }
+
   filterItems() {
     if (this.searchText) {
       this.categoryClickEventHandler(
@@ -606,7 +611,6 @@ export class PointOfSaleComponent {
     let body = this.preparePlaceOrderBody();
     this.orderService.createOrders(body).subscribe(
       (data) => {
-        debugger
         body['order_no'] = data['order_no']
         body['ordered_time'] = this.dateUtils.getDateForRecipePrint(new Date())
         if(this.printerConn.usbSought){
@@ -628,8 +632,9 @@ export class PointOfSaleComponent {
           },
         });
         dialogRef.afterClosed().subscribe((data) => {
-          this.ngOnInit();
+          this.router.navigate(['./owner/dine-in/table-cockpit'])
         });
+        
         this.disablePlace = false;
       },
       (error) => {
