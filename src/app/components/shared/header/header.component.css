@@ -25,6 +25,10 @@
     gap: 0.5em;
 }
 
+.right-section a{
+    cursor: pointer;
+}
+
 .logo-home{
     align-self: flex-end;
     width: 100px; 
