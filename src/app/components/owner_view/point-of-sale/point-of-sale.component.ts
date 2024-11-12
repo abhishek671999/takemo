@@ -66,7 +66,8 @@ export class PointOfSaleComponent {
   public restaurantId
   public isPOS
   public isKOTEnabled
-  public restaurantKDSenabled
+  public restaurantKDSenabled;
+  public printReceipt: boolean = false
 
   ngOnInit() {
     this.summary = {
@@ -535,23 +536,22 @@ export class PointOfSaleComponent {
   placePOSOrder() {
     this.disablePlace = true;
     let body = this.preparePlaceOrderBody();
-    this.printerRequired && !this.printerConn.usbSought
-      ? this.printerConn.seekUSB()
-      : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
         body['order_no'] = data['order_no']
-        if (this.isKOTEnabled) {
-          body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
+        body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
+        if (this.isKOTEnabled && this.printReceipt) {
           this.receiptPrintFormatter.confirmedOrderObj = body
           let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
           counterReceiptObjs.forEach((counterReceiptObj) => {
             this.print(counterReceiptObj)
           })
         }
-        this.receiptPrintFormatter.confirmedOrderObj = body
-        let receiptObjs = this.receiptPrintFormatter.getCustomerPrintableText()
-        this.print(receiptObjs)
+        if(this.printReceipt){
+          this.receiptPrintFormatter.confirmedOrderObj = body
+          let receiptObjs = this.receiptPrintFormatter.getCustomerPrintableText()
+          this.print(receiptObjs)
+        }
         let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
           data: {
             msg: `Order created successfully. Order No: ${data['order_no']}`,
@@ -585,7 +585,8 @@ export class PointOfSaleComponent {
     });
   }
 
-  placeOrder() {
+  placeOrder(printReceipt) {
+    this.printReceipt = printReceipt
     if (this.outletType == 'e-commerce') {
       this.placeEcomOrder();
     } else if(this.outletType == 'restaurant' && this.isTableManagement){
@@ -603,11 +604,9 @@ export class PointOfSaleComponent {
   placePrintTableOrder(){
     this.disablePlace = true;
     let body = this.preparePlaceOrderBody();
-    this.printerRequired && !this.printerConn.usbSought
-      ? this.printerConn.seekUSB()
-      : null;
     this.orderService.createOrders(body).subscribe(
       (data) => {
+        debugger
         body['order_no'] = data['order_no']
         body['ordered_time'] = this.dateUtils.getDateForRecipePrint(new Date())
         if(this.printerConn.usbSought){

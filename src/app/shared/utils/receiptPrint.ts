@@ -354,7 +354,7 @@ export class ReceiptPrintFormatter{
         )
         if(this.confirmedOrder.table_name) content.splice(4,0, 
           {
-            text: 'Order No: ' + this.confirmedOrder.order_no,
+            text: 'Order No: ' + this.confirmedOrder.table_order_no,
             justification: 'left',
             bold: true
           },
@@ -558,8 +558,8 @@ export class ReceiptPrintFormatter{
     this.confirmedOrder.order_list.forEach((lineItem: lineItem, index) => {
       if (lineItem.quantity > 0) {
         let trimmedName = this.getFixedLengthString(
-            lineItem.item_name.substring(0, 24),
-          24,
+            lineItem.item_name.substring(0, 23),
+          23,
           false,
           ' '
         );
@@ -568,8 +568,8 @@ export class ReceiptPrintFormatter{
             ? ''
             : ' ' +
               this.getFixedLengthString(
-                lineItem.item_name.substring(24, 48),
-                24,
+                lineItem.item_name.substring(23, 48),
+                40,
                 false,
                 ' '
               ) +
