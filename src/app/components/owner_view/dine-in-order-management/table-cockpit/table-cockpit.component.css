@@ -37,12 +37,13 @@
     flex-wrap: wrap;
     justify-content: center;
     padding: 0.5em;
+    gap: 2em
   }
 
 
 .card-box {
     padding: 10px;
-    height: 11em;
+    height: 9em;
     cursor: pointer;
     width: 10em;
     border-radius: 5px;
