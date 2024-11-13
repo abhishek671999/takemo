@@ -15,8 +15,13 @@ export class TablesService {
   private __closeTableSessionEndpoint = 'tables/mark_table_paid/'
   private __markBillPrintedEndpoint = 'tables/mark_bill_printed/'
   private moveTableEndpoint = 'tables/move_table/'
+  private getTableOrdersByOrderSession = 'tables/get_table_orders_group_by_orders/'
 
   constructor(private __httpClient: HttpClient) {}
+
+  getTableOrders(httpParmas: HttpParams){
+    return this.__httpClient.get(host + this.getTableOrdersByOrderSession, {params: httpParmas})
+  }
 
   moveTable(body){
     return this.__httpClient.post(host + this.moveTableEndpoint, body)

@@ -80,9 +80,7 @@ export class TableCockpitComponent {
     let dialogRef = this.__matDialog.open(TableOrdersDialogComponent, { data: table, width: '100vw' })
     dialogRef.afterClosed().subscribe(
       data => {
-        if(data?.refresh){
           this.ngOnInit()
-        }
       },
       error => {
         this.ngOnInit()

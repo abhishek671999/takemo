@@ -52,6 +52,7 @@ export class TableOrdersDialogComponent {
   orderNo: number;
   totalAmountWithoutGst: number = 0
   totalAmountWithGst: number = 0
+  tableOrderId: number;
 
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
@@ -75,6 +76,7 @@ export class TableOrdersDialogComponent {
         this.totalAmount = data['orders']['total_amount'];
         this.isBillPrinted = data['orders']['bill_printed']
         this.orderNo = data['orders']['table_order_no']
+        this.tableOrderId = data['orders']['table_order_id']
         this.calculateAmountWithoutTax()
         this.calculateAmountWithTax()
       },
@@ -94,7 +96,17 @@ export class TableOrdersDialogComponent {
   }
 
   moveItemsBetweenTables(){
-    this.__matDialog.open(MoveTablesComponent, {data: {table_id: this.data.table_id, table_name: this.data.table_name}})
+    let fromTable = {table_id: this.data.table_id, table_name: this.data.table_name, table_order_id: this.tableOrderId}
+    let dialogRef = this.__matDialog.open(MoveTablesComponent, {data: fromTable})
+    dialogRef.afterClosed().subscribe(
+      (data) => {
+        if(data?.success){
+        
+          this.waiterKOTPrint()
+          this.ngOnInit()
+        }
+      }
+    )
   }
 
   verifyPassword(){
