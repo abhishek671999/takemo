@@ -101,7 +101,6 @@ export class TableOrdersDialogComponent {
     dialogRef.afterClosed().subscribe(
       (data) => {
         if(data?.success){
-          debugger
           this.waiterKOTPrint()
           this.ngOnInit()
         }
