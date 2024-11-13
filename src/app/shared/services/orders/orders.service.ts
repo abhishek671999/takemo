@@ -30,6 +30,11 @@ export class OrdersService {
   private deleteLineItemEndpoint = 'order/delete_line_item/'
   private mobileOrdersForReceiptEndpoint = host + 'order/get_mobile_orders_for_receipt/'
   private markOrderAsPrintedEndpoint = host + 'order/mark_orders_as_printed/'
+  private getTableOrdersByOrderSessionEndpoint = host + 'order/get_table_orders_group_by_orders/'
+
+  getTableOrdersByOrderSession(httpParmas: HttpParams){
+    return this._http.get(this.getTableOrdersByOrderSessionEndpoint, {params: httpParmas})
+  }
 
   markOrderAsPrinted(body){
     return this._http.post(this.markOrderAsPrintedEndpoint, body)

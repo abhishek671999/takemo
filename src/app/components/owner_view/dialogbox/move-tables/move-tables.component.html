@@ -1,7 +1,37 @@
 <h2 mat-dialog-title>Move items from {{data.table_name}}</h2>
 <div mat-dialog-content>
-
+    <mat-form-field>
+        <mat-label>Choose an option</mat-label>
+        <mat-select [(value)]="toTable" >
+            <mat-option *ngFor="let table of tables" [disabled]="fromTable.table_id == table.table_id" [value]="table">
+                {{ table.table_name }}
+              </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+          <mat-checkbox (change)="allItemsSelected = !allItemsSelected" [checked]="allItemsSelected">Select all items</mat-checkbox>  
+      </div>
+      <div *ngIf="!allItemsSelected">
+          <table>
+            <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Item Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item" *ngFor="let order of tableOrders; let subIndex = index">
+                    <td>
+                        <mat-checkbox class="example-margin" (change)="order.is_selected = !order.is_selected" [checked]="order.is_selected"></mat-checkbox>
+                    </td>
+                    <td [innerHTML]="order.item_details"></td>
+                </tr>
+            </tbody>
+    
+          </table>
+      </div>
 </div>
 <div mat-dialog-actions>
-
+    <button mat-raised-button>Close</button>
+    <button (click)="submitRequest()" [disabled]="!toTable" mat-raised-button color="primary">Submit</button>
 </div>
