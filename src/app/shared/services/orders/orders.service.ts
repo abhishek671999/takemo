@@ -16,6 +16,7 @@ export class OrdersService {
   private deliverAllOrdersEndpoint = 'order/deliver_all_pending_orders/';
   private deliverEntireOrderEndpoint = 'order/deliver_entire_order/';
   private getRestaurantOrdersEndpoint = 'order/get_restaurant_orders/';
+  private getRestaurantTableFulfilledOrdersEndpoint =  host + 'order/get_table_orders_history/';
   private getEcomOrdersEndpoint = 'order/get_ecom_orders/';
   private getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/';
   private updateOrderStatusEndpoint = 'order/update_single_item_status/';
@@ -34,6 +35,10 @@ export class OrdersService {
 
   getTableOrdersByOrderSession(httpParmas: HttpParams){
     return this._http.get(this.getTableOrdersByOrderSessionEndpoint, {params: httpParmas})
+  }
+
+  getFulfilledTableOrders(body){
+    return this._http.post(this.getRestaurantTableFulfilledOrdersEndpoint, body)
   }
 
   markOrderAsPrinted(body){

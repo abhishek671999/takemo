@@ -47,20 +47,17 @@ export class OrdersHistoryComponent {
     { ViewValue: 'Calendar', actualValue: 'custom' },
   ];
 
-  displayedColumns: string[] = [
-    'orderno',
-    'Order details',
-    'Amount',
-    'ordered_by',
-    'OrderedAt',
-    'Details',
-  ];
+  displayedColumns: string[] = ['orderno','Order details','Amount','ordered_by','OrderedAt','Details'];
+  tableDisplayColumns: string[]  = ['billno', 'table_name', 'item_details_string', 'amount_with_gst']
+
   public isTaxInclusive: number
   public taxPercentage: number
   public showSpinner = true;
   public cancelledOrders = [];
-  public cancelledOrdersDataSource = new MatTableDataSource();
+  public fulfilledOrdersDataSource = new MatTableDataSource();
+  public tableFulfilledOrdersDataSource = new MatTableDataSource()
   public restaurantId: number;
+  public istableManagementEnabled: boolean = false
 
   selectedTimeFrame = this.timeFrames[0];
   range = new FormGroup({
@@ -71,17 +68,53 @@ export class OrdersHistoryComponent {
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
+        this.istableManagementEnabled = restaurant['table_management']
         this.restaurantId = restaurant['restaurant_id']
         this.isTaxInclusive = restaurant['tax_inclusive']
         this.taxPercentage = this.isTaxInclusive? 0: Number(restaurant['tax_percentage'])
-        this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
+        if(this.istableManagementEnabled) this.getRestaurantTableOrders()
+        else this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
       }
     )
   }
 
   ngAfterViewInit(){
-    this.cancelledOrdersDataSource.sort = this.sort
+    this.fulfilledOrdersDataSource.sort = this.sort
+    this.tableFulfilledOrdersDataSource.sort = this.sort
   }
+
+  getRestaurantTableOrders(){
+    this.showSpinner = true
+    let body = this.getRestaurantOrdersAPIBody()
+    body['offset'] =  this.pageIndex * this.pageSize
+    body['limit'] = this.pageIndex * this.pageSize + this.pageSize
+    this._orderService.getFulfilledTableOrders(body).subscribe(
+      (data) => {
+        data['table_orders'].forEach((order) => {
+          order['item_details_string'] = this.parseTableOrders(order)
+        })
+        this.tableFulfilledOrdersDataSource.data = data['table_orders']
+        this.showSpinner = false;
+        this.length = data['no_of_records'];
+      },
+      (error) => {
+        this.showSpinner = false;
+        console.log(error)
+      }
+    )
+  }
+
+  parseTableOrders(order){
+    let tableOrder: string = ''
+    order['item_details'].forEach((lineItem) => {
+      tableOrder += `${lineItem.item_name} ${lineItem.item_quantity} X ${
+        lineItem.item_price
+      } = ${lineItem.item_quantity * lineItem.item_price} <br>`
+    })
+    return tableOrder
+  }
+
+  
 
   getRestaurantOrdersAPIBody() {
     let body = {
@@ -115,14 +148,16 @@ export class OrdersHistoryComponent {
     } else {
       field.classList.add('hidden');
     }
-    this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
+    if(this.istableManagementEnabled) this.getRestaurantTableOrders()
+    else this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
   }
 
   handlePageEvent(e: PageEvent) {
     this.length = e.length;
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
-    this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
+    if(this.istableManagementEnabled) this.getRestaurantTableOrders()
+      else this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
   }
 
   getRestaurantCurrentOrders(body) {
@@ -140,7 +175,6 @@ export class OrdersHistoryComponent {
           this.unparseResponse(data);
           this.showSpinner = false;
           this.length = data['no_of_orders'];
-
         },
         (error) => {
           console.log(error);
@@ -155,7 +189,7 @@ export class OrdersHistoryComponent {
     data['order_list'].map((ele) => {
       this.cancelledOrders.push(this.unParsedOrder(ele));
     });
-    this.cancelledOrdersDataSource.data = this.cancelledOrders;
+    this.fulfilledOrdersDataSource.data = this.cancelledOrders;
   }
 
   unParsedOrder(order) {
@@ -196,7 +230,7 @@ export class OrdersHistoryComponent {
   }
 
   applyFilter(filterValue) {
-    this.cancelledOrdersDataSource.filter = (
+    this.fulfilledOrdersDataSource.filter = (
       filterValue as HTMLInputElement
     ).value
       .trim()
@@ -204,7 +238,7 @@ export class OrdersHistoryComponent {
   }
 
   onClick() {
-    console.log(this.cancelledOrdersDataSource);
+    console.log(this.fulfilledOrdersDataSource);
   }
 
   displayMoreDetails(order) {

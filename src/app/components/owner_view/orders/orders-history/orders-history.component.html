@@ -31,64 +31,115 @@
         <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
     </div>
     <ng-template #elseBlock>
-        <div *ngIf="cancelledOrders.length == 0">
+        <div *ngIf="cancelledOrders.length == 0 && tableFulfilledOrdersDataSource.data.length == 0">
             <h1 class="text-center m-1">No Orders</h1>
         </div>
     </ng-template>
     <mat-paginator #paginator
-    class="demo-paginator"
-    (page)="handlePageEvent($event)"
-    [length]="length"
-    [pageSize]="pageSize"
-    [showFirstLastButtons]="showFirstLastButtons"
-    [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-    [hidePageSize]="hidePageSize"
-    [pageIndex]="pageIndex"
-    aria-label="Select page">
+        class="demo-paginator"
+        (page)="handlePageEvent($event)"
+        [length]="length"
+        [pageSize]="pageSize"
+        [showFirstLastButtons]="showFirstLastButtons"
+        [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+        [hidePageSize]="hidePageSize"
+        [pageIndex]="pageIndex"
+        aria-label="Select page">
     </mat-paginator>
     <div class="table-section">
-        <table mat-table [dataSource]="cancelledOrdersDataSource" matSort (matSortChange)="announceSortChange($event)">
-                
-            <ng-container matColumnDef="orderno">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef>Order No.</th>
-                <td mat-cell *matCellDef="let element">{{element.orderno}}</td>
-            </ng-container>
+        <ng-container *ngIf="istableManagementEnabled else individualOrders">
+            <table mat-table [dataSource]="tableFulfilledOrdersDataSource" matSort (matSortChange)="announceSortChange($event)">
+                    
+                <ng-container matColumnDef="billno">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef>Bill no</th>
+                    <td mat-cell *matCellDef="let element">{{element.table_order_id}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="table_name">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef>Table</th>
+                    <td mat-cell *matCellDef="let element">{{element.table_name}}</td>
+                </ng-container>
+            
+                <ng-container matColumnDef='item_details_string'>
+                    <th mat-header-cell *matHeaderCellDef>Items</th>
+                    <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.item_details_string"></td>
+                </ng-container>
         
-            <ng-container matColumnDef='Order details'>
-                <th mat-header-cell *matHeaderCellDef>Items</th>
-                <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.order_detail"></td>
-            </ng-container>
-    
-            <ng-container matColumnDef="Details">
-                <th mat-header-cell *matHeaderCellDef>Details</th>
-                <td mat-cell *matCellDef="let element">
-                    <button mat-raised-button color="primary" (click)="displayMoreDetails(element)">More Details</button>
-                </td>
-            </ng-container>
+                <ng-container matColumnDef="Details">
+                    <th mat-header-cell *matHeaderCellDef>Details</th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-raised-button color="primary" (click)="displayMoreDetails(element)">More Details</button>
+                    </td>
+                </ng-container>
+                
+                <ng-container matColumnDef='amount_with_gst'>
+                    <th mat-header-cell *matHeaderCellDef>Total Amount</th>
+                    <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_amount}}</td>
+                </ng-container>
+        
+                <ng-container matColumnDef='ordered_by'>
+                    <th mat-header-cell mat-sort-header  *matHeaderCellDef>Ordered By</th>
+                    <td mat-cell *matCellDef="let element">{{element.ordered_by}}</td>
+                </ng-container>
+        
+                <ng-container matColumnDef="OrderedAt">
+                    <th mat-header-cell *matHeaderCellDef>Ordered at</th>
+                    <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="Location">
+                    <th mat-header-cell *matHeaderCellDef>Location</th>
+                    <td mat-cell *matCellDef="let element">{{element.Location}}</td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="tableDisplayColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: tableDisplayColumns;"></tr>
+            </table>
+        </ng-container>
+        <ng-template #individualOrders>
+            <table mat-table [dataSource]="fulfilledOrdersDataSource" matSort (matSortChange)="announceSortChange($event)">
+                    
+                <ng-container matColumnDef="orderno">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef>Order No.</th>
+                    <td mat-cell *matCellDef="let element">{{element.orderno}}</td>
+                </ng-container>
             
-            <ng-container matColumnDef='Amount'>
-                <th mat-header-cell *matHeaderCellDef>{{isTaxInclusive? 'Amount': 'Amount+GST' }}</th>
-                <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_restaurant_amount}}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef='ordered_by'>
-                <th mat-header-cell mat-sort-header  *matHeaderCellDef>Ordered By</th>
-                <td mat-cell *matCellDef="let element">{{element.ordered_by}}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="OrderedAt">
-                <th mat-header-cell *matHeaderCellDef>Ordered at</th>
-                <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
-            </ng-container>
-            
-            <ng-container matColumnDef="Location">
-                <th mat-header-cell *matHeaderCellDef>Location</th>
-                <td mat-cell *matCellDef="let element">{{element.Location}}</td>
-            </ng-container>
-    
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+                <ng-container matColumnDef='Order details'>
+                    <th mat-header-cell *matHeaderCellDef>Items</th>
+                    <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.order_detail"></td>
+                </ng-container>
+        
+                <ng-container matColumnDef="Details">
+                    <th mat-header-cell *matHeaderCellDef>Details</th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-raised-button color="primary" (click)="displayMoreDetails(element)">More Details</button>
+                    </td>
+                </ng-container>
+                
+                <ng-container matColumnDef='Amount'>
+                    <th mat-header-cell *matHeaderCellDef>{{isTaxInclusive? 'Amount': 'Amount+GST' }}</th>
+                    <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_restaurant_amount}}</td>
+                </ng-container>
+        
+                <ng-container matColumnDef='ordered_by'>
+                    <th mat-header-cell mat-sort-header  *matHeaderCellDef>Ordered By</th>
+                    <td mat-cell *matCellDef="let element">{{element.ordered_by}}</td>
+                </ng-container>
+        
+                <ng-container matColumnDef="OrderedAt">
+                    <th mat-header-cell *matHeaderCellDef>Ordered at</th>
+                    <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="Location">
+                    <th mat-header-cell *matHeaderCellDef>Location</th>
+                    <td mat-cell *matCellDef="let element">{{element.Location}}</td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </ng-template>
     </div>
 
 
