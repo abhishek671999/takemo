@@ -5,14 +5,8 @@
     </div>
     <div mat-dialog-content>
         <div mat-dialog-actions class="action-container">
-            <div>
-                <button mat-raised-button color="primary" [disabled]="!(printerConn.usbSought && data.is_occupied)" (click)="requestPrintBill()">Print bill</button>
-                <small *ngIf="!printerConn.usbSought" class="text-danger" style="display: block">Connect printer</small>
-            </div>
-            <div>
-                <button mat-raised-button color="primary"  [disabled]="!(printerConn.usbSought && data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
-                <small *ngIf="!printerConn.usbSought" class="text-danger" style="display: block">Connect printer</small>
-            </div>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied)" (click)="requestPrintBill()">Print bill</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary"  [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!data.is_occupied" (click)="markPaymentDone()">Payment done</button>
             <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
             <button mat-raised-button color="primary" [disabled]="data.bill_printed" (click)="posOrder()" >POS order</button>
@@ -25,7 +19,7 @@
                     <th class="item">Item</th>
                     <th class="price">Price</th>
                     <th >Quantity</th>
-                    <th class="total_price">{{taxInclusive? "Amount": "Amount | GST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" }} </th>
+                    <th class="total_price">{{taxInclusive? "Amount": "&nbsp;&nbsp;&nbsp;&nbsp;Amt | GST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" }} </th>
                     <th class="delete" *ngIf="isEditEnabled">Delete</th>
                 </tr>
             </thead>

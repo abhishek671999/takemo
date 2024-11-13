@@ -296,6 +296,8 @@ export class TableOrdersDialogComponent {
           order.quantity -= 1
           order.line_item_price -= order.price
           this.totalAmount -= order.price
+          this.calculateAmountWithTax()
+          this.calculateAmountWithoutTax()
         },
         (error) => {
           this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to subtract item'}})
@@ -313,6 +315,8 @@ export class TableOrdersDialogComponent {
       data => {
         this.orders = this.orders.filter((each_order) => each_order.line_item_ids !== order.line_item_ids)
         this.totalAmount -= order.line_item_price
+        this.calculateAmountWithTax()
+        this.calculateAmountWithoutTax()
       },
       error => {
         this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to delete item'}})

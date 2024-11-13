@@ -354,7 +354,7 @@ export class ReceiptPrintFormatter{
         )
         if(this.confirmedOrder.table_name) content.splice(4,0, 
           {
-            text: 'Order No: ' + this.confirmedOrder.table_order_no,
+            text: 'Bill No: ' + this.confirmedOrder.order_no,
             justification: 'left',
             bold: true
           },

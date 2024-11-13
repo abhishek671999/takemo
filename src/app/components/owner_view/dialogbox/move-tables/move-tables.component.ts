@@ -32,9 +32,11 @@ export class MoveTablesComponent {
   public toTable;
   public tableOrders;
   public allItemsSelected: boolean = true
+  public tableExcludeList = []
 
 
   ngOnInit(){
+    this.tableExcludeList.push(this.fromTable.table_id)
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.restaurantId = restaurant['restaurant_id']
@@ -50,6 +52,10 @@ export class MoveTablesComponent {
     this.__tableService.getTables(httpParams).subscribe(
       data => {
         this.tables = data['restaurants']
+        this.tables.forEach(table => {
+          if(table.bill_printed) this.tableExcludeList.push(table.table_id)
+        })
+      console.log(this.tableExcludeList)
       },
       error => {
         console.log('This is error: ', error)
@@ -78,9 +84,7 @@ export class MoveTablesComponent {
   parseTableOrders(order){
     let tableOrder: string = ''
     order['line_items'].forEach((lineItem) => {
-      tableOrder += `${lineItem.item_name} ${lineItem.item_quantity} X ${
-        lineItem.item_price
-      } = ${lineItem.item_quantity * lineItem.item_price} <br>`
+      tableOrder += `${lineItem.item_name} - ${lineItem.item_quantity}<br>`
     })
     return tableOrder
   }

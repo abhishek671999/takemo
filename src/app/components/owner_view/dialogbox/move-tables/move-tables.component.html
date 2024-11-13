@@ -3,7 +3,7 @@
     <mat-form-field>
         <mat-label>Choose an option</mat-label>
         <mat-select [(value)]="toTable" >
-            <mat-option *ngFor="let table of tables" [disabled]="fromTable.table_id == table.table_id" [value]="table">
+            <mat-option *ngFor="let table of tables" [disabled]="tableExcludeList.includes(table.table_id)" [value]="table">
                 {{ table.table_name }}
               </mat-option>
         </mat-select>
@@ -32,6 +32,6 @@
       </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-raised-button>Close</button>
+    <button mat-raised-button [mat-dialog-close]>Close</button>
     <button (click)="submitRequest()" [disabled]="!toTable" mat-raised-button color="primary">Submit</button>
 </div>
