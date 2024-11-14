@@ -56,7 +56,7 @@ export class TableCockpitComponent {
     return setInterval(() => {
       this.fetchTables()
      
-    }, this.refreshFrequency * 100000);
+    }, this.refreshFrequency * 1000);
   }
 
   ngOnDestroy(){

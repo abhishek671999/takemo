@@ -1,7 +1,4 @@
 <div class="main-container">
-    <div  style="width: 100%; text-align: right;">
-        <small>*Drag and drop table cards to move orders between tables</small>
-    </div>
     <div class="content-box" >
         <div *ngFor="let table of tables" class="card-box" [ngClass]="table.bill_printed? 'billpaid-table': table.is_occupied? 'occupied-table': 'vacant-table'" (click)="openTableDetails(table)">
                     <div class="table-header">
