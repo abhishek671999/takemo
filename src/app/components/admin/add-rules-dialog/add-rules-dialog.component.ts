@@ -36,14 +36,11 @@ export class AddRulesDialogComponent {
         "max_amount_per_shift": this.addRuleForm.value.max_amount_per_shift,
         "same_day_end_date": this.addRuleForm.value.checked
     }
-    console.log('This is body: ', body)
     this._rulesService.addRule(body).subscribe(
       data => {
-        console.log(data)
         this.dialogRef.close({success: 'ok'})
       },
       error => {
-       console.log(error.error.error)
        this.dialogRef.close({success: 'failed', msg: error.error.error})
       }
     )

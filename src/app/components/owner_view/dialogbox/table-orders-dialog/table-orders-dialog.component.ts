@@ -185,41 +185,53 @@ export class TableOrdersDialogComponent {
       this.verifyPassword().subscribe(
         (data: any) => {
           if(data?.validated){
-            this.printBill().subscribe(
+            let body = {
+              "table_id": this.data.table_id,
+            }
+            this.__tableService.markBillPrinted(body).subscribe(
               (data: any) => {
-                if(data?.billPrinted) this.markBillasPaid()
+                this.orderNo = data['bill_no']
+                this.printBill()
+                this.dialogRef.close({refresh: true});
+              },
+              (error: any) => {
+                this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
               }
             )
           }
         }
       )
-    }else{
-      this.printBill().subscribe(
-        (data: any) => {
-          if(data?.billPrinted) this.markBillasPaid()
+      }else{
+        let body = {
+          "table_id": this.data.table_id,
         }
-      )
+        this.__tableService.markBillPrinted(body).subscribe(
+          (data: any) => {
+            this.orderNo = data['bill_no']
+            this.printBill()
+            this.dialogRef.close({refresh: true});
+          },
+          (error: any) => {
+            this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
+          }
+        )
+      }
     }
-  }
 
 
   printBill() {
-    let statusObserver = new Observable((observer) => {
-      let orderObj = {
-        order_list: this.orders,
-        total_amount: this.totalAmount,
-        payment_mode: `Table order`,
-        restaurant_id :this.restaurantId,
-        order_no: this.orderNo,
-        table_name: this.data.table_name,
-      }
-      this.receiptPrintFormatter.confirmedOrderObj = orderObj
-      let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
-      this.print(printObj)
-      this.isBillPrinted = true
-      observer.next({billPrinted: true})
-    })
-    return statusObserver
+    let orderObj = {
+      order_list: this.orders,
+      total_amount: this.totalAmount,
+      payment_mode: `Table order`,
+      restaurant_id :this.restaurantId,
+      order_no: this.orderNo,
+      table_name: this.data.table_name,
+    }
+    this.receiptPrintFormatter.confirmedOrderObj = orderObj
+    let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
+    this.print(printObj)
+    this.isBillPrinted = true
   } 
 
   markPaymentDone() {

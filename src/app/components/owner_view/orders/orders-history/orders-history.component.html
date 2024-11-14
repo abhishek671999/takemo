@@ -47,12 +47,12 @@
         aria-label="Select page">
     </mat-paginator>
     <div class="table-section">
-        <ng-container *ngIf="istableManagementEnabled else individualOrders">
+        <div *ngIf="istableManagementEnabled else individualOrders">
             <table mat-table [dataSource]="tableFulfilledOrdersDataSource" matSort (matSortChange)="announceSortChange($event)">
                     
-                <ng-container matColumnDef="billno">
+                <ng-container matColumnDef="table_order_no">
                     <th mat-header-cell mat-sort-header *matHeaderCellDef>Bill no</th>
-                    <td mat-cell *matCellDef="let element">{{element.table_order_id}}</td>
+                    <td mat-cell *matCellDef="let element">{{element.table_order_no}}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="table_name">
@@ -64,38 +64,27 @@
                     <th mat-header-cell *matHeaderCellDef>Items</th>
                     <td mat-cell style="white-space: pre;" *matCellDef="let element" [innerHTML]="element.item_details_string"></td>
                 </ng-container>
-        
-                <ng-container matColumnDef="Details">
-                    <th mat-header-cell *matHeaderCellDef>Details</th>
-                    <td mat-cell *matCellDef="let element">
-                        <button mat-raised-button color="primary" (click)="displayMoreDetails(element)">More Details</button>
-                    </td>
-                </ng-container>
                 
                 <ng-container matColumnDef='amount_with_gst'>
-                    <th mat-header-cell *matHeaderCellDef>Total Amount</th>
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef>Total Amount</th>
                     <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_amount}}</td>
                 </ng-container>
         
-                <ng-container matColumnDef='ordered_by'>
-                    <th mat-header-cell mat-sort-header  *matHeaderCellDef>Ordered By</th>
-                    <td mat-cell *matCellDef="let element">{{element.ordered_by}}</td>
-                </ng-container>
         
-                <ng-container matColumnDef="OrderedAt">
-                    <th mat-header-cell *matHeaderCellDef>Ordered at</th>
-                    <td mat-cell *matCellDef="let element">{{element.OrderedAt}}</td>
+                <ng-container matColumnDef="start_time">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef>Start time</th>
+                    <td mat-cell *matCellDef="let element">{{element.start_time}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="end_time">
+                    <th mat-header-cell mat-sort-header *matHeaderCellDef>End time</th>
+                    <td mat-cell *matCellDef="let element">{{element.end_time}}</td>
                 </ng-container>
                 
-                <ng-container matColumnDef="Location">
-                    <th mat-header-cell *matHeaderCellDef>Location</th>
-                    <td mat-cell *matCellDef="let element">{{element.Location}}</td>
-                </ng-container>
-        
                 <tr mat-header-row *matHeaderRowDef="tableDisplayColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: tableDisplayColumns;"></tr>
             </table>
-        </ng-container>
+        </div>
         <ng-template #individualOrders>
             <table mat-table [dataSource]="fulfilledOrdersDataSource" matSort (matSortChange)="announceSortChange($event)">
                     

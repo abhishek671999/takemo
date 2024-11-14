@@ -15,6 +15,7 @@ import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog
 import { HttpParams } from '@angular/common/http';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { AddItemNoteDialogComponent } from '../../shared/add-item-note-dialog/add-item-note-dialog.component';
+import { CacheService } from 'src/app/shared/services/cache/cache.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -34,7 +35,8 @@ export class PointOfSaleComponent {
     private receiptPrintFormatter: ReceiptPrintFormatter,
     private matdialog: MatDialog,
     private meUtility: meAPIUtility,
-    private dateUtils: dateUtils
+    private dateUtils: dateUtils,
+    private cacheService: CacheService
   ) {
 
   }
@@ -100,26 +102,34 @@ export class PointOfSaleComponent {
 
   openAddItemNotesWindow(item){
     this.matdialog.open(AddItemNoteDialogComponent, {data: item} )
-    
   }
 
   fetchPOSMenu(){
-    this.menuService
-    .getPOSMenu(this.restaurantId)
-    .subscribe((data) => {
-      this.menu = data['menu'];
-      this.printerRequired = data['printer_required'];
-      this.restaurantParcel = data['restaurant_parcel'];
-      this.createAllCategory()
-      this.menu.map((category) => {
-        category.category.items.filter(
-          (element) => element.is_available == true
-        );
+    let parsedMenu = this.cacheService.get('parsedMenu')
+    if(!(typeof(parsedMenu) == "undefined" || parsedMenu === "" || parsedMenu == "undefined")){
+      this.menuCopy = parsedMenu
+      this.menu = parsedMenu
+      this.showOnlyFirstCategory()
+    }else{
+      this.menuService
+      .getPOSMenu(this.restaurantId)
+      .subscribe(
+        (data) => {
+          this.menu = data['menu'];
+          this.printerRequired = data['printer_required'];
+          this.restaurantParcel = data['restaurant_parcel'];
+          this.createAllCategory()
+          this.menu.map((category) => {
+            category.category.items.filter(
+              (element) => element.is_available == true
+            );
+          });
+          this.setQuantity();
+          this.menuCopy = JSON.parse(JSON.stringify(this.menu))
+          this.cacheService.set('parsedMenu',this.menuCopy);
+          this.showOnlyFirstCategory();
       });
-      this.setQuantity();
-      this.menuCopy = JSON.parse(JSON.stringify(this.menu))
-      this.showOnlyFirstCategory();
-    });
+    }
   }
 
   fetchCounters(){

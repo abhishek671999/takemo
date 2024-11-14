@@ -48,7 +48,7 @@ export class OrdersHistoryComponent {
   ];
 
   displayedColumns: string[] = ['orderno','Order details','Amount','ordered_by','OrderedAt','Details'];
-  tableDisplayColumns: string[]  = ['billno', 'table_name', 'item_details_string', 'amount_with_gst']
+  tableDisplayColumns: string[]  = ['table_order_no', 'table_name', 'item_details_string', 'amount_with_gst', 'start_time', 'end_time']
 
   public isTaxInclusive: number
   public taxPercentage: number
@@ -76,6 +76,7 @@ export class OrdersHistoryComponent {
         else this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());
       }
     )
+
   }
 
   ngAfterViewInit(){
