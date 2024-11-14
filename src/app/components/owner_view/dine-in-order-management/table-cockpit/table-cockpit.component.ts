@@ -49,14 +49,14 @@ export class TableCockpitComponent {
         this.fetchTables()
       }
     )
+    if(this.pollingInterval) clearInterval(this.pollingInterval)
     this.pollingInterval = this.startPageRefresh()
   }
 
   startPageRefresh(){
     return setInterval(() => {
       this.fetchTables()
-     
-    }, this.refreshFrequency * 100000);
+    }, this.refreshFrequency * 1000);
   }
 
   ngOnDestroy(){
