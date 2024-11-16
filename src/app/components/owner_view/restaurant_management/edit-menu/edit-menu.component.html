@@ -124,33 +124,4 @@
         </div>
     </div>
 
-    <!-- <div *ngIf="menu" class="menu-container">
-        <div class="text-center">
-
-            <mat-form-field>
-                <mat-label>Select category</mat-label>
-                <mat-select (selectionChange)="showCategory()" [(value)]="selectedCategoryId">
-                  <mat-option  *ngFor="let category of allCategories" [value]="category.categoryId">{{category.categoryName}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              
-            <cdk-virtual-scroll-viewport itemSize="500" class="viewport" >
-                    <mat-expansion-panel [expanded]='true' class="expansion-panel" *ngFor="let category of visibleCategory; let mainIndex = index">
-                        <mat-expansion-panel-header >
-                            <mat-panel-title>
-                                <b style="font-size: x-large;">{{category.category.name}}</b>
-                            </mat-panel-title>
-                            <div>
-                                <mat-slide-toggle *ngIf="mobileOrderingEnabled" class="category-toggle" color="primary" [ngModel]='!category.category.hide_category' (change)="toggleCategoryAvailability(category)"></mat-slide-toggle>
-                                <mat-icon style="margin: 10px 4em 0 0;" title="Delete this category" svgIcon="delete" (click)="deleteCategory(category)"></mat-icon>
-                            </div>
-                        </mat-expansion-panel-header>
-                        <div class="text-center">
-                            <button mat-raised-button color="primary" [disabled]="!category.category.id" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item to {{category.category.name}}</button>
-                        </div>
-
-                    </mat-expansion-panel>
-            </cdk-virtual-scroll-viewport>
-        </div> 
-    </div>   -->
 </div>

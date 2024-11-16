@@ -155,7 +155,7 @@
         <p class="mb-2"></p>
         <div class="action-section">
           <button mat-raised-button (click)="clearSummary()">Clear</button>
-          <button mat-raised-button (click)="placeOrder(false)" *ngIf="!isTableManagement" [disabled]="summary.amount == 0 || disablePlace" color="primary"> Place </button>
+          <button mat-raised-button (click)="placeOrder(false)" *ngIf="(isKOTEnabled && !(isTableManagement && isKOTEnabled))" [disabled]="summary.amount == 0 || disablePlace" color="primary"> Place </button>
           <div>
             <button mat-raised-button (click)="placeOrder(true)" [disabled]="summary.amount == 0 || (!printerConn.usbSought && printerRequired) || disablePlace" color="primary">  Place & Print </button>
             <small
