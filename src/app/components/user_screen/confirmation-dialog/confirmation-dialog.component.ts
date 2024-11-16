@@ -48,7 +48,7 @@ export class ConfirmationDialogComponent {
   }
   public restaurantId;
   public isPayment;
-  public platformFee = undefined || {};
+  public platformFee: undefined | {};
   public totalAmount;
   public roundOffAmount;
   public platformFeeAmount;

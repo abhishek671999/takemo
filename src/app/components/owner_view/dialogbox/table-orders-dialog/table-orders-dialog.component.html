@@ -5,12 +5,12 @@
     </div>
     <div mat-dialog-content>
         <div mat-dialog-actions class="action-container">
-            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied)" (click)="requestPrintBill()">Print bill</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="requestPrintBill()">Print bill</button>
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary"  [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
-            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!data.is_occupied" (click)="markPaymentDone()">Payment done</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && isBillPrinted)" (click)="markPaymentDone()">Payment done</button>
             <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
-            <button mat-raised-button color="primary" [disabled]="data.bill_printed" (click)="posOrder()" >POS order</button>
-            <button mat-raised-button color="primary" (click)="moveItemsBetweenTables()" >Move</button>
+            <button mat-raised-button color="primary" [disabled]="isBillPrinted" (click)="posOrder()" >POS order</button>
+            <button mat-raised-button color="primary" [disabled]="isBillPrinted" (click)="moveItemsBetweenTables()" >Move</button>
         </div>
         <table class="table-order-container">
             <thead>
