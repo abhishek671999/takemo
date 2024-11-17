@@ -19,15 +19,6 @@
             </div>
         </ng-template>
         <button *ngIf="isPOSEnabled" mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
-    </div>
-    <div class="menu-action-bar">
-        <button mat-raised-button color='primary' class="add-category-button" title="Add a new category" svgIcon="plus" (click)="addCategory()">
-            Add category
-        </button>
-        <div class="text-center">
-            <button mat-raised-button color="primary" [disabled]="searchText != ''" class="add-item-button" svgIcon="plus" (click)="addItem()">Add new Item to {{selectedCategory[0].categoryName}}</button>
-            <button mat-flat-button [disabled]="searchText != ''" (click)="editCategory(selectedCategory[0])">Edit {{selectedCategory[0].categoryName}}</button>
-        </div>
         <mat-form-field >
             <mat-label>Search item</mat-label>
             <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
@@ -36,16 +27,24 @@
 
     <div *ngIf="menu" class="menu-container">
         <div  class="category-bar" >
-            <mat-selection-list  [multiple]="false" [hideSingleSelectionIndicator]="true" >
-                <div *ngFor="let category of allCategories;">
-                    <mat-checkbox [checked]="selectedCategory.includes(category)" (change)="onCategorySelection(category);"> 
-                        <mat-label [ngClass]="{'bold': selectedCategory.includes(category)}" >{{category.categoryName}}</mat-label> 
-                    </mat-checkbox>
-                    <!-- <mat-list-option [selected]="selectedCategory.includes(category)" (selectedChange)="onCategorySelection(category)"><span [ngClass]="{'bold': selectedCategory.includes(category)}" >{{category.categoryName}}</span></mat-list-option> -->
-                </div>
-            </mat-selection-list>
+            <h2 (click)="addCategory()" class="add-header">Categories <span class="material-symbols-outlined">add_circle</span></h2>
+            <div class="category-button" *ngFor="let category of allCategories;">
+                <ul>
+                    <li
+                        class="category-bar-items {{
+                        category.categoryName.replace(' ', '')
+                        }}"
+                        [ngClass]="{'bold': selectedCategory.includes(category)}"
+                        (click)="onCategorySelection(category)"
+                    >
+                    <mat-icon *ngIf="category.categoryId" svgIcon="edit" title="Edit this item" (click)="editCategory(category)"></mat-icon>
+                        {{ category.categoryName }}
+                    </li>
+                    </ul>
+            </div>
         </div>
         <div class="items-section">
+            <h2 (click)="addItem()" class="add-header">Items <span class="material-symbols-outlined">add_circle</span></h2>
             <table mat-table [dataSource]="dataSource" class="table table-hover">
 
                 <ng-container matColumnDef="id">
