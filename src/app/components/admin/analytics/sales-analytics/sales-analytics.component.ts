@@ -119,7 +119,7 @@ export class SalesAnalyticsComponent {
   counters = [];
   selectedCounterId;
   tableView = true;
-  dataLoadSpinner = false;
+  dataLoadSpinner = true;
   analyticsSpinner 
 
   range = new FormGroup({

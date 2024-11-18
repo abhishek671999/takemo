@@ -74,7 +74,7 @@ export class TimelyAnalyticsComponent {
   tableView = true;
   counters = [];
   selectedCounterId;
-  dataLoadSpinner = false;
+  dataLoadSpinner = true;
 
   chart2: any = [];
   chart4: any = [];

@@ -109,9 +109,9 @@
           </div>
           <div>
             <mat-form-field>
-              <mat-label>Counter Name</mat-label>
+              <mat-label>Select counter</mat-label>
               <mat-select formControlName="counterId">
-                  <mat-option>None</mat-option>
+                  <mat-option>All</mat-option>
                   <mat-option *ngFor="let option of data.counters" [value]="option.counter_id">{{option.counter_name}}</mat-option>
               </mat-select>
             </mat-form-field>
