@@ -134,6 +134,12 @@ export class HeaderComponent {
       action: () => {
         this.router.navigate(['./owner/dine-in/table-cockpit'])
       }
+    },
+    'attendance': {
+      name: 'Attendance',
+      action: () => {
+        this.router.navigate(['./shared/attendance/attendance'])
+      }
     }
   }
 
@@ -172,7 +178,7 @@ export class HeaderComponent {
         this.restaurantType = data['type']
         this.userType = data['role_name']
         this.isKotReciptEnabled = data['kot_receipt']
-        this.fetchCounters()
+        if(this.isPollingRequired) this.fetchCounters()
         if(this.userType == 'restaurant_admin'){
           this.addRestaurantOwnerNavOptions(data)
         }else if(this.userType == 'restaurant_staff'){
@@ -207,10 +213,13 @@ export class HeaderComponent {
       this.printerConn.printerConnected.subscribe(
         (data: any) => {
           if(data){
-            if(this.pollingInterval) clearInterval(this.pollingInterval)
-            this.pollingInterval = this.startMobileOrderingPoll()
+            if(!this.pollingInterval) {
+              this.pollingInterval = this.startMobileOrderingPoll()
+            }
           }else{
-            if(this.pollingInterval) clearInterval(this.pollingInterval)
+            if(this.pollingInterval){
+              this.pollingInterval = clearInterval(this.pollingInterval)
+            } 
           }
         }
       )
@@ -244,7 +253,7 @@ export class HeaderComponent {
     if(this.restaurantId == 1 || this.restaurantId == 2){
       restaurantOwnerNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
     }else{
-      restaurantOwnerNavOptions = ['analytics', 'edit_menu' ,'orders']
+      restaurantOwnerNavOptions = ['attendance', 'analytics', 'edit_menu' ,'orders']
     }
     if (this.hasExpenseManagement) {
       restaurantOwnerNavOptions.push('expense')
@@ -392,7 +401,9 @@ export class HeaderComponent {
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
     sessionStorage.removeItem('table_name');
-    if(this.pollingInterval) clearInterval(this.pollingInterval)
+    if(this.pollingInterval){
+      this.pollingInterval = clearInterval(this.pollingInterval)
+    } 
   }
 
 }

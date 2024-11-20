@@ -1,0 +1,13 @@
+.main-container{
+    width: 100%;
+    min-height: 78vh;
+    max-height: fit-content;
+}
+
+.attendance-filter{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
