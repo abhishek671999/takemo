@@ -8,7 +8,7 @@
           </div>
         </div>
       </div>
-      <a style="text-decoration: none;" *ngIf="userType != 'user'" [style.color]="printerConn.usbSought? 'rgb(0, 136, 50)': 'rgb(225, 223, 223)' " (click)="connectToPrinter()"><mat-icon>print</mat-icon></a>
+      <a style="text-decoration: none;" *ngIf="printerRequired" [style.color]="printerConn.usbSought? 'rgb(0, 136, 50)': 'rgb(225, 223, 223)' " (click)="connectToPrinter()"><mat-icon>print</mat-icon></a>
       <a *ngIf="hasTableOrderingEnabled" style="text-decoration: none; color: rgb(225, 223, 223); " (click)="onHeaderIconClick('table')"><mat-icon>table_restaurant</mat-icon></a>
       <a style="text-decoration: none; color: rgb(225, 223, 223); " (click)="onHeaderIconClick('support')"><mat-icon>contact_support</mat-icon></a>
       <a style="text-decoration: none; color: rgb(225, 223, 223);" (click)="onHeaderIconClick('profile')"><mat-icon>person_outline</mat-icon></a>

@@ -39,7 +39,6 @@ export class ProfileComponent {
         this.meData = data;
         console.log('In profile', this.meData);
         this.updateForm();
-        this.meUtility.setMeData(this.meData);
       },
       (error) => {
         console.log('Error in fetching me data');
@@ -77,11 +76,9 @@ export class ProfileComponent {
         console.log('Data: ', data);
         this.meData['address'] = this.profileForm.value.address || '';
         this.meData['first_name'] = this.profileForm.value.firstName;
-        this.meUtility.setMeData(this.meData);
         this.dialog.open(SuccessMsgDialogComponent, {
           data: { msg: 'Profile Updated' },
         });
-        sessionStorage.setItem('load_header', 'true')
         this.router.navigate(['home/']);
 
       },

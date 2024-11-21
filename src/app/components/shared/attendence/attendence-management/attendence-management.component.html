@@ -47,7 +47,7 @@
             <th mat-header-cell *matHeaderCellDef>Punch out</th>
             <td mat-cell *matCellDef="let element" >
                 <span *ngIf="element.punch_out" >
-                  {{element.punch_out}} &nbsp;<span class="material-symbols-outlined" (click)="openImage('Punch in image', element.punch_out_image_url)" *ngIf="element.punch_in_image_url">image</span>
+                  {{element.punch_out}} &nbsp;<span class="material-symbols-outlined" (click)="openImage('Punch out image', element.punch_out_image_url)" *ngIf="element.punch_in_image_url">image</span>
                 </span>
                 <span *ngIf="!element.punch_out" >
                     <span class="material-symbols-outlined" (click)="punchOut(element)" >camera</span>

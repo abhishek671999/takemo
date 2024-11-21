@@ -12,11 +12,9 @@ import { CounterService } from 'src/app/shared/services/inventory/counter.servic
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
-import { HttpParams } from '@angular/common/http';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { AddItemNoteDialogComponent } from '../../shared/add-item-note-dialog/add-item-note-dialog.component';
 import { CacheService } from 'src/app/shared/services/cache/cache.service';
-import { resetFakeAsyncZone } from '@angular/core/testing';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -85,7 +83,6 @@ export class PointOfSaleComponent {
   }
 
   setButtonConfig(){
-    debugger
     if(this.printerRequired){
       if(this.isTableManagement){
         this.buttonConfig.placePrint.show = true
@@ -98,12 +95,13 @@ export class PointOfSaleComponent {
         if(this.isKOTEnabled){
           this.buttonConfig.place.show = true
           this.buttonConfig.place.enable = true
-          this.buttonConfig.place.enableWithoutPrint = true
+          this.buttonConfig.place.enableWithoutPrint = false
         }
       }
     }else{
       this.buttonConfig.place.enable = true
       this.buttonConfig.place.show = true
+      this.buttonConfig.place.enableWithoutPrint = true
     }
   }
 

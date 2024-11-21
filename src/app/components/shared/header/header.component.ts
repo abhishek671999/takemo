@@ -158,6 +158,8 @@ export class HeaderComponent {
   public hasMultipleRestaurants: boolean = false
   public hasTableOrderingEnabled: boolean = false
   public hasExpenseManagement: boolean = false
+  public pollingCallStarted: boolean = false
+  public printerRequired: boolean = false
 
   public counters = [];
   public dropdownList = [ this.AvailableDropdownList['logout']]
@@ -171,13 +173,13 @@ export class HeaderComponent {
         this.hasExpenseManagement = data['expense_management']
         this.isPOSEnabled = data['pos']
         this.pollingFrequency = Number(data['ui_polling_for_mobile_order_receipt_printing_frequency'])
-        this.restaurantId = Number(data['restaurant_id'])
         this.isPollingRequired = data['ui_polling_for_mobile_order_receipt_printing']
         this.location = data['restaurant_name']
         this.restaurantKDS = data['restaurant_kds']
         this.restaurantType = data['type']
         this.userType = data['role_name']
         this.isKotReciptEnabled = data['kot_receipt']
+        this.printerRequired = data['printer_required'];
         if(this.isPollingRequired) this.fetchCounters()
         if(this.userType == 'restaurant_admin'){
           this.addRestaurantOwnerNavOptions(data)
@@ -335,47 +337,51 @@ export class HeaderComponent {
     let httpParams = new HttpParams()
     httpParams = httpParams.append('restaurant_id', this.restaurantId)
     return setInterval(() => {
-      this.orderService.getMobileOrdersToPrint(httpParams).subscribe(
-        (data: any) => {
-          let printedKOTOrderIds = []
-          let printedWKOTOrderIds = []
-          data['orders'].forEach((order) => {
-            this.receiptPrintFormatter.confirmedOrderObj = order
-            debugger
-            if(order.kot_printed == false && this.isKotReciptEnabled){
-              let printObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
-              let printStatus = false
-              printObjs.forEach((printObj) => {
-                printStatus = this.print(printObj)
-              })
-              if(printStatus) printedKOTOrderIds.push(order.order_id)
-            } 
-          if(order.wkot_printed == false){
-              let printObjs = this.receiptPrintFormatter.getWKOTReceiptText(this.counters)
-              let printStatus = false
-              printObjs.forEach((printObj) => {
-                printStatus = this.print(printObj)
-              })
-              if(printStatus) printedWKOTOrderIds.push(order.order_id)
+      if(!this.pollingCallStarted){
+        this.pollingCallStarted = true
+        this.orderService.getMobileOrdersToPrint(httpParams).subscribe(
+          (data: any) => {
+            let printedKOTOrderIds = []
+            let printedWKOTOrderIds = []
+            data['orders'].forEach((order) => {
+              this.receiptPrintFormatter.confirmedOrderObj = order
+              if(order.kot_printed == false && this.isKotReciptEnabled){
+                let printObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
+                let printStatus = false
+                printObjs.forEach((printObj) => {
+                  printStatus = this.print(printObj)
+                })
+                if(printStatus) printedKOTOrderIds.push(order.order_id)
+              } 
+            if(order.wkot_printed == false){
+                let printObjs = this.receiptPrintFormatter.getWKOTReceiptText(this.counters)
+                let printStatus = false
+                printObjs.forEach((printObj) => {
+                  printStatus = this.print(printObj)
+                })
+                if(printStatus) printedWKOTOrderIds.push(order.order_id)
+              }
+            })
+          if(printedKOTOrderIds.length > 0 || printedWKOTOrderIds.length > 0){
+            let body = {
+              "kot_order_ids": printedKOTOrderIds,
+              "wkot_order_ids": printedWKOTOrderIds,
+              "restaurant_id": this.restaurantId
             }
-          })
-        if(printedKOTOrderIds.length > 0 || printedWKOTOrderIds.length > 0){
-          let body = {
-            "kot_order_ids": printedKOTOrderIds,
-            "wkot_order_ids": printedWKOTOrderIds,
-            "restaurant_id": this.restaurantId
+            this.orderService.markOrderAsPrinted(body).subscribe(
+              (data) => {
+                console.log(data)
+                this.pollingCallStarted = false
+              },
+              (error) => {
+                console.log(error)
+                this.pollingCallStarted = false
+              }
+            )
           }
-          this.orderService.markOrderAsPrinted(body).subscribe(
-            (data) => {
-              console.log(data)
-            },
-            (error) => {
-              console.log(error)
-            }
-          )
         }
+      )
       }
-    )
     }, this.pollingFrequency * 1000);
 
   }

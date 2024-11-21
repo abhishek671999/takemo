@@ -49,11 +49,13 @@
           <ng-container matColumnDef="sl_no">
             <th mat-header-cell *matHeaderCellDef>Sl.no</th>
             <td mat-cell *matCellDef="let element; let i=index">{{ i + 1 }}</td>
+            <td mat-footer-cell *matFooterCellDef> - </td>
           </ng-container>
           
           <ng-container matColumnDef="restaurant_name">
             <th mat-header-cell *matHeaderCellDef>Restaurant name</th>
             <td mat-cell *matCellDef="let element">{{ element.restaurant_name }}</td>
+            <td mat-footer-cell *matFooterCellDef> Total </td>
           </ng-container>
 
           <ng-container matColumnDef="total_making_price">
@@ -61,11 +63,13 @@
             <td mat-cell *matCellDef="let element">
               &nbsp;₹&nbsp;{{ element.total_making_price.toFixed(2) }}
             </td>
+            <td mat-footer-cell *matFooterCellDef> {{getTotalMakingPrice().toFixed(2)}} </td>
           </ng-container>
           
           <ng-container matColumnDef="total_quantity">
             <th mat-header-cell mat-sort-header *matHeaderCellDef>Total orders</th>
             <td mat-cell *matCellDef="let element">{{ element.total_quantity }}</td>
+            <td mat-footer-cell *matFooterCellDef>{{getTotalQuantity()}} </td>  
           </ng-container>
           
           <ng-container matColumnDef="total_amount">
@@ -73,20 +77,24 @@
             <td mat-cell *matCellDef="let element">
               &nbsp;₹&nbsp;{{ element.total_amount.toFixed(2) }}
             </td>
+            <td mat-footer-cell *matFooterCellDef>&nbsp;₹&nbsp;{{getTotalAmount().toFixed(2)}} </td>
           </ng-container>
           
           <ng-container matColumnDef="total_amount_without_tax">
             <th mat-header-cell *matHeaderCellDef>Amount without tax</th>
             <td mat-cell *matCellDef="let element">{{ element.total_amount_without_tax.toFixed(2) }}</td>
+            <td mat-footer-cell *matFooterCellDef>&nbsp;₹&nbsp;{{getTotalAmountWithouutTax().toFixed(2)}} </td>
           </ng-container>
 
           <ng-container matColumnDef="total_gst_amount">
             <th mat-header-cell *matHeaderCellDef>Tax amount</th>
             <td mat-cell *matCellDef="let element">{{ element.total_gst_amount.toFixed(2) }}</td>
+            <td mat-footer-cell *matFooterCellDef> &nbsp;₹&nbsp;{{getTotalTaxAmount().toFixed(2)}} </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="salesDataTableColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: salesDataTableColumns"></tr>
+          <tr mat-footer-row *matFooterRowDef="salesDataTableColumns; stickyOrder Details"></tr>
         </table>
 
       </div>

@@ -24,14 +24,11 @@ export class PostLoginComponent {
       this.myInfo = data;
         if (this.myInfo['restaurants'].length > 0) {
           let restaurant = data['restaurants'][0]
-          if(sessionStorage.getItem('load_header') == 'true' || sessionStorage.getItem('load_header') == null) {
-            this.meAPIUtility.setRestaurant(restaurant)
-          }
           let navigationURL =
             restaurant['restaurant_kds'] == 'true'? '/owner/orders/pending-orders': restaurant['type'] == 'e-commerce'? '/owner/orders/unconfirmed-orders' : '/owner/orders/orders-history';
           this._router.navigate([navigationURL]);
         } else if (this.myInfo['companies'].length > 0) {
-          this.meAPIUtility.setCompany(data['companies'][0])
+          // this.meAPIUtility.setCompany(data['companies'][0])
           localStorage.setItem('role', 'corporate_admin')
           this._router.navigate(['admin/user-management']);
         } else {
