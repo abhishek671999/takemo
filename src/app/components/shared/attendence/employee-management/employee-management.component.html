@@ -1,0 +1,97 @@
+<div class="main-container">
+    <div class="table-section">
+        <form class="profile-form" [formGroup]="addEmployeeForm"> 
+            <table class="table table-hover">
+                <thead class="text-center">
+                    <tr>
+                        <th class="col1" scope="col">Id</th>
+                        <th class="col2" scope="col">Name</th>
+                        <th class="col3" scope="col">Mobile</th>
+                        <th class="col4" scope="col">Email</th>
+                        <th class="col5" scope="col">Gender</th>
+                        <th class="col6" scope="col">Edit</th>
+                        <th class="col7" scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center" >
+                    <!-- <p style="margin: 0; padding: 5px 0 0 10px; text-align: left;">{{category.category.name}}</p>         -->
+                    <tr class="table-row"*ngFor="let employee of employeeDetails; let mainIndex = index">
+                        <td class="col1" >{{mainIndex+1}}</td>
+                        <td class="col2" >
+                            <div *ngIf="!employee.is_edit">
+                                {{employee.name}}
+                            </div>
+                            <mat-form-field *ngIf="employee.is_edit">
+                                <mat-label>Name</mat-label>
+                                <input type="text" matInput value={{employee.name}}  (blur)="editEmployee(employee, $event)" placeholder={{employee.name}} [disabled]="!employee.is_edit">
+                            </mat-form-field>
+                        </td>
+                        <td class="col3" >
+                            <div *ngIf="!employee.is_edit">
+                                {{employee.mobile}}
+                            </div>
+                            <mat-form-field *ngIf="employee.is_edit">
+                                <mat-label>Mobile</mat-label>
+                                <input type="text" pattern="[789][0-9]{9}" matInput value={{employee.mobile}}  (blur)="editEmployee(employee, $event)" placeholder={{employee.mobile}} [disabled]="!employee.is_edit">
+                            </mat-form-field>
+                        </td>
+                        <td class="col4" >
+                            <div *ngIf="!employee.is_edit">
+                                {{employee.email}}
+                            </div>
+                            <mat-form-field *ngIf="employee.is_edit">
+                                <mat-label>Email</mat-label>
+                                <input type="text" matInput value={{employee.email}}  (blur)="editEmployee(employee, $event)" placeholder={{employee.email}} [disabled]="!employee.is_edit">
+                            </mat-form-field>
+                        </td>
+                        <td class="col5">
+                            <div *ngIf="!employee.is_edit">
+                                {{employee.gender == 1? "Male": "Female"}}
+                            </div>
+                            <mat-radio-group  *ngIf="employee.is_edit"[(ngModel)]="employee.gender" formControlName="gender" aria-label="Select an option">
+                                <mat-radio-button value="1">Male</mat-radio-button>
+                                <mat-radio-button value="2">Female</mat-radio-button>
+                            </mat-radio-group>
+                        <td class="col6">
+                            <mat-icon title="Edit this item" (click)="enableEditTable(employee)">create</mat-icon>
+                        </td>
+                        <td class="col6">
+                            <mat-icon  title="Delete this category" (click)="deleteEmployee(employee)">delete</mat-icon>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td>
+                            <mat-form-field >
+                                <mat-label>Name</mat-label>
+                                <input matInput type="text" formControlName="name">
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field >
+                                <mat-label>Mobile</mat-label>
+                                <input matInput type="text"  formControlName ="mobile">
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field >
+                                <mat-label>Email </mat-label>
+                                <input matInput type="text" formControlName="email">
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-radio-group formControlName="gender" aria-label="Select an option">
+                                <mat-radio-button value="1">Male</mat-radio-button>
+                                <mat-radio-button value="2">Female</mat-radio-button>
+                            </mat-radio-group>
+                        </td>
+                        <td><button mat-raised-button color="primary" [disabled]="addEmployeeForm.invalid" (click)="addEmployee()">Submit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+    
+    
+          </form>
+    </div>
+      
+</div>

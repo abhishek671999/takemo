@@ -29,4 +29,9 @@ export class dateUtils{
 
         return `${day}-${month}-${year} ${hour}:${minute}:${second}`
     }
+
+    getStandardizedTimeFormate(date: Date){
+        let timeString = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })
+         return timeString
+    }
 }

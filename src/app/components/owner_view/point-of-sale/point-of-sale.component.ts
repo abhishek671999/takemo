@@ -12,7 +12,6 @@ import { CounterService } from 'src/app/shared/services/inventory/counter.servic
 import { EcomPosOrdersComponent } from '../dialogbox/ecom-pos-orders/ecom-pos-orders.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog/select-subitem-dialog.component';
-import { HttpParams } from '@angular/common/http';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { AddItemNoteDialogComponent } from '../../shared/add-item-note-dialog/add-item-note-dialog.component';
 import { CacheService } from 'src/app/shared/services/cache/cache.service';
@@ -70,6 +69,42 @@ export class PointOfSaleComponent {
   public isKOTEnabled
   public restaurantKDSenabled;
   public printReceipt: boolean = false
+  public buttonConfig = {
+    place: {
+      enable: false,
+      show: false,
+      enableWithoutPrint: false
+    },
+    placePrint: {
+      enable: false,
+      show: false,
+      enableWithoutPrint: false
+    }
+  }
+
+  setButtonConfig(){
+    if(this.printerRequired){
+      if(this.isTableManagement){
+        this.buttonConfig.placePrint.show = true
+        this.buttonConfig.placePrint.enable = true
+        this.buttonConfig.placePrint.enableWithoutPrint = true
+      }else{
+        this.buttonConfig.placePrint.show = true
+        this.buttonConfig.placePrint.enable = true
+        this.buttonConfig.placePrint.enableWithoutPrint = false
+        if(this.isKOTEnabled){
+          this.buttonConfig.place.show = true
+          this.buttonConfig.place.enable = true
+          this.buttonConfig.place.enableWithoutPrint = false
+        }
+      }
+    }else{
+      this.buttonConfig.place.enable = true
+      this.buttonConfig.place.show = true
+      this.buttonConfig.place.enableWithoutPrint = true
+    }
+  }
+
 
   ngOnInit() {
     this.summary = {
@@ -91,6 +126,8 @@ export class PointOfSaleComponent {
         this.isPOS = restaurant['pos']
         this.isKOTEnabled = restaurant['kot_receipt']
         this.restaurantKDSenabled = restaurant['restaurant_kds'] 
+        this.printerRequired = restaurant['printer_required'];
+        this.setButtonConfig()
         if(this.isTableManagement && !this.tableName){
             this.router.navigate(['./owner/dine-in/table-cockpit'])
         }
@@ -116,7 +153,6 @@ export class PointOfSaleComponent {
       .subscribe(
         (data) => {
           this.menu = data['menu'];
-          this.printerRequired = data['printer_required'];
           this.restaurantParcel = data['restaurant_parcel'];
           this.createAllCategory()
           this.menu.map((category) => {

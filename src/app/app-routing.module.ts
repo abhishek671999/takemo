@@ -46,6 +46,12 @@ const routes: Routes = [
       import('./components/owner_view/owner.module').then((m) => m.OwnerModule)
   },
   {
+    path: 'shared',
+    canActivate: [authGuard2],
+    loadChildren: () => 
+      import('./components/shared/shared.module').then((m) => m.SharedModule)
+  },
+  {
     path: 'test',
     component: TestComponentNewComponent
   },

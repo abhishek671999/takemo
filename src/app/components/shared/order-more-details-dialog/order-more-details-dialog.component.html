@@ -35,6 +35,7 @@
         <h3 style="display: inline; font-weight: bold;">UTR:  </h3><h3 style="display: inline;">{{data.payment_details.UTR || NA}}</h3><br>
     </div>
     <div mat-dialog-actions>
+        <button mat-raised-button (click)="deleteOrder()" color="warning"> Delete Order</button>
         <button mat-raised-button (click)="closeDialog()"> Close</button>
     </div>
 </div>

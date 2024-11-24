@@ -155,15 +155,15 @@
         <p class="mb-2"></p>
         <div class="action-section">
           <button mat-raised-button (click)="clearSummary()">Clear</button>
-          <button mat-raised-button (click)="placeOrder(false)" *ngIf="(isKOTEnabled && !(isTableManagement && isKOTEnabled))" [disabled]="summary.amount == 0 || disablePlace" color="primary"> Place </button>
-          <div>
-            <button mat-raised-button (click)="placeOrder(true)" [disabled]="summary.amount == 0 || (!printerConn.usbSought && printerRequired) || disablePlace" color="primary">  Place & Print </button>
+          <button mat-raised-button (click)="placeOrder(false)" *ngIf="buttonConfig.place.show" [disabled]="!buttonConfig.place.enable || !((buttonConfig.place.enableWithoutPrint || printerConn.usbSought) ) || summary.amount == 0 || disablePlace" color="primary"> Place </button>
+          <div *ngIf="buttonConfig.placePrint.show" >
+            <button mat-raised-button (click)="placeOrder(true)" [disabled]="!buttonConfig.placePrint.enable || !((buttonConfig.placePrint.enableWithoutPrint || printerConn.usbSought) )  || summary.amount == 0 || disablePlace" color="primary">  Place & Print </button>
             <small
               class="text-danger"
               style="display: block"
               *ngIf="!printerConn.usbSought && printerRequired"
             >
-              Please connect Printer</small
+              Printer not connected</small
             >
           </div>
         </div>

@@ -10,7 +10,7 @@
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && isBillPrinted)" (click)="markPaymentDone()">Payment done</button>
             <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
             <button mat-raised-button color="primary" [disabled]="isBillPrinted" (click)="posOrder()" >POS order</button>
-            <button mat-raised-button color="primary" [disabled]="isBillPrinted" (click)="moveItemsBetweenTables()" >Move</button>
+            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="moveItemsBetweenTables()" >Move</button>
         </div>
         <table class="table-order-container">
             <thead>
@@ -28,10 +28,12 @@
                     <td class="sl_no">{{main_index + 1}}</td>
                     <td class="item">{{order.item_name}}</td>
                     <td class="price">{{order.price}}</td>
-                    <td class="quantity">
-                        <mat-icon (click)="subItem(order)" *ngIf="isEditEnabled">remove_circle</mat-icon>
-                        {{order.quantity}}
-                        <!-- <mat-icon (click)="addItem(order)">add_circle</mat-icon> -->
+                    <td >
+                        <div class="quantity">
+                            <mat-icon (click)="subItem(order)" *ngIf="isEditEnabled">remove_circle</mat-icon>
+                            {{order.quantity}}
+                            <!-- <mat-icon (click)="addItem(order)">add_circle</mat-icon> -->
+                        </div>
                     </td>
                     <td class="total_price">₹&nbsp;{{order.line_item_price.toFixed(1)}}{{taxInclusive? '': " | ₹&nbsp;" +calculateItemGST(order).toFixed(1)}}</td>
                     <td class="delete" *ngIf="isEditEnabled">

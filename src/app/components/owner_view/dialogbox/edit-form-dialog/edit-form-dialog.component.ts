@@ -28,6 +28,8 @@ export class EditFormDialogComponent {
   public counterMangement: boolean
   private restaurantType: string
   public mobileOrderingEnabled: boolean
+  public taxInclusive: boolean
+
   outputBoxVisible = false;
   progress = `0%`;
   uploadResult = '';
@@ -60,6 +62,7 @@ export class EditFormDialogComponent {
         this.counterMangement = restaurant['counter_management']
         this.restaurantType = restaurant['type'].toLowerCase()
         this.mobileOrderingEnabled = restaurant['mobile_ordering']
+        this.taxInclusive = restaurant['tax_inclusive']
       }
     )
     this.unitPriceDetails = this.data.item_unit_price_list

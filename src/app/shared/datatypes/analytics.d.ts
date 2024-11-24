@@ -6,6 +6,9 @@ export type getMultilocationSalesAnalytics = {
 
 export type multilocationSalesAnalytics = {
     restaurnat_name: string,
-    total_quanity: number,
+    total_quantity: number,
     total_amount: number
+    total_making_price: number,
+    total_amount_without_tax: number,
+    total_gst_amount: number
 }

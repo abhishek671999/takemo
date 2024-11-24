@@ -1,0 +1,8 @@
+.main-container{
+    min-height: 85vh;
+}
+
+.table-section{
+    width: 100%;
+    overflow: auto;
+}

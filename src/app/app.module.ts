@@ -56,7 +56,6 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     SelectSubitemDialogComponent,
     AddItemNoteDialogComponent,
     InputPasswordDialogComponent,
-
   ],
   imports: [
     BrowserModule,
@@ -72,7 +71,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatDialogModule,
     MatFormFieldModule,
      MatInputModule,
-     MatCheckboxModule
+     MatCheckboxModule,
+     MatTabsModule
     ],
   providers: [Utility, meAPIUtility, dateUtils, 
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}

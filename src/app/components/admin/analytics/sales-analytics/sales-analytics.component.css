@@ -60,7 +60,7 @@
 .unsold-view-section{
     padding: 1em;
     position: relative;
-    bottom: 4em;
+    top: 5px;
 }
 
 @media screen and (max-width: 425px) {

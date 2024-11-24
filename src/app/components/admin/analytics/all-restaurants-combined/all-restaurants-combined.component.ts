@@ -41,6 +41,9 @@ export class AllRestaurantsCombinedComponent {
   public dataLoadSpinner: boolean = false
   ngOnInit(){
     this.fetchAnalytics()
+    window.addEventListener('visibilitychange', () => {
+      this.fetchAnalytics()
+    })
   }
 
   ngAfterViewInit(){
@@ -87,5 +90,26 @@ export class AllRestaurantsCombinedComponent {
       this._liveAnnouncer.announce('Sorting cleared');
     }
   }
+
+  getTotalAmount() {
+    return this.salesDataSource.data.map(t => t.total_amount).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalQuantity() {
+    return this.salesDataSource.data.map(t => t.total_quantity).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalMakingPrice() {
+    return this.salesDataSource.data.map(t => t.total_making_price).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalAmountWithouutTax() {
+    return this.salesDataSource.data.map(t => t.total_amount_without_tax).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalTaxAmount() {
+    return this.salesDataSource.data.map(t => t.total_gst_amount).reduce((acc, value) => acc + value, 0);
+  }
+
 
 }
