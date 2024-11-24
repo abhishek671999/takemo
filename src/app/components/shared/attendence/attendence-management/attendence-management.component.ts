@@ -61,8 +61,7 @@ export class AttendenceManagementComponent {
           formData.append('employee_id', employee.employee_id)
           this.restaurantService.punchIn(formData).subscribe(
             (data: any) => {
-              debugger
-              employee.punch_in = this.dateUtils.getStandardizedDateTimeFormate(new Date())
+              this.ngOnInit()
             },
             (error: any) => {
               console.log(error)
@@ -83,7 +82,7 @@ export class AttendenceManagementComponent {
           formData.append('employee_id', employee.employee_id)
           this.restaurantService.punchOut(formData).subscribe(
             (data: any) => {
-              employee.punch_out = this.dateUtils.getStandardizedTimeFormate(new Date())
+              this.ngOnInit()
             },
             (error: any) => {
               console.log(error)

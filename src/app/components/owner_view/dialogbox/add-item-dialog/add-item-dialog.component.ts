@@ -44,7 +44,7 @@ export class AddItemDialogComponent {
    }
 
    private restaurantType: string
-
+   public taxInclusive: boolean
 
   outputBoxVisible = false;
   progress = `0%`;
@@ -91,6 +91,7 @@ export class AddItemDialogComponent {
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.tableManagement = restaurant['table_management']
+        this.taxInclusive = restaurant['tax_inclusive']
         this.restaurantType = restaurant['type'].toLowerCase()
       }
     )

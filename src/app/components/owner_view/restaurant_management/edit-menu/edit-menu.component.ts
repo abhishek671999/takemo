@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
-import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { EditFormDialogComponent } from '../../dialogbox/edit-form-dialog/edit-form-dialog.component';
@@ -9,7 +9,6 @@ import { DeleteConfirmationDialogComponent } from '../../dialogbox/delete-confir
 import { AddCategoryDialogComponent } from '../../dialogbox/add-category-dialog/add-category-dialog.component';
 import { AddItemDialogComponent } from '../../dialogbox/add-item-dialog/add-item-dialog.component';
 import { SuccessfulDialogComponent } from '../../dialogbox/successful-dialog/successful-dialog.component';
-import { ErrorDialogComponent } from '../../dialogbox/error-dialog/error-dialog.component';
 import { EditMenuService } from 'src/app/shared/services/menu/edit-menu.service';
 import { DeleteCategoryConfirmationDialogComponent } from '../../dialogbox/delete-category-confirmation-dialog/delete-category-confirmation-dialog.component';
 import {

@@ -60,17 +60,6 @@ export class meAPIUtility {
   public doesUserBelongToRaviGobi: boolean = false
 
 
-  setMeData(meData) {
-    let meDataExpiryDuration = 30; // min
-    this.isMultiRestaurantOwner = meData['restaurants'].length > 1
-    this.cookieService.set(
-      'me',
-      JSON.stringify(meData),
-      new Date(new Date().getTime() + meDataExpiryDuration * 60 * 1000),
-      '/'
-    );
-  }
-
   setRestaurant(restaurant, duration=6000){
     this.cookieService.delete('company', '/')
     let expiryDuration = duration; // min
@@ -80,27 +69,30 @@ export class meAPIUtility {
       new Date(new Date().getTime() + expiryDuration * 60 * 1000),
       '/'
     );
+    localStorage.setItem('restaurant_id', restaurant.restaurant_id)
+    localStorage.removeItem('company_id')
   }
 
   getRestaurant(){
     let restaurantObservable = new Observable((observer) => {
-      let restaurantData = this.cookieService.get('restaurant')
-      if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
-        let data = JSON.parse(restaurantData)
-        this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
-        this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
-        observer.next(data)
-      } else {
-        this.getMeData().subscribe((data) => {
-          if(data['restaurants'].length > 0){
-            let firstRestaurantInList = data['restaurants'][0]
-            this.doesUserBelongToITT = [1,2].includes(firstRestaurantInList['restaurant_id'])
-            this.doesUserBelongToRaviGobi = firstRestaurantInList['restaurant_id'] == 7
-            this.setRestaurant(firstRestaurantInList)
-            observer.next(firstRestaurantInList)
-          }
-
-        })
+      if(!Boolean(localStorage.getItem('company_id'))){
+        let restaurantData = this.cookieService.get('restaurant')
+        if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
+          let data = JSON.parse(restaurantData)
+          this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
+          this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
+          observer.next(data)
+        } else {
+          this.getMeData().subscribe((data) => {
+            if(data['restaurants'].length > 0){
+              let restaurantData = this.cookieService.get('restaurant')
+              if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
+                let data = JSON.parse(restaurantData)
+                observer.next(data)
+              }
+            }
+          })
+        }
       }
     })
     return restaurantObservable
@@ -115,20 +107,26 @@ export class meAPIUtility {
       new Date(new Date().getTime() + expiryDuration * 60 * 1000),
       '/'
     );
+    localStorage.setItem('company_id', company.company_id)
+    localStorage.removeItem('restaurant_id')
   }
 
   getCompany(){
     let restaurantObservable = new Observable((observer) => {
-      let restaurantData = this.cookieService.get('company')
-      if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
-        observer.next(JSON.parse(restaurantData))
-      } else {
-        this.getMeData().subscribe((data) => {
-          if(data['companies'].length > 0){
-            this.setCompany(data['companies'][0])
-            observer.next(data['companies'][0])
-          }
-        })
+      if(!Boolean(localStorage.getItem('restaurant_id'))){
+        let restaurantData = this.cookieService.get('company')
+        if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
+          observer.next(JSON.parse(restaurantData))
+        } else {
+          this.getMeData().subscribe((data) => {
+            if(data['companies'].length > 0){
+              let restaurantData = this.cookieService.get('company')
+              if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
+                observer.next(JSON.parse(restaurantData))
+              }
+            }
+          })
+        }
       }
     })
     return restaurantObservable
@@ -136,18 +134,24 @@ export class meAPIUtility {
 
   getMeData() {
     let meDataObservable = new Observable((observer) => {
-      let meData: any = this.cookieService.get('me');
-      if (meData) {
-        let data = JSON.parse(meData)
+      this._meService.getMyInfo().subscribe((data) => {
         this.isMultiRestaurantOwner = data['restaurants'].length > 1
+        if(data['companies'].length > 0){
+          let savedCompanyId = localStorage.getItem('company_id') ? Number(localStorage.getItem('company_id')): 0
+          let savedCompany = data['companies'].filter((company: any) => company.restaurant_id == savedCompanyId)
+          savedCompany = savedCompany.length > 0? savedCompany[0] : data['companies'][0]
+          this.setCompany(savedCompany)
+        }
+        else if(data['restaurants'].length > 0){
+          let savedRestaurantId = localStorage.getItem('restaurant_id') ? Number(localStorage.getItem('restaurant_id')): 0
+          let savedRestaurant = data['restaurants'].filter((restaurant: any) => restaurant.restaurant_id == savedRestaurantId)
+          savedRestaurant = savedRestaurant.length > 0? savedRestaurant[0] : data['restaurants'][0]
+          this.doesUserBelongToITT = [1,2].includes(savedRestaurant['restaurant_id'])
+          this.doesUserBelongToRaviGobi = savedRestaurant['restaurant_id'] == 7
+          this.setRestaurant(savedRestaurant)
+        }
         observer.next(data);
-      } else {
-        this._meService.getMyInfo().subscribe((data) => {
-          this.isMultiRestaurantOwner = data['restaurants'].length > 1
-          this.setMeData(data);
-          observer.next(data);
         });
-      }
     });
     return meDataObservable;
   }
@@ -164,9 +168,7 @@ export class meAPIUtility {
       this.cookieService.delete('restaurant')
       this.cookieService.delete('company')
     }
-  }  
-
-
+  }
 }
 
 

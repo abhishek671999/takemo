@@ -27,8 +27,6 @@ th.edit, td.edit{
     width: 100%;
     justify-content: center;
     align-items: center;
-
-
 }
 
 .action-container{
@@ -53,8 +51,8 @@ th.edit, td.edit{
     border: 1px solid;
 }
 .table-order-container td {
-    border-left: 1px solid;
-    border-right: 1px solid;
+    border: 1px solid;
+    /* border-right: 1px solid; */
 }
 
  table tr:hover{
