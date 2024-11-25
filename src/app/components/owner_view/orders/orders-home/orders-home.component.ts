@@ -75,7 +75,7 @@ export class OrdersHomeComponent {
             this.navLinks.push(this.availableNavlinks[tab])
           })
         }else{
-          let restaurantComponents = restaurant['restaurant_kds'] == 'true' ? ['pending', 'current', 'history'] : ['history']
+          let restaurantComponents = restaurant['restaurant_kds'] == true ? ['pending', 'current', 'history'] : ['history']
           restaurantComponents.forEach((tab) => {
             this.navLinks.push(this.availableNavlinks[tab])
           })

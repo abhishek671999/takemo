@@ -10,11 +10,6 @@ export class CacheService {
   public cache$ = new BehaviorSubject<string>(null);
 
   set(key: string, data: any): void {
-
-    if (this.cache.has(key)) {
-      throw new Error(`Data already exists for key '${key}'. Use a different key or delete the existing one first.`);
-    }
-
     this.cache.set(key, data);
     this.cache$.next(this.cache.get(key));
   }

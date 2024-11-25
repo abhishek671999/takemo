@@ -21,6 +21,7 @@ import { StringUtils } from 'src/app/shared/utils/stringUtils';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { CacheService } from 'src/app/shared/services/cache/cache.service';
 
 
 export type ChartOptions = {
@@ -46,7 +47,7 @@ export class SalesAnalyticsComponent {
 
   constructor(
     private _analyticsService: AnalyticsService,
-    private _menuService: MenuService,
+    private cacheService: CacheService,
     private _ruleService: RulesService,
     private dateUtils: dateUtils,
     private meUtility: meAPIUtility,
@@ -55,7 +56,7 @@ export class SalesAnalyticsComponent {
     private __matDialog: MatDialog,
     public stringUtils: StringUtils,
   ) {
-    
+    this.assignedRestaurantList = this.cacheService.get('restaurants')
   }
 
   private _liveAnnouncer = inject(LiveAnnouncer);
@@ -91,6 +92,8 @@ export class SalesAnalyticsComponent {
     { displayValue: 'Honey Dew Kitchen', restaurant_id: 2 },
   ];
 
+  assignedRestaurantList = []
+
   paymentMethods = [
     // hardcode
     { displayValue: 'All', codedList: [2, 5, 6, 7, 8] },
@@ -102,7 +105,8 @@ export class SalesAnalyticsComponent {
   loadView = false;
   selectedGroup: string = this.groupList[0].actualValue;
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
-  selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  selectedRestaurantwithCompany: number = this.restaurantList[0].restaurant_id;
+  selectedRestaurant: number 
   selectPaymentMethod: number[] = this.paymentMethods[0].codedList;
   selectedOrderStatus: string = this.orderTypes[0].actualValue;
   selectedRule;
@@ -153,6 +157,7 @@ export class SalesAnalyticsComponent {
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.restaurant = restaurant
+        this.selectedRestaurant = restaurant['restaurant_id']
         this.restaurantFlag = restaurant['restaurant_id']? true: false;
         this.hasOrderTypes = restaurant['type'] == 'e-commerce'? true: false;
         this.isITTUser = this.meUtility.doesUserBelongToITT
@@ -186,16 +191,15 @@ export class SalesAnalyticsComponent {
   }
 
   getRequestBodyPrepared() {
+    let restaurantPOS = this.assignedRestaurantList.filter((restaurant) => restaurant.restaurant_id == this.selectedRestaurant)[0]['pos']
     let body = {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: this.restaurant
-        ? this.restaurant['restaurant_id']
-        : this.selectedRestaurant,
+      restaurant_id: this.selectedRestaurant? this.selectedRestaurant: this.selectedRestaurantwithCompany,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
-      pos: (!this.isITTUser && this.restaurant),
+      pos: (!this.isITTUser && true),
     };
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
