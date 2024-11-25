@@ -24,6 +24,7 @@ import { ErrorMsgDialogComponent } from 'src/app/components/shared/error-msg-dia
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { MatTableDataSource } from '@angular/material/table';
 import { EditCategoryDialogComponent } from '../../dialogbox/edit-category-dialog/edit-category-dialog.component';
+import { CacheService } from 'src/app/shared/services/cache/cache.service';
 
 @Component({
   selector: 'app-edit-menu',
@@ -43,7 +44,8 @@ export class EditMenuComponent {
     private _counterService: CounterService,
     private _editMenuService: EditMenuService,
     private __cd: ChangeDetectorRef,
-    private meUtility: meAPIUtility
+    private meUtility: meAPIUtility,
+    private cacheService: CacheService
   ) {
     iconRegistry.addSvgIconLiteral(
       'Available',
@@ -467,6 +469,7 @@ export class EditMenuComponent {
 
   ngOnDestroy(){
     localStorage.removeItem('lastViewCategoryId')
+    this.cacheService.clear('parsedMenu')
   }
 
 }

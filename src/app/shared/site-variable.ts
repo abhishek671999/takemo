@@ -4,6 +4,7 @@ import { booleanAttribute, Injectable } from '@angular/core';
 import { MeService } from './services/register/me.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { CacheService } from './services/cache/cache.service';
 
 // export let host = 'http://65.20.75.191:8001/api/v1/' // local test
 export let host = 'https://takemotest.in/api/v1/'; // Demo test
@@ -49,7 +50,7 @@ export class meAPIUtility {
   constructor(
     public cookieService: CookieService,
     private _meService: MeService,
-    private _router: Router,
+    private cacheService: CacheService
   ) {
 
   }
@@ -137,12 +138,14 @@ export class meAPIUtility {
       this._meService.getMyInfo().subscribe((data) => {
         this.isMultiRestaurantOwner = data['restaurants'].length > 1
         if(data['companies'].length > 0){
+          this.cacheService.set('companies', data['companies'])
           let savedCompanyId = localStorage.getItem('company_id') ? Number(localStorage.getItem('company_id')): 0
           let savedCompany = data['companies'].filter((company: any) => company.restaurant_id == savedCompanyId)
           savedCompany = savedCompany.length > 0? savedCompany[0] : data['companies'][0]
           this.setCompany(savedCompany)
         }
         else if(data['restaurants'].length > 0){
+          this.cacheService.set('restaurants', data['restaurants'])
           let savedRestaurantId = localStorage.getItem('restaurant_id') ? Number(localStorage.getItem('restaurant_id')): 0
           let savedRestaurant = data['restaurants'].filter((restaurant: any) => restaurant.restaurant_id == savedRestaurantId)
           savedRestaurant = savedRestaurant.length > 0? savedRestaurant[0] : data['restaurants'][0]

@@ -21,7 +21,8 @@ import { ImageLoaderComponent } from './subcomponents/image-loader/image-loader.
 import { MatTableModule } from '@angular/material/table';
 import { CaptureImageComponent } from './subcomponents/capture-image/capture-image.component';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { LoaderComponent } from './dialogbox/loader/loader.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     HomeComponent,
     ViewImageComponent,
     ImageLoaderComponent,
-    CaptureImageComponent
+    CaptureImageComponent,
+    LoaderComponent
   ],
   imports: [
     CommonModule,
@@ -48,7 +50,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatNativeDateModule,
     FormsModule,
     MatTableModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
 
 })

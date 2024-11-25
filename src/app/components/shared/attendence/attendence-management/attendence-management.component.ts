@@ -7,6 +7,7 @@ import { dateUtils } from 'src/app/shared/utils/date_utils';
 import { ViewImageComponent } from '../../dialogbox/view-image/view-image.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { CaptureImageComponent } from '../../subcomponents/capture-image/capture-image.component';
+import { LoaderComponent } from '../../dialogbox/loader/loader.component';
 
 @Component({
   selector: 'app-attendence-management',
@@ -56,14 +57,17 @@ export class AttendenceManagementComponent {
     dialogRef.afterClosed().subscribe(
       (data: any) => {
         if(data?.file){
+          let loaderDialogRef = this.matDialog.open(LoaderComponent, {data: {msg: 'Punching in'}})
           const formData = new FormData();
           formData.append('file', data.file);
           formData.append('employee_id', employee.employee_id)
           this.restaurantService.punchIn(formData).subscribe(
             (data: any) => {
+              loaderDialogRef.close()
               this.ngOnInit()
             },
             (error: any) => {
+              loaderDialogRef.close()
               console.log(error)
             }
           )
@@ -77,14 +81,17 @@ export class AttendenceManagementComponent {
     dialogRef.afterClosed().subscribe(
       (data: any) => {
         if(data?.file){
+          let loaderDialogRef = this.matDialog.open(LoaderComponent, {data: {msg: 'Punching out'}})
           const formData = new FormData();
           formData.append('file', data.file);
           formData.append('employee_id', employee.employee_id)
           this.restaurantService.punchOut(formData).subscribe(
             (data: any) => {
+              loaderDialogRef.close()
               this.ngOnInit()
             },
             (error: any) => {
+              loaderDialogRef.close()
               console.log(error)
             }
           )
