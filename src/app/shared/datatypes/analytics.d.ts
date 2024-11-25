@@ -5,6 +5,9 @@ export type getMultilocationSalesAnalytics = {
 }
 
 export type multilocationSalesAnalytics = {
+    upi_amount: number,
+    card_amount: number,
+    cash_amount: number,
     restaurnat_name: string,
     total_quantity: number,
     total_amount: number

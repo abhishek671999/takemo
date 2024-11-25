@@ -5,6 +5,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { getMultilocationSalesAnalytics, multilocationSalesAnalytics } from 'src/app/shared/datatypes/analytics';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-all-restaurants-combined',
@@ -13,7 +14,10 @@ import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.se
 })
 export class AllRestaurantsCombinedComponent {
 
-  constructor(private analyticsService: AnalyticsService){}
+  constructor(
+    private analyticsService: AnalyticsService,
+    private dateUtils: dateUtils
+  ){}
 
   @ViewChild(MatSort)
   sort: MatSort = new MatSort;
@@ -36,13 +40,14 @@ export class AllRestaurantsCombinedComponent {
   public selectedFromDate: Date | undefined
   public selectedToDate: Date | undefined
   public salesDataSource = new MatTableDataSource<multilocationSalesAnalytics>()
-  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_quantity', 'total_amount', 'total_amount_without_tax', 'total_gst_amount','total_making_price',]
+  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_amount', 'total_upi', 'total_cash', 'total_card', 'total_amount_without_tax', 'total_gst_amount', 'total_quantity']
 
   public dataLoadSpinner: boolean = false
   ngOnInit(){
     this.fetchAnalytics()
-    window.addEventListener('visibilitychange', () => {
-      this.fetchAnalytics()
+    document.addEventListener('visibilitychange', (event) => {
+      console.log(event)
+      if(!document.hidden) this.fetchAnalytics()
     })
   }
 
@@ -58,8 +63,8 @@ export class AllRestaurantsCombinedComponent {
     }
     if (this.selectedTimeFrame == 'custom') {
       if (this.selectedFromDate && this.selectedToDate) {
-        body['from_date'] = this.selectedFromDate
-        body['to_date'] = this.selectedToDate
+        body['start_date'] = this.dateUtils.getStandardizedDateFormate(this.selectedFromDate)
+        body['end_date'] = this.dateUtils.getStandardizedDateFormate(this.selectedToDate)
       }
       else {
         body = {}
@@ -93,6 +98,18 @@ export class AllRestaurantsCombinedComponent {
 
   getTotalAmount() {
     return this.salesDataSource.data.map(t => t.total_amount).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalUPIAmount() {
+    return this.salesDataSource.data.map(t => t.upi_amount).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalCashAmount() {
+    return this.salesDataSource.data.map(t => t.cash_amount).reduce((acc, value) => acc + value, 0);
+  }
+
+  getTotalCardAmount() {
+    return this.salesDataSource.data.map(t => t.card_amount).reduce((acc, value) => acc + value, 0);
   }
 
   getTotalQuantity() {

@@ -205,11 +205,9 @@ export class HeaderComponent {
       if(data['restaurants'].length == 0 && data['companies'].length == 0) {
         this.addUserNavOptions()
         this.userType = 'user'
-      }
+        }
       }
     )
-
-    
 
     if(this.isPollingRequired){
       this.printerConn.printerConnected.subscribe(
@@ -221,6 +219,7 @@ export class HeaderComponent {
           }else{
             if(this.pollingInterval){
               this.pollingInterval = clearInterval(this.pollingInterval)
+              this.pollingInterval = null
             } 
           }
         }
@@ -378,7 +377,12 @@ export class HeaderComponent {
                 this.pollingCallStarted = false
               }
             )
+          }else{
+            this.pollingCallStarted = false
           }
+        },
+        (error) => {
+          this.pollingCallStarted = false
         }
       )
       }

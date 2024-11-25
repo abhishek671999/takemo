@@ -16,8 +16,6 @@ export class ConnectComponentsService {
     this.message.next(message)
   }
 
-
-
 }
 
 @Injectable({

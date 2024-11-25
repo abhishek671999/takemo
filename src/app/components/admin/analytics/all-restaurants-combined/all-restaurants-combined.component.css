@@ -9,8 +9,7 @@ table{
     width: 100%;
 }
 
-.example-container {
-    height: 270px;
+.table-container {
     overflow: auto;
   }
   
@@ -25,6 +24,10 @@ table{
   .mat-mdc-table-sticky {
     border-top: 1px solid #e0e0e0;
   }
+
+th, td{
+    text-align: center;
+}
 
 @media screen and (max-width: 430px)  {
     th, td{
