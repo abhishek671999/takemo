@@ -15,7 +15,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="form-field">
+    <mat-form-field *ngIf="assignedRestaurantList.length > 1" class="form-field">
       <mat-label>Select Restaurant</mat-label>
       <mat-select
         [(value)]="selectedRestaurant"
@@ -69,7 +69,7 @@
     <mat-form-field class="form-field" *ngIf="!restaurantFlag">
       <mat-label>Select Restaurant</mat-label>
       <mat-select
-        [(value)]="selectedRestaurant"
+        [(value)]="selectedRestaurantwithCompany"
         (selectionChange)="onValueChange()"
       >
         <mat-option
@@ -184,9 +184,16 @@
           </table>
   
           <div>
-            <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+            <button mat-raised-button [disabled]="!printerConn.usbSought" (click)="printSalesAnalytics()" color="primary">
               Print Report
             </button>
+            <small
+              class="text-danger"
+              style="display: block"
+              *ngIf="!printerConn.usbSought"
+            >
+              Printer not connected</small
+            >
             <!-- <button mat-raised-button (click)="openSendEmailDialogBox()" color="primary">
               Send email report
             </button> -->

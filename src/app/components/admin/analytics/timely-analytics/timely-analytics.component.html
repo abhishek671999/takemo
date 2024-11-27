@@ -5,12 +5,25 @@
   <div *ngIf="loadView" class="input-container">
     <mat-form-field class="form-field" *ngIf="!restaurantFlag">
       <mat-label>Select Restaurant</mat-label>
-      <mat-select [(value)]="selectedRestaurant" (selectionChange)="onValueChange('none')">
+      <mat-select [(value)]="selectedRestaurantwithCompany" (selectionChange)="onValueChange('none')">
         <mat-option *ngFor="let restaurant of restaurantList" [value]="restaurant.restaurant_id">
           {{restaurant.displayValue}}
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field *ngIf="assignedRestaurantList.length > 1" class="form-field">
+      <mat-label>Select Restaurant</mat-label>
+      <mat-select
+        [(value)]="selectedRestaurant"
+        (selectionChange)="onValueChange('none')"
+      >
+        <mat-option *ngFor="let restaurant of assignedRestaurantList" [value]="restaurant.restaurant_id">
+          {{ restaurant.restaurant_name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <mat-form-field *ngIf="isITTUser" class="form-field">
       <mat-label>Select Shift</mat-label>
       <mat-select [(value)]="selectedRule" (selectionChange)="onValueChange('none')">
@@ -95,9 +108,16 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
         <div class="print-analytics">
-          <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+          <button mat-raised-button [disabled]="!printerConn.usbSought" (click)="printSalesAnalytics()" color="primary">
             Print Report
           </button>
+          <small
+              class="text-danger"
+              style="display: block"
+              *ngIf="!printerConn.usbSought"
+            >
+              Printer not connected</small
+            >
         </div>
       </div>
     </div>

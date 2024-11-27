@@ -56,7 +56,7 @@ export class SalesAnalyticsComponent {
     private __matDialog: MatDialog,
     public stringUtils: StringUtils,
   ) {
-    this.assignedRestaurantList = this.cacheService.get('restaurants')
+    this.assignedRestaurantList = this.cacheService.get('restaurants') || []
   }
 
   private _liveAnnouncer = inject(LiveAnnouncer);
@@ -644,6 +644,10 @@ export class SalesAnalyticsComponent {
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+  }
+
+  ngOnDestroy(){
+    
   }
 
 

@@ -213,6 +213,7 @@ export class HeaderComponent {
       this.printerConn.printerConnected.subscribe(
         (data: any) => {
           if(data){
+            console.log('Header: isPolling', data, this.pollingInterval)
             if(!this.pollingInterval) {
               this.pollingInterval = this.startMobileOrderingPoll()
             }

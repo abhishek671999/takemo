@@ -8,22 +8,23 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class PrintConnectorService {
 
-  constructor(  public printService: PrinterService) { }
+  constructor(  public printService: PrinterService) {
+    this.usbDriver.isConnected.subscribe(
+      (data) => {
+        this.usbSought = data
+      }
+    )
+   }
 
   private usbDriver = new UsbDriver();
 
 
   public usbSought = false
-  public printerConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public printerConnected = this.usbDriver.isConnected
 
   async seekUSB() {
     await this.usbDriver.requestUsb().subscribe((data) => {
-      this.printService.setDriver(this.usbDriver);
-      this.printService.isConnected.subscribe(result => {
-        this.usbSought = result
-        this.printerConnected.next(result)
-      }
-    )
+      this.printService.setDriver(this.usbDriver) 
     });
   }
 

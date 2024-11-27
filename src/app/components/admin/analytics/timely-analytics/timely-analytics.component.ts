@@ -11,6 +11,7 @@ import { PrintConnectorService } from 'src/app/shared/services/printer/print-con
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { CacheService } from 'src/app/shared/services/cache/cache.service';
 
 @Component({
   selector: 'app-timely-analytics',
@@ -26,7 +27,10 @@ export class TimelyAnalyticsComponent {
     private meUtility: meAPIUtility,
     private _counterService: CounterService,
     public printerConn: PrintConnectorService,
-  ) { }
+    private cacheService: CacheService
+  ) {
+    this.assignedRestaurantList = this.cacheService.get('restaurants')
+   }
 
   @ViewChild(MatSort)
   sort: MatSort = new MatSort;
@@ -56,11 +60,14 @@ export class TimelyAnalyticsComponent {
     { displayValue: 'Honey Dew Kitchen', restaurant_id: 2 },
   ];
 
+  public assignedRestaurantList = []
+
   selectedTimeFrameForTimelyAnalytics: string =
     this.timeFramesForTimelyAnalytics[0].actualValue;
   selectedCategory = this.categoryList[0];
   selectedItem = this.itemList[0];
-  selectedRestaurant: number = this.restaurantList[0].restaurant_id;
+  selectedRestaurantwithCompany: number = this.restaurantList[0].restaurant_id;
+  selectedRestaurant: number
   restaurantFlag: boolean;
 
   selectedDate = new Date();
@@ -184,9 +191,7 @@ export class TimelyAnalyticsComponent {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
         : [this.selectedRule],
-      restaurant_id: this.restaurant
-        ?  this.restaurant['restaurant_id']
-        : this.selectedRestaurant,
+      restaurant_id:this.selectedRestaurant? this.selectedRestaurant: this.selectedRestaurantwithCompany,
       category_id: this.selectedCategory.id,
       item_id: this.selectedCategory.id == 0 ? this.selectedItem.id : '',
       pos: this.isITTUser ? false : true,

@@ -15,7 +15,6 @@ const GS = 0x1D;
 export class PrinterService  extends PrintBuilder{
   public printLanguage?: string;
     public driver?: PrintDriver;
-    public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public builder? : PrintBuilder;
 
     constructor(){
@@ -26,10 +25,6 @@ export class PrinterService  extends PrintBuilder{
         this.driver = driver;
         this.printLanguage = printLanguage;
         this.driver.connect()
-
-        this.driver.isConnected.subscribe(result => {
-            this.isConnected.next(result)
-        })
         return this
     }
     
