@@ -108,9 +108,16 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
         <div class="print-analytics">
-          <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+          <button mat-raised-button [disabled]="!printerConn.usbSought" (click)="printSalesAnalytics()" color="primary">
             Print Report
           </button>
+          <small
+              class="text-danger"
+              style="display: block"
+              *ngIf="!printerConn.usbSought"
+            >
+              Printer not connected</small
+            >
         </div>
       </div>
     </div>

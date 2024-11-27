@@ -184,9 +184,16 @@
           </table>
   
           <div>
-            <button mat-raised-button (click)="printSalesAnalytics()" color="primary">
+            <button mat-raised-button [disabled]="!printerConn.usbSought" (click)="printSalesAnalytics()" color="primary">
               Print Report
             </button>
+            <small
+              class="text-danger"
+              style="display: block"
+              *ngIf="!printerConn.usbSought"
+            >
+              Printer not connected</small
+            >
             <!-- <button mat-raised-button (click)="openSendEmailDialogBox()" color="primary">
               Send email report
             </button> -->

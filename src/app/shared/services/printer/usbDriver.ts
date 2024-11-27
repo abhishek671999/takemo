@@ -22,19 +22,15 @@ export class UsbDriver extends PrintDriver {
             this.device = devices.find( (device: any) => {
               return device.vendorId == this.vendorId && device.productId == this.productId
             })
-            console.log('connected', this.device)
             return this.device?.open()
           }).then(() => {
-            console.log('Open success')
             let result = this.device?.selectConfiguration(1)
-            console.log('Configuration', result, this.device)
             return result
           })
           .then(() => {
             let result = this.device?.claimInterface(0)
             return result
           }).then( (result: any) => {
-            console.log('This is error result: ', result)
             const endPoints: any[] | undefined = this.device?.configuration?.interfaces[0].alternate.endpoints;
             if(endPoints){
               this.endPoint = endPoints.find((endPoint: any) => endPoint.direction === 'out');
@@ -66,9 +62,11 @@ export class UsbDriver extends PrintDriver {
 
       private listenForUsbConnections(): void {
         navigator.usb.addEventListener('disconnect', () => {
+          console.log('Disconnect event triggered: ',)
             this.isConnected.next(false)
         });
         navigator.usb.addEventListener('connect', () => {
+            console.log('Connect event triggered: ')
             this.isConnected.next(true);
         });
     }
