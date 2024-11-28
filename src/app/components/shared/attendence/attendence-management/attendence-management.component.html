@@ -34,10 +34,13 @@
         <ng-container matColumnDef="punch_in">
           <th mat-header-cell *matHeaderCellDef>Punch In</th>
           <td mat-cell *matCellDef="let element" >
-            <span *ngIf="element.punch_in" >
+            <span *ngIf="element.punch_in; else missingData" >
               {{element.punch_in}} &nbsp;<span class="material-symbols-outlined" (click)="openImage('Punch in image', element.punch_in_image_url)" *ngIf="element.punch_in_image_url">image</span>
             </span>
-            <span *ngIf="!element.punch_in" >
+            <ng-template #missingData>
+              NA
+            </ng-template>
+            <span *ngIf="!element.punch_in && isSelectedDateToday()" >
                 <span class="material-symbols-outlined" (click)="punchIn(element)" >camera</span>
             </span>
           </td>
@@ -46,10 +49,13 @@
         <ng-container matColumnDef="punch_out">
             <th mat-header-cell *matHeaderCellDef>Punch out</th>
             <td mat-cell *matCellDef="let element" >
-                <span *ngIf="element.punch_out" >
+                <span *ngIf="element.punch_out; else missingData" >
                   {{element.punch_out}} &nbsp;<span class="material-symbols-outlined" (click)="openImage('Punch out image', element.punch_out_image_url)" *ngIf="element.punch_in_image_url">image</span>
                 </span>
-                <span *ngIf="!element.punch_out" >
+                <ng-template #missingData>
+                  NA
+                </ng-template>
+                <span *ngIf="!element.punch_out && isSelectedDateToday()" >
                     <span class="material-symbols-outlined" (click)="punchOut(element)" >camera</span>
                 </span>
           </ng-container>

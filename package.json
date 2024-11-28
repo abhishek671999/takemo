@@ -27,6 +27,7 @@
     "apexcharts": "^3.44.0",
     "chart.js": "^4.4.0",
     "ng-apexcharts": "^1.8.0",
+    "ng2-img-max": "^2.2.9",
     "ng2-pdf-viewer": "^10.0.0",
     "ngx-cookie-service": "^17.0.0",
     "ngx-mat-timepicker": "^16.1.2",

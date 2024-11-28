@@ -40,7 +40,6 @@
     justify-content: center;
     align-items: center;
     gap: 2em;
-
 }
 
 .graph{
@@ -75,15 +74,17 @@
     }
 
     .input-container{
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        row-gap: 1px;
-        gap: 0;
+        gap: 0.2;
     }
 
     .total-view{
         padding-top: 1em;
+    }
+
+    .form-field{
+        width: calc(100vw / 2.1);
     }
 }
 
@@ -99,16 +100,16 @@
     }
 
     .input-container{
-        flex-direction: column;
         justify-content: center;
+        gap: 0.2em;
         align-items: center;
-        row-gap: 1px;
-        gap: 0;
+        flex-wrap: wrap;
     }
 
     .total-view{
         padding-top: 1em;
     }
+
 }
 
 
