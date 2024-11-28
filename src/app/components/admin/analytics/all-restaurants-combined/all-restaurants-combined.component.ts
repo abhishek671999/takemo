@@ -40,7 +40,7 @@ export class AllRestaurantsCombinedComponent {
   public selectedFromDate: Date | undefined
   public selectedToDate: Date | undefined
   public salesDataSource = new MatTableDataSource<multilocationSalesAnalytics>()
-  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_amount', 'total_upi', 'total_cash', 'total_card', 'total_amount_without_tax', 'total_gst_amount', 'total_quantity']
+  public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_amount', 'total_upi', 'total_cash', 'total_credit', 'total_card', 'total_amount_without_tax', 'total_gst_amount', 'total_quantity']
 
   public dataLoadSpinner: boolean = false
   ngOnInit(){
@@ -106,6 +106,10 @@ export class AllRestaurantsCombinedComponent {
 
   getTotalCashAmount() {
     return this.salesDataSource.data.map(t => t.cash_amount).reduce((acc, value) => acc + value, 0);
+  }
+  
+  getTotalCreditAmount() {
+    return this.salesDataSource.data.map(t => t.PayLater_amount).reduce((acc, value) => acc + value, 0);
   }
 
   getTotalCardAmount() {

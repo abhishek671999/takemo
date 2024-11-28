@@ -82,6 +82,14 @@
             <td mat-footer-cell *matFooterCellDef>&nbsp;₹&nbsp;{{getTotalCashAmount().toFixed(2)}} </td>
           </ng-container>
 
+          <ng-container matColumnDef="total_credit">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>Credit</th>
+            <td mat-cell *matCellDef="let element">
+              &nbsp;₹&nbsp;{{ element.PayLater_amount.toFixed(2) }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef>&nbsp;₹&nbsp;{{getTotalCreditAmount().toFixed(2)}} </td>
+          </ng-container>
+
           <ng-container matColumnDef="total_card">
             <th mat-header-cell mat-sort-header *matHeaderCellDef>Card</th>
             <td mat-cell *matCellDef="let element">
