@@ -1,15 +1,13 @@
 import { HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { booleanAttribute, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MeService } from './services/register/me.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CacheService } from './services/cache/cache.service';
+import { environment } from 'src/environments/environment';
 
-// export let host = 'http://65.20.75.191:8001/api/v1/' // local test
-export let host = 'https://takemotest.in/api/v1/'; // Demo test
-// export let host = 'http://139.84.139.204:8000/api/v1/'
-//export let host = 'https://takemo.in/api/v1/' //Prod
+export let host = environment.host
 
 @Injectable({
   providedIn: 'root',

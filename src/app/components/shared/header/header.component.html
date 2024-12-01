@@ -1,4 +1,4 @@
-<div class="main-header">
+<div class="main-header" [ngClass]="isProd? 'prod': 'non-prod'">
     <div class="right-section">
       <div *ngIf="hasMultipleRestaurants" class="dropdown">
         <a style="text-decoration: none; color: rgb(225, 223, 223);" ><mat-icon> store</mat-icon></a>
