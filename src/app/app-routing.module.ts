@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home_screen/home/home.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { authGuard, authGuard2 } from './gurd/auth/auth.guard';
-import { TestComponentNewComponent } from './test-component-new/test-component-new.component';
 import { PostLoginComponent } from './components/post-login/post-login.component';
 
 const routes: Routes = [
@@ -50,10 +49,6 @@ const routes: Routes = [
     canActivate: [authGuard2],
     loadChildren: () => 
       import('./components/shared/shared.module').then((m) => m.SharedModule)
-  },
-  {
-    path: 'test',
-    component: TestComponentNewComponent
   },
   { path: '**', component: NotfoundComponent },
 ];

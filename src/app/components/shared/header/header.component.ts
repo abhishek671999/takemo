@@ -9,6 +9,7 @@ import { HttpParams } from '@angular/common/http';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -27,6 +28,8 @@ export class HeaderComponent {
     private _counterService: CounterService,
   ) {
   }
+
+  public isProd = environment.production
 
   public AvailableDropdownList = {
     'profile': {

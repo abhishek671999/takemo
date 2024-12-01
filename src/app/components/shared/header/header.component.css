@@ -1,5 +1,12 @@
-.main-header {
+.prod{
     background-color: rgb(65, 104, 244);
+}
+
+.non-prod{
+    background-color: rgb(244, 101, 65);
+}
+
+.main-header {
     font-size: 20px;
     width: 100vw;
     position: relative;
