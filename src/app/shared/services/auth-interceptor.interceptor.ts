@@ -23,7 +23,7 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
   
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let unAuthRequestsURLs = [host + 'rest-auth/login/', host + 'users/auth/token/', host + 'users/auth/email/', host + 'users/auth/mobile/',  ,  host + 'users/auth/mobile/']
+    let unAuthRequestsURLs = [host + 'rest-auth/login/', host + 'users/auth/token/', host + 'users/auth/email/', host + 'users/auth/mobile/', host + 'users/auth/mobile/']
     if(!unAuthRequestsURLs.includes(request.url)){
       request = request.clone({headers: this.utility.getHeaders()})
     }
@@ -39,7 +39,9 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
             this.showErrorMessage = true
           }, 5000);
           if(error.status == 0){
-            if(this.showErrorMessage) alert('Device not connected to Internet. Please check')
+            if(this.showErrorMessage){
+             alert('Device not connected to Internet. Please check')
+            }  
           } else if (error.status != 400 && error.error.detail?.toLowerCase().startsWith('invalid token')) {
             if (this.loggedInFlag) {
               this.loggedInFlag = false

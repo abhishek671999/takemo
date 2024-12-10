@@ -27,6 +27,25 @@ export class HeaderComponent {
     private receiptPrintFormatter: ReceiptPrintFormatter,
     private _counterService: CounterService,
   ) {
+    let host = new URL(environment.host)
+    console.log(host)
+    let currentPath = new URL(window.location.href)
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.active?.postMessage({
+          type: 'setConfig',
+          host: host.hostname,
+          pathName: currentPath.pathname
+        });
+      });
+
+      navigator.serviceWorker.addEventListener('message', (event) => {
+         if(event.data.type == 'redirection'){
+          this.router.navigate([event.data.url])
+         }
+      });
+    }
   }
 
   public isProd = environment.production
