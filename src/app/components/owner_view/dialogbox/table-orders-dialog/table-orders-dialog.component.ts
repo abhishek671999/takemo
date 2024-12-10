@@ -12,7 +12,7 @@ import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { InputPasswordDialogComponent } from 'src/app/components/shared/input-password-dialog/input-password-dialog.component';
@@ -181,6 +181,7 @@ export class TableOrdersDialogComponent {
   }
     
   requestPrintBill(){
+    debugger
     if(this.isBillPrinted){
       this.verifyPassword().subscribe(
         (data: any) => {
@@ -188,11 +189,22 @@ export class TableOrdersDialogComponent {
             let body = {
               "table_id": this.data.table_id,
             }
-            this.__tableService.markBillPrinted(body).subscribe(
+            this.__tableService.markBillPrinted(body).pipe(
+              (
+                switchMap((data: any) => {
+                  this.orderNo = data['bill_no']
+                  return this.__orderService.getTableOrders(body)
+                })),
+            ).subscribe(
               (data: any) => {
-                this.orderNo = data['bill_no']
+                this.orders = data['orders']['item_details'];
+                this.hasOrderedItems = this.orders.length > 0;
+                this.totalAmount = data['orders']['total_amount'];
+                this.isBillPrinted = data['orders']['bill_printed']
+                this.tableOrderId = data['orders']['table_order_id']
+                this.calculateAmountWithoutTax()
+                this.calculateAmountWithTax()
                 this.printBill()
-                this.dialogRef.close({refresh: true});
               },
               (error: any) => {
                 this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
@@ -205,16 +217,29 @@ export class TableOrdersDialogComponent {
         let body = {
           "table_id": this.data.table_id,
         }
-        this.__tableService.markBillPrinted(body).subscribe(
+        this.__tableService.markBillPrinted(body).pipe(
+          (
+            switchMap((data: any) => {
+              this.orderNo = data['bill_no']
+              return this.__orderService.getTableOrders(body)
+            })),
+        ).subscribe(
           (data: any) => {
-            this.orderNo = data['bill_no']
+            this.orders = data['orders']['item_details'];
+            this.hasOrderedItems = this.orders.length > 0;
+            this.totalAmount = data['orders']['total_amount'];
+            this.isBillPrinted = data['orders']['bill_printed']
+            this.tableOrderId = data['orders']['table_order_id']
+            this.calculateAmountWithoutTax()
+            this.calculateAmountWithTax()
             this.printBill()
-            this.dialogRef.close({refresh: true});
           },
           (error: any) => {
             this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
           }
         )
+
+
       }
     }
 
