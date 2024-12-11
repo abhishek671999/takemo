@@ -11,8 +11,9 @@ export class CounterService {
   private editCounterEndpoint = 'inventory/edit_counter/';
   private inventoryLogEndpoint = 'inventory/get_inventory_stock_log/';
   private deleteCounterEndpoint = 'inventory/delete_counter/'
+  private getItemSpecialNotesEndpoint = 'inventory/get_item_special_notes/'
 
-  constructor(private _http: HttpClient, private _utility: Utility) {}
+  constructor(private _http: HttpClient) {}
 
   deleteCounter(body){
     return this._http.delete(host + this.deleteCounterEndpoint, {body: body})
@@ -38,5 +39,9 @@ export class CounterService {
     return this._http.get(host + this.inventoryLogEndpoint, {
       params: httpParams,
     });
+  }
+
+  getItemSpecialNotes(httpParams){
+    return this._http.get(host + this.getItemSpecialNotesEndpoint, {params: httpParams});
   }
 }

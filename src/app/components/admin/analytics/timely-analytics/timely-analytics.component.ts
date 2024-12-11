@@ -29,7 +29,7 @@ export class TimelyAnalyticsComponent {
     public printerConn: PrintConnectorService,
     private cacheService: CacheService
   ) {
-    this.assignedRestaurantList = this.cacheService.get('restaurants')
+    this.assignedRestaurantList = this.cacheService.get('restaurants') || []
    }
 
   @ViewChild(MatSort)
@@ -187,6 +187,8 @@ export class TimelyAnalyticsComponent {
 
 
   getRequestBodyPrepared() {
+    let selectedRestaurant = this.assignedRestaurantList.filter((restaurant) => restaurant.restaurant_id == this.selectedRestaurant)
+    let restaurantPOS = selectedRestaurant.length > 0 ? selectedRestaurant[0]['pos'] : false
     let body = {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
@@ -194,7 +196,7 @@ export class TimelyAnalyticsComponent {
       restaurant_id:this.selectedRestaurant? this.selectedRestaurant: this.selectedRestaurantwithCompany,
       category_id: this.selectedCategory.id,
       item_id: this.selectedCategory.id == 0 ? this.selectedItem.id : '',
-      pos: this.isITTUser ? false : true,
+      pos: (!this.isITTUser && restaurantPOS),
     };
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
