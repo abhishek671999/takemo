@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Enter discount (Optional)</h2>
+<div mat-dialog-content>
+    <form [formGroup]="discountForm">
+
+    </form>
+    <mat-form-field>
+        <mat-label>Discount</mat-label>
+        <input type="number" matInput [(ngModel)]="discountValue" (input)="updateForm()" >
+      </mat-form-field>
+    <mat-radio-group [(ngModel)]="isPercentage" (ngModelChange)="updateForm()">
+        <mat-radio-button value="yes">Percentage</mat-radio-button>
+        <mat-radio-button value="no">Value</mat-radio-button>
+      </mat-radio-group>
+</div>
+<mat-dialog-actions>
+    <button mat-raised-button (click)="close()">Clsoe</button>
+    <div>
+        <button mat-raised-button (click)="submit()" color="primary" [disabled]="discountForm.invalid">Apply & Print</button>
+        <mat-error style="font-size: x-small;" *ngIf="discountForm.hasError('incorrectDiscountAmount')">Discount Should less than Amount</mat-error>
+    </div>
+</mat-dialog-actions>
