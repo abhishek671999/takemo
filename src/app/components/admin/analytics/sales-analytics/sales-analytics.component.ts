@@ -191,7 +191,8 @@ export class SalesAnalyticsComponent {
   }
 
   getRequestBodyPrepared() {
-    let restaurantPOS = this.assignedRestaurantList.filter((restaurant) => restaurant.restaurant_id == this.selectedRestaurant)[0]['pos']
+    let selectedRestaurant = this.assignedRestaurantList.filter((restaurant) => restaurant.restaurant_id == this.selectedRestaurant)
+    let restaurantPOS = selectedRestaurant.length > 0 ? selectedRestaurant[0]['pos'] : false
     let body = {
       rule_id_list: Array.isArray(this.selectedRule)
         ? this.selectedRule
@@ -199,7 +200,7 @@ export class SalesAnalyticsComponent {
       restaurant_id: this.selectedRestaurant? this.selectedRestaurant: this.selectedRestaurantwithCompany,
       item_wise: this.selectedGroup == 'item_wise' ? true : false,
       category_wise: this.selectedGroup == 'category_wise' ? true : false,
-      pos: (!this.isITTUser && true),
+      pos: (!this.isITTUser && restaurantPOS),
     };
     if (this.selectedCounterId) {
       body['counter_id'] = this.selectedCounterId;
