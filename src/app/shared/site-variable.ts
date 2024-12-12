@@ -135,11 +135,10 @@ export class meAPIUtility {
     let meDataObservable = new Observable((observer) => {
       let meData = this.cacheService.get('me')
       let localMeData = localStorage.getItem('me')
+      console.log('Me data', meData, 'local', localMeData)
         if(!(typeof(meData) == "undefined" || meData === "" || meData == "undefined")){
           observer.next(meData)
-        } else if(!(typeof(localMeData) == "undefined" || localMeData === "" || localMeData == "undefined" || !Boolean(localMeData)) ){
-          observer.next(JSON.parse(localMeData))
-        }else{
+        } else{
           this._meService.getMyInfo().subscribe((data) => {
             this.cacheService.set('me', data)
             localStorage.setItem('me', JSON.stringify(data))

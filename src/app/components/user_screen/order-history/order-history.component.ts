@@ -28,18 +28,17 @@ export class OrderHistoryComponent {
   constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
   
   ngOnInit(){
+    this.getMyOrders()
+  }
+
+  getMyOrders(){
     let body = {
-      // "rule_id": 1,
-      "_c": "rule_id is optional",
       "time_frame": this.selectedTimeFrame,
-      "_c1": "possible options for time_frame are today, this_week, this_month",
-      "start_date": "",
-      "end_date": "",
-      "_c3": "if the above both are given then time_frame is not needed"
     }
     this._ordersService.getMyOrders(body).subscribe(
       data => {
         console.log('This is data: ', data['order_list'])
+        this.orderHistory = []
         data['order_list'].map(ele => {
             this.orderHistory.push(this.unparsePastOrders(ele))
             this.orderHistoryDataSource.data = this.orderHistory

@@ -81,11 +81,11 @@ import { ServiceWorkerModule } from '@angular/service-worker';
        // or after 30 seconds (whichever comes first).
        registrationStrategy: 'registerWhenStable:30000'
      }),
-     ServiceWorkerModule.register('custom-sw.js', {
-      enabled: !isDevMode(),
-      scope: './' ,
-      registrationStrategy: 'registerWhenStable:30000'
-    })
+    //  ServiceWorkerModule.register('custom-sw.js', {
+    //   enabled: !isDevMode(),
+    //   scope: '/' ,
+    //   registrationStrategy: 'registerWhenStable:30000'
+    // })
     ],
   providers: [Utility, meAPIUtility, dateUtils, 
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}

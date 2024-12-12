@@ -20,12 +20,20 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
   constructor(public utility: Utility, private _loginService: LoginService, private _router: Router, private meAPIUtility: meAPIUtility, private matDialog: MatDialog) {}
   loggedInFlag = false
   showErrorMessage = true
+  offlineRedirected = false
   
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     let unAuthRequestsURLs = [host + 'rest-auth/login/', host + 'users/auth/token/', host + 'users/auth/email/', host + 'users/auth/mobile/', host + 'users/auth/mobile/']
     if(!unAuthRequestsURLs.includes(request.url)){
       request = request.clone({headers: this.utility.getHeaders()})
+    }
+    if(!navigator.onLine && !this.offlineRedirected){
+      alert('Browser offline. Redirecting to POS')
+      this.offlineRedirected = true
+      this._router.navigate(['/owner/point-of-sale'])
+    }else if(navigator.onLine){
+      this.offlineRedirected = false
     }
     return next.handle(request).pipe(
       tap((event) => {

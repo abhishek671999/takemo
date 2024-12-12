@@ -37,7 +37,7 @@ export class PointOfSaleComponent {
     private dateUtils: dateUtils,
     private cacheService: CacheService
   ) {
-
+    
   }
   public menu;
   public summary;
@@ -584,47 +584,66 @@ export class PointOfSaleComponent {
     printConnect.feed(5).cut().flush();
   }
 
+  printOrderReceipt(body){
+    if (this.isKOTEnabled) {
+      this.receiptPrintFormatter.confirmedOrderObj = body
+      let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
+      counterReceiptObjs.forEach((counterReceiptObj) => {
+        this.print(counterReceiptObj)
+      })
+    }
+    if(this.printReceipt){
+      this.receiptPrintFormatter.confirmedOrderObj = body
+      let receiptObjs = this.receiptPrintFormatter.getCustomerPrintableText()
+      this.print(receiptObjs)
+    }
+    let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+      data: {
+        msg: `Order created successfully. Order No: ${body['order_no']}`,
+      },
+    });
+    dialogRef.afterClosed().subscribe((data) => {
+      this.ngOnInit();
+    });
+  }
+
   placePOSOrder() {
     this.disablePlace = true;
     let body = this.preparePlaceOrderBody();
-    this.orderService.createOrders(body).subscribe(
-      (data) => {
-        body['order_no'] = data['order_no']
-        body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
-        if (this.isKOTEnabled) {
-          this.receiptPrintFormatter.confirmedOrderObj = body
-          let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
-          counterReceiptObjs.forEach((counterReceiptObj) => {
-            this.print(counterReceiptObj)
-          })
+    if(navigator.onLine){
+      this.orderService.createOrders(body).subscribe(
+        (data) => {
+          body['order_no'] = data['order_no']
+          body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
+          localStorage.setItem('last_order_no', data['order_no'])
+          this.disablePlace = false;
+          this.printOrderReceipt(body)
+        },
+        (error) => {
+          console.log('Place order response', error);
+          let errorMsg =
+            error.status != 0
+              ? `Failed to create Order. ${error.error.error}`
+              : 'Failed to create order. No internet';
+          this.dialog.open(ErrorMsgDialogComponent, {
+            data: { msg: errorMsg },
+          });
+          this.disablePlace = false;
         }
-        if(this.printReceipt){
-          this.receiptPrintFormatter.confirmedOrderObj = body
-          let receiptObjs = this.receiptPrintFormatter.getCustomerPrintableText()
-          this.print(receiptObjs)
-        }
-        let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
-          data: {
-            msg: `Order created successfully. Order No: ${data['order_no']}`,
-          },
-        });
-        dialogRef.afterClosed().subscribe((data) => {
-          this.ngOnInit();
-        });
-        this.disablePlace = false;
-      },
-      (error) => {
-        console.log('Place order response', error);
-        let errorMsg =
-          error.status != 0
-            ? `Failed to create Order. ${error.error.error}`
-            : 'Failed to create order. No internet';
-        this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: errorMsg },
-        });
-        this.disablePlace = false;
-      }
-    );
+      );
+    }else{
+      let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
+      let lastOrderNumber = Number(localStorage.getItem('last_order_no')) || 0
+      let currentOrderNumber = lastOrderNumber + 1
+      body['order_no'] = currentOrderNumber
+      body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
+      this.printOrderReceipt(body)
+      cachedOrders.push(body)
+      localStorage.setItem('cached_orders', JSON.stringify(cachedOrders))
+      localStorage.setItem('last_order_no', String(currentOrderNumber))
+      this.disablePlace = false
+    }
+
   }
 
   placeEcomOrder() {
