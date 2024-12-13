@@ -5,8 +5,8 @@
     </div>
     <div mat-dialog-content>
         <div mat-dialog-actions class="action-container">
-            <button *ngIf="!printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="requestPrintBill()">Print bill</button>
-            <button *ngIf="!printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="applyDiscount()">Apply discount</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="requestPrintBill()">Print bill</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="applyDiscount()">Apply discount</button>
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary"  [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!((data.is_occupied && isBillPrinted) || (data.is_occupied && !hasOrderedItems))" (click)="markPaymentDone()">Payment done</button>
             <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
