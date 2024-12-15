@@ -7,6 +7,10 @@
               </div>
         </div>
         <ng-template #elseBlock>
+            <div class="toggle-section">
+                <mat-slide-toggle [ngModel]='printerRequired' color="primary" (change)="togglePrinterRequired()"></mat-slide-toggle>
+                <h4 class="text-center m-0"> {{ printerRequired? 'Print on': 'Print off'}}</h4>
+            </div>
             <div *ngIf="mobileOrderingEnabled" class="nav-center-section">
                 <div class="toggle-section">
                     <mat-slide-toggle [ngModel]='restaurantStatus' color="primary" (change)="toggleRestOpen()"></mat-slide-toggle>
@@ -18,7 +22,10 @@
                 </div>
             </div>
         </ng-template>
-        <button *ngIf="isPOSEnabled" mat-raised-button (click)="navigateToPOS()" color="primary">POS</button>
+        <button *ngIf="isPOSEnabled" mat-raised-button (click)="navigateToPOS()" color="primary">
+            POS
+        </button>
+
         <mat-form-field >
             <mat-label>Search item</mat-label>
             <input matInput placeholder="search item" [(ngModel)]="searchText" (keyup)="filterItems()">
