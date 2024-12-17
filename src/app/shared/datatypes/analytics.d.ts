@@ -5,6 +5,7 @@ export type getMultilocationSalesAnalytics = {
 }
 
 export type multilocationSalesAnalytics = {
+    [x: string]: any
     upi_amount: number,
     card_amount: number,
     cash_amount: number,
@@ -14,5 +15,6 @@ export type multilocationSalesAnalytics = {
     total_amount: number
     total_making_price: number,
     total_amount_without_tax: number,
-    total_gst_amount: number
+    total_gst_amount: number,
+    daily_average: number
 }

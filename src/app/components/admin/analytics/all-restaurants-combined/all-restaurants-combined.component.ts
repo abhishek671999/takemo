@@ -100,6 +100,10 @@ export class AllRestaurantsCombinedComponent {
     return this.salesDataSource.data.map(t => t.total_amount).reduce((acc, value) => acc + value, 0);
   }
 
+  getDailyAverage() {
+    return this.salesDataSource.data.map(t => t.daily_average).reduce((acc, value) => acc + value, 0);
+  }
+
   getTotalUPIAmount() {
     return this.salesDataSource.data.map(t => t.upi_amount).reduce((acc, value) => acc + value, 0);
   }
