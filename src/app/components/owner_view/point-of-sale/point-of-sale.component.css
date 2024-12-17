@@ -60,10 +60,11 @@ th{
 }
 
 .item-bar{
+    position: relative;
     margin: 0.2em;
     border: 1px solid ;
     width: 46%;
-    overflow: auto;
+    
     height: 90%;
 }
 
@@ -72,6 +73,11 @@ th{
     display: flex;
     flex-wrap: wrap;
     gap: 1em;
+}
+
+.items-container{
+    height: 100%;
+    overflow: auto;
 }
 
 .item-card{
@@ -83,6 +89,12 @@ th{
     overflow: auto;
     display: flex;
     justify-content: flex-start;
+}
+
+.more-options-container{
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 
