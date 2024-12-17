@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
-import { Observable,Subscription, interval  } from 'rxjs';
-import { Dialog } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-current-orders',
@@ -14,10 +13,13 @@ import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details
 export class CurrentOrdersComponent {
 
   public currentOrders = []
-  displayedColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'More details'];
+  displayedColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount',  'order_after' ,'More details',];
   public currentOrdersDataSource = new MatTableDataSource(this.currentOrders)
 
-  constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
+  constructor(private _ordersService: OrdersService, 
+    private _dialog: MatDialog,
+    private dateUtils: dateUtils
+  ){}
 
   refreshInterval = 5 // seconds
 
@@ -47,6 +49,7 @@ export class CurrentOrdersComponent {
   }
 
   unparseCurrentOrder(order){
+    
     let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
     let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
     return { 
@@ -55,7 +58,7 @@ export class CurrentOrdersComponent {
           order.line_items.map(this.addOrderDetails).map(items => items.details).join('<br>') : 
           order.line_items.map(this.addOrderDetails)[0].details,
       amount: order.total_amount,
-      OrderedAt: ordered_time,
+      OrderedAt: order.ordered_time,
       OrderStatus:  order.order_status,//order.line_items.length != 1?
         // order.line_items.map(this.addOrderStatus).map(items => items.status).join('<br>') : 
         // order.line_items.map(this.addOrderStatus)[0].status,
@@ -64,8 +67,10 @@ export class CurrentOrdersComponent {
       payment_details: order.payment_details,
       total_amount: order.total_amount.toFixed(2),
       total_platform_fee: order.total_platform_fee.toFixed(2),
-      total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
-      order_address: order.address
+      total_restaurant_amount: Number(order.total_restaurant_amount.toFixed(2)),
+      tax_amount: Number(order.tax_amount.toFixed(2)),
+      order_address: order.address,
+      order_after: order.print_kot_at,
     }
   }
 
@@ -92,9 +97,34 @@ export class CurrentOrdersComponent {
   }
 
   displayMoreDetails(order) {
-    console.log(order);
+    console.log('order', order);
     let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
       data: order,
     });
   }
+
+  modifyOrderAfter(order, orderAfter){
+    let body = {
+      "order_id": order.order_id,
+      "print_time_delta": orderAfter
+    }
+    console.log(body)
+    this._ordersService.modifyOrderAfter(body).subscribe(
+      data => {
+        console.log('This is data: ', data)
+        this.getMyOrders()
+      },
+      error => {
+        console.log('this is error: ', error)
+      }
+    )
+  }
+
+    allowOrderAfter(order){
+      let orderAfter = this.dateUtils.parseDateString(order.order_after)
+      let now = new Date()
+      return orderAfter > now
+    }
+
+
 }

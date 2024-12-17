@@ -21,7 +21,10 @@ export class OrdersService {
   private getCurrentOrdersCardsEndpoint = 'order/get_current_orders_cards/';
   private updateOrderStatusEndpoint = 'order/update_single_item_status/';
   private updateEcomOrderStatusEndpoint = 'order/update_ecom_order_status/';
+  
   private cancelOrderEndpoint = 'order/cancel_order/';
+  private deleteOrderEndpoint = 'order/delete_order/';
+
   private myCancelledOrdersEndpoint = 'order/get_my_canceled_orders/';
   private cancellledRestaurantOrdersEndpoint =
     'order/get_restaurant_canceled_orders/';
@@ -32,6 +35,7 @@ export class OrdersService {
   private mobileOrdersForReceiptEndpoint = host + 'order/get_mobile_orders_for_receipt/'
   private markOrderAsPrintedEndpoint = host + 'order/mark_orders_as_printed/'
   private getTableOrdersByOrderSessionEndpoint = host + 'order/get_table_orders_group_by_orders/'
+  private modifyOrderAfterEndpoint = host + 'order/update_order_print_time/'
 
   getTableOrdersByOrderSession(httpParmas: HttpParams){
     return this._http.get(this.getTableOrdersByOrderSessionEndpoint, {params: httpParmas})
@@ -115,6 +119,10 @@ export class OrdersService {
     return this._http.post(host + this.cancelOrderEndpoint, body);
   }
 
+  deleteOrder(body) {
+    return this._http.delete(host + this.deleteOrderEndpoint, {body: body});
+  }
+
   getCancelledOrders(body) {
     return this._http.post(host + this.myCancelledOrdersEndpoint, body);
   }
@@ -136,5 +144,9 @@ export class OrdersService {
 
   deleteLineItem(body) {
     return this._http.post(host + this.deleteLineItemEndpoint, body)
+  }
+
+  modifyOrderAfter(body) {
+    return this._http.post(this.modifyOrderAfterEndpoint, body)
   }
 }

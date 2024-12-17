@@ -5,8 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { SuccessMsgDialogComponent } from '../../success-msg-dialog/success-msg-dialog.component';
-import { ErrorMsgDialogComponent } from '../../error-msg-dialog/error-msg-dialog.component';
-import { ConfirmationDialogComponent } from 'src/app/components/user_screen/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmActionDialogComponent } from '../../confirm-action-dialog/confirm-action-dialog.component';
 
 @Component({

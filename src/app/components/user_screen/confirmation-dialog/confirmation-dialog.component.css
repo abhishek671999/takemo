@@ -8,8 +8,38 @@
 .upi-transaction-form{
     display: flex;
     flex-direction: column;
-
 }
+
+.subtotal-section{
+    display: flex;
+    justify-content: space-between;
+}
+
+.subtotal-section p{
+    font-size: small;
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+}
+
+.total-section {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+}
+
+.total-section h3{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.small-button-text{
+    line-height: 1em;
+}
+
+
 .dialog-title {
     display: flex;
     justify-content: space-between;

@@ -18,6 +18,7 @@ import { HttpParams } from '@angular/common/http';
 import { meAPIUtility, sessionWrapper } from 'src/app/shared/site-variable';
 import { cartConnectService } from 'src/app/shared/services/connect-components/connect-components.service';
 import { ParcelDialogComponent } from '../parcel-dialog/parcel-dialog.component';
+import { PrepareLaterDialogComponent } from '../prepare-later-dialog/prepare-later-dialog.component';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -34,7 +35,7 @@ export class ConfirmationDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     private __ordersService: OrdersService,
-    private dialog: MatDialog,
+    private matdialog: MatDialog,
     private _router: Router,
     private _snackBar: MatSnackBar,
     private meService: MeService,
@@ -46,9 +47,9 @@ export class ConfirmationDialogComponent {
   ) {
     console.log(data)
   }
-  public restaurantId;
+
   public isPayment;
-  public platformFee: undefined | {};
+  public platformFee = {};
   public totalAmount;
   public roundOffAmount;
   public platformFeeAmount;
@@ -60,7 +61,8 @@ export class ConfirmationDialogComponent {
   public showQRcode = false;
   public otpValidated = false;
   public payOnDelivery = false;
-  public isApiLoaded = false
+  public isApiLoaded = false;
+  public restaurantId = Number(this.__sessionWrapper.getItem('restaurant_id'));
 
   // public upiId = 'pascitopcprivatelimited.ibz@icici';
   public upiId = '8296577900@ibl';
@@ -145,6 +147,8 @@ export class ConfirmationDialogComponent {
   }
 
   preparePlaceOrderBody(wallet = null) {
+    debugger
+    this.data.summary.itemList = this.data.summary.itemList.filter(item => item.quantity > 0)
     this.data.summary.itemList.forEach(item => {
       item.item_id = item.id
     })
@@ -159,12 +163,9 @@ export class ConfirmationDialogComponent {
       body['transaction_id'] = this.transactionForm.value.transactionId;
       body['address'] = this.transactionForm.value.addresss;
     }
-    if (this.data.summary.table_id) {
-      body['table_id'] = this.data.summary.table_id
-    }
-    if (this.payOnDelivery) {
-      body['payment_mode'] = "pay_on_delivery"
-    }
+    if (this.data.summary.table_id) body['table_id'] = this.data.summary.table_id
+    if (this.payOnDelivery) body['payment_mode'] = "pay_on_delivery"
+    if(this.data.order_later) body['order_later'] = true
     return body;
   }
 
@@ -177,13 +178,13 @@ export class ConfirmationDialogComponent {
           sessionStorage.setItem('transaction_id', data['transaction_id']);
           sessionStorage.setItem('order_no', data['order_no']);
           this.clearCart()
-          this.dialog.open(SuccessMsgDialogComponent, {
+          this.matdialog.open(SuccessMsgDialogComponent, {
             data: { msg: 'Your Order number is: ' + data['order_no'] },
           });
           this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary});
         },
         (error) => {
-          this.dialog.open(ErrorMsgDialogComponent, {
+          this.matdialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
           this.confirmOrderButton._elementRef.nativeElement.disabled = false
@@ -208,7 +209,7 @@ export class ConfirmationDialogComponent {
         window.location.href = data['payment_url'];
       },
       (error) => {
-        this.dialog.open(ErrorMsgDialogComponent, {
+        this.matdialog.open(ErrorMsgDialogComponent, {
           data: { msg: error.error.description },
         });
         if(this.proceedToPayButton) this.proceedToPayButton._elementRef.nativeElement.disabled = false
@@ -224,7 +225,7 @@ export class ConfirmationDialogComponent {
       this.__ordersService.createEcomOrders(body).subscribe(
         (data) => {
           this.clearCart()
-          let successDialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+          let successDialogRef = this.matdialog.open(SuccessMsgDialogComponent, {
             data: { msg: 'Your Order id is: ' + data['order_no'] },
           });
           successDialogRef.afterClosed().subscribe((data) => {
@@ -233,7 +234,7 @@ export class ConfirmationDialogComponent {
           });
         },
         (error) => {
-          this.dialog.open(ErrorMsgDialogComponent, {
+          this.matdialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
           if(this.payViaVPAButton) this.payViaVPAButton._elementRef.nativeElement.disabled = false
@@ -250,13 +251,13 @@ export class ConfirmationDialogComponent {
           sessionStorage.setItem('transaction_id', data['transaction_id']);
           sessionStorage.setItem('order_no', data['order_no']);
           this.clearCart()
-          this.dialog.open(SuccessMsgDialogComponent, {
+          this.matdialog.open(SuccessMsgDialogComponent, {
             data: { msg: 'Your Order number is: ' + data['order_no'] },
           });
           this.dialogRef.close({ mode: 'wallet', orderlist: this.data.summary });
         },
         (error) => {
-          this.dialog.open(ErrorMsgDialogComponent, {
+          this.matdialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
           if(this.payViaWalletButton) this.payViaWalletButton._elementRef.nativeElement.disabled = false
@@ -269,9 +270,8 @@ export class ConfirmationDialogComponent {
   }
 
   addItem(subItem) {
-    debugger
     if(subItem.parcel_available) {
-      let dialogRef = this.dialog.open(ParcelDialogComponent, {
+      let dialogRef = this.matdialog.open(ParcelDialogComponent, {
         data: {
           item: subItem, orderList: this.data.summary
         }
@@ -289,7 +289,7 @@ export class ConfirmationDialogComponent {
   }
   subItem(subItem) {
     if(subItem.parcel_available) {
-      let dialogRef = this.dialog.open(ParcelDialogComponent, {
+      let dialogRef = this.matdialog.open(ParcelDialogComponent, {
         data: {
           item: subItem, orderList: this.data.summary
         }
@@ -411,17 +411,28 @@ export class ConfirmationDialogComponent {
       this.__ordersService.createOrders(body).subscribe(
         data => {
           this.clearCart();
-          this.dialog.open(SuccessMsgDialogComponent, {
+          this.matdialog.open(SuccessMsgDialogComponent, {
             data: { msg: 'Your Order number is: ' + data['order_no'] },
           });
           this.dialogRef.close({orderlist: this.data.summary})
         },
         error => {
-          this.dialog.open(ErrorMsgDialogComponent, {
+          this.matdialog.open(ErrorMsgDialogComponent, {
             data: { msg: error.error.description },
           });
         }
       )
     }
+
+    prepareLaterDialog(){
+      let dialogRef = this.matdialog.open(PrepareLaterDialogComponent, {data: {summary: this.data.summary}})
+      dialogRef.afterClosed().subscribe(
+        (data: any) => {
+          if(data){
+            this.data['order_later'] = data?.update
+            this.__cartService.setCartItems(this.data.summary)
+          }
+        })
+      }
 
 }

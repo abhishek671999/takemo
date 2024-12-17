@@ -248,6 +248,13 @@ export class OrdersHistoryComponent {
     let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
       data: order,
     });
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if(data?.refresh){
+          this.ngOnInit()
+        }
+      }
+    )
   }
 
 

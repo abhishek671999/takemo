@@ -34,4 +34,16 @@ export class dateUtils{
         let timeString = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })
          return timeString
     }
+
+    parseDateString(dateString: string): Date {
+        const [datePart, timePart, period] = dateString.split(/[\s]+/);
+        const [day, month, year] = datePart.split('-').map(Number);
+        let [hours, minutes, seconds] = timePart.split(':').map(Number);
+        if (period === 'PM' && hours < 12) {
+          hours += 12;
+        } else if (period === 'AM' && hours === 12) {
+          hours = 0;
+        }
+        return new Date(year, month - 1, day, hours, minutes, seconds);
+    }
 }
