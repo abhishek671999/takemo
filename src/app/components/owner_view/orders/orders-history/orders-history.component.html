@@ -72,7 +72,7 @@
 
                 <ng-container matColumnDef='total_discount'>
                     <th mat-header-cell mat-sort-header *matHeaderCellDef>Total Discount</th>
-                    <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_discount}}</td>
+                    <td mat-cell *matCellDef="let element">₹&nbsp;{{element.total_discount.toFixed(2)}}</td>
                 </ng-container>
                 
                 <ng-container matColumnDef='amount_received'>

@@ -86,7 +86,6 @@ export class TableOrdersDialogComponent {
         this.discountAmount = data['orders']['discount_amount'] || 0
         this.calculateAmountWithoutTax()
         this.calculateAmountWithTax()
-        this.discountAmount = this.subtotalAmountWithGst - this.data.standing_amount
       },
       (error) => {
         this.__matDialog.open(ErrorMsgDialogComponent, {
