@@ -17,7 +17,8 @@ export class AllRestaurantsCombinedComponent {
   constructor(
     private analyticsService: AnalyticsService,
     private dateUtils: dateUtils
-  ){}
+  ){
+  }
 
   @ViewChild(MatSort)
   sort: MatSort = new MatSort;
@@ -43,18 +44,27 @@ export class AllRestaurantsCombinedComponent {
   public salesDataTableColumns: string[] = ['sl_no', 'restaurant_name', 'total_amount', 'daily_average', 'total_upi', 'total_cash', 'total_credit', 'total_card', 'total_amount_without_tax', 'total_gst_amount', 'total_quantity']
 
   public dataLoadSpinner: boolean = false
-  ngOnInit(){
+
+  ngOnInit(): void {
     this.fetchAnalytics()
-    document.addEventListener('visibilitychange', (event) => {
-      console.log(event)
-      if(!document.hidden) this.fetchAnalytics()
-    })
+    document.addEventListener('visibilitychange', this.visibilityChangeHandler);
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
   }
 
   ngAfterViewInit(){
     this.salesDataSource.sort = this.sort
     this.salesDataSource.paginator = this.paginator;
   }
+
+  private visibilityChangeHandler = (event: Event) => {
+    console.log(event);
+    if (!document.hidden) {
+      this.fetchAnalytics();
+    }
+  };
 
   fetchAnalytics(){
     this.dataLoadSpinner = true
@@ -85,10 +95,6 @@ export class AllRestaurantsCombinedComponent {
   }
 
   announceSortChange(sortState: Sort) {
-    // This example uses English messages. If your application supports
-    // multiple language, you would internationalize these strings.
-    // Furthermore, you can customize the message to add additional
-    // details about the values being sorted.
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {

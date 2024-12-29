@@ -30,6 +30,7 @@ import { DeleteConfirmationDialogComponent } from '../owner_view/dialogbox/delet
 import { AddCategoryDialogComponent } from '../owner_view/dialogbox/add-category-dialog/add-category-dialog.component';
 import { AddItemDialogComponent } from '../owner_view/dialogbox/add-item-dialog/add-item-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
 import {
   MAT_RADIO_DEFAULT_OPTIONS,
   MatRadioModule,
@@ -55,6 +56,7 @@ import { ProfileComponent } from '../shared/profile/profile.component';
 import {MatBadgeModule} from '@angular/material/badge';
 import { UploadFormComponent } from "../shared/upload-form/upload-form.component";
 import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
+import { PrepareLaterDialogComponent } from './prepare-later-dialog/prepare-later-dialog.component';
 
 
 @NgModule({
@@ -80,7 +82,8 @@ import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
         PostRechargePaymentComponent,
         ClickOutsideCartDirective,
         ProfileComponent,
-        ParcelDialogComponent
+        ParcelDialogComponent,
+        PrepareLaterDialogComponent
     ],
     exports: [],
     imports: [
@@ -106,8 +109,9 @@ import { ParcelDialogComponent } from './parcel-dialog/parcel-dialog.component';
         MatSelectModule,
         MatSnackBarModule,
         MatBadgeModule,
-      UploadFormComponent,
-      MatProgressSpinnerModule,
+        UploadFormComponent,
+        MatProgressSpinnerModule,
+        MatChipsModule
     ]
 })
 export class UserModule {}

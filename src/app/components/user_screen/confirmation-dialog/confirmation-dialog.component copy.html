@@ -5,6 +5,7 @@
       <mat-icon (click)="onEditButtonClick()">close</mat-icon>
     </button>
   </div>
+
   <div mat-dialog-content class="table-container">
     <table class="table" style="width: 100%">
       <thead class="text-center">
@@ -43,33 +44,25 @@
       </tbody>
     </table>
 
-    <div class="subtotal-section">
-      <div>
-        <p>Subtotal amount:&nbsp;&nbsp;₹ {{ data.summary.amount }}</p>
-        <p *ngIf="restaurantParcel">Parcel charge: ₹ {{ data.summary.parcel_amount }} <br>
-          <small class="font-weight-bold text-warning"
-          >Parcel charges Rs.5 per item</small
-        ></p>
-      </div>
-
-      <div *ngIf="data.summary.itemList.length > 0 && (![1,2].includes(restaurantId))" class="more-order-actions">
-        <button mat-raised-button (click)="prepareLaterDialog()">
-          <div class="small-button-text">
-            <small>Order now</small><br>
-            <small>Prepare later</small> 
-          </div>
-        </button>
-      </div>
+    <div>
+      <p>Amount:&nbsp;&nbsp;₹ {{ data.summary.amount }}</p><span *ngIf="restaurantParcel">Parcel charge: ₹ {{ data.summary.parcel_amount }}</span>
     </div>
-
-
-
-    <div class="total-section">
-      <h3>Total Amount:&nbsp; &nbsp;₹ {{ getGrandTotalAmount() }} <br></h3>
-      <small *ngIf="isPayment && paymentMethod == 'payment_gateway'" class="font-weight-bold text-warning">Amount inclusive of GST (5%)</small>
-    </div>
-
-    <div *ngIf="isPayment == true">
+    
+    <small *ngIf="restaurantParcel" class="font-weight-bold text-warning"
+      >Parcel charges Rs.5 per item</small
+    >
+    <br />
+    <small
+      *ngIf="isPayment && paymentMethod == 'payment_gateway'"
+      class="font-weight-bold text-warning"
+      >Amount inclusive of GST (5%)</small
+    >
+    <div *ngIf="isPayment == true; else tableBlock">
+      
+      <div *ngIf="!paybyWalletCheck; else elseBlock">
+        <div class="text-center amount">
+          Total Amount:&nbsp; &nbsp;₹ {{ getGrandTotalAmount() }}
+        </div>
         <div *ngIf="paymentMethod == 'pay_to_VPA_and_verify'">
           <div style="width: 100%; display: flex; justify-content: space-between; gap: 1em">
             <div>
@@ -99,17 +92,27 @@
               <input matInput placeholder="" formControlName="addresss" />
             </mat-form-field>
           </form>
-        </div>
+        </div>    
 
-        <ng-container *ngIf="otpRequired">
-          <form [formGroup]="otpForm" class="otp-form">
-            <mat-form-field style="width: 100%;">
-              <mat-label><small>Enter OTP recieved from waiter</small></mat-label>
-              <input style="width: 100%;" matInput placeholder="" formControlName="otp"/>
-            </mat-form-field>
-          </form>
-        </ng-container>
+      </div>
+      <ng-template #elseBlock>
+        <p
+          [ngClass]="isWalletPayment ? 'text-primary' : 'text-warning'"
+          [innerHTML]="this.walletPayMessage"
+        ></p>
+      </ng-template>
     </div>
+    
+    <ng-template #tableBlock>
+      <ng-container *ngIf="otpRequired"; else payOnDelivery>
+        <form [formGroup]="otpForm" class="otp-form">
+          <mat-form-field style="width: 100%;">
+            <mat-label><small>Enter OTP recieved from waiter</small></mat-label>
+            <input style="width: 100%;" matInput placeholder="" formControlName="otp"/>
+          </mat-form-field>
+        </form>
+      </ng-container>
+    </ng-template>
   </div>
 
   <div mat-dialog-actions class="button-container">
@@ -120,39 +123,82 @@
       <button mat-raised-button *ngIf="!otpValidated" (click)="validateOTP()" color="primary">Verify OTP</button>
       <button mat-raised-button *ngIf="otpValidated" (click)="placeTableOrder()" color="primary">Place Order</button>
     </ng-container>
-
     <ng-template #walletPay>
       <ng-container *ngIf="!isPayment &&  isApiLoaded; else paymentGateway">
-        <button #confirmOrderButton mat-raised-button (click)="onConfirmButtonClick()" color="primary">Confirm Order</button>
-      </ng-container>
-    </ng-template>
-
-    <ng-template #paymentGateway>
-      <ng-container *ngIf="isPayment && !paybyWalletCheck && paymentMethod == 'payment_gateway'; else payviaVPA">
-        <button #proceedToPayButton mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay
+        <button
+          #confirmOrderButton
+          mat-raised-button
+          (click)="onConfirmButtonClick()"
+          color="primary"
+        >
+          Confirm Order
         </button>
       </ng-container>
     </ng-template>
 
+    <ng-template #paymentGateway>
+      <ng-container
+        *ngIf="
+          isPayment && !paybyWalletCheck && paymentMethod == 'payment_gateway';
+          else payviaVPA
+        "
+        ><button
+        #proceedToPayButton
+          mat-raised-button
+          (click)="onProceedPaymentClick()"
+          color="primary"
+        >
+          Proceed to Pay
+        </button></ng-container
+      >
+    </ng-template>
     <ng-template #payviaVPA>
-      <div *ngIf=" isPayment && !paybyWalletCheck && paymentMethod == 'pay_to_VPA_and_verify'; else walletPayment" class="upi-transaction-form" >
-        <button #payViaVPAButton mat-raised-button (click)="onProceedPayViaVPAClick()" color="primary" [disabled]="!transactionForm.valid"        >
+      <div
+        *ngIf="
+          isPayment &&
+            !paybyWalletCheck &&
+            paymentMethod == 'pay_to_VPA_and_verify';
+          else walletPayment
+        "
+        class="upi-transaction-form"
+        >
+        <button
+        #payViaVPAButton
+          mat-raised-button
+          (click)="onProceedPayViaVPAClick()"
+          color="primary"
+          [disabled]="!transactionForm.valid"
+        >
           Place Order VPA
         </button>
       </div>
     </ng-template>
 
     <ng-template #paymentGateway>
-      <ng-container *ngIf="isPayment == true && !paybyWalletCheck; else walletPayment">
-        <button #proceedToPay mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay</button>
-        </ng-container
+      <ng-container
+        *ngIf="isPayment == true && !paybyWalletCheck; else walletPayment"
+        ><button
+        #proceedToPay
+          mat-raised-button
+          (click)="onProceedPaymentClick()"
+          color="primary"
+        >
+          Proceed to Pay
+        </button></ng-container
       >
     </ng-template>
-
     <ng-template #walletPayment>
-      <ng-container *ngIf="isPayment && isWalletPayment && paybyWalletCheck; else elseBlock">
-        <button #payViaWalletButton mat-raised-button (click)="onProceedwithWalletClick()" color="primary"> Proceed with wallet</button>
-      </ng-container>
+      <ng-container
+        *ngIf="isPayment && isWalletPayment && paybyWalletCheck; else elseBlock"
+        ><button
+        #payViaWalletButton
+          mat-raised-button
+          (click)="onProceedwithWalletClick()"
+          color="primary"
+        >
+          Proceed with wallet
+        </button></ng-container
+      >
     </ng-template>
 
     <ng-template #elseBlock>
