@@ -27,11 +27,8 @@
                 <mat-label >Price</mat-label>
                 <input matInput type="number" placeholder="price" formControlName="price">
               </mat-form-field>
-              <div *ngIf="!taxInclusive">
-                <mat-radio-group formControlName="tax_inclusive">
-                  <mat-radio-button value=true>Tax Incl</mat-radio-button>
-                  <mat-radio-button value=false>Tax Excl</mat-radio-button>
-                </mat-radio-group>
+              <div>
+                <mat-checkbox  formControlName="tax_inclusive" >Collect tax on this item</mat-checkbox>
               </div>
             </div>
           <div  *ngIf="!showSubUnitSection() && isTypeEcom()">

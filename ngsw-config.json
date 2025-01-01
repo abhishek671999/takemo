@@ -35,16 +35,16 @@
     {
       "name": "api-cache",
       "urls": [
-        "https://takemotest.in/api/v1/inventory/get_admin_menu/",
-        "https://takemotest.in/api/v1/inventory/get_pos_menu/",
-        "https://takemotest.in/api/v1/inventory/get_restaurant_counters/",
-        "https://takemotest.in/api/v1/users/me/"
+        "https://takemo.in/api/v1/inventory/get_admin_menu/",
+        "https://takemo.in/api/v1/inventory/get_pos_menu/",
+        "https://takemo.in/api/v1/inventory/get_restaurant_counters/",
+        "https://takemo.in/api/v1/users/me/"
       ],
       "cacheConfig": {
+        "strategy": "freshness",
         "maxSize": 100,             
         "maxAge": "1d",             
-        "timeout": "10s",           
-        "strategy": "performance"   
+        "timeout": "10s"
       }
     }
   ]

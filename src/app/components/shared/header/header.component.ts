@@ -34,6 +34,7 @@ export class HeaderComponent {
       this.router.navigate(['/owner/point-of-sale'])
     })
     window.addEventListener("online", event => {
+
       this.createOfflineOrders()
       this.isOnline = true
     })
@@ -41,6 +42,7 @@ export class HeaderComponent {
 
   public isOnline = navigator.onLine
   public isProd = environment.production
+  private creatingOrderFlag = false
 
   public AvailableDropdownList = {
     'profile': {
@@ -458,7 +460,8 @@ export class HeaderComponent {
 
   createOfflineOrders(){
     let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
-    if(cachedOrders.length > 0){
+    if(cachedOrders.length > 0 && !this.creatingOrderFlag){
+      this.creatingOrderFlag = true
       let body = {
         restaurant_id: this.restaurantId,
         offline_orders: cachedOrders
@@ -467,9 +470,11 @@ export class HeaderComponent {
         (response: any) => {
           localStorage.setItem('cached_orders', JSON.stringify([]))
           localStorage.setItem('last_order_no', response['order_no'] || localStorage.getItem('last_order_no'))        
+          this.creatingOrderFlag = false
         },
         (error: any) => {
           this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to create offline orders'}})
+          this.creatingOrderFlag = false
         }
       )
     }
