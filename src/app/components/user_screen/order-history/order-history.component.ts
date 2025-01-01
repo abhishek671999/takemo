@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { OrderMoreDetailsDialogComponent } from '../../shared/order-more-details-dialog/order-more-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-order-history',
@@ -21,11 +22,14 @@ export class OrderHistoryComponent {
   ]
   selectedTimeFrame: string = this.timeFrames[0].actualValue;
 
-  historyColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'Details']
+  historyColumns: string[] = ['Order No', 'Order details', 'OrderStatus', 'Amount', 'order_after', 'Details']
   public orderHistory = []
   public orderHistoryDataSource = new MatTableDataSource(this.orderHistory)
   
-  constructor(private _ordersService: OrdersService, private _dialog: MatDialog){}
+  constructor(private _ordersService: OrdersService,
+    private _dialog: MatDialog,
+    private dateUtils: dateUtils
+  ){}
   
   ngOnInit(){
     this.getMyOrders()
@@ -57,12 +61,7 @@ export class OrderHistoryComponent {
     this.orderHistoryDataSource.data = this.orderHistory
     let body = {
       // "rule_id": 1,
-      "_c": "rule_id is optional",
       "time_frame": this.selectedTimeFrame,
-      "_c1": "possible options for time_frame are today, this_week, this_month",
-      "start_date": "",
-      "end_date": "",
-      "_c3": "if the above both are given then time_frame is not needed"
     }
     this._ordersService.getMyOrders(body).subscribe(
       data => {
@@ -87,18 +86,14 @@ export class OrderHistoryComponent {
   }
 
   unparsePastOrders(order){
-    let done_time = order.done_time ? new Date(order.done_time).toLocaleString() : null
-    let ordered_time = order.ordered_time ? new Date(order.ordered_time).toLocaleString() : null
-    console.log('Length of line times: ', order.line_items.length)
-    
     return { 
       orderno : order.order_no,
       order_detail: order.line_items.length != 1?
           order.line_items.map(this.addOrderDetails).map(items => items.details).join('<br>'): 
           order.line_items.map(this.addOrderDetails)[0].details, //To-Improve
       amount: order.total_amount,
-      OrderedAt: ordered_time,
-      DelieveredAt: done_time,
+      OrderedAt: order.ordered_time,
+      DelieveredAt: order.done_time ,
       Location: order.restaurant_name,
       order_id: order.order_id,
       payment_details: order.payment_details,
@@ -106,7 +101,8 @@ export class OrderHistoryComponent {
       total_platform_fee: order.total_platform_fee.toFixed(2),
       total_restaurant_amount: order.total_restaurant_amount.toFixed(2),
       OrderStatus:  order.order_status,
-      tax_amount: order.tax_amount
+      tax_amount: order.tax_amount.toFixed(2),
+      order_after: order.print_kot_at,
     }
   }
 
@@ -121,5 +117,29 @@ export class OrderHistoryComponent {
     let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
       data: order,
     });
+  }
+
+  
+  modifyOrderAfter(order, orderAfter){
+    let body = {
+      "order_id": order.order_id,
+      "print_time_delta": orderAfter
+    }
+    console.log(body)
+    this._ordersService.modifyOrderAfter(body).subscribe(
+      data => {
+        console.log('This is data: ', data)
+        this.getMyOrders()
+      },
+      error => {
+        console.log('this is error: ', error)
+      }
+    )
+  }
+
+  allowOrderAfter(order){
+    let orderAfter = this.dateUtils.parseDateString(order.order_after)
+    let now = new Date()
+    return orderAfter > now
   }
 }

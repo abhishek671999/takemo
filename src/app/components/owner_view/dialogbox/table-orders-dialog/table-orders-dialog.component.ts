@@ -12,12 +12,13 @@ import { SuccessMsgDialogComponent } from 'src/app/components/shared/success-msg
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { ConfirmActionDialogComponent } from 'src/app/components/shared/confirm-action-dialog/confirm-action-dialog.component';
 import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { PrintConnectorService } from 'src/app/shared/services/printer/print-connector.service';
 import { InputPasswordDialogComponent } from 'src/app/components/shared/input-password-dialog/input-password-dialog.component';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MoveTablesComponent } from '../move-tables/move-tables.component';
+import { DiscountComponent } from 'src/app/components/shared/dialogbox/discount/discount.component';
 
 @Component({
   selector: 'app-table-orders-dialog',
@@ -51,8 +52,13 @@ export class TableOrdersDialogComponent {
   isEditEnabled: boolean = false;
   orderNo: number;
   totalAmountWithoutGst: number = 0
+  subtotalAmountWithoutGst: number = 0
   totalAmountWithGst: number = 0
+  subtotalAmountWithGst: number = 0
   tableOrderId: number;
+  isDiscount = false
+  discountUnit: 'percentage' | 'value' = 'percentage'
+  discountAmount: number = 0
 
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
@@ -77,6 +83,7 @@ export class TableOrdersDialogComponent {
         this.isBillPrinted = data['orders']['bill_printed']
         this.orderNo = data['orders']['table_order_no']
         this.tableOrderId = data['orders']['table_order_id']
+        this.discountAmount = data['orders']['discount_amount'] || 0
         this.calculateAmountWithoutTax()
         this.calculateAmountWithTax()
       },
@@ -187,12 +194,24 @@ export class TableOrdersDialogComponent {
           if(data?.validated){
             let body = {
               "table_id": this.data.table_id,
+              "discount_amount": Number(this.discountAmount),
             }
-            this.__tableService.markBillPrinted(body).subscribe(
+            this.__tableService.markBillPrinted(body).pipe(
+              (
+                switchMap((data: any) => {
+                  this.orderNo = data['bill_no']
+                  return this.__orderService.getTableOrders(body)
+                })),
+            ).subscribe(
               (data: any) => {
-                this.orderNo = data['bill_no']
+                this.orders = data['orders']['item_details'];
+                this.hasOrderedItems = this.orders.length > 0;
+                this.totalAmount = data['orders']['total_amount'];
+                this.isBillPrinted = data['orders']['bill_printed']
+                this.tableOrderId = data['orders']['table_order_id']
+                this.calculateAmountWithoutTax()
+                this.calculateAmountWithTax()
                 this.printBill()
-                this.dialogRef.close({refresh: true});
               },
               (error: any) => {
                 this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
@@ -204,12 +223,24 @@ export class TableOrdersDialogComponent {
       }else{
         let body = {
           "table_id": this.data.table_id,
+          "discount_amount": Number(this.discountAmount)
         }
-        this.__tableService.markBillPrinted(body).subscribe(
+        this.__tableService.markBillPrinted(body).pipe(
+          (
+            switchMap((data: any) => {
+              this.orderNo = data['bill_no']
+              return this.__orderService.getTableOrders(body)
+            })),
+        ).subscribe(
           (data: any) => {
-            this.orderNo = data['bill_no']
+            this.orders = data['orders']['item_details'];
+            this.hasOrderedItems = this.orders.length > 0;
+            this.totalAmount = data['orders']['total_amount'];
+            this.isBillPrinted = data['orders']['bill_printed']
+            this.tableOrderId = data['orders']['table_order_id']
+            this.calculateAmountWithoutTax()
+            this.calculateAmountWithTax()
             this.printBill()
-            this.dialogRef.close({refresh: true});
           },
           (error: any) => {
             this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
@@ -218,18 +249,119 @@ export class TableOrdersDialogComponent {
       }
     }
 
+    applyDiscount(){
+      if(this.isBillPrinted){
+        this.verifyPassword().pipe(
+          switchMap(
+            (data: any) => {
+              if(data?.validated){
+                return this.inputDiscount()
+              }else{
+                throw('Failed to validate')
+              }
+            }
+          ),
+          switchMap((data: any) => {
+              if(data?.discount){
+                let body = {
+                  "table_id": this.data.table_id,
+                  discount_amount: Number(data.discount)
+                }
+              return this.__tableService.markBillPrinted(body)
+              }else{
+                throw('No discount added')
+              }}),
+          switchMap((data: any) => {
+            let body = {
+              "table_id": this.data.table_id,
+            }
+            this.orderNo = data['bill_no']
+            return this.__orderService.getTableOrders(body)
+          })
+        ).subscribe(
+          (data: any) => {
+            this.orders = data['orders']['item_details'];
+            this.hasOrderedItems = this.orders.length > 0;
+            this.totalAmount = data['orders']['total_amount'];
+            this.isBillPrinted = data['orders']['bill_printed']
+            this.tableOrderId = data['orders']['table_order_id']
+            this.calculateAmountWithoutTax()
+            this.calculateAmountWithTax()
+            this.printBill()
+          },
+          (error) => {
+            console.log('Error', error)
+          }
+        )
+        }else{
+          this.inputDiscount().pipe(
+            switchMap((data: any) => {
+              console.log(data)
+              if(data?.discount){
+                let body = {
+                  "table_id": this.data.table_id,
+                  discount_amount: Number(data.discount)
+                }
+                return this.__tableService.markBillPrinted(body)
+              }else{
+                throw('No discount added')
+              }
+            }),
+            switchMap((data: any) => {
+              let body = {
+                "table_id": this.data.table_id,
+              }
+              this.orderNo = data['bill_no']
+              return this.__orderService.getTableOrders(body)
+            })
+          )
+          .subscribe(
+            (data: any) => {
+              this.orders = data['orders']['item_details'];
+              this.hasOrderedItems = this.orders.length > 0;
+              this.totalAmount = data['orders']['total_amount'];
+              this.isBillPrinted = data['orders']['bill_printed']
+              this.tableOrderId = data['orders']['table_order_id']
+              this.calculateAmountWithoutTax()
+              this.calculateAmountWithTax()
+              this.printBill()
+            },
+            (error) => {
+              console.log('Error', error)
+            }
+          )
+        }
+    }
+
+    inputDiscount(){
+      let inputDiscountObservable = new Observable((observer) => {
+        let matdialogRef = this.__matDialog.open(DiscountComponent, {data: {total_amount: this.totalAmountWithGst, discount_amount: this.discountAmount}})
+        matdialogRef.afterClosed().subscribe(
+          (data) => {
+            if(data?.discount){
+              this.discountAmount = data.discount.toFixed(2)
+              observer.next({discount: data.discount})
+            }
+          }
+        )
+      })
+      return inputDiscountObservable
+    }
+
 
   printBill() {
     let orderObj = {
       order_list: this.orders,
-      total_amount: this.totalAmount,
+      total_amount: this.subtotalAmountWithoutGst,
       payment_mode: `Table order`,
       restaurant_id :this.restaurantId,
       order_no: this.orderNo,
       table_name: this.data.table_name,
+      discount_amount: this.discountAmount
     }
     this.receiptPrintFormatter.confirmedOrderObj = orderObj
     let printObj = this.receiptPrintFormatter.getCustomerPrintableText()
+    console.log('Printing: ', printObj)
     this.print(printObj)
     this.isBillPrinted = true
   } 
@@ -289,6 +421,8 @@ export class TableOrdersDialogComponent {
         order.quantity += 1
         order.line_item_price += order.item_price
         this.totalAmount += order.item_price
+        this.calculateAmountWithTax()
+        this.calculateAmountWithoutTax()
       },
       (error) => {
         this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to add item'}})
@@ -376,6 +510,7 @@ export class TableOrdersDialogComponent {
     this.orders.forEach((item) => {
       this.totalAmountWithoutGst += (item.price * (item.quantity + (item.parcel_quantity? item.parcel_quantity: 0)));
     })
+    this.subtotalAmountWithoutGst = this.totalAmountWithoutGst 
     this.totalAmountWithoutGst = Number(this.totalAmountWithoutGst.toFixed(2))
   }
 
@@ -384,7 +519,18 @@ export class TableOrdersDialogComponent {
     this.orders.forEach((item) => {
       this.totalAmountWithGst += (item.tax_inclusive? item.price: (item.price * 1.05)) * (item.quantity + (item.parcel_quantity? item.parcel_quantity: 0));
     })
+    this.subtotalAmountWithGst = this.totalAmountWithGst
     this.totalAmountWithGst = Number(Math.round(this.totalAmountWithGst))
+  }
+
+  getTotalAmountWithGst(){
+    this.totalAmountWithGst = Number(this.subtotalAmountWithGst - this.discountAmount)
+    return Number(Math.round(this.totalAmountWithGst))
+  }
+
+  getTotalAmountWithoutGST(){
+    this.totalAmountWithoutGst = Number(this.subtotalAmountWithoutGst - this.discountAmount)
+    return Number(Math.round(this.totalAmountWithoutGst))
   }
 
 }

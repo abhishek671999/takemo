@@ -54,6 +54,7 @@ export class meAPIUtility {
   }
 
   public indexSet = 0;
+  public hasExpired = localStorage.getItem('has_expired') == 'true' ? true: false
   public isMultiRestaurantOwner = false;
   public doesUserBelongToITT: boolean = false
   public doesUserBelongToRaviGobi: boolean = false
@@ -76,13 +77,15 @@ export class meAPIUtility {
     let restaurantObservable = new Observable((observer) => {
       if(!Boolean(localStorage.getItem('company_id'))){
         let restaurantData = this.cookieService.get('restaurant')
-        if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
+        if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined") && !this.hasExpired){
           let data = JSON.parse(restaurantData)
           this.doesUserBelongToITT = [1,2].includes(data['restaurant_id'])
           this.doesUserBelongToRaviGobi = data['restaurant_id'] == 7
           observer.next(data)
         } else {
           this.getMeData().subscribe((data) => {
+            this.hasExpired = false
+            localStorage.setItem('has_expired', 'false')
             if(data['restaurants'].length > 0){
               let restaurantData = this.cookieService.get('restaurant')
               if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
@@ -114,10 +117,12 @@ export class meAPIUtility {
     let restaurantObservable = new Observable((observer) => {
       if(!Boolean(localStorage.getItem('restaurant_id'))){
         let restaurantData = this.cookieService.get('company')
-        if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){
+        if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined") && !this.hasExpired){
           observer.next(JSON.parse(restaurantData))
         } else {
           this.getMeData().subscribe((data) => {
+            this.hasExpired = false
+            localStorage.setItem('has_expired', 'false')
             if(data['companies'].length > 0){
               let restaurantData = this.cookieService.get('company')
               if(!(typeof(restaurantData) == "undefined" || restaurantData === "" || restaurantData == "undefined")){

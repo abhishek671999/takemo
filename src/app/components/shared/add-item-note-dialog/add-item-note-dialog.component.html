@@ -2,7 +2,7 @@
 <div mat-dialog-content>
     <mat-form-field class="example-full-width">
         <mat-label>Add a note</mat-label>
-        <input matInput placeholder="Add a note" [(ngModel)]="note">
+        <input matInput placeholder="Add a note" [(ngModel)]="data.note">
     </mat-form-field>
     <section>
         <mat-checkbox *ngIf="!prepare" [(ngModel)]="hold">Hold</mat-checkbox>
@@ -15,6 +15,13 @@
         </div>
         <mat-icon (click)="addItem()">add_circle</mat-icon>
       </div>
+        <ng-container *ngFor="let note of inventoryNotes">
+          <mat-checkbox 
+                        (change)="updateNote(note, $event)" [checked]="data.note.includes(note + ' |')">
+                        
+            {{note}}
+          </mat-checkbox>
+        </ng-container>
 </div>
 <mat-dialog-actions>
     <button mat-raised-button (click)="close()">Close</button>

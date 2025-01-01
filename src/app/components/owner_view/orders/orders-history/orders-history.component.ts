@@ -48,7 +48,7 @@ export class OrdersHistoryComponent {
   ];
 
   displayedColumns: string[] = ['orderno','Order details','Amount','ordered_by','OrderedAt','Details'];
-  tableDisplayColumns: string[]  = ['table_order_no', 'table_name', 'item_details_string', 'amount_with_gst', 'start_time', 'end_time']
+  tableDisplayColumns: string[]  = ['table_order_no', 'table_name', 'item_details_string', 'amount_with_gst', 'total_discount', 'amount_received', 'start_time', 'end_time']
 
   public isTaxInclusive: number
   public taxPercentage: number
@@ -93,6 +93,7 @@ export class OrdersHistoryComponent {
       (data) => {
         data['table_orders'].forEach((order) => {
           order['item_details_string'] = this.parseTableOrders(order)
+          order['amount_received'] = Number(Math.round(order['total_amount'] - order['total_discount']))
         })
         this.tableFulfilledOrdersDataSource.data = data['table_orders']
         this.showSpinner = false;
@@ -247,14 +248,17 @@ export class OrdersHistoryComponent {
     let dialogRef = this._dialog.open(OrderMoreDetailsDialogComponent, {
       data: order,
     });
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if(data?.refresh){
+          this.ngOnInit()
+        }
+      }
+    )
   }
 
 
   announceSortChange(sortState: Sort) {
-    // This example uses English messages. If your application supports
-    // multiple language, you would internationalize these strings.
-    // Furthermore, you can customize the message to add additional
-    // details about the values being sorted.
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {

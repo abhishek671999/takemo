@@ -137,6 +137,7 @@ public orderList = {
               matchedItem[0].quantity = cartItem.quantity
               matchedItem[0].parcel_quantity = cartItem.parcel_quantity
               matchedItem[0].item_unit_price_list = cartItem.item_unit_price_list
+              matchedItem[0].order_after = cartItem.order_after
               this.orderList.itemList.push(matchedItem[0])
             } 
           }

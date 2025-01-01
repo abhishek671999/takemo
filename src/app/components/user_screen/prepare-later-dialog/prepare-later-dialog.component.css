@@ -1,0 +1,24 @@
+.content-wrapper{
+    width: 100%;
+}
+
+.item-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.item-details{
+    display: flex;
+}
+
+.item-details .item-name{
+    width: 80%;
+}
+
+.item-details .item-quantity{
+    width: 20%;
+}
+
+.place-timeline{
+    display: flex;
+}

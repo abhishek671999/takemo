@@ -26,9 +26,7 @@ export class MenuService {
     return this._http.get(host+this.__getAdminMenuEndpoint, {params: queryParams})
   }
 
-  getPOSMenu(id){
-    let queryParams = new HttpParams()
-    queryParams = queryParams.append('restaurant_id', id.toString())
+  getPOSMenu(queryParams: HttpParams){
     return this._http.get(host+this._getPOSMenuEndpoint, {params: queryParams})
   }
 
