@@ -1,0 +1,51 @@
+{
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js"
+        ],
+        "urls": [
+          "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap",
+          "https://fonts.googleapis.com/icon?family=Material+Icons",
+          "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-cache",
+      "urls": [
+        "https://takemotest.in/api/v1/inventory/get_admin_menu/",
+        "https://takemotest.in/api/v1/inventory/get_pos_menu/",
+        "https://takemotest.in/api/v1/inventory/get_restaurant_counters/",
+        "https://takemotest.in/api/v1/users/me/"
+      ],
+      "cacheConfig": {
+        "maxSize": 100,             
+        "maxAge": "1d",             
+        "timeout": "10s",           
+        "strategy": "performance"   
+      }
+    }
+  ]
+}

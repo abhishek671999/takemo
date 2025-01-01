@@ -39,14 +39,14 @@ export class TableCockpitComponent {
   totalAmount;
   private refreshFrequency: number = 10;
   private pollingInterval;
+  private counterLoaded = false
 
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
         this.restaurantId = restaurant['restaurant_id']
         if(!restaurant['table_management']) this.route.navigate(['./home'])
-        this.fetchCounters()
-        this.fetchTables()
+        if(!this.counterLoaded) this.fetchCounters()
       }
     )
     if(this.pollingInterval) clearInterval(this.pollingInterval)
@@ -54,6 +54,7 @@ export class TableCockpitComponent {
   }
 
   startPageRefresh(){
+    this.fetchTables()
     return setInterval(() => {
       this.fetchTables()
     }, this.refreshFrequency * 1000);
@@ -88,58 +89,6 @@ export class TableCockpitComponent {
     )
   }
 
-  onHover(table, $event){
-    console.log('hover', table, $event)
-  }
-
-
-  onDrop(event: CdkDragDrop<string[]>) {
-    if(event.previousIndex != event.currentIndex){
-      let fromTable = this.tables[event.previousIndex]
-      let toTable = this.tables[event.currentIndex]
-      this.getTableOrders(fromTable.table_id)
-      let dialogRef = this.__matDialog.open(ConfirmActionDialogComponent, {data: `Are you sure want to move ${fromTable.table_name} to ${toTable.table_name}`})
-      dialogRef.afterClosed().subscribe(
-        (data: any) => {
-          if(data?.select){
-            let body = {
-              "old_table_id": fromTable.table_id,
-               "new_table_id": toTable.table_id
-          }
-          this.__tableService.moveTable(body).subscribe(
-            (data: any) => {
-              this.__matDialog.open(SuccessMsgDialogComponent, {data: {msg: `Successfully moved ${fromTable.table_name} to ${toTable.table_name}` }})
-              this.waiterKOTPrint(fromTable.table_name)
-              this.ngOnInit()
-            },
-            (error: any) => {
-              this.__matDialog.open(ErrorMsgDialogComponent, {data: 'Failed to move'})
-            }  
-          )
-        }
-      }
-      )
-    }
-  }
-
-  getTableOrders(table_id){
-    let body = {
-      table_id: table_id,
-    };
-    this.__orderService.getTableOrders(body).subscribe(
-      (data) => {
-        this.orders = data['orders']['item_details'];
-        this.hasOrderedItems = this.orders.length > 0;
-        this.totalAmount = data['orders']['total_amount'];
-      },
-      (error) => {
-        this.__matDialog.open(ErrorMsgDialogComponent, {
-          data: { msg: 'Failed to get table orders' },
-        });
-      }
-    );
-  }
-
   fetchCounters(){
     this._counterService
       .getRestaurantCounter(this.restaurantId)
@@ -147,6 +96,7 @@ export class TableCockpitComponent {
         (data) => {
           console.log('counters available', data);
           this.counters = data['counters'];
+          this.counterLoaded = true
         },
         (error) => {
           console.log('Error: ', error);

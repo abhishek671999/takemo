@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule, routingComponents } from './app-routing.module';
@@ -35,6 +35,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { InputPasswordDialogComponent } from './components/shared/input-password-dialog/input-password-dialog.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 
 @NgModule({
@@ -72,7 +73,19 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatFormFieldModule,
      MatInputModule,
      MatCheckboxModule,
-     MatTabsModule
+     MatTabsModule,
+     ServiceWorkerModule.register('ngsw-worker.js', {
+       enabled: !isDevMode(),
+       scope: '/',
+       // Register the ServiceWorker as soon as the application is stable
+       // or after 30 seconds (whichever comes first).
+       registrationStrategy: 'registerWhenStable:30000'
+     }),
+    //  ServiceWorkerModule.register('custom-sw.js', {
+    //   enabled: !isDevMode(),
+    //   scope: '/' ,
+    //   registrationStrategy: 'registerWhenStable:30000'
+    // })
     ],
   providers: [Utility, meAPIUtility, dateUtils, 
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorInterceptor, multi: true}

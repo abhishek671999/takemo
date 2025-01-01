@@ -10,6 +10,8 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { environment } from 'src/environments/environment';
+import { forkJoin } from 'rxjs';
+import { ErrorMsgDialogComponent } from '../error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -27,8 +29,17 @@ export class HeaderComponent {
     private receiptPrintFormatter: ReceiptPrintFormatter,
     private _counterService: CounterService,
   ) {
+    window.addEventListener("offline", event => {      
+      this.isOnline = false
+      this.router.navigate(['/owner/point-of-sale'])
+    })
+    window.addEventListener("online", event => {
+      this.createOfflineOrders()
+      this.isOnline = true
+    })
   }
 
+  public isOnline = navigator.onLine
   public isProd = environment.production
 
   public AvailableDropdownList = {
@@ -169,6 +180,38 @@ export class HeaderComponent {
   public userType: string;
   
   ngOnInit(){
+    let host = new URL(environment.host)
+    console.log(host)
+    let currentPath = new URL(window.location.href)
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        
+        navigator.serviceWorker.getRegistration().then(function(registration) {
+          registration.active?.postMessage({
+            type: 'setConfig',
+            host: host.hostname,
+            pathName: currentPath.pathname
+          });
+        })
+
+        navigator.serviceWorker.getRegistration().then(function(reg) {
+          // There's an active SW, but no controller for this tab.
+          if (reg.active && !navigator.serviceWorker.controller) {
+            // Perform a soft reload to load everything from the SW and get
+            // a consistent set of resources.
+            window.location.reload();
+          }
+        });
+      });
+
+      navigator.serviceWorker.addEventListener('message', (event) => {
+         if(event.data.type == 'redirection'){
+          this.router.navigate([event.data.url])
+         }
+      });
+    }
+
     this._meAPIutility.getRestaurant().subscribe(
       (data) => {
         this.hasTableOrderingEnabled = data['table_management']
@@ -204,6 +247,7 @@ export class HeaderComponent {
 
     this._meAPIutility.getMeData().subscribe(data => {
       this.meData = data
+      console.log(this.meData)
       this.hasMultipleRestaurants = data['restaurants'].length > 1
       if(data['restaurants'].length == 0 && data['companies'].length == 0) {
         this.addUserNavOptions()
@@ -410,6 +454,26 @@ export class HeaderComponent {
     }else{
       return false
     }
+  }
+
+  createOfflineOrders(){
+    let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
+    if(cachedOrders.length > 0){
+      let body = {
+        restaurant_id: this.restaurantId,
+        offline_orders: cachedOrders
+      }
+      this.orderService.createOfflineOrders(body).subscribe(
+        (response: any) => {
+          localStorage.setItem('cached_orders', JSON.stringify([]))
+          localStorage.setItem('last_order_no', response['order_no'] || localStorage.getItem('last_order_no'))        
+        },
+        (error: any) => {
+          this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to create offline orders'}})
+        }
+      )
+    }
+
   }
   
   ngOnDestroy() {

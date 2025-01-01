@@ -11,6 +11,7 @@ export class OrdersService {
   private orderHistoryEndpoint = 'order/get_my_orders/';
   private checkIfPaymentRequiredEndpoint = 'order/check_if_payment_required/';
   private createOrdersEnpoint = 'order/create_order/';
+  private createOfflineOrdersEndpoint = 'order/create_offline_orders/';
   private createEcomOrdersEndpoint = 'order/create_ecom_order/';
   private deliverIndividualOrderEndpoint = 'order/deliver_single_item/';
   private deliverAllOrdersEndpoint = 'order/deliver_all_pending_orders/';
@@ -67,6 +68,10 @@ export class OrdersService {
 
   createOrders(body) {
     return this._http.post(host + this.createOrdersEnpoint, body);
+  }
+
+  createOfflineOrders(body){
+      return this._http.post(host + this.createOfflineOrdersEndpoint, body)
   }
 
   createEcomOrders(body) {

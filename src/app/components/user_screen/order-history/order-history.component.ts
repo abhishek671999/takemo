@@ -32,17 +32,17 @@ export class OrderHistoryComponent {
   ){}
   
   ngOnInit(){
-    this.getMyOrders
+    this.getMyOrders()
   }
 
   getMyOrders(){
     let body = {
-      // "rule_id": 1,
       "time_frame": this.selectedTimeFrame,
     }
     this._ordersService.getMyOrders(body).subscribe(
       data => {
         console.log('This is data: ', data['order_list'])
+        this.orderHistory = []
         data['order_list'].map(ele => {
             this.orderHistory.push(this.unparsePastOrders(ele))
             this.orderHistoryDataSource.data = this.orderHistory
