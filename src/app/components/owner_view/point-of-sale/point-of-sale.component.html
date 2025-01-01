@@ -50,31 +50,45 @@
       </div>
     </div>
     <div class="item-bar">
-      <ng-container *ngFor="let category of filteredMenu">
-        <div
-          id="{{ category.category.name.replace(' ', '') }}"
-          class="category-wrapper"
-        >
-          <div class="item" *ngFor="let item of category.category.items">
-            <div class="item-card" (click)="addItem(item)">
-              <div
-                class="item-type"
-                [ngClass]="{
-                  'bg-success': item.veg,
-                  'bg-danger': item.non_veg,
-                  'bg-warning': item.egg
-                }"
-              ></div>
-              <div class="item-name responsive-font-text">
-                <p class="pr-1 pl-1 pt-1 m-0 ">
-                  {{ item.name }}
-                </p>
-                <p class="fs-8 m-0">₹&nbsp;{{ getPriceForItem(item) }}</p>
+      <div class="items-container">
+        <ng-container *ngFor="let category of filteredMenu">
+          <div
+            id="{{ category.category.name.replace(' ', '') }}"
+            class="category-wrapper"
+          >
+            <div class="item" *ngFor="let item of category.category.items">
+              <div class="item-card" (click)="addItem(item)">
+                <div
+                  class="item-type"
+                  [ngClass]="{
+                    'bg-success': item.veg,
+                    'bg-danger': item.non_veg,
+                    'bg-warning': item.egg
+                  }"
+                ></div>
+                <div class="item-name responsive-font-text">
+                  <p class="pr-1 pl-1 pt-1 m-0 ">
+                    {{ item.name }}
+                  </p>
+                  <p class="fs-8 m-0">₹&nbsp;{{ getPriceForItem(item) }}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </ng-container>
+        </ng-container>
+      </div>
+
+
+      <div class="more-options-container">
+        <button mat-icon-button [matMenuTriggerFor]="moreOptions" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #moreOptions="matMenu">
+          <button mat-menu-item (click)="sortButtonClick()">
+            <span>{{sortByItems? "Unsort items":"Sort items"}}</span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
     <div class="summary-bar">
       <div class="table-section">

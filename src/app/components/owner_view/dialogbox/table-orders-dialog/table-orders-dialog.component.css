@@ -43,6 +43,20 @@ th.edit, td.edit{
     justify-content: space-between;
 }
 
+.order-summary{
+    text-align: right;
+}
+
+.discount-selection mat-form-field{
+    width: 10em;
+}
+
+.discount-info h3{
+    margin: 0;
+    padding: 0;
+    line-height: 15px;
+}
+
 .title-container h1{
     margin: 0;
 }

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
 import { OrdersService } from 'src/app/shared/services/orders/orders.service';
@@ -15,6 +15,7 @@ import { SelectSubitemDialogComponent } from '../../shared/select-subitem-dialog
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { AddItemNoteDialogComponent } from '../../shared/add-item-note-dialog/add-item-note-dialog.component';
 import { CacheService } from 'src/app/shared/services/cache/cache.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -39,6 +40,7 @@ export class PointOfSaleComponent {
   ) {
 
   }
+
   public menu;
   public summary;
   public paymentFlag = false;
@@ -59,11 +61,12 @@ export class PointOfSaleComponent {
   public pollingFrequency;
   searchText = '';
   private currentCategoryId;
-
   counters = [];
   public outletType;
   public isTableManagement
   public tableName = sessionStorage.getItem('table_name')
+  public sortByItems = localStorage.getItem('sort_items') == "true" ? true: false
+  public reload = false
   public restaurantId
   public isPOS
   public isKOTEnabled
@@ -137,19 +140,31 @@ export class PointOfSaleComponent {
     )
   }
 
+  sortButtonClick(){
+    console.log('clicked')
+    this.sortByItems = !this.sortByItems
+    this.reload = true
+    this.fetchPOSMenu()
+  }
+
+
+
   openAddItemNotesWindow(item){
     this.matdialog.open(AddItemNoteDialogComponent, {data: item} )
   }
 
   fetchPOSMenu(){
     let parsedMenu = this.cacheService.get('parsedMenu')
-    if(!(typeof(parsedMenu) == "undefined" || parsedMenu === "" || parsedMenu == "undefined")){
+    if(!(typeof(parsedMenu) == "undefined" || parsedMenu === "" || parsedMenu == "undefined") && !this.reload){
       this.menuCopy = parsedMenu
       this.menu = parsedMenu
       this.showOnlyFirstCategory()
     }else{
+      let queryParams = new HttpParams()
+      queryParams = queryParams.append('restaurant_id', this.restaurantId.toString())
+      queryParams = queryParams.append('sort_items', this.sortByItems)
       this.menuService
-      .getPOSMenu(this.restaurantId)
+      .getPOSMenu(queryParams)
       .subscribe(
         (data) => {
           this.menu = data['menu'];
@@ -164,6 +179,7 @@ export class PointOfSaleComponent {
           this.menuCopy = JSON.parse(JSON.stringify(this.menu))
           this.cacheService.set('parsedMenu',this.menuCopy);
           this.showOnlyFirstCategory();
+          this.reload = false
       });
     }
   }

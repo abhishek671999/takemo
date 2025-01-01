@@ -73,7 +73,8 @@ export class EditMenuComponent {
   fontStyle?: string;
   restaurantId: number;
   restaurantStatus = false;
-  parcelEnabled = false
+  parcelEnabled = false;
+  printerRequired = false
   RestaurantAction = this.restaurantStatus
     ? 'Close restaurant'
     : 'Open restaurant';
@@ -106,6 +107,7 @@ export class EditMenuComponent {
     this.searchText = ''
     this.meUtility.getRestaurant().subscribe(
       (restaurant) => {
+        console.log(restaurant)
         this.restaurantId = restaurant['restaurant_id']
         this.restaurantKDSenabled = restaurant['restaurant_kds'] 
         this.restaurantType = restaurant['type']
@@ -113,6 +115,7 @@ export class EditMenuComponent {
         this.inventoryManagement = restaurant['inventory_management']
         this.mobileOrderingEnabled = restaurant['mobile_ordering']
         this.isPOSEnabled = restaurant['pos']
+        this.printerRequired = restaurant['printer_required']
         this.fetchAdminMenu()
         this.fetchCounters()
         this.displayedColumns = ['id', 'item', 'price', ...(this.mobileOrderingEnabled? ['available', 'item_parcel']: []), 'favorite', ...(this.inventoryManagement? ['inventory']: []) ,...(this.counterMangement? ['counter']: []), 'edit', 'delete'];
@@ -329,7 +332,6 @@ export class EditMenuComponent {
   }
 
   toggleRestOpen() {
-    console.log('Restaurant toggled');
     let body = {
       restaurant_id: this.restaurantId,
       is_open: !this.restaurantStatus,
@@ -350,7 +352,6 @@ export class EditMenuComponent {
   }
 
   toggleParcelOn(){
-    console.log('Restaurant toggled');
     let body = {
       restaurant_id: this.restaurantId,
       is_open: this.restaurantStatus,
@@ -365,6 +366,26 @@ export class EditMenuComponent {
       }
     );
   }
+
+  togglePrinterRequired(){
+    let body = {
+      restaurant_id: this.restaurantId,
+      is_open: this.restaurantStatus,
+      accept_parcel: this.parcelEnabled,
+      print_required: !this.printerRequired
+    };
+    this._restaurantService.editIsRestaurantOpen(body).subscribe(
+      (data) => {
+        this.printerRequired = !this.printerRequired;
+        localStorage.setItem('has_expired', 'true')
+        this.meUtility.hasExpired = true
+      },
+      (error) => {
+        this._dialog.open(ErrorMsgDialogComponent, { data: { msg: error.error.description} });
+      }
+    );
+  }
+
 
   toggleCategoryAvailability(category) {
     console.log('Category toggled', category, category);

@@ -324,7 +324,7 @@ export class ReceiptPrintFormatter{
             justification: 'center',
           },
           {
-            text: this.getSubTotalStrint(),
+            text: this.getSubTotalString(),
             justification: 'right'
           },
           {
@@ -704,19 +704,28 @@ export class ReceiptPrintFormatter{
     }
 
     private getTotalAmount() {
+      let discountAmount = this.confirmedOrder.discount_amount
       let subTotal = this.getSubTotal()
-      let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
-      let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
+      let totalAmount = discountAmount? subTotal - discountAmount: subTotal
+      let amountRounded = Math.round((totalAmount + Number.EPSILON) * 100) / 100 // 2 digits        2.5
+      let amountRoundedToNextInteger = Math.round(totalAmount) // integer -> floor, ceil            3
       let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference    0.5
       return `Total Amount: Rs.${amountRoundedToNextInteger}`;    // 0.5, 3
     }
 
-    private getSubTotalStrint(){
+    private getSubTotalString(){
+      let discountAmount = this.confirmedOrder.discount_amount
       let subTotal = this.getSubTotal()
-      let amountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
-      let amountRoundedToNextInteger = Math.round(subTotal) // integer -> floor, ceil            3
-      let roundOffAmount =  amountRoundedToNextInteger - amountRounded // round off difference   0.5
-      return `Sub-total: ${amountRounded}\nRound off: ${roundOffAmount.toFixed(2)}`;    // 0.5, 3
+      let subTotalAmountRounded = Math.round((subTotal + Number.EPSILON) * 100) / 100 // 2 digits        2.5
+      let subTotalAmountRoundedTemp = discountAmount? subTotalAmountRounded - discountAmount: subTotalAmountRounded
+      subTotalAmountRoundedTemp = Math.round((subTotalAmountRoundedTemp + Number.EPSILON) * 100) / 100 
+      let amountRoundedToNextInteger = Math.round(subTotalAmountRoundedTemp) // integer -> floor, ceil            3
+      let roundOffAmount =  amountRoundedToNextInteger - subTotalAmountRoundedTemp // round off difference   0.5
+      if(discountAmount){
+        return `Sub-total: ${subTotalAmountRounded}\nDiscount: ${discountAmount}\nRound off: ${roundOffAmount.toFixed(2)}`;    // 0.5, 3
+      }else{
+        return `Sub-total: ${subTotalAmountRounded}\nRound off: ${roundOffAmount.toFixed(2)}`;    // 0.5, 3
+      }
     }
 
     private getFormattedCurrentDate() {

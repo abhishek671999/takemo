@@ -60,6 +60,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { MoveTablesComponent } from './dialogbox/move-tables/move-tables.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
@@ -126,7 +127,8 @@ import { MoveTablesComponent } from './dialogbox/move-tables/move-tables.compone
     MatSortModule,
     CdkDropListGroup,
     CdkDropList,
-    CdkDrag
+    CdkDrag,
+    MatMenuModule
   ],
   exports: [],
 })

@@ -23,6 +23,7 @@ import { CaptureImageComponent } from './subcomponents/capture-image/capture-ima
 import { MatDialogModule } from '@angular/material/dialog';
 import { LoaderComponent } from './dialogbox/loader/loader.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { DiscountComponent } from './dialogbox/discount/discount.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ViewImageComponent,
     ImageLoaderComponent,
     CaptureImageComponent,
-    LoaderComponent
+    LoaderComponent,
+    DiscountComponent
   ],
   imports: [
     CommonModule,

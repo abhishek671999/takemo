@@ -6,6 +6,7 @@
     <div mat-dialog-content>
         <div mat-dialog-actions class="action-container">
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="requestPrintBill()">Print bill</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="applyDiscount()">Apply discount</button>
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary"  [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
             <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!((data.is_occupied && isBillPrinted) || (data.is_occupied && !hasOrderedItems))" (click)="markPaymentDone()">Payment done</button>
             <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
@@ -42,6 +43,23 @@
                 </tr>
             </tbody>
         </table>
-        <h2>Total Amount: ₹&nbsp;{{totalAmountWithoutGst}} | ₹&nbsp;{{totalAmountWithGst}}</h2>
+        <div class="order-summary">
+            <!-- <div class="discount-selection">
+                <mat-form-field >
+                    <mat-label>Discount</mat-label>
+                    <input type="text" matInput>
+                    <div>
+                        <mat-icon matSuffix><span class="material-symbols-outlined">percent</span></mat-icon>
+                        <mat-icon matSuffix><span class="material-symbols-outlined">currency_rupee</span></mat-icon>
+                    </div>
+                    
+                  </mat-form-field>
+            </div> -->
+            <div class="discount-info">
+                <h3>Sub-total: ₹&nbsp;{{subtotalAmountWithoutGst}} | ₹&nbsp;{{subtotalAmountWithGst}}</h3>
+                <h3>Discount: {{discountAmount}}</h3>
+            </div>
+            <h2>Total Amount: ₹&nbsp;{{getTotalAmountWithoutGST()}} | ₹&nbsp;{{getTotalAmountWithGst()}}</h2>
+        </div>
     </div>
 </div>

@@ -1,10 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { InputPasswordDialogComponent } from '../input-password-dialog/input-password-dialog.component';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 import { RestaurantService } from 'src/app/shared/services/restuarant/restuarant.service';
 import { ErrorMsgDialogComponent } from '../error-msg-dialog/error-msg-dialog.component';
+import { OrdersService } from 'src/app/shared/services/orders/orders.service';
+import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
 
 @Component({
   selector: 'app-order-more-details-dialog',
@@ -19,35 +21,44 @@ export class OrderMoreDetailsDialogComponent {
     private meUtility: meAPIUtility,
     @Inject(MAT_DIALOG_DATA) public data,
     private restaurantService: RestaurantService,
+    private orderService: OrdersService,
     private dialogRef: MatDialogRef<OrderMoreDetailsDialogComponent>
   ){
     console.log('Data recerived: ', data)
     this.meUtility.getRestaurant().subscribe(
       (data: any) => {
         this.restaurantId = data['restaurant_id']
+        this.allowOrderEdit = data['allow_edit_order']
       }
     )
   }
   public restaurantId!: number
+  public allowOrderEdit = false
   NA = 'NA'
   closeDialog(){
     this.dialogRef.close()
   }
 
   deleteOrder(){
-    this.verifyPassword().subscribe(
-      (data: any) => {
-        if(data?.validated){
-          console.log('Deleted order') // todo: put api call here
-        }else{
-          this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Incorrect password'}})
-        }
-      },
-      (error: any) => {
-        console.log('this is error: ', error)
-        this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Incorrect password'}})
-      }
-    )
+    this.verifyPassword()
+      .subscribe(
+        (data: any) => {
+          if(data?.validated){
+            let body = {
+              'order_id': this.data.order_id
+            }
+            this.orderService.deleteOrder(body).subscribe(
+              (data: any) => {
+                this.matdialog.open(SuccessMsgDialogComponent, {data: {msg: 'Order deleted successfully'}})
+                this.dialogRef.close({refresh: true})
+              },
+              (error: any) => {
+                this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Something went wrong'}})
+              }
+            )
+          }
+        },
+      )
   }
 
   verifyPassword(){

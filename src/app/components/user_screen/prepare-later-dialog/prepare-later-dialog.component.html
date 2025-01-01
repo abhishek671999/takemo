@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Prepare later</h2>
+<div mat-dialog-content class="content-wrapper">
+    <ng-container *ngFor="let item of itemList; let i = index">
+        <div class="item-container">
+            <div class="item-details">
+                <div class="item-name">{{item.name}} <small style="font-size: x-small;">{{item.order_after? 'After '+ item.order_after + ' min': 'Immediately'}}</small>
+                </div>
+                <!-- <mat-icon *ngIf="item.order_after" (click)="subItem(item)">remove_circle</mat-icon> -->
+                <div class="item-quantity">{{item.quantity}} of {{item.total_quantity}}</div>
+                <!-- <mat-icon *ngIf="item.order_after" (click)="addItem(item)">add_circle</mat-icon> -->
+            </div>
+            <div class="place-timeline">
+                <mat-chip-listbox aria-label="Fish selection">
+                    <mat-chip-option [selected]="item.order_after == 5" (selectionChange)="orderAfterNMinutes(item, i, 5, $event)">After 5 min </mat-chip-option>
+                    <mat-chip-option [selected]="item.order_after == 10" (selectionChange)="orderAfterNMinutes(item, i, 10, $event)">After 10 min</mat-chip-option>
+                    <mat-chip-option [selected]="item.order_after == 20" (selectionChange)="orderAfterNMinutes(item, i, 20, $event)">After 20 min</mat-chip-option>
+                </mat-chip-listbox>
+            </div>
+        </div>
+    </ng-container>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="onPrepareLater()">Prepare later</button>
+</div>
+

@@ -58,6 +58,14 @@
             <td mat-footer-cell *matFooterCellDef> Total </td>
           </ng-container>
 
+          <ng-container matColumnDef="daily_average">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>Daily Average</th>
+            <td mat-cell *matCellDef="let element" style="font-weight: bolder;">
+              &nbsp;₹&nbsp;{{ element.daily_average.toFixed(2) }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef>&nbsp;₹&nbsp;{{getDailyAverage().toFixed(2)}} </td>
+          </ng-container>
+
           <ng-container matColumnDef="total_amount">
             <th mat-header-cell mat-sort-header *matHeaderCellDef>Total Amount</th>
             <td mat-cell *matCellDef="let element" style="font-weight: bolder;">
@@ -83,7 +91,7 @@
           </ng-container>
 
           <ng-container matColumnDef="total_credit">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef>Credit</th>
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>Pay later</th>
             <td mat-cell *matCellDef="let element">
               &nbsp;₹&nbsp;{{ element.PayLater_amount.toFixed(2) }}
             </td>
