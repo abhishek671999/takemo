@@ -22,7 +22,6 @@ export class PostLoginComponent {
     sessionStorage.clear()
     this.meAPIUtility.getMeData().subscribe((data) => {
       this.myInfo = data;
-      debugger
         if (this.myInfo['restaurants'].length > 0) {
           let restaurant = data['restaurants'][0]
           let navigationURL =

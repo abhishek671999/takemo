@@ -162,6 +162,7 @@ export class SalesAnalyticsComponent {
         this.hasOrderTypes = restaurant['type'] == 'e-commerce'? true: false;
         this.isITTUser = this.meUtility.doesUserBelongToITT
         this.isRaviGobiUser = this.meUtility.doesUserBelongToRaviGobi
+        if (this.restaurant['role_name'] == 'restaurant_staff') this.timeFrames = this.timeFrames.slice(0,2)
         this._counterService
           .getRestaurantCounter(this.restaurant['restaurant_id'])
           .subscribe(

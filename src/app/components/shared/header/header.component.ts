@@ -29,16 +29,21 @@ export class HeaderComponent {
     private receiptPrintFormatter: ReceiptPrintFormatter,
     private _counterService: CounterService,
   ) {
-    window.addEventListener("offline", event => {      
-      this.isOnline = false
-      this.router.navigate(['/owner/point-of-sale'])
-    })
-    window.addEventListener("online", event => {
-
-      this.createOfflineOrders()
-      this.isOnline = true
-    })
+    window.addEventListener('offline', this.handleOffline);
+    window.addEventListener('online', this.handleOnline);
   }
+
+
+  private handleOffline = (event: Event) => {
+    this.isOnline = false;
+    this.router.navigate(['/owner/point-of-sale']);
+  };
+
+  private handleOnline = (event: Event) => {
+    this.createOfflineOrders();
+    this.isOnline = true;
+  };
+
 
   public isOnline = navigator.onLine
   public isProd = environment.production
@@ -289,8 +294,21 @@ export class HeaderComponent {
   }
 
   addRestaurantStaffNavOptions(data){
-    let restaurantStaffNavOptions = ['edit_menu', 'orders']
-    if(this.isPOSEnabled) restaurantStaffNavOptions.push('POS')
+    let restaurantStaffNavOptions
+    if(this.restaurantId == 1 || this.restaurantId == 2){
+      restaurantStaffNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
+    }else{
+      restaurantStaffNavOptions = ['attendance', 'analytics', 'edit_menu' ,'orders']
+    }
+    if (this.hasExpenseManagement) {
+      restaurantStaffNavOptions.push('expense')
+    }
+    if (this.isPOSEnabled) { 
+      restaurantStaffNavOptions.push('POS') 
+    }
+    if (this.hasTableOrderingEnabled) {
+      restaurantStaffNavOptions.push('table')
+    }
     for(let option of restaurantStaffNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -487,6 +505,8 @@ export class HeaderComponent {
     if(this.pollingInterval){
       this.pollingInterval = clearInterval(this.pollingInterval)
     } 
+    window.removeEventListener('offline', this.handleOffline);
+    window.removeEventListener('online', this.handleOnline);
   }
 
 }

@@ -9,6 +9,7 @@ import { UnconfirmedOrdersComponent } from '../unconfirmed-orders/unconfirmed-or
 import { ConfirmedOrdersComponent } from '../confirmed-orders/confirmed-orders.component';
 import { DeliveredOrdersComponent } from '../delivered-orders/delivered-orders.component';
 import { RejectedOrdersComponent } from '../rejected-orders/rejected-orders.component';
+import { DeletedOrdersComponent } from '../deleted-orders/deleted-orders.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,7 @@ const routes: Routes = [
       { path: 'confirmed-orders', component: ConfirmedOrdersComponent },
       { path: 'delivered-orders', component: DeliveredOrdersComponent },
       { path: 'rejected-orders', component: RejectedOrdersComponent },
+      { path: 'deleted-orders', component: DeletedOrdersComponent },
     ],
   },
 ];

@@ -103,6 +103,7 @@ export class TimelyAnalyticsComponent {
         this.restaurant = restaurant
         this.isITTUser = this.meUtility.doesUserBelongToITT
         this.restaurantFlag = this.restaurant['restaurant_id']? true : false;
+        if (this.restaurant['role_name'] == 'restaurant_staff') this.timeFramesForTimelyAnalytics = this.timeFramesForTimelyAnalytics.slice(0,2)
         this.selectedRestaurant = this.restaurant['restaurant_id'] ? this.restaurant['restaurant_id']: this.restaurantList[0].restaurant_id
         this._menuService.getMenu(this.selectedRestaurant).subscribe((data) => {
           data['menu'].forEach((element) => {

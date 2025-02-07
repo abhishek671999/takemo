@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Chart, registerables } from 'chart.js';
 import { meAPIUtility } from 'src/app/shared/site-variable';
 
 
@@ -10,7 +11,9 @@ import { meAPIUtility } from 'src/app/shared/site-variable';
 })
 export class AnalyticsHomeComponent {
 
-  constructor(private meUtility: meAPIUtility, private router: Router){}
+  constructor(private meUtility: meAPIUtility, private router: Router){
+    Chart.register(...registerables)
+  }
   analyticsPages = [
     {name: 'Sales-analytics' , href: "sales-analytics" },
     {name: 'Timely-analytics', href: "timely-analytics"},
