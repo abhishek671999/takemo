@@ -40,6 +40,7 @@ export class TableCockpitComponent {
   private refreshFrequency: number = 10;
   private pollingInterval;
   private counterLoaded = false
+  public loader = false
 
   ngOnInit() {
     this.meUtility.getRestaurant().subscribe(
@@ -49,11 +50,12 @@ export class TableCockpitComponent {
         if(!this.counterLoaded) this.fetchCounters()
       }
     )
-    if(this.pollingInterval) clearInterval(this.pollingInterval)
-    this.pollingInterval = this.startPageRefresh()
+    // this.pollingInterval = this.startPageRefresh()
+    this.fetchTables()
   }
 
   startPageRefresh(){
+    if(this.pollingInterval) clearInterval(this.pollingInterval)
     this.fetchTables()
     return setInterval(() => {
       this.fetchTables()
@@ -62,28 +64,51 @@ export class TableCockpitComponent {
 
   ngOnDestroy(){
     clearInterval(this.pollingInterval)
+    this.pollingInterval = null
   }
 
   fetchTables(){
+    this.loader = true
     let httpParams = new HttpParams()
     httpParams = httpParams.append('restaurant_id', this.restaurantId);
     this.__tableService.getTables(httpParams).subscribe(
       data => {
         this.tables = data['restaurants']
+        this.tables.forEach(table => {
+          let tableOrdersKey = `table_items_${table['table_name']}`
+          if(localStorage.getItem(tableOrdersKey)){
+            let offlineOrdersCache = JSON.parse(localStorage.getItem(tableOrdersKey))
+            console.log('offlineOrdersCache', tableOrdersKey, offlineOrdersCache)
+            if(offlineOrdersCache['table_session_id'] > 1){
+              table['is_occupied'] = false
+              table['standing_amount'] = 0
+              table['bill_printed'] = false
+            }
+            table['standing_amount'] =  offlineOrdersCache['order_amount'] + table['standing_amount']
+            table['is_occupied'] = table['is_occupied'] || offlineOrdersCache['order_list'].length > 0
+            table['bill_printed'] = table['bill_printed'] || offlineOrdersCache['isBillPrinted']
+          }
+          
+        })
+        this.loader = false
       },
       error => {
         console.log('This is error: ', error)
+        this.loader = false
       }
     )
   }
   
   openTableDetails(table) {
-    let dialogRef = this.__matDialog.open(TableOrdersDialogComponent, { data: table, width: '100vw' })
+    clearInterval(this.pollingInterval)
+    let dialogRef = this.__matDialog.open(TableOrdersDialogComponent, { data: {table: table, pollingInterval: this.pollingInterval}, width: '100vw' })
     dialogRef.afterClosed().subscribe(
       data => {
+        console.log('Dialog closed', data)
           this.ngOnInit()
       },
       error => {
+        console.log('Dialog closed', error)
         this.ngOnInit()
       }
     )

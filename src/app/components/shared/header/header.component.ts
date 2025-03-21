@@ -486,8 +486,10 @@ export class HeaderComponent {
       }
       this.orderService.createOfflineOrders(body).subscribe(
         (response: any) => {
+          let lastOrderNumber = response['order_no'] || localStorage.getItem('last_order_no')
+          localStorage.clear()
           localStorage.setItem('cached_orders', JSON.stringify([]))
-          localStorage.setItem('last_order_no', response['order_no'] || localStorage.getItem('last_order_no'))        
+          localStorage.setItem('last_order_no', lastOrderNumber)
           this.creatingOrderFlag = false
         },
         (error: any) => {

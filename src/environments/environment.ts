@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    host: 'https://takemotest.in/api/v1/'
+    host: 'https://takemo.in/api/v1/'
   };

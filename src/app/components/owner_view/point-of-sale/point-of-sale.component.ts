@@ -110,6 +110,7 @@ export class PointOfSaleComponent {
 
 
   ngOnInit() {
+    this.tableName = sessionStorage.getItem('table_name')
     this.summary = {
       amount: 0,
       itemList: [],
@@ -550,12 +551,14 @@ export class PointOfSaleComponent {
       printer_conneted: this.printerConn.usbSought,
       total_amount: this.summary.amount,
       actual_total_amount: actualTotalAmount,
+      action: 'pos_order'
     };
     if(this.isTableManagement){
       body['table_id'] =  Number(sessionStorage.getItem('table_id'))
       body['table_name'] = sessionStorage.getItem('table_name')
       body['wkot_printed'] = true //this.printerConn.usbSought
-      body['kot_printed'] = this.printerConn.usbSought
+      body['kot_printed'] = this.printerConn.usbSought,
+      body['action'] =  'table_order'
     }
     return body;
   }
@@ -673,6 +676,7 @@ export class PointOfSaleComponent {
 
   placeOrder(printReceipt) {
     this.printReceipt = printReceipt
+    debugger
     if (this.outletType == 'e-commerce') {
       this.placeEcomOrder();
     } else if(this.outletType == 'restaurant' && this.isTableManagement){
@@ -690,46 +694,98 @@ export class PointOfSaleComponent {
   placePrintTableOrder(){
     this.disablePlace = true;
     let body = this.preparePlaceOrderBody();
-    this.orderService.createOrders(body).subscribe(
-      (data) => {
-        body['order_no'] = data['order_no']
-        body['ordered_time'] = this.dateUtils.getDateForRecipePrint(new Date())
-        if(this.printerConn.usbSought){
-          this.receiptPrintFormatter.confirmedOrderObj = body
-          // let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptTextV2()
-          // counterReceiptObjs.forEach((counterReceiptObj) => {
-          //   this.print(counterReceiptObj)
-          // })
-          if(this.isKOTEnabled){
-            let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
-            counterReceiptObjs.forEach((counterReceiptObj) => {
-              this.print(counterReceiptObj)
-            })
+
+    if(navigator.onLine){
+      this.orderService.createOrders(body).subscribe(
+        (data) => {
+          body['order_no'] = data['order_no']
+          body['ordered_time'] = this.dateUtils.getDateForRecipePrint(new Date())
+          localStorage.setItem('last_order_no', data['order_no'])
+          if(this.printerConn.usbSought){
+            this.receiptPrintFormatter.confirmedOrderObj = body
+            // let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptTextV2()
+            // counterReceiptObjs.forEach((counterReceiptObj) => {
+            //   this.print(counterReceiptObj)
+            // })
+            if(this.isKOTEnabled){
+              let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
+              counterReceiptObjs.forEach((counterReceiptObj) => {
+                this.print(counterReceiptObj)
+              })
+            }
           }
+          let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+            data: {
+              msg: `Order created successfully. Order No: ${data['order_no']}`,
+            },
+          });
+          dialogRef.afterClosed().subscribe((data) => {
+            this.router.navigate(['./owner/dine-in/table-cockpit'])
+          });
+          this.disablePlace = false;
+        },
+        (error) => {
+          console.log('Place order response', error);
+          let errorMsg =
+            error.status != 0
+              ? `Failed to create Order. ${error.error.error}`
+              : 'Failed to create order. No internet';
+          this.dialog.open(ErrorMsgDialogComponent, {
+            data: { msg: errorMsg },
+          });
+          this.disablePlace = false;
         }
-        let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
-          data: {
-            msg: `Order created successfully. Order No: ${data['order_no']}`,
-          },
-        });
-        dialogRef.afterClosed().subscribe((data) => {
-          this.router.navigate(['./owner/dine-in/table-cockpit'])
-        });
-        
-        this.disablePlace = false;
-      },
-      (error) => {
-        console.log('Place order response', error);
-        let errorMsg =
-          error.status != 0
-            ? `Failed to create Order. ${error.error.error}`
-            : 'Failed to create order. No internet';
-        this.dialog.open(ErrorMsgDialogComponent, {
-          data: { msg: errorMsg },
-        });
-        this.disablePlace = false;
+      );
+    }else if(this.printerConn.usbSought){   
+      let tableOrdersKey = `table_items_${body['table_name']}`
+      let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
+      let lastOrderNumber = Number(localStorage.getItem('last_order_no')) || 0
+      let tableOrders = JSON.parse(localStorage.getItem(tableOrdersKey)) || {}
+      if(!tableOrders['order_list']) {
+        tableOrders['order_list'] = body['order_list']
+        tableOrders['order_amount'] = body['total_amount']
+        tableOrders['isPaymentDone'] = false
+        tableOrders['table_session_id'] = 1
       }
-    );
+      else{
+        body['order_list'].forEach(order => {
+          tableOrders['order_list'].push(order)
+        })
+        tableOrders['order_amount'] += body['total_amount']
+        tableOrders['isPaymentDone'] = false
+      }
+      let currentOrderNumber = lastOrderNumber + 1
+      body['order_no'] = currentOrderNumber
+      body['ordered_time'] =  this.dateUtils.getDateForRecipePrint()
+      cachedOrders.push(body)
+      localStorage.setItem('cached_orders', JSON.stringify(cachedOrders))
+      localStorage.setItem('last_order_no', String(currentOrderNumber))
+      localStorage.setItem(tableOrdersKey, JSON.stringify(tableOrders))
+      let dialogRef = this.dialog.open(SuccessMsgDialogComponent, {
+        data: {
+          msg: `Order created successfully. Order No: ${body['order_no']}`,
+        },
+      });
+      dialogRef.afterClosed().subscribe((data) => {
+        this.router.navigate(['./owner/dine-in/table-cockpit'])
+      });
+      this.receiptPrintFormatter.confirmedOrderObj = body
+            // let counterReceiptObjs = this.receiptPrintFormatter.getWKOTReceiptTextV2()
+            // counterReceiptObjs.forEach((counterReceiptObj) => {
+            //   this.print(counterReceiptObj)
+            // })
+            if(this.isKOTEnabled){
+              let counterReceiptObjs = this.receiptPrintFormatter.getKOTReceiptText(this.counters)
+              counterReceiptObjs.forEach((counterReceiptObj) => {
+                this.print(counterReceiptObj)
+              })
+            }
+      this.disablePlace = false
+    }else{
+      alert('No internet')
+    }
+
+
   }
 
 
