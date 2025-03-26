@@ -526,14 +526,14 @@ export class SalesAnalyticsComponent {
   createItemWiseTotalOrderChart(data) {
     console.log('Crateing item wise total orders');
     let chartData = [];
-    for (let point in data['item_wise_data_amount']) {
-      chartData.push(data['item_wise_data_amount'][point]['quantity']);
+    for (let point in data['item_wise_data']) {
+      chartData.push(data['item_wise_data'][point]['quantity']);
     }
 
     return new Chart('canvas2', {
       type: 'bar',
       data: {
-        labels: Object.keys(data['item_wise_data_amount']),
+        labels: Object.keys(data['item_wise_data']),
         datasets: [
           {
             label: 'Total Quantity',
