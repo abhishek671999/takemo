@@ -31,7 +31,15 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
     if(!navigator.onLine && !this.offlineRedirected){
       alert('Browser offline. Redirecting to POS')
       this.offlineRedirected = true
-      this._router.navigate(['/owner/point-of-sale'])
+      let tableName = sessionStorage.getItem('table_name')
+      this.meAPIUtility.getRestaurant().subscribe(
+        (restaurant) => {
+          if(restaurant['table_management'] && !tableName){
+            this._router.navigate(['./owner/dine-in/table-cockpit'])
+          }else{
+            this._router.navigate(['/owner/point-of-sale'])
+          }
+        })
     }else if(navigator.onLine){
       this.offlineRedirected = false
     }
