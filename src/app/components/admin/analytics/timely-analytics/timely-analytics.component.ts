@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import { AnalyticsService } from 'src/app/shared/services/analytics/analytics.service';
 import { MenuService } from 'src/app/shared/services/menu/menu.service';
@@ -12,7 +12,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CacheService } from 'src/app/shared/services/cache/cache.service';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-timely-analytics',
   templateUrl: './timely-analytics.component.html',
@@ -34,6 +34,7 @@ export class TimelyAnalyticsComponent {
 
   @ViewChild(MatSort)
   sort: MatSort = new MatSort;
+  @ViewChild('TABLE') table: ElementRef;
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
@@ -404,5 +405,16 @@ export class TimelyAnalyticsComponent {
       this._liveAnnouncer.announce('Sorting cleared');
     }
   }
+
+    exportAsExcel()
+    {
+      const ws: XLSX.WorkSheet=XLSX.utils.table_to_sheet(this.table.nativeElement);//converts a DOM TABLE element to a worksheet
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  
+      /* save to file */
+      XLSX.writeFile(wb, 'Timely_analytics.xlsx');
+  
+    }
 
 }

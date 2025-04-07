@@ -154,8 +154,9 @@
       <mat-spinner diameter="40" style="margin: 0 auto"></mat-spinner>
     </div>
       <div *ngIf="tableView; else graphView">
-        <div class="table-container">
-          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+        <div class="table-container"  #TABLE>
+
+          <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
   
             <ng-container matColumnDef="sl_no">
               <th mat-header-cell *matHeaderCellDef>No.</th>
@@ -182,7 +183,7 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
-  
+          <button mat-raised-button color="primary" (click)="exportAsExcel()">Export as Excel</button>
           <div>
             <button mat-raised-button [disabled]="!printerConn.usbSought" (click)="printSalesAnalytics()" color="primary">
               Print Report
