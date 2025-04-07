@@ -58,6 +58,10 @@ export class OrdersHomeComponent {
       label: 'Rejected',
       link: '/owner/orders/rejected-orders',
     },
+    deleted: {
+      label: 'Deleted',
+      link: '/owner/orders/deleted-orders',
+    },
   };
   public isPOSEnabled: boolean
   public restaurantId: number;
@@ -76,6 +80,7 @@ export class OrdersHomeComponent {
           })
         }else{
           let restaurantComponents = restaurant['restaurant_kds'] == true ? ['pending', 'current', 'history'] : ['history']
+          if(restaurant['allow_edit_order']) restaurantComponents.push('deleted')
           restaurantComponents.forEach((tab) => {
             this.navLinks.push(this.availableNavlinks[tab])
           })

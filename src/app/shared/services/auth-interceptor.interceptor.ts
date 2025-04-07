@@ -20,12 +20,28 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
   constructor(public utility: Utility, private _loginService: LoginService, private _router: Router, private meAPIUtility: meAPIUtility, private matDialog: MatDialog) {}
   loggedInFlag = false
   showErrorMessage = true
+  offlineRedirected = false
   
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let unAuthRequestsURLs = [host + 'rest-auth/login/', host + 'users/auth/token/', host + 'users/auth/email/', host + 'users/auth/mobile/',  ,  host + 'users/auth/mobile/']
+    let unAuthRequestsURLs = [host + 'rest-auth/login/', host + 'users/auth/token/', host + 'users/auth/email/', host + 'users/auth/mobile/', host + 'users/auth/mobile/']
     if(!unAuthRequestsURLs.includes(request.url)){
       request = request.clone({headers: this.utility.getHeaders()})
+    }
+    if(!navigator.onLine && !this.offlineRedirected){
+      alert('Browser offline. Redirecting to POS')
+      this.offlineRedirected = true
+      let tableName = sessionStorage.getItem('table_name')
+      this.meAPIUtility.getRestaurant().subscribe(
+        (restaurant) => {
+          if(restaurant['table_management'] && !tableName){
+            this._router.navigate(['./owner/dine-in/table-cockpit'])
+          }else{
+            this._router.navigate(['/owner/point-of-sale'])
+          }
+        })
+    }else if(navigator.onLine){
+      this.offlineRedirected = false
     }
     return next.handle(request).pipe(
       tap((event) => {
@@ -39,7 +55,9 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
             this.showErrorMessage = true
           }, 5000);
           if(error.status == 0){
-            if(this.showErrorMessage) alert('Device not connected to Internet. Please check')
+            if(this.showErrorMessage){
+             alert('Device not connected to Internet. Please check')
+            }  
           } else if (error.status != 400 && error.error.detail?.toLowerCase().startsWith('invalid token')) {
             if (this.loggedInFlag) {
               this.loggedInFlag = false

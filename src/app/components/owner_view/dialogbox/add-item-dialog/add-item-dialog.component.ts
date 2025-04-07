@@ -84,7 +84,7 @@ export class AddItemDialogComponent {
     itemUnit: ['1', Validators.required],
     item_description: [''],
     subItemUnit: [''],
-    tax_inclusive: ['true']
+    tax_inclusive: [false]
   });
 
   ngOnInit(){
@@ -111,7 +111,7 @@ export class AddItemDialogComponent {
       counter_id: this.addItemForm.value.counterId,
       item_unit: this.addItemForm.value.itemUnit,
       item_unit_price_list: this.unitPriceDetails,
-      tax_inclusive: this.addItemForm.value.tax_inclusive == 'true'? true: false
+      tax_inclusive: !this.addItemForm.value.tax_inclusive
     };
     this._editMenuService.addItem(body).pipe(
       switchMap(response => {

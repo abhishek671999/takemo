@@ -61,6 +61,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { MoveTablesComponent } from './dialogbox/move-tables/move-tables.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { DeletedOrdersComponent } from './orders/deleted-orders/deleted-orders.component';
 
 
 @NgModule({
@@ -92,6 +93,7 @@ import { MatMenuModule } from '@angular/material/menu';
     EditExpenseDialogComponent,
     EditCategoryDialogComponent,
     MoveTablesComponent,
+    DeletedOrdersComponent,
   ],
   imports: [
     CommonModule,

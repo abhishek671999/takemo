@@ -138,26 +138,36 @@ export class meAPIUtility {
 
   getMeData() {
     let meDataObservable = new Observable((observer) => {
-      this._meService.getMyInfo().subscribe((data) => {
-        this.isMultiRestaurantOwner = data['restaurants'].length > 1
-        if(data['companies'].length > 0){
-          this.cacheService.set('companies', data['companies'])
-          let savedCompanyId = localStorage.getItem('company_id') ? Number(localStorage.getItem('company_id')): 0
-          let savedCompany = data['companies'].filter((company: any) => company.restaurant_id == savedCompanyId)
-          savedCompany = savedCompany.length > 0? savedCompany[0] : data['companies'][0]
-          this.setCompany(savedCompany)
+      let meData = this.cacheService.get('me')
+      let localMeData = localStorage.getItem('me')
+      console.log('Me data', meData, 'local', localMeData)
+        if(!(typeof(meData) == "undefined" || meData === "" || meData == "undefined")){
+          observer.next(meData)
+        } else{
+          this._meService.getMyInfo().subscribe((data) => {
+            this.cacheService.set('me', data)
+            localStorage.setItem('me', JSON.stringify(data))
+            this.isMultiRestaurantOwner = data['restaurants'].length > 1
+            if(data['companies'].length > 0){
+              this.cacheService.set('companies', data['companies'])
+              let savedCompanyId = localStorage.getItem('company_id') ? Number(localStorage.getItem('company_id')): 0
+              let savedCompany = data['companies'].filter((company: any) => company.restaurant_id == savedCompanyId)
+              savedCompany = savedCompany.length > 0? savedCompany[0] : data['companies'][0]
+              this.setCompany(savedCompany)
+            }
+            else if(data['restaurants'].length > 0){
+              this.cacheService.set('restaurants', data['restaurants'])
+              let savedRestaurantId = localStorage.getItem('restaurant_id') ? Number(localStorage.getItem('restaurant_id')): 0
+              let savedRestaurant = data['restaurants'].filter((restaurant: any) => restaurant.restaurant_id == savedRestaurantId)
+              savedRestaurant = savedRestaurant.length > 0? savedRestaurant[0] : data['restaurants'][0]
+              this.doesUserBelongToITT = [1,2].includes(savedRestaurant['restaurant_id'])
+              this.doesUserBelongToRaviGobi = savedRestaurant['restaurant_id'] == 7
+              this.setRestaurant(savedRestaurant)
+            }
+            observer.next(data);
+          });
         }
-        else if(data['restaurants'].length > 0){
-          this.cacheService.set('restaurants', data['restaurants'])
-          let savedRestaurantId = localStorage.getItem('restaurant_id') ? Number(localStorage.getItem('restaurant_id')): 0
-          let savedRestaurant = data['restaurants'].filter((restaurant: any) => restaurant.restaurant_id == savedRestaurantId)
-          savedRestaurant = savedRestaurant.length > 0? savedRestaurant[0] : data['restaurants'][0]
-          this.doesUserBelongToITT = [1,2].includes(savedRestaurant['restaurant_id'])
-          this.doesUserBelongToRaviGobi = savedRestaurant['restaurant_id'] == 7
-          this.setRestaurant(savedRestaurant)
-        }
-        observer.next(data);
-        });
+
     });
     return meDataObservable;
   }

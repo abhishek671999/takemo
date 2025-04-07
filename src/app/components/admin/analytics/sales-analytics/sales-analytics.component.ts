@@ -162,6 +162,7 @@ export class SalesAnalyticsComponent {
         this.hasOrderTypes = restaurant['type'] == 'e-commerce'? true: false;
         this.isITTUser = this.meUtility.doesUserBelongToITT
         this.isRaviGobiUser = this.meUtility.doesUserBelongToRaviGobi
+        if (this.restaurant['role_name'] == 'restaurant_staff') this.timeFrames = this.timeFrames.slice(0,2)
         this._counterService
           .getRestaurantCounter(this.restaurant['restaurant_id'])
           .subscribe(
@@ -290,7 +291,7 @@ export class SalesAnalyticsComponent {
 
   parseOrdersItemWise(data) {
     let parsedArray = [];
-    let itemWiseData = data['item_wise_data'];
+    let itemWiseData = data['item_wise_data_amount'];
     Object.entries(itemWiseData).forEach(([key, value], index) => {
       parsedArray.push({
         position: index + 1,
@@ -440,13 +441,13 @@ export class SalesAnalyticsComponent {
   createItemWiseTotalAmountChart(data) {
     console.log('creating item wise total amount chart');
     let chartData = [];
-    for (let point in data['item_wise_data']) {
-      chartData.push(data['item_wise_data'][point]['total_amount']);
+    for (let point in data['item_wise_data_amount']) {
+      chartData.push(data['item_wise_data_amount'][point]['total_amount']);
     }
     return new Chart('canvas1', {
       type: 'bar',
       data: {
-        labels: Object.keys(data['item_wise_data']),
+        labels: Object.keys(data['item_wise_data_amount']),
         datasets: [
           {
             label: 'Total Amount',

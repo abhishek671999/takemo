@@ -10,6 +10,5 @@ export class LoaderComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
   ){
-    debugger
   }
 }

@@ -5,13 +5,13 @@
     </div>
     <div mat-dialog-content>
         <div mat-dialog-actions class="action-container">
-            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="requestPrintBill()">Print bill</button>
-            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="applyDiscount()">Apply discount</button>
-            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary"  [disabled]="!(data.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
-            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!((data.is_occupied && isBillPrinted) || (data.is_occupied && !hasOrderedItems))" (click)="markPaymentDone()">Payment done</button>
-            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="enableOrderEdit()">Edit order</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.table.is_occupied && hasOrderedItems)" (click)="requestPrintBill()">Print bill</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!(data.table.is_occupied && hasOrderedItems && isOnline)" (click)="applyDiscount()">Apply discount</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary"  [disabled]="!(data.table.is_occupied && hasOrderedItems)" (click)="waiterKOTPrint()">Check KOT</button>
+            <button *ngIf="printerConn.usbSought" mat-raised-button color="primary" [disabled]="!((data.table.is_occupied && isBillPrinted) || (data.is_occupied && !hasOrderedItems))" (click)="markPaymentDone()">Payment done</button>
+            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.table.bill_printed || !isOnline" (click)="enableOrderEdit()">Edit order</button>
             <button mat-raised-button color="primary" [disabled]="isBillPrinted" (click)="posOrder()" >POS order</button>
-            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.bill_printed" (click)="moveItemsBetweenTables()" >Move</button>
+            <button mat-raised-button color="primary" [disabled]="!hasOrderedItems || data.table.bill_printed || !isOnline" (click)="moveItemsBetweenTables()" >Move</button>
         </div>
         <table class="table-order-container">
             <thead>
@@ -36,7 +36,7 @@
                             <!-- <mat-icon (click)="addItem(order)">add_circle</mat-icon> -->
                         </div>
                     </td>
-                    <td class="total_price">₹&nbsp;{{order.line_item_price.toFixed(1)}}{{taxInclusive? '': " | ₹&nbsp;" +calculateItemGST(order).toFixed(1)}}</td>
+                    <td class="total_price">₹&nbsp;{{calculateLineItemPrie(order).toFixed(2)}}{{taxInclusive? '': " | ₹&nbsp;" +calculateItemGST(order).toFixed(1)}}</td>
                     <td class="delete" *ngIf="isEditEnabled">
                         <mat-icon (click)="deleteItem(order)">delete</mat-icon>
                     </td>

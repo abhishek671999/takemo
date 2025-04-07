@@ -71,6 +71,7 @@ export class OrdersHistoryComponent {
         this.istableManagementEnabled = restaurant['table_management']
         this.restaurantId = restaurant['restaurant_id']
         this.isTaxInclusive = restaurant['tax_inclusive']
+        if (restaurant['role_name'] == 'restaurant_staff') this.timeFrames = this.timeFrames.slice(0,2)
         this.taxPercentage = this.isTaxInclusive? 0: Number(restaurant['tax_percentage'])
         if(this.istableManagementEnabled) this.getRestaurantTableOrders()
         else this.getRestaurantCurrentOrders(this.getRestaurantOrdersAPIBody());

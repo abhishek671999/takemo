@@ -10,6 +10,8 @@ import { OrdersService } from 'src/app/shared/services/orders/orders.service';
 import { ReceiptPrintFormatter } from 'src/app/shared/utils/receiptPrint';
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { environment } from 'src/environments/environment';
+import { forkJoin } from 'rxjs';
+import { ErrorMsgDialogComponent } from '../error-msg-dialog/error-msg-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -27,9 +29,25 @@ export class HeaderComponent {
     private receiptPrintFormatter: ReceiptPrintFormatter,
     private _counterService: CounterService,
   ) {
+    window.addEventListener('offline', this.handleOffline);
+    window.addEventListener('online', this.handleOnline);
   }
 
+
+  private handleOffline = (event: Event) => {
+    this.isOnline = false;
+    this.router.navigate(['/owner/point-of-sale']);
+  };
+
+  private handleOnline = (event: Event) => {
+    this.createOfflineOrders();
+    this.isOnline = true;
+  };
+
+
+  public isOnline = navigator.onLine
   public isProd = environment.production
+  private creatingOrderFlag = false
 
   public AvailableDropdownList = {
     'profile': {
@@ -169,6 +187,38 @@ export class HeaderComponent {
   public userType: string;
   
   ngOnInit(){
+    let host = new URL(environment.host)
+    console.log(host)
+    let currentPath = new URL(window.location.href)
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        
+        navigator.serviceWorker.getRegistration().then(function(registration) {
+          registration.active?.postMessage({
+            type: 'setConfig',
+            host: host.hostname,
+            pathName: currentPath.pathname
+          });
+        })
+
+        navigator.serviceWorker.getRegistration().then(function(reg) {
+          // There's an active SW, but no controller for this tab.
+          if (reg.active && !navigator.serviceWorker.controller) {
+            // Perform a soft reload to load everything from the SW and get
+            // a consistent set of resources.
+            window.location.reload();
+          }
+        });
+      });
+
+      navigator.serviceWorker.addEventListener('message', (event) => {
+         if(event.data.type == 'redirection'){
+          this.router.navigate([event.data.url])
+         }
+      });
+    }
+
     this._meAPIutility.getRestaurant().subscribe(
       (data) => {
         this.hasTableOrderingEnabled = data['table_management']
@@ -204,6 +254,7 @@ export class HeaderComponent {
 
     this._meAPIutility.getMeData().subscribe(data => {
       this.meData = data
+      console.log(this.meData)
       this.hasMultipleRestaurants = data['restaurants'].length > 1
       if(data['restaurants'].length == 0 && data['companies'].length == 0) {
         this.addUserNavOptions()
@@ -243,8 +294,21 @@ export class HeaderComponent {
   }
 
   addRestaurantStaffNavOptions(data){
-    let restaurantStaffNavOptions = ['edit_menu', 'orders']
-    if(this.isPOSEnabled) restaurantStaffNavOptions.push('POS')
+    let restaurantStaffNavOptions
+    if(this.restaurantId == 1 || this.restaurantId == 2){
+      restaurantStaffNavOptions = ['billing', 'analytics', 'edit_menu' ,'orders']
+    }else{
+      restaurantStaffNavOptions = ['attendance', 'analytics', 'edit_menu' ,'orders']
+    }
+    if (this.hasExpenseManagement) {
+      restaurantStaffNavOptions.push('expense')
+    }
+    if (this.isPOSEnabled) { 
+      restaurantStaffNavOptions.push('POS') 
+    }
+    if (this.hasTableOrderingEnabled) {
+      restaurantStaffNavOptions.push('table')
+    }
     for(let option of restaurantStaffNavOptions){
       if(this.dropdownList.indexOf(this.AvailableDropdownList[option]) === -1){
         this.dropdownList.splice(0, 0, this.AvailableDropdownList[option])
@@ -411,6 +475,31 @@ export class HeaderComponent {
       return false
     }
   }
+
+  createOfflineOrders(){
+    let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
+    if(cachedOrders.length > 0 && !this.creatingOrderFlag){
+      this.creatingOrderFlag = true
+      let body = {
+        restaurant_id: this.restaurantId,
+        offline_orders: cachedOrders
+      }
+      this.orderService.createOfflineOrders(body).subscribe(
+        (response: any) => {
+          let lastOrderNumber = response['order_no'] || localStorage.getItem('last_order_no')
+          localStorage.clear()
+          localStorage.setItem('cached_orders', JSON.stringify([]))
+          localStorage.setItem('last_order_no', lastOrderNumber)
+          this.creatingOrderFlag = false
+        },
+        (error: any) => {
+          this.matdialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to create offline orders'}})
+          this.creatingOrderFlag = false
+        }
+      )
+    }
+
+  }
   
   ngOnDestroy() {
     sessionStorage.removeItem('table_id');
@@ -418,6 +507,8 @@ export class HeaderComponent {
     if(this.pollingInterval){
       this.pollingInterval = clearInterval(this.pollingInterval)
     } 
+    window.removeEventListener('offline', this.handleOffline);
+    window.removeEventListener('online', this.handleOnline);
   }
 
 }

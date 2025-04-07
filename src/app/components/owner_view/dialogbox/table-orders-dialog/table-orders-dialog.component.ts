@@ -19,6 +19,7 @@ import { InputPasswordDialogComponent } from 'src/app/components/shared/input-pa
 import { CounterService } from 'src/app/shared/services/inventory/counter.service';
 import { MoveTablesComponent } from '../move-tables/move-tables.component';
 import { DiscountComponent } from 'src/app/components/shared/dialogbox/discount/discount.component';
+import { dateUtils } from 'src/app/shared/utils/date_utils';
 
 @Component({
   selector: 'app-table-orders-dialog',
@@ -37,14 +38,19 @@ export class TableOrdersDialogComponent {
     private receiptPrintFormatter: ReceiptPrintFormatter,
     public printerConn: PrintConnectorService,
     private _counterService: CounterService,
-    private meUtility: meAPIUtility
+    private meUtility: meAPIUtility,
+    private dateUtils: dateUtils
   ) {
     console.log(data)
+    console.log('This is navigator online: ', navigator.onLine)
+    clearInterval(this.data.pollingInterval)
+    this.data.pollingInterval = null
   }
   counters = [];
   hasOrderedItems = false;
   restaurantId: number
   taxInclusive: boolean
+  public isOnline = navigator.onLine
 
   orders;
   totalAmount;
@@ -57,53 +63,25 @@ export class TableOrdersDialogComponent {
   subtotalAmountWithGst: number = 0
   tableOrderId: number;
   isDiscount = false
+  isOccupied = false
   discountUnit: 'percentage' | 'value' = 'percentage'
   discountAmount: number = 0
 
   ngOnInit() {
-    this.meUtility.getRestaurant().subscribe(
-      (restaurant) => {
-        this.restaurantId = restaurant['restaurant_id']
-        this.taxInclusive = restaurant['tax_inclusive']
-        this.getTableOrders()
-        this.fetchCounters()
-      }
-    )
-  }
-
-  getTableOrders(){
-    let body = {
-      table_id: this.data.table_id,
-    };
-    this.__orderService.getTableOrders(body).subscribe(
-      (data) => {
-        this.orders = data['orders']['item_details'];
-        this.hasOrderedItems = this.orders.length > 0;
-        this.totalAmount = data['orders']['total_amount'];
-        this.isBillPrinted = data['orders']['bill_printed']
-        this.orderNo = data['orders']['table_order_no']
-        this.tableOrderId = data['orders']['table_order_id']
-        this.discountAmount = data['orders']['discount_amount'] || 0
-        this.calculateAmountWithoutTax()
-        this.calculateAmountWithTax()
-      },
-      (error) => {
-        this.__matDialog.open(ErrorMsgDialogComponent, {
-          data: { msg: 'Failed to get table orders' },
-        });
-      }
-    );
+    this.processTableOrders(this.data.table)
   }
 
   posOrder() {
-    sessionStorage.setItem('table_id', this.data.table_id);
-    sessionStorage.setItem('table_name', this.data.table_name);
+    sessionStorage.setItem('table_id', this.data.table.table_id);
+    sessionStorage.setItem('table_name', this.data.table.table_name);
     this.__router.navigate(['owner/point-of-sale']);
+    clearInterval(this.data.pollingInterval)
+    this.data.pollingInterval = null
     this.dialogRef.close({refresh: false});
   }
 
   moveItemsBetweenTables(){
-    let fromTable = {table_id: this.data.table_id, table_name: this.data.table_name, table_order_id: this.tableOrderId}
+    let fromTable = {table_id: this.data.table.table_id, table_name: this.data.table.table_name, table_order_id: this.tableOrderId}
     let dialogRef = this.__matDialog.open(MoveTablesComponent, {data: fromTable})
     dialogRef.afterClosed().subscribe(
       (data) => {
@@ -122,7 +100,7 @@ export class TableOrdersDialogComponent {
         (data: any) => {
           if(data?.password){
             let body = {
-              "restaurant_id": this.restaurantId,
+              "restaurant_id": this.data.table.restaurant_id,
               "password": data.password
             }
             this.restaurantService.validatePassword(body).subscribe(
@@ -144,7 +122,7 @@ export class TableOrdersDialogComponent {
 
   markBillasPaid(){
     let body = {
-      "table_id": this.data.table_id,
+      "table_id": this.data.table.table_id,
     }
     this.__tableService.markBillPrinted(body).subscribe(
       (data: any) => {
@@ -177,29 +155,34 @@ export class TableOrdersDialogComponent {
       order_list: this.orders,
       total_amount: this.totalAmount,
       payment_mode: `Table order`,
-      restaurant_id :this.restaurantId,
-      table_name: this.data.table_name,
-      waiter_name: this.data.waiter_name,
+      restaurant_id :this.data.table.restaurant_id,
+      table_name: this.data.table.table_name,
+      waiter_name: this.data.table.waiter_name,
       order_no: this.orderNo
     }
     this.receiptPrintFormatter.confirmedOrderObj = orderObj
     let printObj = this.receiptPrintFormatter.getWaiterCheckKOTText(this.counters)
+    console.log('Printing: ', printObj)
     this.print(printObj)
   }
     
   requestPrintBill(){
-    if(this.isBillPrinted){
+    if(this.isBillPrinted && !this.isOnline){
+      this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'No internet connection'}})
+    }
+    else if(this.isBillPrinted && this.isOnline){
       this.verifyPassword().subscribe(
         (data: any) => {
           if(data?.validated){
             let body = {
-              "table_id": this.data.table_id,
+              "table_id": this.data.table.table_id,
               "discount_amount": Number(this.discountAmount),
             }
             this.__tableService.markBillPrinted(body).pipe(
               (
                 switchMap((data: any) => {
                   this.orderNo = data['bill_no']
+                  localStorage.setItem('last_bill_no', data['bill_no'])
                   return this.__orderService.getTableOrders(body)
                 })),
             ).subscribe(
@@ -220,33 +203,89 @@ export class TableOrdersDialogComponent {
           }
         }
       )
-      }else{
+    }else if(!this.isBillPrinted && this.isOnline){
         let body = {
-          "table_id": this.data.table_id,
+          "table_id": this.data.table.table_id,
           "discount_amount": Number(this.discountAmount)
         }
         this.__tableService.markBillPrinted(body).pipe(
           (
             switchMap((data: any) => {
               this.orderNo = data['bill_no']
+              localStorage.setItem('last_bill_no', data['bill_no'])
               return this.__orderService.getTableOrders(body)
             })),
         ).subscribe(
           (data: any) => {
-            this.orders = data['orders']['item_details'];
-            this.hasOrderedItems = this.orders.length > 0;
-            this.totalAmount = data['orders']['total_amount'];
-            this.isBillPrinted = data['orders']['bill_printed']
-            this.tableOrderId = data['orders']['table_order_id']
-            this.calculateAmountWithoutTax()
-            this.calculateAmountWithTax()
+            this.processTableOrders(data)
             this.printBill()
           },
           (error: any) => {
             this.__matDialog.open(ErrorMsgDialogComponent, {data: {msg: 'Failed to mark print'}})
           }
         )
+    } else if(!this.isBillPrinted && !this.isOnline){
+        let body = {
+          "table_id": this.data.table.table_id,
+          "table_name": this.data.table.table_name,
+          "discount_amount": Number(this.discountAmount),
+          'action': 'mark_printed',
+          'timestamp' : this.dateUtils.getDateForRecipePrint()
+        }
+        let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
+        let tableOrdersKey = `table_items_${body['table_name']}`
+        let tableOrders = JSON.parse(localStorage.getItem(tableOrdersKey)) || {}
+        if(!tableOrders['isBillPrinted']) {
+          tableOrders['isBillPrinted'] = true
+        }
+        localStorage.setItem(tableOrdersKey, JSON.stringify(tableOrders))
+        let currentBillNo = Number(localStorage.getItem('last_bill_no')? localStorage.getItem('last_bill_no'): 0 ) + 1
+        localStorage.setItem('last_bill_no', String(currentBillNo))
+        cachedOrders.push(body)
+        localStorage.setItem('cached_orders', JSON.stringify(cachedOrders))
+        this.processTableOrders(this.data.table)
+        this.printBill()
       }
+    }
+
+    processTableOrders(data){
+      debugger
+      let tableOrdersKey = `table_items_${this.data.table['table_name']}`
+        let offlineOrderAmount = 0
+        let offlineOrders = []
+        let isCacheOrderBillPrinted: boolean = false
+        let isPaymentDone: boolean = false
+        let currentBillNo = Number(localStorage.getItem('last_bill_no')? localStorage.getItem('last_bill_no'): 0 )
+        let tableSessionId = 0
+        if(localStorage.getItem(tableOrdersKey)){
+          let offlineOrdersCache = JSON.parse(localStorage.getItem(tableOrdersKey))
+          offlineOrderAmount = offlineOrdersCache['order_amount']
+          offlineOrders = offlineOrdersCache['order_list']
+          isCacheOrderBillPrinted = offlineOrdersCache['isBillPrinted']
+          isPaymentDone = offlineOrdersCache['isPaymentDone']
+          tableSessionId = offlineOrdersCache['table_session_id']
+        }
+        console.log(offlineOrders)
+        if(tableSessionId > 1){
+          data['orders']['item_details'] = []
+          data['orders']['total_amount'] = 0
+          data['orders']['bill_printed'] = false
+          data['orders']['table_order_no'] = null
+          data['orders']['table_order_id'] = null
+          data['orders']['discount_amount'] = 0
+        }
+        console.log(data['orders']['item_details'])
+        this.orders = data['orders']['item_details'].concat(offlineOrders);
+        this.hasOrderedItems = this.orders.length > 0;
+        this.totalAmount = data['orders']['total_amount'] + offlineOrderAmount;
+        this.isBillPrinted = data['orders']['bill_printed']  || isCacheOrderBillPrinted
+        this.orderNo = data['orders']['table_order_no']
+        this.tableOrderId = data['orders']['table_order_id'] || currentBillNo
+        this.discountAmount = data['orders']['discount_amount'] || 0
+        this.isOccupied = data['isOccupied'] || data['orders']['item_details'].length > 0
+        this.calculateAmountWithoutTax()
+        this.calculateAmountWithTax()
+        console.log(this.orders, this.totalAmount)
     }
 
     applyDiscount(){
@@ -264,7 +303,7 @@ export class TableOrdersDialogComponent {
           switchMap((data: any) => {
               if(data?.discount){
                 let body = {
-                  "table_id": this.data.table_id,
+                  "table_id": this.data.table.table_id,
                   discount_amount: Number(data.discount)
                 }
               return this.__tableService.markBillPrinted(body)
@@ -273,7 +312,7 @@ export class TableOrdersDialogComponent {
               }}),
           switchMap((data: any) => {
             let body = {
-              "table_id": this.data.table_id,
+              "table_id": this.data.table.table_id,
             }
             this.orderNo = data['bill_no']
             return this.__orderService.getTableOrders(body)
@@ -299,7 +338,7 @@ export class TableOrdersDialogComponent {
               console.log(data)
               if(data?.discount){
                 let body = {
-                  "table_id": this.data.table_id,
+                  "table_id": this.data.table.table_id,
                   discount_amount: Number(data.discount)
                 }
                 return this.__tableService.markBillPrinted(body)
@@ -309,7 +348,7 @@ export class TableOrdersDialogComponent {
             }),
             switchMap((data: any) => {
               let body = {
-                "table_id": this.data.table_id,
+                "table_id": this.data.table.table_id,
               }
               this.orderNo = data['bill_no']
               return this.__orderService.getTableOrders(body)
@@ -354,9 +393,9 @@ export class TableOrdersDialogComponent {
       order_list: this.orders,
       total_amount: this.subtotalAmountWithoutGst,
       payment_mode: `Table order`,
-      restaurant_id :this.restaurantId,
+      restaurant_id :this.data.table.restaurant_id,
       order_no: this.orderNo,
-      table_name: this.data.table_name,
+      table_name: this.data.table.table_name,
       discount_amount: this.discountAmount
     }
     this.receiptPrintFormatter.confirmedOrderObj = orderObj
@@ -372,21 +411,40 @@ export class TableOrdersDialogComponent {
       (data: any) => {
         if(data?.select){
           let body = {
-            table_id: this.data.table_id,
+            table_id: this.data.table.table_id,
+            'action':  'close_session',
+            'timestamp' : this.dateUtils.getDateForRecipePrint()
           };
-          this.__tableService.closeTableSession(body).subscribe(
-            (data) => {
-              this.__matDialog.open(SuccessMsgDialogComponent, {
-                data: { msg: 'Marked as payment done' },
+          if(this.isOnline){
+            this.__tableService.closeTableSession(body).subscribe(
+              (data) => {
+                this.__matDialog.open(SuccessMsgDialogComponent, {
+                  data: { msg: 'Marked as payment done' },
+                });
+                let tableOrdersKey = `table_items_${this.data.table['table_name']}`
+                localStorage.removeItem(tableOrdersKey)
+                this.dialogRef.close({refresh: true});
+              },
+              (error) => {
+                this.__matDialog.open(ErrorMsgDialogComponent, {
+                  data: { msg: 'Request failed' },
+                });
               });
-              this.dialogRef.close({refresh: true});
-            },
-            (error) => {
-              this.__matDialog.open(ErrorMsgDialogComponent, {
-                data: { msg: 'Request failed' },
-              });
-            }
-          );
+          }
+          else{
+            let tableOrdersKey = `table_items_${this.data.table['table_name']}`
+            let cachedOrders = JSON.parse(localStorage.getItem('cached_orders')) || []
+            cachedOrders.push(body)
+            localStorage.setItem('cached_orders', JSON.stringify(cachedOrders))
+            let new_table_session_id = (localStorage.getItem(tableOrdersKey)['table_session_id'] ? localStorage.getItem(tableOrdersKey)['table_session_id'] : 1)  + 1
+            console.log('new_table_session_id', new_table_session_id, localStorage.getItem(tableOrdersKey))
+            localStorage.setItem(tableOrdersKey, JSON.stringify({order_list: [], order_amount: 0, isPaymentDone: true, table_session_id: new_table_session_id}))
+            // localStorage.removeItem(tableOrdersKey)
+            this.__matDialog.open(SuccessMsgDialogComponent, {
+              data: { msg: 'Marked as payment done' },
+            });
+            this.dialogRef.close({refresh: true})
+          }
         }
       }
     )
@@ -412,7 +470,7 @@ export class TableOrdersDialogComponent {
 
   addItem(order) {
     let body = {
-      restaurant_id: this.restaurantId,
+      restaurant_id: this.data.table.restaurant_id,
       line_item_ids: order.line_item_ids,
       action: 1,
     };
@@ -433,7 +491,7 @@ export class TableOrdersDialogComponent {
   subItem(order) {
     if (order.quantity > 0) {
       let body = {
-        restaurant_id: this.restaurantId,
+        restaurant_id: this.data.table.restaurant_id,
         line_item_ids: order.line_item_ids,
         action: -1,
       };
@@ -454,7 +512,7 @@ export class TableOrdersDialogComponent {
 
   deleteItem(order) {
     let body = {
-      "restaurant_id": this.restaurantId,
+      "restaurant_id": this.data.table.restaurant_id,
       "line_item_ids": order.line_item_ids
     }
     this.__orderService.deleteLineItem(body).subscribe(
@@ -470,9 +528,13 @@ export class TableOrdersDialogComponent {
     )
   }
 
-  calculateItemGST(item){
+    calculateItemGST(item){
     let total = (item.tax_inclusive? item.price: (item.price * 1.05)) * (item.quantity + (item.parcel_quantity? item.parcel_quantity: 0));
     return total
+  }
+
+  calculateLineItemPrie(item){
+    return item.line_item_price ? item.line_item_price: item.price * item.quantity
   }
 
   arraysEqual(a, b) {
@@ -493,7 +555,7 @@ export class TableOrdersDialogComponent {
 
   fetchCounters(){
     this._counterService
-      .getRestaurantCounter(this.restaurantId)
+      .getRestaurantCounter(this.data.table.restaurant_id)
       .subscribe(
         (data) => {
           console.log('counters available', data);

@@ -25,10 +25,12 @@ export class OrderMoreDetailsDialogComponent {
     private dialogRef: MatDialogRef<OrderMoreDetailsDialogComponent>
   ){
     console.log('Data recerived: ', data)
+    let redirectionFrom = data['redirectingFrom']
     this.meUtility.getRestaurant().subscribe(
-      (data: any) => {
-        this.restaurantId = data['restaurant_id']
-        this.allowOrderEdit = data['allow_edit_order']
+      (data: any) => {        
+        let role = data['role_name'] 
+        this.allowOrderEdit = data['allow_edit_order'] && (role == 'restaurant_admin')  && (redirectionFrom != 'deleted_orders')
+        this.restaurantId = data['restaurant_id'] 
       }
     )
   }
