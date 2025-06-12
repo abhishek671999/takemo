@@ -129,8 +129,8 @@
 
     <ng-template #paymentGateway>
       <ng-container *ngIf="isPayment && !paybyWalletCheck && paymentMethod == 'payment_gateway'; else payviaVPA">
-        <button #proceedToPayButton mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay
-        </button>
+        <button #proceedToPayButton mat-raised-button (click)="onProceedPaymentClick()" [disabled]="[1,2].includes(restaurantId)" color="primary">Proceed to Pay</button>
+        <mat-error *ngIf="[1,2].includes(restaurantId)">Payment disabled. Please contact admin</mat-error>
       </ng-container>
     </ng-template>
 
@@ -144,9 +144,9 @@
 
     <ng-template #paymentGateway>
       <ng-container *ngIf="isPayment == true && !paybyWalletCheck; else walletPayment">
-        <button #proceedToPay mat-raised-button (click)="onProceedPaymentClick()" color="primary">Proceed to Pay</button>
-        </ng-container
-      >
+        <button #proceedToPay mat-raised-button (click)="onProceedPaymentClick()" [disabled]="[1,2].includes(restaurantId)" color="primary">Proceed to Pay</button>
+        <mat-error *ngIf="[1,2].includes(restaurantId)">Payment disabled. Please contact admin</mat-error>
+        </ng-container>
     </ng-template>
 
     <ng-template #walletPayment>

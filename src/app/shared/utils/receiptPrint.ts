@@ -20,6 +20,10 @@ export class ReceiptPrintFormatter{
     private restaurantGST
     private isGSTInclusive
     private confirmedOrder
+    private paperWidth: number; //  inches
+    private charactersPerLine: number;
+    private charactersPerInch = 14 // 14 characters per inch
+    private itemNameLength: number;
 
     set confirmedOrderObj(confirmedOrder: confirmedOrder){
       this.meUtility.getRestaurant().subscribe(
@@ -28,13 +32,16 @@ export class ReceiptPrintFormatter{
           this.restaurantAddress = restaurant['restaurant_address']
           this.restaurantGST = restaurant['restaurant_gst']
           this.isGSTInclusive = restaurant['tax_inclusive']
+          this.paperWidth = Number(restaurant['paper_width']) ? Number(restaurant['paper_width']) : 3 // default 3 inches
+          this.charactersPerLine = this.paperWidth * this.charactersPerInch
+          this.itemNameLength = this.paperWidth == 2? 9: 23 
         }
       )
         this.confirmedOrder = confirmedOrder
     }
 
     getKOTReceiptText(counters){
-      let sectionSeperatorCharacters = '-'.repeat(42);
+      let sectionSeperatorCharacters = '-'.repeat(this.charactersPerLine);
       let printObjs = []
       if(counters.length > 0){
         counters.forEach((counterEle) => {
@@ -267,10 +274,10 @@ export class ReceiptPrintFormatter{
 
     getCustomerPrintableText() {
         let sectionHeader1 =
-          '-'.repeat(15) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(15);
-        let tableHeader = '           ITEM            QTY  RATE   AMT';
+          '-'.repeat(this.charactersPerInch) + `${this.confirmedOrder.payment_mode.toUpperCase()}` + '-'.repeat(this.charactersPerInch);
+        let tableHeader = this.paperWidth == 2? '    ITEM     QTY  RATE   AMT' :'           ITEM            QTY  RATE   AMT';
         let endNote = 'Thank you. Visit again';
-        let sectionSeperatorCharacters = '-'.repeat(42);
+        let sectionSeperatorCharacters = '-'.repeat(this.charactersPerLine);
         let content = [
           {
             text: this.restaurantName,
@@ -330,7 +337,7 @@ export class ReceiptPrintFormatter{
           {
             text: this.getTotalAmount(),
             bold: true,
-            size: 'xlarge',
+            size: this.paperWidth == 2? 'normal' : 'xlarge',
             justification: 'right',
           },
           {
@@ -544,8 +551,8 @@ export class ReceiptPrintFormatter{
   private getFormattedCounterItemDetails(counterItemList) {
       let formattedText = '';
       counterItemList.forEach((element, index) => {
-        let trimmedName = this.getFixedLengthString(element.item_name.substring(0, 30), 30, false, ' ')
-        let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(30, 60), 30, false, ' ') + '\n';
+        let trimmedName = this.getFixedLengthString(element.item_name.substring(0, this.itemNameLength), this.itemNameLength, false, ' ')
+        let remainingName = trimmedName.trim() == element.item_name ? '' : ' ' + this.getFixedLengthString(element.item_name.substring(this.itemNameLength, this.charactersPerLine), this.charactersPerLine, false, ' ') + '\n';
         let itemQty = this.getFixedLengthString(element.quantity, 3, true, ' ');
         formattedText += `- ${trimmedName}  ${itemQty}\n${remainingName}`
         if(element.note) formattedText += `(${element.note})\n`
@@ -558,8 +565,8 @@ export class ReceiptPrintFormatter{
     this.confirmedOrder.order_list.forEach((lineItem: lineItem, index) => {
       if (lineItem.quantity > 0) {
         let trimmedName = this.getFixedLengthString(
-            lineItem.item_name.substring(0, 23),
-          23,
+            lineItem.item_name.substring(0, this.itemNameLength),
+          this.itemNameLength,
           false,
           ' '
         );
@@ -568,8 +575,8 @@ export class ReceiptPrintFormatter{
             ? ''
             : ' ' +
               this.getFixedLengthString(
-                lineItem.item_name.substring(23, 48),
-                40,
+                lineItem.item_name.substring(this.itemNameLength, this.charactersPerInch),
+                this.charactersPerLine,
                 false,
                 ' '
               ) +
@@ -624,8 +631,8 @@ export class ReceiptPrintFormatter{
       this.confirmedOrder.order_list.forEach((element: any) => {
         if (element.parcelQuantity > 0) {
           let trimmedName = this.getFixedLengthString(
-            element.name.substring(0, 24),
-            24,
+            element.name.substring(0, this.itemNameLength),
+            this.itemNameLength,
             false,
             ' '
           );
@@ -634,8 +641,8 @@ export class ReceiptPrintFormatter{
               ? ''
               : ' ' +
                 this.getFixedLengthString(
-                  element.name.substring(24, 48),
-                  24,
+                  element.name.substring(this.itemNameLength, this.charactersPerLine),
+                  this.charactersPerLine,
                   false,
                   ' '
                 ) +
